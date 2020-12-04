@@ -9,9 +9,8 @@ def load_transformers(modes):
     transfomers = []
     classes = inspect.getmembers(sys.modules[__name__], inspect.isclass)
     for transfomer_class in classes:
-        transfomer = transfomer_class[1]()
-        if getattr(transfomer, 'name', None) in modes:
-            transfomers.append(transfomer)
+        if transfomer_class[1].__name__ in modes:
+            transfomers.append(transfomer_class[1]())
     return transfomers
 
 
@@ -19,20 +18,14 @@ def load_transfomers_names():
     transfomers = []
     classes = inspect.getmembers(sys.modules[__name__], inspect.isclass)
     for transfomer_class in classes:
-        if hasattr(transfomer_class[1], 'name'):
-            transfomers.append(transfomer_class[1].name)
+        if issubclass(transfomer_class[1], ModelTransformer) and transfomer_class[1].__name__ != 'ModelTransformer':
+            transfomers.append(transfomer_class[1].__name__)
     return transfomers
 
 
 class DummyTransformer(ModelTransformer):
-    name = 'dummy_transformer'
-
-    def __str__(self):
-        return self.name
+    pass
 
 
-class AnotherTransfomer(ModelTransformer):
-    name = 'another_transformer'
-
-    def __str__(self):
-        return self.name
+class AnotherTransformer(ModelTransformer):
+    pass
