@@ -4,13 +4,6 @@ from robotidy.app import Robotidy
 from robotidy.transformers import load_transfomers_names
 
 
-class CommaSeparated(click.ParamType):
-    name = "csv"
-
-    def convert(self, value, param, ctx):
-        return set(value.split(','))
-
-
 @click.command()
 @click.option(
     '--mode',
