@@ -19,6 +19,6 @@ class CommaSeparated(click.ParamType):
     multiple=True
 )
 @click.version_option(__version__)
-def cli(modes):
-    tidy = Robotidy(modes)
+def cli(mode):
+    tidy = Robotidy(mode)
     print(tidy.transformers)
