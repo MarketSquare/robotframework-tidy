@@ -6,12 +6,12 @@ from robotidy.transformers import load_transfomers_names
 
 @click.command()
 @click.option(
-    '--mode',
+    '--transformer',
     type=click.Choice(load_transfomers_names(), case_sensitive=False),
     required=True,
     multiple=True
 )
 @click.version_option(__version__)
-def cli(mode):
-    tidy = Robotidy(mode)
+def cli(transformer):
+    tidy = Robotidy(transformer)
     print(tidy.transformers)
