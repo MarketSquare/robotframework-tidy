@@ -32,6 +32,7 @@ class DummyTransformer(ModelTransformer):
 
     @configurable
     def some_value(self, value):
+        """ configurable property with name `some_value`. Parse and return expected value to save it """
         return int(value) + 1
 
 
@@ -42,6 +43,7 @@ class AnotherTransformer(ModelTransformer):
 
     @configurable
     def other_value(self, value):
+        """ configurable property with name `other_value`. Parse and return expected value to save it """
         value = value * 10
         return value
 
