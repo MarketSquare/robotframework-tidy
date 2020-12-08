@@ -5,10 +5,15 @@ from robotidy.decorators import transformer, configurable
 
 class TestDecorators:
     def test_transform_decorator(self):
-        @transformer
+        @transformer()
         class TestingTransformer:
             pass
+
+        class NotATransfomer:
+            pass
+
         assert getattr(TestingTransformer, 'is_transformer', False)
+        assert not hasattr(NotATransfomer, 'is_transformer')
 
     def test_configurable_init(self):
         @transformer

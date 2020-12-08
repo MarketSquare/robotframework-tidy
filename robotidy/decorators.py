@@ -1,3 +1,6 @@
+import inspect
+
+
 class configurable:  # noqa
     """
     Decorator to expose method as configurable parameter.
@@ -34,7 +37,14 @@ class configurable:  # noqa
             raise AttributeError(f'{owner.__name__}.{self.fun.__name__} attribute was not initialized before use')
 
 
-def transformer(cls):
+def transformer(arg=None):
     """Decorator for transformer class. Only decorated classes are loaded and used to transform the source code."""
-    cls.is_transformer = True
-    return cls
+
+    if inspect.isclass(arg):
+        return transformer()(arg)
+
+    def decorator(cls):
+        cls.is_transformer = True
+        return cls
+
+    return decorator
