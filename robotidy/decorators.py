@@ -1,4 +1,18 @@
 class configurable:  # noqa
+    """
+    Decorator to expose method as configurable parameter.
+    Decorated method should return value.
+
+    Example::
+
+        @configurable
+        def some_value(self, value):
+            # parsing for value
+            return value
+
+        def other_method(self, arg):
+           print(self.some_value)
+    """
     def __init__(self, fun):
         self.fun = fun
 
@@ -21,5 +35,6 @@ class configurable:  # noqa
 
 
 def transformer(cls):
+    """Decorator for transformer class. Only decorated classes are loaded and used to transform the source code."""
     cls.is_transformer = True
     return cls
