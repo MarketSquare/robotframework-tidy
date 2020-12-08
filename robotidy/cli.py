@@ -1,7 +1,6 @@
 import click
 from robotidy.version import __version__
 from robotidy.app import Robotidy
-from robotidy.transformers import load_transfomers_names
 
 
 class TransformType(click.ParamType):

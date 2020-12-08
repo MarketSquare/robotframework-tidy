@@ -11,18 +11,12 @@ def load_transformers(allowed_transformers):
     transformer_classes = {}
     classes = inspect.getmembers(sys.modules[__name__], inspect.isclass)
     for transfomer_class in classes:
-        if transfomer_class[1].__name__ in allowed_transformers:
+        if not allowed_transformers:
+            if getattr(transfomer_class[1], 'is_transformer', False):
+                transformer_classes[transfomer_class[1].__name__] = transfomer_class[1]()
+        elif transfomer_class[1].__name__ in allowed_transformers:
             transformer_classes[transfomer_class[1].__name__] = transfomer_class[1]()
     return transformer_classes
-
-
-def load_transfomers_names():
-    transformer_names = []
-    classes = inspect.getmembers(sys.modules[__name__], inspect.isclass)
-    for transfomer_class in classes:
-        if getattr(transfomer_class[1], 'is_transformer', False):
-            transformer_names.append(transfomer_class[1].__name__)
-    return transformer_names
 
 
 @transformer
