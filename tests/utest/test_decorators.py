@@ -63,3 +63,18 @@ class TestDecorators:
         transform = TestingTransformer()
         transform.some_value = 5
         assert getattr(transform, 'some_value', 0) == 7
+
+    def test_configurable_no_value_set(self):
+        @transformer
+        class TestingTransformer:
+            @configurable()
+            def some_value(self, value):
+                return value + 2
+
+        transform = TestingTransformer()
+
+        with pytest.raises(AttributeError) as err:
+            print(transform.some_value)
+            assert 'TestingTransformer.some_value attribute was not initialized before use' in str(err)
+        transform.some_value = 15
+        assert getattr(transform, 'some_value', 0) == 17
