@@ -2,6 +2,8 @@ import inspect
 import sys
 
 from robot.parsing import ModelTransformer
+from robot.parsing.model.statements import EmptyLine, Comment
+from robot.parsing.model.blocks import CommentSection
 
 from robotidy.decorators import transformer, configurable
 
@@ -44,3 +46,32 @@ class AnotherTransformer(ModelTransformer):
 
 class NotATransformer(ModelTransformer):
     pass
+
+
+@transformer
+class DiscardEmptySections(ModelTransformer):
+    @configurable(default=False)
+    def allow_only_comments(self, value):
+        """ If True then sections only with comments are not considered as empty """
+        return bool(value)
+
+    def check_if_empty(self, node):
+        anything_but = EmptyLine if self.allow_only_comments or isinstance(node, CommentSection) else (Comment, EmptyLine)
+        if all(isinstance(child, anything_but) for child in node.body):
+            return None
+        return node
+
+    def visit_SettingSection(self, node):  # noqa
+        return self.check_if_empty(node)
+
+    def visit_VariableSection(self, node):  # noqa
+        return self.check_if_empty(node)
+
+    def visit_TestCaseSection(self, node):  # noqa
+        return self.check_if_empty(node)
+
+    def visit_KeywordSection(self, node):  # noqa
+        return self.check_if_empty(node)
+
+    def visit_CommentSection(self, node):  # noqa
+        return self.check_if_empty(node)
