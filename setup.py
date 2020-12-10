@@ -42,7 +42,7 @@ setup(
         'Click>=7.0'
     ],
     extras_requires={
-        'dev': ['pytest'],
+        'dev': ['pytest', 'pylama', 'pylama_pylint', 'coverage'],
         'doc': ['sphinx', 'sphinx_rtd_theme']
     },
     entry_points={'console_scripts': ['robotidy=robotidy.cli:cli']},
