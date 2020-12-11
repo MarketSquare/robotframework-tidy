@@ -62,15 +62,22 @@ def get_paths(src: Tuple[str, ...]):
         exists=True, file_okay=True, dir_okay=True, readable=True, allow_dash=True
     ),
     is_eager=True,
+    metavar='[PATH(S)]'
+)
+@click.option(
+    '--overwrite/--no-overwrite',
+    default=True,
+    help='Overwrite source files'
 )
 @click.version_option(version=__version__, prog_name='robotidy')
 @click.pass_context
 def cli(
         ctx: click.Context,
         transform: List[Tuple[str, Dict]],
-        src: Tuple[str, ...]
+        src: Tuple[str, ...],
+        overwrite: bool
 ):
     sources = get_paths(src)
-    tidy = Robotidy(transform, sources)
+    tidy = Robotidy(transformers=transform, src=sources, overwrite=overwrite)
     tidy.transform_files()
 

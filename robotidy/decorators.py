@@ -13,8 +13,6 @@ class ConfigurableDecorator:
         owner.configurables.add(name)
 
     def __set__(self, obj, value):
-        if not obj:
-            return self
         self._value = self.fun(obj, value)
         return self._value
 
@@ -23,9 +21,6 @@ class ConfigurableDecorator:
             return self._value
         except AttributeError:
             raise AttributeError(f'{owner.__name__}.{self.fun.__name__} attribute was not initialized before use')
-
-    def __call__(self, *args, **kwargs):
-        pass
 
 
 def configurable(function=None, **kwargs):

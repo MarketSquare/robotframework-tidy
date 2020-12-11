@@ -6,8 +6,11 @@ from robotidy.transformers import load_transformers
 class Robotidy:
     def __init__(self,
                  transformers: List[Tuple[str, Dict]],
-                 src: Set):
+                 src: Set,
+                 overwrite: bool
+                 ):
         self.sources = src
+        self.overwrite = overwrite
         transformer_names = [transformer[0] for transformer in transformers]
         self.transformers = load_transformers(set(transformer_names))
         self.configure_transformers(transformers)
@@ -27,4 +30,8 @@ class Robotidy:
             model = get_model(source)
             for transformer in self.transformers.values():
                 transformer.visit(model)
+            model.save()
+
+    def save_model(self, model):
+        if self.overwrite:
             model.save()
