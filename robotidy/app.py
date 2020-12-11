@@ -53,7 +53,7 @@ class Robotidy:
         new = new_model.text.splitlines()
         lines = [line for line in unified_diff(old, new, fromfile=f'{path}\tbefore', tofile=f'{path}\tafter')]
         colorized_output = self.color_diff(lines)
-        click.echo(colorized_output, color=True)  # FIXME: does not display colours
+        # click.echo(colorized_output, color=True)  # FIXME: does not display colours
         print(colorized_output)
 
     def color_diff(self, contents: List[str]) -> str:
