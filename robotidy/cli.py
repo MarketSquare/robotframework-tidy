@@ -69,15 +69,21 @@ def get_paths(src: Tuple[str, ...]):
     default=True,
     help='Overwrite source files'
 )
+@click.option(
+    '--diff',
+    is_flag=True,
+    help='Output diff of each processed file'
+)
 @click.version_option(version=__version__, prog_name='robotidy')
 @click.pass_context
 def cli(
         ctx: click.Context,
         transform: List[Tuple[str, Dict]],
         src: Tuple[str, ...],
-        overwrite: bool
+        overwrite: bool,
+        diff: bool
 ):
     sources = get_paths(src)
-    tidy = Robotidy(transformers=transform, src=sources, overwrite=overwrite)
+    tidy = Robotidy(transformers=transform, src=sources, overwrite=overwrite, show_diff=diff)
     tidy.transform_files()
 
