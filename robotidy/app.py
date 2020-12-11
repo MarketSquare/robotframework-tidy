@@ -1,6 +1,7 @@
 from typing import List, Tuple, Dict, Set
 from difflib import unified_diff
 
+import click
 from robot.api import get_model
 from robot.parsing.model.visitor import ModelVisitor
 from robotidy.transformers import load_transformers
@@ -61,21 +62,19 @@ class Robotidy:
         new = new_model.text.splitlines()
         lines = [line for line in unified_diff(old, new, fromfile=f'{path}\tbefore', tofile=f'{path}\tafter')]
         colorized_output = self.color_diff(lines)
+        # click.echo(colorized_output, color=True) FIXME: does not display colours
         print(colorized_output)
 
     def color_diff(self, contents: List[str]) -> str:
-        """
-        Inject the ANSI color codes to the diff.
-        TODO: handle Windows colouring (with colorama)
-        """
+        """Inject the ANSI color codes to the diff."""
         for i, line in enumerate(contents):
             if line.startswith("+++") or line.startswith("---"):
-                line = "\033[1;37m" + line + "\033[0m"  # bold white, reset
+                line = f"\033[1;37m{line}\033[0m"  # bold white, reset
             elif line.startswith("@@"):
-                line = "\033[36m" + line + "\033[0m"  # cyan, reset
+                line = f"\033[36m{line}\033[0m"  # cyan, reset
             elif line.startswith("+"):
-                line = "\033[32m" + line + "\033[0m"  # green, reset
+                line = f"\033[32m{line}\033[0m"  # green, reset
             elif line.startswith("-"):
-                line = "\033[31m" + line + "\033[0m"  # red, reset
+                line = f"\033[31m{line}\033[0m"  # red, reset
             contents[i] = line
         return '\n'.join(contents)
