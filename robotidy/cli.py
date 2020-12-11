@@ -27,9 +27,9 @@ class TransformType(click.ParamType):
 
 def iterate_dir(paths: Iterable[Path]) -> Iterator[Path]:
     for path in paths:
-        if path.suffix not in INCLUDE_EXT:
-            continue
         if path.is_file():
+            if path.suffix not in INCLUDE_EXT:
+                continue
             yield path
         elif path.is_dir():
             yield from iterate_dir(path.iterdir())
@@ -38,7 +38,7 @@ def iterate_dir(paths: Iterable[Path]) -> Iterator[Path]:
 def get_paths(src: Tuple[str, ...]):
     sources = set()
     for s in src:
-        path = Path(s)
+        path = Path(s).resolve()
         if path.is_file():
             sources.add(path)
         elif path.is_dir():
