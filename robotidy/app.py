@@ -3,18 +3,9 @@ from difflib import unified_diff
 
 import click
 from robot.api import get_model
-from robot.parsing.model.visitor import ModelVisitor
+
 from robotidy.transformers import load_transformers
-
-
-class StatementLinesCollector(ModelVisitor):
-    def __init__(self, model):
-        self.text = ''
-        self.visit(model)
-
-    def visit_Statement(self, node):  # noqa
-        for token in node.tokens:
-            self.text += token.value
+from robotidy.utils import StatementLinesCollector
 
 
 class Robotidy:
@@ -62,7 +53,7 @@ class Robotidy:
         new = new_model.text.splitlines()
         lines = [line for line in unified_diff(old, new, fromfile=f'{path}\tbefore', tofile=f'{path}\tafter')]
         colorized_output = self.color_diff(lines)
-        # click.echo(colorized_output, color=True) FIXME: does not display colours
+        click.echo(colorized_output, color=True)  # FIXME: does not display colours
         print(colorized_output)
 
     def color_diff(self, contents: List[str]) -> str:
