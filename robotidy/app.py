@@ -5,7 +5,7 @@ import click
 from robot.api import get_model
 
 from robotidy.transformers import load_transformers
-from robotidy.utils import StatementLinesCollector
+from robotidy.utils import StatementLinesCollector, decorate_diff_with_color
 
 
 class Robotidy:
@@ -30,7 +30,10 @@ class Robotidy:
                 if param_name in self.transformers[name].configurables:
                     setattr(self.transformers[name], param_name, value)
                 else:
-                    raise ValueError(f"Invalid configurable name: '{param_name}' for transformer: '{name}'")
+                    raise click.BadOptionUsage(
+                        option_name='transform',
+                        message=f"Invalid configurable name: '{param_name}' for transformer: '{name}'"
+                    )
 
     def transform_files(self):
         for source in self.sources:
@@ -52,20 +55,6 @@ class Robotidy:
         old = old_model.text.splitlines()
         new = new_model.text.splitlines()
         lines = [line for line in unified_diff(old, new, fromfile=f'{path}\tbefore', tofile=f'{path}\tafter')]
-        colorized_output = self.color_diff(lines)
+        colorized_output = decorate_diff_with_color(lines)
         # click.echo(colorized_output, color=True)  # FIXME: does not display colours
         print(colorized_output)
-
-    def color_diff(self, contents: List[str]) -> str:
-        """Inject the ANSI color codes to the diff."""
-        for i, line in enumerate(contents):
-            if line.startswith("+++") or line.startswith("---"):
-                line = f"\033[1;37m{line}\033[0m"  # bold white, reset
-            elif line.startswith("@@"):
-                line = f"\033[36m{line}\033[0m"  # cyan, reset
-            elif line.startswith("+"):
-                line = f"\033[32m{line}\033[0m"  # green, reset
-            elif line.startswith("-"):
-                line = f"\033[31m{line}\033[0m"  # red, reset
-            contents[i] = line
-        return '\n'.join(contents)

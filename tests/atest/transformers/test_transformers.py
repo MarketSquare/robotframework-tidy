@@ -1,10 +1,13 @@
 import filecmp
-from typing import List
+from difflib import unified_diff
 from pathlib import Path
+from typing import List
 from unittest.mock import patch
+
 from click.testing import CliRunner
 
 from robotidy.cli import cli
+from robotidy.utils import decorate_diff_with_color
 
 
 def save_tmp_model(self, model):
@@ -31,7 +34,21 @@ def compare_file(transformer_name: str, actual_name: str, expected_name: str = N
     expected = Path(transformer_name, 'expected', expected_name)
     actual = Path('actual', actual_name)
     if not filecmp.cmp(expected, actual):
+        display_file_diff(expected, actual)
         raise AssertionError(f'File {actual_name} is not same as expected')
+
+
+def display_file_diff(expected, actual):
+    print('\nExpected file after transforming does not match actual')
+    with open(expected) as f, open(actual) as f2:
+        expected_lines = f.readlines()
+        actual_lines = f2.readlines()
+    lines = [line for line in unified_diff(expected_lines,
+                                           actual_lines,
+                                           fromfile=f'expected: {expected}\t', tofile=f'actual: {actual}\t')
+             ]
+    colorized_output = decorate_diff_with_color(lines)
+    print(colorized_output)
 
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
