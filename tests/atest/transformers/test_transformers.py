@@ -11,6 +11,8 @@ from robotidy.utils import decorate_diff_with_color
 
 
 def save_tmp_model(self, model):
+    """ Decorator that disables default robotidy save to file mechanism and replace with mocked one.
+    That way we can save output to 'actual' directory for easy comparison with expected files.  """
     path = Path('actual', Path(model.source).name)
     model.save(output=path)
 
