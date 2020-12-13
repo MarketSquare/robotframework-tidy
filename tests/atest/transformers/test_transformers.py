@@ -26,7 +26,9 @@ def run_tidy(transformer_name: str, args: List[str] = None, sources: List[str] =
         paths = [str(Path(transformer_name, 'source', source)) for source in sources]
     cmd = arguments + paths
     result = runner.invoke(cli, cmd)
-    assert result.exit_code == exit_code
+    if result.exit_code == exit_code:
+        print(result.output)
+        raise AssertionError(f'robotidy exit code: {result.exit_code} does not match expected: {exit_code}')
     return result
 
 
