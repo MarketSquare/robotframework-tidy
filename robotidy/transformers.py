@@ -1,3 +1,28 @@
+"""
+Transformers are classes used to transform passed Robot Framework code model.
+You can create your own transformer class if you follow those rules:
+    - inherit from `ModelTransformer` class
+    - add `@transformer` class decorator
+
+Classes that do not met all of those two conditions will not be loaded into `robotidy` as transformers.
+Thanks for that you can use it to create common classes / helper methods:
+
+    class NotATransformer(ModelTransformer):
+        pass
+
+Transformers can have parameters configurable from cli or config files. To create them provide
+function for parsing its value from `str` and decorate it with `@configurable`:
+
+    @configurable
+    def some_value(self, value: str):
+        ''' configurable property with name `some_value`. Parse and return expected value to save it '''
+        return int(value) + 1
+
+You can access this parameter by name of parsing function - `self.some_value`. You can initialize it in two ways:
+    - in __init__ - but the value used will be passed through parsing function
+    - as `default` argument to configurable decorator: `@configurable(default=10)
+
+"""
 import inspect
 import sys
 
@@ -19,33 +44,6 @@ def load_transformers(allowed_transformers):
         elif transfomer_class[1].__name__ in allowed_transformers:
             transformer_classes[transfomer_class[1].__name__] = transfomer_class[1]()
     return transformer_classes
-
-
-@transformer
-class DummyTransformer(ModelTransformer):
-    def __init__(self):
-        self.some_value = 10
-
-    @configurable
-    def some_value(self, value):
-        """ configurable property with name `some_value`. Parse and return expected value to save it """
-        return int(value) + 1
-
-
-@transformer
-class AnotherTransformer(ModelTransformer):
-    def __init__(self):
-        self.other_value = 5
-
-    @configurable
-    def other_value(self, value):
-        """ configurable property with name `other_value`. Parse and return expected value to save it """
-        value = value * 10
-        return value
-
-
-class NotATransformer(ModelTransformer):
-    pass
 
 
 @transformer

@@ -2,6 +2,9 @@ from robot.parsing.model.visitor import ModelVisitor
 
 
 class StatementLinesCollector(ModelVisitor):
+    """
+    Used to get writeable presentation of Robot Framework model.
+    """
     def __init__(self, model):
         self.text = ''
         self.visit(model)
