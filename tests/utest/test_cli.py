@@ -18,7 +18,7 @@ class TestCli:
     def test_not_existing_transformer(self):
         expected_output = 'Usage: cli [OPTIONS] [PATH(S)]\n\n' \
                           'Error: Failed to load all requested transformers. Make sure you provided correct name. ' \
-                          'Missing:\nNotExisting\nMissingTransformer\n'
+                          'Missing:\nMissingTransformer\nNotExisting\n'
         args = '--transform NotExisting --transform MissingTransformer --transform DiscardEmptySections'.split()
         result = run_tidy(args, exit_code=2)
         assert expected_output == result.output

@@ -26,7 +26,7 @@ class Robotidy:
         transformer_names = set([transformer[0] for transformer in transformers])
         transformers = load_transformers(transformer_names)
         if transformer_names and len(transformers) != len(transformer_names):
-            missing = transformer_names.difference(set(transformers))
+            missing = sorted(transformer_names.difference(set(transformers)))
             msg = 'Failed to load all requested transformers. Make sure you provided correct name. Missing:\n'
             msg += '\n'.join(missing)
             raise click.BadOptionUsage(
