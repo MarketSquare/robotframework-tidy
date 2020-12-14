@@ -12,9 +12,12 @@ class TransformType(click.ParamType):
     name = "transform"
 
     def convert(self, value, param, ctx):
-        name, *configs = value.split(':')
-        configurations = {}
+        name = ''
         try:
+            name, *configs = value.split(':')
+            if '=' in name:
+                raise ValueError
+            configurations = {}
             for config in configs:
                 key, value = config.split('=', maxsplit=1)
                 configurations[key] = value
