@@ -1,4 +1,5 @@
 from typing import List
+import os
 from robot.parsing.model.visitor import ModelVisitor
 
 
@@ -13,6 +14,18 @@ class StatementLinesCollector(ModelVisitor):
     def visit_Statement(self, node):  # noqa
         for token in node.tokens:
             self.text += token.value
+
+
+class GlobalFormattingConfig:
+    def __init__(self, use_pipes: bool, space_count: int, line_sep: str):
+        self.use_pipes = use_pipes
+        self.space_count = space_count
+        if line_sep == 'windows':
+            self.line_sep = '\n'
+        elif line_sep == 'unix':
+            self.line_sep = '\r\n'
+        else:
+            self.line_sep = os.linesep
 
 
 def decorate_diff_with_color(contents: List[str]) -> str:

@@ -5,7 +5,11 @@ import click
 from robot.api import get_model
 
 from robotidy.transformers import load_transformers
-from robotidy.utils import StatementLinesCollector, decorate_diff_with_color
+from robotidy.utils import (
+    StatementLinesCollector,
+    decorate_diff_with_color,
+    GlobalFormattingConfig
+)
 
 
 class Robotidy:
@@ -13,11 +17,13 @@ class Robotidy:
                  transformers: List[Tuple[str, Dict]],
                  src: Set,
                  overwrite: bool,
-                 show_diff: bool
+                 show_diff: bool,
+                 formatting_config: GlobalFormattingConfig
                  ):
         self.sources = src
         self.overwrite = overwrite
         self.show_diff = show_diff
+        self.formatting_config = formatting_config
         self.transformers = self.find_and_load_transformers(transformers)
         self.configure_transformers(transformers)
 
@@ -54,6 +60,8 @@ class Robotidy:
             model = get_model(source)
             old_model = StatementLinesCollector(model)
             for transformer in self.transformers.values():
+                # inject global settings TODO: handle it better
+                setattr(transformer, 'formatting_config', self.formatting_config)
                 transformer.visit(model)
             new_model = StatementLinesCollector(model)
             self.output_diff(model.source, old_model, new_model)

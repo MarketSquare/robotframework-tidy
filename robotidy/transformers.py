@@ -76,13 +76,13 @@ class DiscardEmptySections(ModelTransformer):
         return self.check_if_empty(node)
 
 
-def insert_separators(indent, tokens):
+def insert_separators(indent, tokens, sep_type):
     yield Token(Token.SEPARATOR, indent + 4 * ' ')
     for token in tokens[:-1]:
         yield token
         yield Token(Token.SEPARATOR, 4 * ' ')
     yield tokens[-1]
-    yield Token(Token.EOL, '\n')
+    yield Token(Token.EOL, sep_type)
 
 
 @transformer
@@ -111,7 +111,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
         end = Statement.from_tokens([
             separator,
             Token(Token.END, 'END'),
-            Token(Token.EOL, '\n')
+            Token(Token.EOL, self.formatting_config.line_sep)
         ])
         prev_if = None
         for branch in reversed(list(self.split_args_on_delimeters(raw_args, ('ELSE', 'ELSE IF')))):
@@ -137,7 +137,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
                     branch[0]
                 ]
                 args = branch[1:]
-            header_tokens.append(Token(Token.EOL, '\n'))
+            header_tokens.append(Token(Token.EOL, self.formatting_config.line_sep))
             header = Statement.from_tokens(header_tokens)
             keywords = self.create_keywords(args, assign, separator.value)
             if_block = If(header=header, body=keywords, orelse=prev_if)
@@ -152,11 +152,11 @@ class ReplaceRunKeywordIf(ModelTransformer):
         else:
             return self.args_to_keyword(arg_tokens, assign, indent)
 
-    @staticmethod
-    def args_to_keyword(arg_tokens, assign, indent):
+    def args_to_keyword(self, arg_tokens, assign, indent):
         separated_tokens = list(insert_separators(
             indent,
-            [*assign, Token(Token.KEYWORD, arg_tokens[0].value), *arg_tokens[1:]]
+            [*assign, Token(Token.KEYWORD, arg_tokens[0].value), *arg_tokens[1:]],
+            self.formatting_config.line_sep
         ))
         return KeywordCall.from_tokens(separated_tokens)
 

@@ -18,14 +18,20 @@ def save_tmp_model(self, model):
     model.save(output=path)
 
 
-def run_tidy(transformer_name: str, args: List[str] = None, sources: List[str] = None, exit_code: int = 0):
+def run_tidy(
+        transformer_name: str,
+        args: List[str] = None,
+        sources: List[str] = None,
+        exit_code: int = 0,
+        line_sep='windows'
+):
     runner = CliRunner()
     arguments = args if args is not None else []
     if sources is None:
         paths = [str(Path(Path(__file__).parent, transformer_name, 'source'))]
     else:
         paths = [str(Path(Path(__file__).parent, transformer_name, 'source', source)) for source in sources]
-    cmd = arguments + paths
+    cmd = ['--lineseparator', line_sep] + arguments + paths
     result = runner.invoke(cli, cmd)
     if result.exit_code != exit_code:
         print(result.output)
