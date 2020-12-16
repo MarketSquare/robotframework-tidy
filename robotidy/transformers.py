@@ -97,20 +97,9 @@ def insert_separators(indent, tokens, formatting_config):
 
 @transformer
 class ReplaceRunKeywordIf(ModelTransformer):
-    def visit_Keyword(self, node):  # noqa
-        return self.replace(node)
-
-    def visit_TestCase(self, node):  # noqa
-        return self.replace(node)
-
-    def replace(self, node):
-        new_nodes = []
-        for child in node.body:
-            if isinstance(child, KeywordCall) and normalize_name(child.keyword) == 'runkeywordif':
-                new_nodes.append(self.create_branched(child))
-            else:
-                new_nodes.append(child)
-        node.body = new_nodes
+    def visit_KeywordCall(self, node):  # noqa
+        if normalize_name(node.keyword) == 'runkeywordif':
+            return self.create_branched(node)
         return node
 
     def create_branched(self, node):
