@@ -28,3 +28,7 @@ def decorate_diff_with_color(contents: List[str]) -> str:
             line = f"\033[31m{line}\033[0m"  # red, reset
         contents[i] = line
     return '\n'.join(contents)
+
+
+def normalize_name(name):
+    return name.lower().replace('_', '').replace(' ', '')
