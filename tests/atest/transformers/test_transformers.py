@@ -92,33 +92,11 @@ class TestDiscardEmptySections:
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
 class TestReplaceRunKeywordIf:
     TRANSFORMER_NAME = 'ReplaceRunKeywordIf'
-
-    def test_multiple_common_conditions_merge(self):
+    def test_run_keyword_if_replaced(self):
         run_tidy(
             self.TRANSFORMER_NAME,
             args=f'--transform {self.TRANSFORMER_NAME}'.split(),
-            sources=['multiple_common_conditions.robot']
+            sources=['tests.robot']
         )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot')
 
-    def test_multiple_common_conditions_non_merge(self):
-        run_tidy(
-            self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}:merge_common=False'.split(),
-            sources=['multiple_common_conditions.robot']
-        )
-
-    def test_ifelse(self):
-        run_tidy(
-            self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
-            sources=['ifelse.robot']
-        )
-        compare_file(self.TRANSFORMER_NAME, 'ifelse.robot')
-
-    def test_return_value(self):
-        run_tidy(
-            self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
-            sources=['return_value.robot']
-        )
-        compare_file(self.TRANSFORMER_NAME, 'return_value.robot')
