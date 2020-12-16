@@ -1,7 +1,34 @@
+"""
+Transformers are classes used to transform passed Robot Framework code model.
+You can create your own transformer class if you follow those rules:
+    - inherit from `ModelTransformer` class
+    - add `@transformer` class decorator
+
+Classes that do not met all of those two conditions will not be loaded into `robotidy` as transformers.
+Thanks for that you can use it to create common classes / helper methods:
+
+    class NotATransformer(ModelTransformer):
+        pass
+
+Transformers can have parameters configurable from cli or config files. To create them provide
+function for parsing its value from `str` and decorate it with `@configurable`:
+
+    @configurable
+    def some_value(self, value: str):
+        ''' configurable property with name `some_value`. Parse and return expected value to save it '''
+        return int(value) + 1
+
+You can access this parameter by name of parsing function - `self.some_value`. You can initialize it in two ways:
+    - in __init__ - but the value used will be passed through parsing function
+    - as `default` argument to configurable decorator: `@configurable(default=10)
+
+"""
 import inspect
 import sys
 
 from robot.parsing import ModelTransformer
+from robot.parsing.model.statements import EmptyLine, Comment
+from robot.parsing.model.blocks import CommentSection
 
 from robotidy.decorators import transformer, configurable
 
@@ -20,27 +47,29 @@ def load_transformers(allowed_transformers):
 
 
 @transformer
-class DummyTransformer(ModelTransformer):
-    def __init__(self):
-        self.some_value = 10
+class DiscardEmptySections(ModelTransformer):
+    @configurable(default=False)
+    def allow_only_comments(self, value):
+        """ If True then sections only with comments are not considered as empty """
+        return bool(value)
 
-    @configurable
-    def some_value(self, value):
-        """ configurable property with name `some_value`. Parse and return expected value to save it """
-        return int(value) + 1
+    def check_if_empty(self, node):
+        anything_but = EmptyLine if self.allow_only_comments or isinstance(node, CommentSection) else (Comment, EmptyLine)
+        if all(isinstance(child, anything_but) for child in node.body):
+            return None
+        return node
 
+    def visit_SettingSection(self, node):  # noqa
+        return self.check_if_empty(node)
 
-@transformer
-class AnotherTransformer(ModelTransformer):
-    def __init__(self):
-        self.other_value = 5
+    def visit_VariableSection(self, node):  # noqa
+        return self.check_if_empty(node)
 
-    @configurable
-    def other_value(self, value):
-        """ configurable property with name `other_value`. Parse and return expected value to save it """
-        value = value * 10
-        return value
+    def visit_TestCaseSection(self, node):  # noqa
+        return self.check_if_empty(node)
 
+    def visit_KeywordSection(self, node):  # noqa
+        return self.check_if_empty(node)
 
-class NotATransformer(ModelTransformer):
-    pass
+    def visit_CommentSection(self, node):  # noqa
+        return self.check_if_empty(node)
