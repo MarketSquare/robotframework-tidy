@@ -26,9 +26,19 @@ You can access this parameter by name of parsing function - `self.some_value`. Y
 import inspect
 import sys
 
-from robot.parsing import ModelTransformer, Token
-from robot.parsing.model.statements import EmptyLine, Comment, KeywordCall, Statement
-from robot.parsing.model.blocks import CommentSection, If
+from robot.api.parsing import (
+    ModelTransformer,
+    Token,
+    EmptyLine,
+    Comment,
+    KeywordCall,
+    CommentSection,
+    If,
+    End,
+    IfHeader,
+    ElseHeader,
+    ElseIfHeader
+)
 
 from robotidy.decorators import transformer, configurable
 from robotidy.utils import normalize_name
@@ -107,8 +117,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
         separator = node.tokens[0]
         assign = node.get_tokens(Token.ASSIGN)
         raw_args = node.get_tokens(Token.ARGUMENT)
-
-        end = Statement.from_tokens([
+        end = End([
             separator,
             Token(Token.END, 'END'),
             Token(Token.EOL, self.formatting_config.line_sep)
@@ -116,29 +125,30 @@ class ReplaceRunKeywordIf(ModelTransformer):
         prev_if = None
         for branch in reversed(list(self.split_args_on_delimeters(raw_args, ('ELSE', 'ELSE IF')))):
             if branch[0].value == 'ELSE':
-                header_tokens = [
+                header = ElseHeader([
                     separator,
-                    Token('ELSE', 'ELSE')
-                ]
+                    Token('ELSE', 'ELSE'),
+                    Token(Token.EOL, self.formatting_config.line_sep)
+                ])
                 args = branch[1:]
             elif branch[0].value == 'ELSE IF':
-                header_tokens = [
+                header = ElseIfHeader([
                     separator,
                     Token('ELSE IF', 'ELSE IF'),
                     Token(Token.SEPARATOR, self.formatting_config.space_count * ' '),
-                    branch[1]
-                ]
+                    branch[1],
+                    Token(Token.EOL, self.formatting_config.line_sep)
+                ])
                 args = branch[2:]
             else:
-                header_tokens = [
+                header = IfHeader([
                     separator,
                     Token('IF', 'IF'),
                     Token(Token.SEPARATOR, self.formatting_config.space_count * ' '),
-                    branch[0]
-                ]
+                    branch[0],
+                    Token(Token.EOL, self.formatting_config.line_sep)
+                ])
                 args = branch[1:]
-            header_tokens.append(Token(Token.EOL, self.formatting_config.line_sep))
-            header = Statement.from_tokens(header_tokens)
             keywords = self.create_keywords(args, assign, separator.value)
             if_block = If(header=header, body=keywords, orelse=prev_if)
             prev_if = if_block
