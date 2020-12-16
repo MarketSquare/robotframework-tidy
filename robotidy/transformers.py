@@ -76,13 +76,13 @@ class DiscardEmptySections(ModelTransformer):
         return self.check_if_empty(node)
 
 
-def insert_separators(indent, tokens, sep_type):
-    yield Token(Token.SEPARATOR, indent + 4 * ' ')
+def insert_separators(indent, tokens, formatting_config):
+    yield Token(Token.SEPARATOR, indent + formatting_config.space_count * ' ')
     for token in tokens[:-1]:
         yield token
-        yield Token(Token.SEPARATOR, 4 * ' ')
+        yield Token(Token.SEPARATOR, formatting_config.space_count * ' ')
     yield tokens[-1]
-    yield Token(Token.EOL, sep_type)
+    yield Token(Token.EOL, formatting_config.line_sep)
 
 
 @transformer
@@ -125,7 +125,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
                 header_tokens = [
                     separator,
                     Token('ELSE IF', 'ELSE IF'),
-                    Token(Token.SEPARATOR, 4 * ' '),
+                    Token(Token.SEPARATOR, self.formatting_config.space_count * ' '),
                     branch[1]
                 ]
                 args = branch[2:]
@@ -133,7 +133,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
                 header_tokens = [
                     separator,
                     Token('IF', 'IF'),
-                    Token(Token.SEPARATOR, 4 * ' '),
+                    Token(Token.SEPARATOR, self.formatting_config.space_count * ' '),
                     branch[0]
                 ]
                 args = branch[1:]
@@ -156,7 +156,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
         separated_tokens = list(insert_separators(
             indent,
             [*assign, Token(Token.KEYWORD, arg_tokens[0].value), *arg_tokens[1:]],
-            self.formatting_config.line_sep
+            self.formatting_config
         ))
         return KeywordCall.from_tokens(separated_tokens)
 
