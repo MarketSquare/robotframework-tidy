@@ -21,9 +21,9 @@ class GlobalFormattingConfig:
         self.use_pipes = use_pipes
         self.space_count = space_count
         if line_sep == 'windows':
-            self.line_sep = '\n'
-        elif line_sep == 'unix':
             self.line_sep = '\r\n'
+        elif line_sep == 'unix':
+            self.line_sep = '\n'
         else:
             self.line_sep = os.linesep
 
