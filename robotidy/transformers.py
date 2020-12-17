@@ -92,7 +92,7 @@ def insert_separators(indent, tokens, formatting_config):
         yield token
         yield Token(Token.SEPARATOR, formatting_config.space_count * ' ')
     yield tokens[-1]
-    yield Token(Token.EOL, '\n')
+    yield Token(Token.EOL)
 
 
 @transformer
@@ -157,16 +157,16 @@ class ReplaceRunKeywordIf(ModelTransformer):
             return node
         end = End([
             separator,
-            Token(Token.END, 'END'),
-            Token(Token.EOL, '\n')
+            Token(Token.END),
+            Token(Token.EOL)
         ])
         prev_if = None
         for branch in reversed(list(self.split_args_on_delimeters(raw_args, ('ELSE', 'ELSE IF')))):
             if branch[0].value == 'ELSE':
                 header = ElseHeader([
                     separator,
-                    Token('ELSE', 'ELSE'),
-                    Token(Token.EOL, '\n')
+                    Token(Token.ELSE),
+                    Token(Token.EOL)
                 ])
                 if len(branch) < 2:
                     return node
@@ -176,10 +176,10 @@ class ReplaceRunKeywordIf(ModelTransformer):
                     return node
                 header = ElseIfHeader([
                     separator,
-                    Token('ELSE IF', 'ELSE IF'),
+                    Token(Token.ELSE_IF),
                     Token(Token.SEPARATOR, self.formatting_config.space_count * ' '),
                     branch[1],
-                    Token(Token.EOL, '\n')
+                    Token(Token.EOL)
                 ])
                 args = branch[2:]
             else:
@@ -187,10 +187,10 @@ class ReplaceRunKeywordIf(ModelTransformer):
                     return node
                 header = IfHeader([
                     separator,
-                    Token('IF', 'IF'),
+                    Token(Token.IF),
                     Token(Token.SEPARATOR, self.formatting_config.space_count * ' '),
                     branch[0],
-                    Token(Token.EOL, '\n')
+                    Token(Token.EOL)
                 ])
                 args = branch[1:]
             keywords = self.create_keywords(args, assign, separator.value)
