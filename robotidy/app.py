@@ -29,7 +29,7 @@ class Robotidy:
 
     @staticmethod
     def find_and_load_transformers(transformers: List[Tuple[str, Dict]]):
-        transformer_names = set([transformer[0] for transformer in transformers])
+        transformer_names = set(transformer[0] for transformer in transformers)
         transformers = load_transformers(transformer_names)
         if transformer_names and len(transformers) != len(transformer_names):
             missing = sorted(transformer_names.difference(set(transformers)))
@@ -76,7 +76,7 @@ class Robotidy:
             return
         old = old_model.text.splitlines()
         new = new_model.text.splitlines()
-        lines = [line for line in unified_diff(old, new, fromfile=f'{path}\tbefore', tofile=f'{path}\tafter')]
+        lines = list(unified_diff(old, new, fromfile=f'{path}\tbefore', tofile=f'{path}\tafter'))
         colorized_output = decorate_diff_with_color(lines)
         # click.echo(colorized_output, color=True)  # FIXME: does not display colours
         print(colorized_output)

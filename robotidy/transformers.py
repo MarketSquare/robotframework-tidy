@@ -196,13 +196,12 @@ class ReplaceRunKeywordIf(ModelTransformer):
             prev_if = if_block
         prev_if.end = end
         return prev_if
-    
+
     def create_keywords(self, arg_tokens, assign, indent):
         if normalize_name(arg_tokens[0].value) == 'runkeywords':
             return [self.args_to_keyword(keyword[1:], assign, indent)
                     for keyword in self.split_args_on_delimeters(arg_tokens, ('AND',))]
-        else:
-            return self.args_to_keyword(arg_tokens, assign, indent)
+        return self.args_to_keyword(arg_tokens, assign, indent)
 
     def args_to_keyword(self, arg_tokens, assign, indent):
         separated_tokens = list(insert_separators(
