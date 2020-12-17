@@ -143,6 +143,8 @@ class ReplaceRunKeywordIf(ModelTransformer):
 
     """
     def visit_KeywordCall(self, node):  # noqa
+        if not node.keyword:
+            return node
         if normalize_name(node.keyword) == 'runkeywordif':
             return self.create_branched(node)
         return node
