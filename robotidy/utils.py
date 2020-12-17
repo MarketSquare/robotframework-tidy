@@ -25,7 +25,7 @@ class GlobalFormattingConfig:
         elif line_sep == 'unix':
             self.line_sep = '\n'
         else:
-            self.line_sep = os.linesep
+            self.line_sep = '\n'
 
 
 def decorate_diff_with_color(contents: List[str]) -> str:
