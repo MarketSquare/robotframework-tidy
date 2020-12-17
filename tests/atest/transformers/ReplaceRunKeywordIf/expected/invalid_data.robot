@@ -39,5 +39,3 @@ Not closes if
         IF    ${condition}
             Keyword
         END
-
-

@@ -29,5 +29,3 @@ Not closed for loop
 Not closes if
     IF  ${condition}
         Run Keyword If  ${condition}  Keyword
-
-
