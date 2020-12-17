@@ -24,11 +24,13 @@ You can access this parameter by name of parsing function - `self.some_value`. Y
 
 """
 import inspect
+import re
 import sys
 
 from robot.api.parsing import (
     ModelTransformer,
     Token,
+    Variable,
     EmptyLine,
     Comment,
     KeywordCall,
@@ -221,3 +223,39 @@ class ReplaceRunKeywordIf(ModelTransformer):
             yield args[prev_index:split_point]
             prev_index = split_point
         yield args[prev_index:len(args)]
+
+
+@transformer
+class NormalizeEqualSigns(ModelTransformer):
+    def __init__(self):
+        self.remove_equal_sign = re.compile(r'\s?=$')
+
+    @configurable(default='')
+    def equal_sign_type(self, value):
+        types = {
+            'remove': '',
+            'equal_sign': '=',
+            'space_and_equal_sign': ' ='
+        }
+        if value not in types:
+            raise ValueError()  # TODO
+        return types[value]
+
+    def visit_KeywordCall(self, node):  # noqa
+        if node.assign:  # if keyword returns any value
+            assign_tokens = node.get_tokens(Token.ASSIGN)
+            self.normalize_equal_sign(assign_tokens[-1])
+        return node
+
+    def visit_VariableSection(self, node):  # noqa
+        for child in node.body:
+            if not isinstance(child, Variable):
+                continue
+            var_token = child.get_token(Token.VARIABLE)
+            self.normalize_equal_sign(var_token)
+        return node
+
+    def normalize_equal_sign(self, token):
+        token.value = re.sub(self.remove_equal_sign, '', token.value)
+        if self.equal_sign_type:
+            token.value += self.equal_sign_type

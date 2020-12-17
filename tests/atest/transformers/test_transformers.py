@@ -107,3 +107,32 @@ class TestReplaceRunKeywordIf:
             sources=['invalid_data.robot']
         )
         compare_file(self.TRANSFORMER_NAME, 'invalid_data.robot')
+
+
+@patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
+class TestNormalizeEqualSigns:
+    TRANSFORMER_NAME = 'NormalizeEqualSigns'
+
+    def test_remove(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'remove.robot')
+
+    def test_add_equal_sign(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}:equal_sign_type=equal_sign'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'equal_sign.robot')
+
+    def test_add_space_and_equal_sign(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}:equal_sign_type=space_and_equal_sign'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'space_and_equal_sign.robot')
