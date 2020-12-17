@@ -227,6 +227,45 @@ class ReplaceRunKeywordIf(ModelTransformer):
 
 @transformer
 class NormalizeEqualSigns(ModelTransformer):
+    """
+    Normalize equal signs. By default it removes `=` signs::
+
+        *** Variables ***
+        ${var}=  ${1}
+        @{list}=  a
+        ...  b
+        ...  c
+
+        ${variable}=  10
+
+
+        *** Keywords ***
+        Keyword
+            ${var}=  Keyword1
+            ${var}=   Keyword2
+            ${var}=    Keyword
+
+    To::
+
+        *** Variables ***
+        ${var}  ${1}
+        @{list}  a
+        ...  b
+        ...  c
+
+        ${variable}  10
+
+
+        *** Keywords ***
+        Keyword
+            ${var}  Keyword1
+            ${var}   Keyword2
+            ${var}    Keyword
+
+    You can configure that behaviour to automatically add desired equal sign with `equal_sign_type` configurable
+    (possible types are: `remove` (default), `equal_sign` ('='), `space_and_equal_sign` (' =').
+
+    """
     def __init__(self):
         self.remove_equal_sign = re.compile(r'\s?=$')
 
