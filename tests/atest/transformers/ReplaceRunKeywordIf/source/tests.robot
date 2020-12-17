@@ -34,6 +34,20 @@ Run keyword if with else if and run keywords
     ...  ELSE IF  ${var}==1  Run Keywords  Single Keyword  ${argument}
     ...  ELSE  Normal Keyword  abc
 
+Run keyword if inside FOR loop
+    FOR  ${var}  IN  @{elems}
+        Run Keyword If  ${condition}    Keyword
+        ...  ELSE IF  ${other_condition}    Other Keyword
+        ...  ELSE  Final Keyword
+    END
+
+Run keyword if inside IF
+    IF  ${condition}
+        Run Keyword If  ${condition}    Keyword
+        ...  ELSE IF  ${other_condition}    Other Keyword
+        ...  ELSE  Final Keyword
+    END
+
 *** Keywords ***
 Test Content Merged Into One Keyword
     IF    condition
