@@ -97,6 +97,51 @@ def insert_separators(indent, tokens, formatting_config):
 
 @transformer
 class ReplaceRunKeywordIf(ModelTransformer):
+    """
+    Replace `Run Keyword If` keyword calls with IF END blocks.
+    Supports global formatting params: `--lineseparator`, `--spacecount`.
+
+    Following code::
+
+        Run Keyword If  ${condition}
+        ...  Keyword  ${arg}
+        ...  ELSE IF  ${condition2}  Keyword2
+        ...  ELSE  Keyword3
+
+    Will be transformed to::
+
+        IF    ${condition}
+            Keyword    ${arg}
+        ELSE IF    ${condition2}
+            Keyword2
+        ELSE
+            Keyword3
+        END
+
+    Any return value will be applied to every ELSE/ELSE IF branch::
+
+        ${var}  Run Keyword If  ${condition}  Keyword  ELSE  Keyword2
+
+    Output::
+
+        IF    ${condition}
+            ${var}    Keyword
+        ELSE
+            ${var}    Keyword2
+        END
+
+    Run Keywords inside Run Keyword If will be splitted into separate keywords::
+
+       Run Keyword If  ${condition}  Run Keywords  Keyword  ${arg}  AND  Keyword2
+
+    Output::
+
+        IF    ${condition}
+            Keyword    ${arg}
+            Keyword2
+        END
+
+    """
     def visit_KeywordCall(self, node):  # noqa
         if normalize_name(node.keyword) == 'runkeywordif':
             return self.create_branched(node)
