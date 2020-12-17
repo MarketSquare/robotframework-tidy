@@ -1,5 +1,4 @@
 from typing import List
-import os
 from robot.parsing.model.visitor import ModelVisitor
 
 
