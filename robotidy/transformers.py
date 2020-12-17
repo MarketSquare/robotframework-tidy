@@ -92,14 +92,14 @@ def insert_separators(indent, tokens, formatting_config):
         yield token
         yield Token(Token.SEPARATOR, formatting_config.space_count * ' ')
     yield tokens[-1]
-    yield Token(Token.EOL, formatting_config.line_sep)
+    yield Token(Token.EOL, '\n')
 
 
 @transformer
 class ReplaceRunKeywordIf(ModelTransformer):
     """
     Replace `Run Keyword If` keyword calls with IF END blocks.
-    Supports global formatting params: `--lineseparator`, `--spacecount`.
+    Supports global formatting param: `--spacecount`.
 
     Following code::
 
@@ -158,7 +158,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
         end = End([
             separator,
             Token(Token.END, 'END'),
-            Token(Token.EOL, self.formatting_config.line_sep)
+            Token(Token.EOL, '\n')
         ])
         prev_if = None
         for branch in reversed(list(self.split_args_on_delimeters(raw_args, ('ELSE', 'ELSE IF')))):
@@ -166,7 +166,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
                 header = ElseHeader([
                     separator,
                     Token('ELSE', 'ELSE'),
-                    Token(Token.EOL, self.formatting_config.line_sep)
+                    Token(Token.EOL, '\n')
                 ])
                 if len(branch) < 2:
                     return node
@@ -179,7 +179,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
                     Token('ELSE IF', 'ELSE IF'),
                     Token(Token.SEPARATOR, self.formatting_config.space_count * ' '),
                     branch[1],
-                    Token(Token.EOL, self.formatting_config.line_sep)
+                    Token(Token.EOL, '\n')
                 ])
                 args = branch[2:]
             else:
@@ -190,7 +190,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
                     Token('IF', 'IF'),
                     Token(Token.SEPARATOR, self.formatting_config.space_count * ' '),
                     branch[0],
-                    Token(Token.EOL, self.formatting_config.line_sep)
+                    Token(Token.EOL, '\n')
                 ])
                 args = branch[1:]
             keywords = self.create_keywords(args, assign, separator.value)

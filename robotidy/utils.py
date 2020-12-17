@@ -1,4 +1,6 @@
+import os
 from typing import List
+
 from robot.parsing.model.visitor import ModelVisitor
 
 
@@ -24,7 +26,7 @@ class GlobalFormattingConfig:
         elif line_sep == 'unix':
             self.line_sep = '\n'
         else:
-            self.line_sep = '\n'
+            self.line_sep = os.linesep
 
 
 def decorate_diff_with_color(contents: List[str]) -> str:
