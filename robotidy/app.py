@@ -18,11 +18,13 @@ class Robotidy:
                  src: Set,
                  overwrite: bool,
                  show_diff: bool,
-                 formatting_config: GlobalFormattingConfig
+                 formatting_config: GlobalFormattingConfig,
+                 verbose: bool
                  ):
         self.sources = src
         self.overwrite = overwrite
         self.show_diff = show_diff
+        self.verbose = verbose
         self.formatting_config = formatting_config
         self.transformers = self.find_and_load_transformers(transformers)
         self.configure_transformers(transformers)
@@ -57,6 +59,8 @@ class Robotidy:
 
     def transform_files(self):
         for source in self.sources:
+            if self.verbose:
+                click.echo(f'Transforming {source} file')
             model = get_model(source)
             old_model = StatementLinesCollector(model)
             for transformer in self.transformers.values():

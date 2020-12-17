@@ -1,8 +1,16 @@
 from unittest.mock import patch
+from pathlib import Path
 
+from unittest.mock import MagicMock,Mock
 import pytest
 
 from .utils import run_tidy, save_tmp_model
+from robotidy.cli import (
+    find_project_root,
+    find_config,
+    parse_config,
+    read_config
+)
 
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
@@ -44,3 +52,66 @@ class TestCli:
         args = ('--transform DiscardEmptySections' + configurable).split()
         result = run_tidy(args, exit_code=1)
         assert expected_output == str(result.exception)
+
+    def test_find_project_root_from_src(self):
+        src = Path(Path(__file__).parent, 'testdata', 'nested', 'test.robot')
+        path = find_project_root([src])
+        assert path == Path(Path(__file__).parent, 'testdata')
+
+    def test_find_config_toml_from_src(self):
+        src = Path(Path(__file__).parent, 'testdata', 'nested', 'test.robot')
+        path = find_config([src])
+        assert path == str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
+
+    def test_parse_config(self):
+        expected_config = {
+            'main': {
+                'overwrite': False,
+                'diff': False,
+                'spacecount': 4
+            },
+            'transformers': {
+                'DiscardEmptySections': {
+                    'allow_only_comments': True
+                },
+                'ReplaceRunKeywordIf': {}
+            }
+        }
+        config_path = str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
+        config = parse_config(config_path)
+        assert config == expected_config
+
+    def test_read_config_from_param(self):
+        expected_parsed_config = {
+            'overwrite': False,
+            'diff': False,
+            'spacecount': 4,
+            'transform': [
+                'DiscardEmptySections:allow_only_comments=True',
+                'ReplaceRunKeywordIf'
+            ]
+        }
+        config_path = str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
+        ctx_mock = MagicMock()
+        param_mock = Mock()
+        config = read_config(ctx_mock, param_mock, config_path)
+        assert ctx_mock.default_map == expected_parsed_config
+        assert config == config_path
+
+    def test_read_config_without_param(self):
+        expected_parsed_config = {
+            'overwrite': False,
+            'diff': False,
+            'spacecount': 4,
+            'transform': [
+                'DiscardEmptySections:allow_only_comments=True',
+                'ReplaceRunKeywordIf'
+            ]
+        }
+        config_path = str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
+        ctx_mock = MagicMock()
+        ctx_mock.params = {'src': [config_path]}
+        param_mock = Mock()
+        config = read_config(ctx_mock, param_mock, value=None)
+        assert ctx_mock.default_map == expected_parsed_config
+        assert config == config_path
