@@ -22,8 +22,7 @@ def run_tidy(
         transformer_name: str,
         args: List[str] = None,
         sources: List[str] = None,
-        exit_code: int = 0,
-        line_sep='windows'
+        exit_code: int = 0
 ):
     runner = CliRunner()
     arguments = args if args is not None else []
@@ -31,7 +30,7 @@ def run_tidy(
         paths = [str(Path(Path(__file__).parent, transformer_name, 'source'))]
     else:
         paths = [str(Path(Path(__file__).parent, transformer_name, 'source', source)) for source in sources]
-    cmd = ['--lineseparator', line_sep] + arguments + paths
+    cmd = arguments + paths
     result = runner.invoke(cli, cmd)
     if result.exit_code != exit_code:
         print(result.output)
@@ -92,6 +91,7 @@ class TestDiscardEmptySections:
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
 class TestReplaceRunKeywordIf:
     TRANSFORMER_NAME = 'ReplaceRunKeywordIf'
+
     def test_run_keyword_if_replaced(self):
         run_tidy(
             self.TRANSFORMER_NAME,
@@ -100,3 +100,10 @@ class TestReplaceRunKeywordIf:
         )
         compare_file(self.TRANSFORMER_NAME, 'tests.robot')
 
+    def test_invalid_data(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
+            sources=['invalid_data.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'invalid_data.robot')

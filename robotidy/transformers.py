@@ -106,6 +106,8 @@ class ReplaceRunKeywordIf(ModelTransformer):
         separator = node.tokens[0]
         assign = node.get_tokens(Token.ASSIGN)
         raw_args = node.get_tokens(Token.ARGUMENT)
+        if len(raw_args) < 2:
+            return node
         end = End([
             separator,
             Token(Token.END, 'END'),
@@ -119,8 +121,12 @@ class ReplaceRunKeywordIf(ModelTransformer):
                     Token('ELSE', 'ELSE'),
                     Token(Token.EOL, self.formatting_config.line_sep)
                 ])
+                if len(branch) < 2:
+                    return node
                 args = branch[1:]
             elif branch[0].value == 'ELSE IF':
+                if len(branch) < 3:
+                    return node
                 header = ElseIfHeader([
                     separator,
                     Token('ELSE IF', 'ELSE IF'),
@@ -130,6 +136,8 @@ class ReplaceRunKeywordIf(ModelTransformer):
                 ])
                 args = branch[2:]
             else:
+                if len(branch) < 2:
+                    return node
                 header = IfHeader([
                     separator,
                     Token('IF', 'IF'),
