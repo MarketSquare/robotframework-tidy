@@ -1,2 +1,93 @@
-# robotframework-tidy
-New Tidy
+.. Badges
+
+|Unit tests| |Codecov| |License|
+
+
+Tidy
+===============
+
+.. contents::
+   :local:
+
+Introduction
+------------
+Tidy is spiritual ancestor of Robot Framework's ``robot.tidy`` package. It's main purpose is to format
+Robot Framework code according to agreed code standards. You can run Tidy without configuring anything but
+you can also change how it behaves through cli or file config.
+
+Requirements
+------------
+
+Python 3.7+ and Robot Framework 4.0.0+.
+
+Installation
+------------
+
+You can install Tidy by running::
+
+    pip install git+git://github.com/MarketSquare/robotframework-tidy
+
+Usage
+-----
+When called without any arguments, robotidy will not do anything. It requires at least one argument: source to file/directory
+with robot files::
+
+    robotidy tests
+    robotidy test.robot
+    robotidy tests/resources  test.robot
+
+
+Executing selected transformers
+-------------------------------
+You can run robotidy with selected transformers. Use ``--transform`` argument for this::
+
+    robotidy --transform ReplaceRunKeywordIf src
+
+Some transformers provide configurable parameters. You can modify them by adding them after `:` in transformer name::
+
+    robotidy --transform DiscardEmptySections:allow_only_comments:True src
+
+
+Command line options
+--------------------
+You can list available options by running ``robotidy --help``::
+
+   Usage: robotidy [OPTIONS] [PATH(S)]
+
+   Options:
+     --transform TRANSFORM
+     --overwrite / --no-overwrite    Overwrite source files.
+     --diff                          Output diff of each processed file.
+     -s, --spacecount INTEGER        The number of spaces between cells in the
+                                     plain text format. Default is 4.
+
+     -l, --lineseparator [native|windows|unix]
+                                     Line separator to use in outputs. The
+                                     default is 'native'.
+                                     native:  use operating system's native line separators
+                                     windows: use Windows line separators (CRLF)
+                                     unix:    use Unix line separators (LF)
+
+     -p, --usepipes                  Use pipe ('|') as a column separator in the
+                                     plain text format.
+
+     -v, --verbose
+     --config FILE                   Read configuration from FILE path.
+     --version                       Show the version and exit.
+     --help                          Show this message and exit.
+
+
+.. Badges links
+
+.. |Unit tests|
+   image:: https://img.shields.io/github/workflow/status/MarketSquare/robotframework-tidy/Unit%20tests/main
+   :alt: GitHub Workflow Unit Tests Status
+   :target: https://github.com/MarketSquare/robotframework-tidy/actions?query=workflow%3A%22Unit+tests%22
+
+.. |Codecov|
+   image:: https://img.shields.io/codecov/c/github/MarketSquare/robotframework-tidy/main
+   :alt: Code coverage on master branch
+
+.. |License|
+   image:: https://img.shields.io/pypi/l/robotframework-robocop
+   :alt: PyPI - License
