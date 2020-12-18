@@ -136,3 +136,15 @@ class TestNormalizeEqualSigns:
             sources=['tests.robot']
         )
         compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'space_and_equal_sign.robot')
+
+    def test_invalid_equal_sign_type(self):
+        result = run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}:equal_sign_type=='.split(),
+            sources=['tests.robot'],
+            exit_code=2
+        )
+        expected_output = "Usage: cli [OPTIONS] [PATH(S)]\n\n" \
+                          "Error: Invalid configurable value: = for equal_sign_type for NormalizeEqualSign transformer. " \
+                          "Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign\n"
+        assert expected_output in result.output

@@ -27,6 +27,7 @@ import inspect
 import re
 import sys
 
+import click
 from robot.api.parsing import (
     ModelTransformer,
     Token,
@@ -277,7 +278,11 @@ class NormalizeEqualSigns(ModelTransformer):
             'space_and_equal_sign': ' ='
         }
         if value not in types:
-            raise ValueError()  # TODO
+            raise click.BadOptionUsage(
+                option_name='transform',
+                message=f"Invalid configurable value: {value} for equal_sign_type for NormalizeEqualSign transformer. "
+                        f"Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign"
+            )
         return types[value]
 
     def visit_KeywordCall(self, node):  # noqa
