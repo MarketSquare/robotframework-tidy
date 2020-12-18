@@ -87,6 +87,18 @@ class TestDiscardEmptySections:
             'removes_empty_sections_except_comments.robot'
         )
 
+    def test_remove_selected_empty_node(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args='--transform DiscardEmptySections --startline 17 --endline 18'.split(),
+            sources=['removes_empty_sections.robot']
+        )
+        compare_file(
+            self.TRANSFORMER_NAME,
+            'removes_empty_sections.robot',
+            'removes_selected_empty_section.robot'
+        )
+
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
 class TestReplaceRunKeywordIf:
@@ -95,10 +107,21 @@ class TestReplaceRunKeywordIf:
     def test_run_keyword_if_replaced(self):
         run_tidy(
             self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME} --startline 18 --endline 20'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(
+            self.TRANSFORMER_NAME,
+            'tests.robot',
+            'tests_selected.robot'
+        )
+
+    def test_run_keyword_if_replaced_selected(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
             args=f'--transform {self.TRANSFORMER_NAME}'.split(),
             sources=['tests.robot']
         )
-        compare_file(self.TRANSFORMER_NAME, 'tests.robot')
 
     def test_invalid_data(self):
         run_tidy(
