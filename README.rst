@@ -45,7 +45,7 @@ You can run robotidy with selected transformers. Use ``--transform`` argument fo
 
 Some transformers provide configurable parameters. You can modify them by adding them after `:` in transformer name::
 
-    robotidy --transform DiscardEmptySections:allow_only_comments:True src
+    robotidy --transform DiscardEmptySections:allow_only_comments=True src
 
 
 Command line options
