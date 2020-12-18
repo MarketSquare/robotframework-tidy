@@ -18,7 +18,12 @@ def save_tmp_model(self, model):
     model.save(output=path)
 
 
-def run_tidy(transformer_name: str, args: List[str] = None, sources: List[str] = None, exit_code: int = 0):
+def run_tidy(
+        transformer_name: str,
+        args: List[str] = None,
+        sources: List[str] = None,
+        exit_code: int = 0
+):
     runner = CliRunner()
     arguments = args if args is not None else []
     if sources is None:
@@ -81,3 +86,24 @@ class TestDiscardEmptySections:
             'removes_empty_sections.robot',
             'removes_empty_sections_except_comments.robot'
         )
+
+
+@patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
+class TestReplaceRunKeywordIf:
+    TRANSFORMER_NAME = 'ReplaceRunKeywordIf'
+
+    def test_run_keyword_if_replaced(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot')
+
+    def test_invalid_data(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
+            sources=['invalid_data.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'invalid_data.robot')

@@ -3,6 +3,7 @@ from pathlib import Path
 import click
 from robotidy.version import __version__
 from robotidy.app import Robotidy
+from robotidy.utils import GlobalFormattingConfig
 
 
 INCLUDE_EXT = ('.robot', '.resource')
@@ -70,12 +71,36 @@ def get_paths(src: Tuple[str, ...]):
 @click.option(
     '--overwrite/--no-overwrite',
     default=True,
-    help='Overwrite source files'
+    help='Overwrite source files.'
 )
 @click.option(
     '--diff',
     is_flag=True,
-    help='Output diff of each processed file'
+    help='Output diff of each processed file.'
+)
+@click.option(
+    '-s',
+    '--spacecount',
+    type=click.types.INT,
+    default=4,
+    help='The number of spaces between cells in the plain text format.\n'
+         'Default is 4.'
+)
+@click.option(
+    '-l',
+    '--lineseparator',
+    type=click.types.Choice(['native', 'windows', 'unix']),
+    default='native',
+    help="Line separator to use in outputs. The default is 'native'.\n"
+         "native:  use operating system's native line separators\n"
+         "windows: use Windows line separators (CRLF)\n"
+         "unix:    use Unix line separators (LF)"
+)
+@click.option(
+    '-p',
+    '--usepipes',
+    is_flag=True,
+    help="Use pipe ('|') as a column separator in the plain text format."
 )
 @click.version_option(version=__version__, prog_name='robotidy')
 @click.pass_context
@@ -84,9 +109,23 @@ def cli(
         transform: List[Tuple[str, Dict]],
         src: Tuple[str, ...],
         overwrite: bool,
-        diff: bool
+        diff: bool,
+        spacecount: int,
+        lineseparator: str,
+        usepipes: bool
 ):
+    formatting_config = GlobalFormattingConfig(
+        use_pipes=usepipes,
+        space_count=spacecount,
+        line_sep=lineseparator
+    )
     sources = get_paths(src)
-    tidy = Robotidy(transformers=transform, src=sources, overwrite=overwrite, show_diff=diff)
+    tidy = Robotidy(
+        transformers=transform,
+        src=sources,
+        overwrite=overwrite,
+        show_diff=diff,
+        formatting_config=formatting_config
+    )
     tidy.transform_files()
 

@@ -38,7 +38,7 @@ setup(
     include_package_data=True,
     python_requires=">=3.7",
     install_requires=[
-        'robotframework==4.0b1',
+        'robotframework @ https://github.com/robotframework/robotframework/archive/master.zip',
         'Click>=7.0'
     ],
     extras_requires={
