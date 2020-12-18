@@ -77,6 +77,34 @@ You can list available options by running ``robotidy --help``::
      --help                          Show this message and exit.
 
 
+Configuration file
+-------------------
+Robotidy can read configuration from files with ``toml`` type. Options are loaded in following order:
+ - auto discovered configuration file (``robotidy.toml``)
+ - configuration file passed with --config
+ - command line arguments
+
+By default if `--config`` argument is not used, robotidy look for configuration file named ``robotidy.toml``
+in common directories for passed sources and execution directory.
+
+It is possible to mix configuration between config file and command line, but if the same parameters is used
+command line parameter value will be used instead (reference to loading order). It's important because
+you cannot specify some of the transformers in config file and come in cli - you need to list all required transformers
+in one place.
+
+Example configuration file::
+
+    [main]
+    overwrite = false
+    diff = false
+    spacecount = 4
+
+    [transformers]
+        [transformers.DiscardEmptySections]
+            allow_only_comments = true
+        [transformers.ReplaceRunKeywordIf]
+
+
 .. Badges links
 
 .. |Unit tests|
