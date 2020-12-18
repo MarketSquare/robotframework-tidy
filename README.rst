@@ -11,7 +11,7 @@ Tidy
 
 Introduction
 ------------
-Tidy is spiritual ancestor of Robot Framework's ``robot.tidy`` package. It's main purpose is to format
+Tidy is spiritual descendant of Robot Framework's ``robot.tidy`` package. It's main purpose is to format
 Robot Framework code according to agreed code standards. You can run Tidy without configuring anything but
 you can also change how it behaves through cli or file config.
 
