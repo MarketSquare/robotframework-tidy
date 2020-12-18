@@ -26,6 +26,8 @@ You can access this parameter by name of parsing function - `self.some_value`. Y
 import inspect
 import re
 import sys
+import ast
+from collections import Counter
 
 import click
 from robot.api.parsing import (
@@ -270,7 +272,7 @@ class NormalizeEqualSigns(ModelTransformer):
     def __init__(self):
         self.remove_equal_sign = re.compile(r'\s?=$')
 
-    @configurable(default='')
+    @configurable(default=None)
     def equal_sign_type(self, value):
         types = {
             'remove': '',
@@ -284,6 +286,11 @@ class NormalizeEqualSigns(ModelTransformer):
                         f"Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign"
             )
         return types[value]
+
+    def visit_File(self, node):  # noqa
+        if self.equal_sign_type is None:
+            self.equal_sign_type = self.auto_detect_equal_sign(node)
+        self.generic_visit(node)
 
     def visit_KeywordCall(self, node):  # noqa
         if node.assign:  # if keyword returns any value
@@ -303,3 +310,40 @@ class NormalizeEqualSigns(ModelTransformer):
         token.value = re.sub(self.remove_equal_sign, '', token.value)
         if self.equal_sign_type:
             token.value += self.equal_sign_type
+
+    def auto_detect_equal_sign(self, node):
+        auto_detector = AssignmentTypeDetector()
+        auto_detector.visit(node)
+        return {
+            '': 'remove',
+            '=': 'equal_sign',
+            ' =': 'space_and_equal_sign'
+        }[auto_detector.most_common]
+
+
+class AssignmentTypeDetector(ast.NodeVisitor):
+    def __init__(self):
+        self.sign_counter = Counter()
+        self.most_common = ''
+
+    def visit_File(self, node):  # noqa
+        self.generic_visit(node)
+        self.most_common = self.sign_counter.most_common(1)[0][0]
+
+    def visit_KeywordCall(self, node):  # noqa
+        if node.assign:  # if keyword returns any value
+            sign = self.get_assignment_sign(node.assign[-1])
+            self.sign_counter[sign] += 1
+
+    def visit_VariableSection(self, node):  # noqa
+        for child in node.body:
+            if not isinstance(child, Variable):
+                continue
+            var_token = child.get_token(Token.VARIABLE)
+            sign = self.get_assignment_sign(var_token.value)
+            self.sign_counter[sign] += 1
+        return node
+
+    @staticmethod
+    def get_assignment_sign(token_value):
+        return token_value[token_value.find('}')+1:]

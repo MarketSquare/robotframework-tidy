@@ -116,7 +116,7 @@ class TestNormalizeEqualSigns:
     def test_remove(self):
         run_tidy(
             self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
+            args=f'--transform {self.TRANSFORMER_NAME}:equal_sign_type=remove'.split(),
             sources=['tests.robot']
         )
         compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'remove.robot')
