@@ -12,7 +12,7 @@ Robotidy
 Introduction
 ------------
 Tidy is spiritual descendant of Robot Framework's ``robot.tidy`` package. Its main purpose is to format
-Robot Framework code according to agreed code standards. You can run Tidy without configuring anything but
+Robot Framework code according to agreed code standards. You can run Robotidy without configuring anything but
 you can also change how it behaves through CLI or configuration file.
 
 Requirements
