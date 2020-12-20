@@ -3,7 +3,7 @@
 |Unit tests| |Codecov| |License|
 
 
-Tidy
+Robotidy
 ===============
 
 .. contents::
@@ -11,9 +11,9 @@ Tidy
 
 Introduction
 ------------
-Tidy is spiritual descendant of Robot Framework's ``robot.tidy`` package. It's main purpose is to format
-Robot Framework code according to agreed code standards. You can run Tidy without configuring anything but
-you can also change how it behaves through cli or file config.
+Tidy is spiritual descendant of Robot Framework's ``robot.tidy`` package. Its main purpose is to format
+Robot Framework code according to agreed code standards. You can run Robotidy without configuring anything but
+you can also change how it behaves through CLI or configuration file.
 
 Requirements
 ------------
@@ -43,7 +43,7 @@ You can run robotidy with selected transformers. Use ``--transform`` argument fo
 
     robotidy --transform ReplaceRunKeywordIf src
 
-Some transformers provide configurable parameters. You can modify them by adding them after `:` in transformer name::
+Some transformers provide configurable parameters. You can modify them by adding `:` after transformer name::
 
     robotidy --transform DiscardEmptySections:allow_only_comments=True src
 
@@ -80,16 +80,16 @@ You can list available options by running ``robotidy --help``::
 Configuration file
 -------------------
 Robotidy can read configuration from files with ``toml`` type. Options are loaded in following order:
- - auto discovered configuration file (``robotidy.toml``)
- - configuration file passed with --config
+ - auto-discovered configuration file (``robotidy.toml``)
+ - configuration file passed with ``--config``
  - command line arguments
 
-By default if `--config`` argument is not used, robotidy look for configuration file named ``robotidy.toml``
+By default if ``--config`` argument is not used, robotidy look for configuration file named ``robotidy.toml``
 in common directories for passed sources and execution directory.
 
-It is possible to mix configuration between config file and command line, but if the same parameters is used
+It is possible to mix configuration between config file and command line, but if the same parameters are used
 command line parameter value will be used instead (reference to loading order). It's important because
-you cannot specify some of the transformers in config file and come in cli - you need to list all required transformers
+you cannot specify some of the transformers in config file and come in CLI - you need to list all required transformers
 in one place.
 
 Example configuration file::
