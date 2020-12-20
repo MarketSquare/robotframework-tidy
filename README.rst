@@ -11,7 +11,7 @@ Robotidy
 
 Introduction
 ------------
-Tidy is spiritual descendant of Robot Framework's ``robot.tidy`` package. Its main purpose is to format
+Robotidy is spiritual descendant of Robot Framework's ``robot.tidy`` package. Its main purpose is to format
 Robot Framework code according to agreed code standards. You can run Robotidy without configuring anything but
 you can also change how it behaves through CLI or configuration file.
 
@@ -23,7 +23,7 @@ Python 3.7+ and Robot Framework 4.0.0+.
 Installation
 ------------
 
-You can install Tidy by running::
+You can install Robotidy by running::
 
     pip install git+git://github.com/MarketSquare/robotframework-tidy
 
