@@ -3,7 +3,7 @@
 |Unit tests| |Codecov| |License|
 
 
-Tidy
+Robotidy
 ===============
 
 .. contents::
