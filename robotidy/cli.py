@@ -1,6 +1,15 @@
-from typing import Tuple, Dict, List, Iterator, Iterable
+from typing import (
+    Tuple,
+    Dict,
+    List,
+    Iterator,
+    Iterable,
+    Optional,
+    Any
+)
 from pathlib import Path
 import click
+import toml
 from robotidy.version import __version__
 from robotidy.app import Robotidy
 from robotidy.utils import GlobalFormattingConfig
@@ -27,6 +36,90 @@ class TransformType(click.ParamType):
                   f'Parameters should be provided in format name=value, delimited by :'
             raise ValueError(exc)
         return name, configurations
+
+
+def find_project_root(srcs: Iterable[str]) -> Path:
+    """Return a directory containing .git, or robotidy.toml.
+    That directory will be a common parent of all files and directories
+    passed in `srcs`.
+    If no directory in the tree contains a marker that would specify it's the
+    project root, the root of the file system is returned.
+    """
+    if not srcs:
+        return Path("/").resolve()
+
+    path_srcs = [Path(Path.cwd(), src).resolve() for src in srcs]
+
+    # A list of lists of parents for each 'src'. 'src' is included as a
+    # "parent" of itself if it is a directory
+    src_parents = [
+        list(path.parents) + ([path] if path.is_dir() else []) for path in path_srcs
+    ]
+
+    common_base = max(
+        set.intersection(*(set(parents) for parents in src_parents)),
+        key=lambda path: path.parts,
+    )
+
+    for directory in (common_base, *common_base.parents):
+        if (directory / ".git").exists():
+            return directory
+
+        if (directory / "robotidy.toml").is_file():
+            return directory
+
+    return directory
+
+
+def find_config(src_paths: Iterable[str]) -> Optional[str]:
+    project_root = find_project_root(src_paths)
+    config_path = project_root / 'robotidy.toml'
+    return str(config_path) if config_path.is_file() else None
+
+
+def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]) -> Optional[str]:
+    # if --config was not used, try to find robotidy.toml file
+    if not value:
+        value = find_config(ctx.params.get("src", ()))
+        if value is None:
+            return None
+    try:
+        config = parse_config(value)
+    except (toml.TomlDecodeError, OSError) as e:
+        raise click.FileError(
+            filename=value, hint=f"Error reading configuration file: {e}"
+        )
+
+    if not config:
+        return None
+    else:
+        # Sanitize the values to be Click friendly. For more information please see:
+        # https://github.com/psf/black/issues/1458
+        # https://github.com/pallets/click/issues/1567
+        config = {
+            k: str(v) if not isinstance(v, (list, dict)) else v
+            for k, v in config.items()
+        }
+
+    default_map: Dict[str, Any] = {}
+    if ctx.default_map:
+        default_map.update(ctx.default_map)
+    default_map.update(config.get('main', {}))
+
+    transformers = []
+    for transformer, configurables in config.get('transformers', {}).items():
+        if configurables:
+            transformer += ':' + ':'.join(f'{key}={value}' for key, value in configurables.items())
+        transformers.append(transformer)
+    default_map['transform'] = transformers
+
+    ctx.default_map = default_map
+    return value
+
+
+def parse_config(path: str) -> Dict[str, Any]:
+    config = toml.load(path)
+    return {k.replace('--', '').replace('-', '_'): v for k, v in config.items()}
 
 
 def iterate_dir(paths: Iterable[Path]) -> Iterator[Path]:
@@ -102,6 +195,25 @@ def get_paths(src: Tuple[str, ...]):
     is_flag=True,
     help="Use pipe ('|') as a column separator in the plain text format."
 )
+@click.option(
+    '-v',
+    '--verbose',
+    is_flag=True
+)
+@click.option(
+    "--config",
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        allow_dash=False,
+        path_type=str,
+    ),
+    is_eager=True,
+    callback=read_config,
+    help="Read configuration from FILE path.",
+)
 @click.version_option(version=__version__, prog_name='robotidy')
 @click.pass_context
 def cli(
@@ -112,8 +224,13 @@ def cli(
         diff: bool,
         spacecount: int,
         lineseparator: str,
-        usepipes: bool
+        usepipes: bool,
+        verbose: bool,
+        config: Optional[str]
 ):
+    if config and verbose:
+        click.echo(f'Loaded {config} configuration file')
+
     formatting_config = GlobalFormattingConfig(
         use_pipes=usepipes,
         space_count=spacecount,
@@ -125,7 +242,8 @@ def cli(
         src=sources,
         overwrite=overwrite,
         show_diff=diff,
-        formatting_config=formatting_config
+        formatting_config=formatting_config,
+        verbose=verbose
     )
     tidy.transform_files()
 
