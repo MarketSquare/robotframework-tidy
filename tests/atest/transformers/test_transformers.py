@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List
 from unittest.mock import patch
 
+import pytest
 from click.testing import CliRunner
 
 from robotidy.cli import cli
@@ -110,8 +111,8 @@ class TestReplaceRunKeywordIf:
 
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
-class TestNormalizeEqualSigns:
-    TRANSFORMER_NAME = 'NormalizeEqualSigns'
+class TestAssignmentNormalizer:
+    TRANSFORMER_NAME = 'AssignmentNormalizer'
 
     def test_remove(self):
         run_tidy(
@@ -148,3 +149,16 @@ class TestNormalizeEqualSigns:
                           "Error: Invalid configurable value: = for equal_sign_type for NormalizeEqualSign transformer. " \
                           "Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign\n"
         assert expected_output in result.output
+
+    @pytest.mark.parametrize('filename', [
+        'common_remove.robot',
+        'common_equal_sign.robot',
+        'common_space_and_equal_sign.robot'
+    ])
+    def test_autodetect(self, filename):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
+            sources=[filename]
+        )
+        compare_file(self.TRANSFORMER_NAME, filename)

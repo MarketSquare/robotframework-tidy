@@ -229,13 +229,16 @@ class ReplaceRunKeywordIf(ModelTransformer):
 
 
 @transformer
-class NormalizeEqualSigns(ModelTransformer):
+class AssignmentNormalizer(ModelTransformer):
     """
-    Normalize equal signs. By default it removes `=` signs::
+    Normalize assignments. By default it detects most common assignment sign
+    and apply it to every assignment in given file.
+
+    In this code most common is no equal sign at all. We should remove `=` signs from the all lines::
 
         *** Variables ***
-        ${var}=  ${1}
-        @{list}=  a
+        ${var} =  ${1}
+        @{list}  a
         ...  b
         ...  c
 
@@ -244,8 +247,8 @@ class NormalizeEqualSigns(ModelTransformer):
 
         *** Keywords ***
         Keyword
-            ${var}=  Keyword1
-            ${var}=   Keyword2
+            ${var}  Keyword1
+            ${var}   Keyword2
             ${var}=    Keyword
 
     To::
@@ -266,11 +269,12 @@ class NormalizeEqualSigns(ModelTransformer):
             ${var}    Keyword
 
     You can configure that behaviour to automatically add desired equal sign with `equal_sign_type` configurable
-    (possible types are: `remove` (default), `equal_sign` ('='), `space_and_equal_sign` (' =').
+    (possible types are: `remove`, `equal_sign` ('='), `space_and_equal_sign` (' =').
 
     """
     def __init__(self):
         self.remove_equal_sign = re.compile(r'\s?=$')
+        self.file_equal_sign_type = None
 
     @configurable(default=None)
     def equal_sign_type(self, value):
@@ -288,12 +292,17 @@ class NormalizeEqualSigns(ModelTransformer):
         return types[value]
 
     def visit_File(self, node):  # noqa
+        """
+        If no assignment sign was set the file will be scanned to find most common assignment sign.
+        This auto detection will happen for every file separately.
+        """
         if self.equal_sign_type is None:
             equal_sign_type = self.auto_detect_equal_sign(node)
             if equal_sign_type is None:
                 return node
-            self.equal_sign_type = equal_sign_type
+            self.file_equal_sign_type = equal_sign_type
         self.generic_visit(node)
+        self.file_equal_sign_type = None
 
     def visit_KeywordCall(self, node):  # noqa
         if node.assign:  # if keyword returns any value
@@ -313,18 +322,14 @@ class NormalizeEqualSigns(ModelTransformer):
         token.value = re.sub(self.remove_equal_sign, '', token.value)
         if self.equal_sign_type:
             token.value += self.equal_sign_type
+        elif self.file_equal_sign_type:
+            token.value += self.file_equal_sign_type
 
     @staticmethod
     def auto_detect_equal_sign(node):
         auto_detector = AssignmentTypeDetector()
         auto_detector.visit(node)
-        if auto_detector.most_common is None:
-            return None
-        return {
-            '': 'remove',
-            '=': 'equal_sign',
-            ' =': 'space_and_equal_sign'
-        }[auto_detector.most_common]
+        return auto_detector.most_common
 
 
 class AssignmentTypeDetector(ast.NodeVisitor):
