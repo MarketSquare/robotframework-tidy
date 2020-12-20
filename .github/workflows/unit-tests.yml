@@ -12,7 +12,7 @@ jobs:
   test:
     strategy:
       matrix:
-        os: ['windows-latest', 'ubuntu-latest']
+        os: ['windows-latest']
         python-version: [ 3.7, 3.8, 3.9]
     runs-on: ${{ matrix.os }}
 
