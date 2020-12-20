@@ -18,9 +18,11 @@ class StatementLinesCollector(ModelVisitor):
 
 
 class GlobalFormattingConfig:
-    def __init__(self, use_pipes: bool, space_count: int, line_sep: str):
+    def __init__(self, use_pipes: bool, space_count: int, line_sep: str, start_line: int, end_line: int):
         self.use_pipes = use_pipes
         self.space_count = space_count
+        self.start_line = start_line
+        self.end_line = end_line
         if line_sep == 'windows':
             self.line_sep = '\r\n'
         elif line_sep == 'unix':
@@ -46,3 +48,16 @@ def decorate_diff_with_color(contents: List[str]) -> str:
 
 def normalize_name(name):
     return name.lower().replace('_', '').replace(' ', '')
+
+
+def node_within_lines(node_start, node_end, start_line, end_line):
+    if start_line:
+        if node_start < start_line:
+            return False
+        if end_line:
+            if node_end > end_line:
+                return False
+        else:
+            if start_line != node_start:
+                return False
+    return True

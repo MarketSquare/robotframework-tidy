@@ -1,3 +1,4 @@
+import sys
 from typing import List, Tuple, Dict, Set
 from difflib import unified_diff
 
@@ -59,7 +60,13 @@ class Robotidy:
 
     def transform_files(self):
         for source in self.sources:
-            if self.verbose:
+            stdin = False
+            if str(source) == '-':
+                stdin = True
+                if self.verbose:
+                    click.echo('Loading file from stdin')
+                source = self.load_from_stdin()
+            elif self.verbose:
                 click.echo(f'Transforming {source} file')
             model = get_model(source)
             old_model = StatementLinesCollector(model)
@@ -69,7 +76,18 @@ class Robotidy:
                 transformer.visit(model)
             new_model = StatementLinesCollector(model)
             self.output_diff(model.source, old_model, new_model)
-            self.save_model(model)
+            if stdin:
+                self.print_to_stdout(new_model)
+            else:
+                self.save_model(model)
+
+    @staticmethod
+    def load_from_stdin() -> str:
+        return ''.join(sys.stdin)
+
+    def print_to_stdout(self, collected_lines):
+        if not self.show_diff:
+            click.echo(collected_lines.text)
 
     def save_model(self, model):
         if self.overwrite:

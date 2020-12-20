@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from pathlib import Path
 
-from unittest.mock import MagicMock,Mock
+from unittest.mock import MagicMock, Mock
 import pytest
 
 from .utils import run_tidy, save_tmp_model
@@ -11,6 +11,7 @@ from robotidy.cli import (
     parse_config,
     read_config
 )
+from robotidy.utils import node_within_lines
 
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
@@ -115,3 +116,25 @@ class TestCli:
         config = read_config(ctx_mock, param_mock, value=None)
         assert ctx_mock.default_map == expected_parsed_config
         assert config == config_path
+
+    @pytest.mark.parametrize('node_start, node_end, start_line, end_line, expected', [
+        (15, 30, 15, None, True),
+        (15, 30, 15, 30, True),
+        (14, 30, 15, 30, False),
+        (15, 31, 15, 30, False),
+        (15, 30, None, 30, True),
+        (15, 30, None, None, True)
+    ])
+    def test_skip_node_start_end_line_setting(self, node_start, node_end, start_line, end_line, expected):
+        assert node_within_lines(node_start, node_end, start_line, end_line) == expected
+
+    def test_loading_from_stdin(self, monkeypatch):
+        input_file = '*** Settings ***\nLibrary  SomeLib\n\n\n' \
+                     '*** Variables ***\n\n\n\n' \
+                     '*** Keywords ***\nKeyword\n    Keyword1 ${arg}\n'
+        expected_output = '*** Settings ***\nLibrary  SomeLib\n\n\n' \
+                          '*** Keywords ***\nKeyword\n    Keyword1 ${arg}\n\n'
+        monkeypatch.setattr("robotidy.app.Robotidy.load_from_stdin", lambda x: input_file)
+        args = '--transform DiscardEmptySections -'.split()
+        result = run_tidy(args)
+        assert result.output == expected_output

@@ -196,6 +196,22 @@ def get_paths(src: Tuple[str, ...]):
     help="Use pipe ('|') as a column separator in the plain text format."
 )
 @click.option(
+    '-sl',
+    '--startline',
+    default=None,
+    type=int,
+    help="Limit robotidy only to selected area. If --endline is not provided, format text only at --startline."
+         "Line numbers start from 1."
+)
+@click.option(
+    '-el',
+    '--endline',
+    default=None,
+    type=int,
+    help="Limit robotidy only to selected area."
+         "Line numbers start from 1."
+)
+@click.option(
     '-v',
     '--verbose',
     is_flag=True
@@ -226,7 +242,9 @@ def cli(
         lineseparator: str,
         usepipes: bool,
         verbose: bool,
-        config: Optional[str]
+        config: Optional[str],
+        startline: int,
+        endline: int
 ):
     if config and verbose:
         click.echo(f'Loaded {config} configuration file')
@@ -234,7 +252,9 @@ def cli(
     formatting_config = GlobalFormattingConfig(
         use_pipes=usepipes,
         space_count=spacecount,
-        line_sep=lineseparator
+        line_sep=lineseparator,
+        start_line=startline,
+        end_line=endline
     )
     sources = get_paths(src)
     tidy = Robotidy(
