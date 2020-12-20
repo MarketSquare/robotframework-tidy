@@ -286,8 +286,8 @@ class AssignmentNormalizer(ModelTransformer):
         if value not in types:
             raise click.BadOptionUsage(
                 option_name='transform',
-                message=f"Invalid configurable value: {value} for equal_sign_type for NormalizeEqualSign transformer. "
-                        f"Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign"
+                message=f"Invalid configurable value: {value} for equal_sign_type for AssignmentNormalizer transformer."
+                        f" Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign"
             )
         return types[value]
 

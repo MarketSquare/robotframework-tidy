@@ -114,6 +114,19 @@ class TestReplaceRunKeywordIf:
 class TestAssignmentNormalizer:
     TRANSFORMER_NAME = 'AssignmentNormalizer'
 
+    @pytest.mark.parametrize('filename', [
+        'common_remove.robot',
+        'common_equal_sign.robot',
+        'common_space_and_equal_sign.robot'
+    ])
+    def test_autodetect(self, filename):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
+            sources=[filename]
+        )
+        compare_file(self.TRANSFORMER_NAME, filename)
+
     def test_remove(self):
         run_tidy(
             self.TRANSFORMER_NAME,
@@ -146,19 +159,8 @@ class TestAssignmentNormalizer:
             exit_code=2
         )
         expected_output = "Usage: cli [OPTIONS] [PATH(S)]\n\n" \
-                          "Error: Invalid configurable value: = for equal_sign_type for NormalizeEqualSign transformer. " \
+                          "Error: Invalid configurable value: = for equal_sign_type for AssignmentNormalizer" \
+                          " transformer. " \
                           "Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign\n"
         assert expected_output in result.output
 
-    @pytest.mark.parametrize('filename', [
-        'common_remove.robot',
-        'common_equal_sign.robot',
-        'common_space_and_equal_sign.robot'
-    ])
-    def test_autodetect(self, filename):
-        run_tidy(
-            self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
-            sources=[filename]
-        )
-        compare_file(self.TRANSFORMER_NAME, filename)
