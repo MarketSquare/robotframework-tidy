@@ -289,7 +289,10 @@ class NormalizeEqualSigns(ModelTransformer):
 
     def visit_File(self, node):  # noqa
         if self.equal_sign_type is None:
-            self.equal_sign_type = self.auto_detect_equal_sign(node)
+            equal_sign_type = self.auto_detect_equal_sign(node)
+            if equal_sign_type is None:
+                return node
+            self.equal_sign_type = equal_sign_type
         self.generic_visit(node)
 
     def visit_KeywordCall(self, node):  # noqa
@@ -311,9 +314,12 @@ class NormalizeEqualSigns(ModelTransformer):
         if self.equal_sign_type:
             token.value += self.equal_sign_type
 
-    def auto_detect_equal_sign(self, node):
+    @staticmethod
+    def auto_detect_equal_sign(node):
         auto_detector = AssignmentTypeDetector()
         auto_detector.visit(node)
+        if auto_detector.most_common is None:
+            return None
         return {
             '': 'remove',
             '=': 'equal_sign',
@@ -324,11 +330,12 @@ class NormalizeEqualSigns(ModelTransformer):
 class AssignmentTypeDetector(ast.NodeVisitor):
     def __init__(self):
         self.sign_counter = Counter()
-        self.most_common = ''
+        self.most_common = None
 
     def visit_File(self, node):  # noqa
         self.generic_visit(node)
-        self.most_common = self.sign_counter.most_common(1)[0][0]
+        if len(self.sign_counter) >= 2:
+            self.most_common = self.sign_counter.most_common(1)[0][0]
 
     def visit_KeywordCall(self, node):  # noqa
         if node.assign:  # if keyword returns any value
