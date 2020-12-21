@@ -78,7 +78,7 @@ def return_node_untouched(node):
 
 def check_start_end_line(func):
     """
-    Do not transform node if it's not withing passed start_line and end_line.
+    Do not transform node if it's not within passed start_line and end_line.
     """
     @functools.wraps(func)
     def wrapper(self, node):
