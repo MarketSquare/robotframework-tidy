@@ -1,4 +1,7 @@
 import inspect
+import functools
+
+from robotidy.utils import node_within_lines
 
 
 class ConfigurableDecorator:
@@ -67,3 +70,24 @@ def transformer(arg=None):
         return cls
 
     return decorator
+
+
+def return_node_untouched(node):
+    return node
+
+
+def check_start_end_line(func):
+    """
+    Do not transform node if it's not within passed start_line and end_line.
+    """
+    @functools.wraps(func)
+    def wrapper(self, node):
+        if not node_within_lines(
+                node.lineno,
+                node.end_lineno,
+                self.formatting_config.start_line,
+                self.formatting_config.end_line
+        ):
+            return return_node_untouched(node)
+        return func(self, node)
+    return wrapper

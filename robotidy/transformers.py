@@ -45,7 +45,11 @@ from robot.api.parsing import (
     ElseIfHeader
 )
 
-from robotidy.decorators import transformer, configurable
+from robotidy.decorators import (
+    transformer,
+    configurable,
+    check_start_end_line
+)
 from robotidy.utils import normalize_name
 
 
@@ -64,11 +68,18 @@ def load_transformers(allowed_transformers):
 
 @transformer
 class DiscardEmptySections(ModelTransformer):
+    """
+    Remove empty sections. Sections are considered empty if there is no data or there are only comments inside
+    (with the exception for *** Comments *** section).
+    You can leave sections with only comments by configuring `allow_only_comments` to True.
+    Supports global formatting params: `--startline` and `--endline`
+    """
     @configurable(default=False)
     def allow_only_comments(self, value):
         """ If True then sections only with comments are not considered as empty """
         return value == 'True'
 
+    @check_start_end_line
     def check_if_empty(self, node):
         anything_but = EmptyLine if self.allow_only_comments or isinstance(node, CommentSection) else (Comment, EmptyLine)
         if all(isinstance(child, anything_but) for child in node.body):
@@ -104,7 +115,7 @@ def insert_separators(indent, tokens, formatting_config):
 class ReplaceRunKeywordIf(ModelTransformer):
     """
     Replace `Run Keyword If` keyword calls with IF END blocks.
-    Supports global formatting param: `--spacecount`.
+    Supports global formatting params: `--spacecount`, `--startline` and `--endline`.
 
     Following code::
 
@@ -147,6 +158,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
         END
 
     """
+    @check_start_end_line
     def visit_KeywordCall(self, node):  # noqa
         if not node.keyword:
             return node
