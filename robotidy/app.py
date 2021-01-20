@@ -26,21 +26,7 @@ class Robotidy:
         self.show_diff = show_diff
         self.verbose = verbose
         self.formatting_config = formatting_config
-        self.transformers = self.find_and_load_transformers(transformers)
-
-    @staticmethod
-    def find_and_load_transformers(transformers: List[Tuple[str, Dict]]):
-        transformer_names = set(transformer[0] for transformer in transformers)
-        transformers = load_transformers(transformers)
-        if transformer_names and len(transformers) != len(transformer_names):
-            missing = sorted(transformer_names.difference(set(transformers)))
-            msg = 'Failed to load all requested transformers. Make sure you provided correct name. Missing:\n'
-            msg += '\n'.join(missing)
-            raise click.BadOptionUsage(
-                option_name='transform',
-                message=msg
-            )
-        return transformers
+        self.transformers = load_transformers(transformers)
 
     def transform_files(self):
         for source in self.sources:
