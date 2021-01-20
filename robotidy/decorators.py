@@ -11,7 +11,6 @@ def transformer(arg=None):
     """Decorator for transformer class. Only decorated classes are loaded and used to transform the source code."""
 
     # it allows to use transformer without ()
-
     if inspect.isclass(arg):
         TRANSFORMERS.add(arg.__name__)
         return transformer()(arg)
