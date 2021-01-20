@@ -1,4 +1,8 @@
-from robotidy.utils import decorate_diff_with_color
+import pytest
+from robotidy.utils import (
+    decorate_diff_with_color,
+    split_args_from_name_or_path
+)
 
 
 class TestUtils:
@@ -31,3 +35,17 @@ class TestUtils:
         ]
         output = decorate_diff_with_color(lines)
         assert output == '\n'.join(expected_lines)
+
+    @pytest.mark.parametrize('name_or_path, expected_name, expected_args', [
+        ('DiscardEmptySections', 'DiscardEmptySections', []),
+        ('DiscardEmptySections:allow_only_comments=True', 'DiscardEmptySections', ['allow_only_comments=True']),
+        ('DiscardEmptySections;allow_only_comments=True', 'DiscardEmptySections', ['allow_only_comments=True']),
+        ('DiscardEmptySections;allow_only_comments=True:my_var=1', 'DiscardEmptySections', [
+            'allow_only_comments=True:my_var=1']),
+        (r'C:\path\to\module\transformer:my_variable=1', r'C:\path\to\module\transformer', ['my_variable=1']),
+        (__file__, __file__, [])
+    ])
+    def test_split_args_from_name_or_path(self, name_or_path, expected_name, expected_args):
+        name, args = split_args_from_name_or_path(name_or_path)
+        assert name == expected_name
+        assert args == expected_args

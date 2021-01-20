@@ -61,3 +61,32 @@ def node_within_lines(node_start, node_end, start_line, end_line):
             if start_line != node_start:
                 return False
     return True
+
+
+def split_args_from_name_or_path(name):
+    """Split arguments embedded to name or path like ``Example:arg1:arg2``.
+
+    The separator can be either colon ``:`` or semicolon ``;``. If both are used,
+    the first one is considered to be the separator.
+    """
+    if os.path.exists(name):
+        return name, []
+    index = _get_arg_separator_index_from_name_or_path(name)
+    if index == -1:
+        return name, []
+    args = name[index+1:].split(name[index])
+    name = name[:index]
+    return name, args
+
+
+def _get_arg_separator_index_from_name_or_path(name):
+    colon_index = name.find(':')
+    # Handle absolute Windows paths
+    if colon_index == 1 and name[2:3] in ('/', '\\'):
+        colon_index = name.find(':', colon_index+1)
+    semicolon_index = name.find(';')
+    if colon_index == -1:
+        return semicolon_index
+    if semicolon_index == -1:
+        return colon_index
+    return min(colon_index, semicolon_index)

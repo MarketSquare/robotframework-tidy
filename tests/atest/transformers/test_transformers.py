@@ -179,11 +179,11 @@ class TestAssignmentNormalizer:
             self.TRANSFORMER_NAME,
             args=f'--transform {self.TRANSFORMER_NAME}:equal_sign_type=='.split(),
             sources=['tests.robot'],
-            exit_code=2
+            exit_code=1
         )
-        expected_output = "Usage: cli [OPTIONS] [PATH(S)]\n\n" \
-                          "Error: Invalid configurable value: = for equal_sign_type for AssignmentNormalizer" \
-                          " transformer. " \
-                          "Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign\n"
-        assert expected_output in result.output
+        expected_output = "Importing 'robotidy.transformers.AssignmentNormalizer' failed: " \
+                          "Creating instance failed: BadOptionUsage: Invalid configurable value: = " \
+                          "for equal_sign_type for AssignmentNormalizer transformer. " \
+                          "Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign"
+        assert expected_output in str(result.exception)
 
