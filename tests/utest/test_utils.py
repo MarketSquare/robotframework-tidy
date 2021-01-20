@@ -1,8 +1,7 @@
 import pytest
 from robotidy.utils import (
     decorate_diff_with_color,
-    split_args_from_name_or_path,
-    _get_arg_separator_index_from_name_or_path
+    split_args_from_name_or_path
 )
 
 
