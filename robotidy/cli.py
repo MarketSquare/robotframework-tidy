@@ -197,7 +197,7 @@ def get_paths(src: Tuple[str, ...]):
     '--startline',
     default=None,
     type=int,
-    help="Limit robotidy only to selected area. If --endline is not provided, format text only at --startline."
+    help="Limit robotidy only to selected area. If --endline is not provided, format text only at --startline. "
          "Line numbers start from 1."
 )
 @click.option(
@@ -205,7 +205,7 @@ def get_paths(src: Tuple[str, ...]):
     '--endline',
     default=None,
     type=int,
-    help="Limit robotidy only to selected area."
+    help="Limit robotidy only to selected area. "
          "Line numbers start from 1."
 )
 @click.option(
