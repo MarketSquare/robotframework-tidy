@@ -10,18 +10,6 @@ Thanks for that you can use it to create common classes / helper methods:
     class NotATransformer(ModelTransformer):
         pass
 
-Transformers can have parameters configurable from cli or config files. To create them provide
-function for parsing its value from `str` and decorate it with `@configurable`:
-
-    @configurable
-    def some_value(self, value: str):
-        ''' configurable property with name `some_value`. Parse and return expected value to save it '''
-        return int(value) + 1
-
-You can access this parameter by name of parsing function - `self.some_value`. You can initialize it in two ways:
-    - in __init__ - but the value used will be passed through parsing function
-    - as `default` argument to configurable decorator: `@configurable(default=10)
-
 """
 import inspect
 import re
@@ -44,26 +32,31 @@ from robot.api.parsing import (
     ElseHeader,
     ElseIfHeader
 )
+from robot.utils.importer import Importer
+
 
 from robotidy.decorators import (
     transformer,
-    configurable,
-    check_start_end_line
+    check_start_end_line,
+    TRANSFORMERS
 )
 from robotidy.utils import normalize_name
 
 
 def load_transformers(allowed_transformers):
-    """ Dynamically load all classess from this file with attribute `name` defined in allowed_transformers """
-    transformer_classes = {}
-    classes = inspect.getmembers(sys.modules[__name__], inspect.isclass)
-    for transfomer_class in classes:
-        if not allowed_transformers:
-            if getattr(transfomer_class[1], 'is_transformer', False):
-                transformer_classes[transfomer_class[1].__name__] = transfomer_class[1]()
-        elif transfomer_class[1].__name__ in allowed_transformers:
-            transformer_classes[transfomer_class[1].__name__] = transfomer_class[1]()
-    return transformer_classes
+    """ Dynamically load all classes from this file with attribute `name` defined in allowed_transformers """
+    if allowed_transformers:
+        loaded_transformers = dict()
+        for name, args in allowed_transformers:
+            name = f'robotidy.transformers.{name}' if name in TRANSFORMERS else name
+            loaded_transformers[name] = Importer().import_class_or_module(
+                name,
+                instantiate_with_args=args
+            )
+        return loaded_transformers
+    else:
+        return {name: Importer().import_class_or_module(f'robotidy.transformers.{name}', instantiate_with_args=())
+                for name in TRANSFORMERS}
 
 
 @transformer
@@ -74,10 +67,9 @@ class DiscardEmptySections(ModelTransformer):
     You can leave sections with only comments by configuring `allow_only_comments` to True.
     Supports global formatting params: `--startline` and `--endline`
     """
-    @configurable(default=False)
-    def allow_only_comments(self, value):
-        """ If True then sections only with comments are not considered as empty """
-        return value == 'True'
+    def __init__(self, allow_only_comments: bool = False):
+        # If True then sections only with comments are not considered as empty
+        self.allow_only_comments = allow_only_comments
 
     @check_start_end_line
     def check_if_empty(self, node):
@@ -284,16 +276,18 @@ class AssignmentNormalizer(ModelTransformer):
     (possible types are: `remove`, `equal_sign` ('='), `space_and_equal_sign` (' =').
 
     """
-    def __init__(self):
+    def __init__(self, equal_sign_type: str = 'autodetect'):
         self.remove_equal_sign = re.compile(r'\s?=$')
         self.file_equal_sign_type = None
+        self.equal_sign_type = self.parse_equal_sign_type(equal_sign_type)
 
-    @configurable(default=None)
-    def equal_sign_type(self, value):
+    @staticmethod
+    def parse_equal_sign_type(value):
         types = {
             'remove': '',
             'equal_sign': '=',
-            'space_and_equal_sign': ' ='
+            'space_and_equal_sign': ' =',
+            'autodetect': None
         }
         if value not in types:
             raise click.BadOptionUsage(

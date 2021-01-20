@@ -25,34 +25,40 @@ class TestCli:
         run_tidy(src)
 
     def test_not_existing_transformer(self):
-        expected_output = 'Usage: cli [OPTIONS] [PATH(S)]\n\n' \
-                          'Error: Failed to load all requested transformers. Make sure you provided correct name. ' \
-                          'Missing:\nMissingTransformer\nNotExisting\n'
+        expected_output = "Importing 'NotExisting' failed: ModuleNotFoundError: No module named 'NotExisting'"
         args = '--transform NotExisting --transform MissingTransformer --transform DiscardEmptySections'.split()
-        result = run_tidy(args, exit_code=2)
-        assert expected_output == result.output
+        result = run_tidy(args, exit_code=1)
+        assert expected_output in str(result.exception)
 
-    def test_not_existing_configurable(self):
-        expected_output = "Usage: cli [OPTIONS] [PATH(S)]\n\n" \
-                          "Error: Invalid configurable name: 'missing_configurable' for transformer: " \
-                          "'DiscardEmptySections'\n"
+    # TODO: raise exception if kwarg does not match
+    # def test_not_existing_configurable(self):
+    #     expected_output = "Usage: cli [OPTIONS] [PATH(S)]\n\n" \
+    #                       "Error: Invalid configurable name: 'missing_configurable' for transformer: " \
+    #                       "'DiscardEmptySections'\n"
+    #
+    #     args = '--transform DiscardEmptySections:allow_only_commentss=True'.split()
+    #     result = run_tidy(args, exit_code=2)
+    #     assert expected_output == result.output
 
-        args = '--transform DiscardEmptySections:missing_configurable=5'.split()
-        result = run_tidy(args, exit_code=2)
-        assert expected_output == result.output
+    def test_invalid_configurable_usage(self):
+        expected_output = "Importing 'DiscardEmptySections=allow_only_comments=False' failed: " \
+                          "ModuleNotFoundError: No module named 'DiscardEmptySections=allow_only_comments=False'"
+        args = '--transform DiscardEmptySections=allow_only_comments=False'.split()
+        result = run_tidy(args, exit_code=1)
+        assert expected_output in str(result.exception)
 
-    @pytest.mark.parametrize('configurable', [
-        ':allow_only_comments',
-        ':allow_only_comments:False',
-        '=allow_only_comments=False'
-    ])
-    def test_invalid_configurable_usage(self, configurable):
-        name = 'DiscardEmptySections' + configurable.split(':')[0]
-        expected_output = f'Invalid {name} transformer configuration. ' \
-                          f'Parameters should be provided in format name=value, delimited by :'
-        args = ('--transform DiscardEmptySections' + configurable).split()
+    def test_too_many_arguments_for_transform(self):
+        expected_output = "Importing 'robotidy.transformers.DiscardEmptySections' failed:  " \
+                          "'DiscardEmptySections' expected 0 to 1 arguments, got 2."
+        args = '--transform DiscardEmptySections:allow_only_comments:False'.split()
         result = run_tidy(args, exit_code=1)
         assert expected_output == str(result.exception)
+
+    # def test_invalid_argument_type_for_transform(self):
+    #     expected_output = "Importing 'robotidy.transformers.DiscardEmptySections' failed:  'DicardEmptySection'"
+    #     args = '--transform DiscardEmptySections:allow_only_comments=true'.split()
+    #     result = run_tidy(args, exit_code=1)
+    #     assert expected_output == str(result.exception)
 
     def test_find_project_root_from_src(self):
         src = Path(Path(__file__).parent, 'testdata', 'nested', 'test.robot')

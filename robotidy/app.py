@@ -27,12 +27,11 @@ class Robotidy:
         self.verbose = verbose
         self.formatting_config = formatting_config
         self.transformers = self.find_and_load_transformers(transformers)
-        self.configure_transformers(transformers)
 
     @staticmethod
     def find_and_load_transformers(transformers: List[Tuple[str, Dict]]):
         transformer_names = set(transformer[0] for transformer in transformers)
-        transformers = load_transformers(transformer_names)
+        transformers = load_transformers(transformers)
         if transformer_names and len(transformers) != len(transformer_names):
             missing = sorted(transformer_names.difference(set(transformers)))
             msg = 'Failed to load all requested transformers. Make sure you provided correct name. Missing:\n'
@@ -42,20 +41,6 @@ class Robotidy:
                 message=msg
             )
         return transformers
-
-    def configure_transformers(self, transformer_config: List[Tuple[str, Dict]]):
-        for name, params in transformer_config:
-            if not params:
-                continue
-            for param_name, value in params.items():
-                if param_name in self.transformers[name].configurables:
-                    setattr(self.transformers[name], param_name, value)
-                else:
-                    # TODO: list possible configurables if provided wrong name
-                    raise click.BadOptionUsage(
-                        option_name='transform',
-                        message=f"Invalid configurable name: '{param_name}' for transformer: '{name}'"
-                    )
 
     def transform_files(self):
         for source in self.sources:

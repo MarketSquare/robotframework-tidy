@@ -10,9 +10,10 @@ from typing import (
 from pathlib import Path
 import click
 import toml
+
 from robotidy.version import __version__
 from robotidy.app import Robotidy
-from robotidy.utils import GlobalFormattingConfig
+from robotidy.utils import GlobalFormattingConfig, split_args_from_name_or_path
 
 
 INCLUDE_EXT = ('.robot', '.resource')
@@ -24,18 +25,12 @@ class TransformType(click.ParamType):
     def convert(self, value, param, ctx):
         name = ''
         try:
-            name, *configs = value.split(':')
-            if '=' in name:
-                raise ValueError
-            configurations = {}
-            for config in configs:
-                key, value = config.split('=', maxsplit=1)
-                configurations[key] = value
+            name, args = split_args_from_name_or_path(value)
         except ValueError:
             exc = f'Invalid {name} transformer configuration. ' \
                   f'Parameters should be provided in format name=value, delimited by :'
             raise ValueError(exc)
-        return name, configurations
+        return name, args
 
 
 def find_project_root(srcs: Iterable[str]) -> Path:
@@ -150,7 +145,9 @@ def get_paths(src: Tuple[str, ...]):
 @click.option(
     '--transform',
     type=TransformType(),
-    multiple=True
+    multiple=True,
+    metavar='TRANSFORMER_NAME',
+    help="Transform files from [PATH(S)] with given transformer"
 )
 @click.argument(
     "src",
