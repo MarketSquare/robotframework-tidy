@@ -187,3 +187,14 @@ class TestAssignmentNormalizer:
                           "Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign"
         assert expected_output in str(result.exception)
 
+
+@patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
+class TestExternalTransformer:
+    def test_external_transformer_works(self):
+        transformer_path = Path(Path(__file__).parent, 'ExternalTransformer', 'ExternalTransformer.py')
+        run_tidy(
+            'ExternalTransformer',
+            args=f'--transform {transformer_path}:param=2'.split(),
+            sources=['tests.robot']
+        )
+        compare_file('ExternalTransformer', 'tests.robot')
