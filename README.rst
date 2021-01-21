@@ -48,9 +48,9 @@ Some transformers provide configurable parameters. You can modify them by adding
     robotidy --transform DiscardEmptySections:allow_only_comments=True src
 
 It is possible to develop your own transformers. You can use module name (if it is installed in your env) or path to
-class::
+file with class::
 
-    robotidy --transform MyTransformers.YourCustomTransformer --transform C:\transformers\main\YourCustomTransformer2 src
+    robotidy --transform MyTransformers.YourCustomTransformer --transform C:\transformers\YourCustomTransformer2.py src
 
 Command line options
 --------------------
