@@ -39,7 +39,8 @@ setup(
     python_requires=">=3.7",
     install_requires=[
         'robotframework @ https://github.com/robotframework/robotframework/archive/master.zip',
-        'Click>=7.0'
+        'Click>=7.0',
+        'toml>=0.10.2'
     ],
     extras_requires={
         'dev': ['pytest', 'pylama', 'pylama_pylint', 'coverage'],
