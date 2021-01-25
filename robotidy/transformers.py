@@ -11,9 +11,7 @@ Thanks for that you can use it to create common classes / helper methods:
         pass
 
 """
-import inspect
 import re
-import sys
 import ast
 from collections import Counter
 
@@ -33,6 +31,7 @@ from robot.api.parsing import (
     ElseIfHeader
 )
 from robot.utils.importer import Importer
+from robot.utils.normalizing import normalize_whitespace
 
 
 from robotidy.decorators import (
@@ -365,3 +364,25 @@ class AssignmentTypeDetector(ast.NodeVisitor):
     @staticmethod
     def get_assignment_sign(token_value):
         return token_value[token_value.find('}')+1:]
+
+
+@transformer
+class NormalizeSettingName(ModelTransformer):
+    """
+    Normalize setting name.
+    Ensure that settings names like Library or [Arguments] are title case without leading or trailing whitespace.
+    """
+    def visit_Statement(self, node):  # noqa
+        if node.type not in Token.SETTING_TOKENS:
+            return node
+        name = node.data_tokens[0].value
+        if name.startswith('['):
+            name = f'[{self.normalize_name(name[1:-1])}]'
+        else:
+            name = self.normalize_name(name)
+        node.data_tokens[0].value = name
+        return node
+
+    @staticmethod
+    def normalize_name(name):
+        return normalize_whitespace(name).strip().title()
