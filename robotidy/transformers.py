@@ -26,6 +26,7 @@ from robot.api.parsing import (
     Comment,
     KeywordCall,
     CommentSection,
+    SectionHeader,
     If,
     End,
     IfHeader,
@@ -365,3 +366,18 @@ class AssignmentTypeDetector(ast.NodeVisitor):
     @staticmethod
     def get_assignment_sign(token_value):
         return token_value[token_value.find('}')+1:]
+
+
+@transformer
+class NormalizeSectionHeaderName(ModelTransformer):
+    """
+    Normalize section headers names.
+    Robot Framework is quite flexible with the section header naming. Therefore *setting or *** SETTINGS are both
+    recognized as *** Settings ***. This transformer normalize naming to follow *** SectionName *** format
+    (with plurar variant). Optional data after section header (for example data driven column names) is preserved.
+    """
+    def visit_SectionHeader(self, node):  # noqa
+        normalized_section = SectionHeader.from_params(type=node.type)
+        # we only modify header token value in order to preserver optional data driven testing column names
+        node.data_tokens[0].value = normalized_section.data_tokens[0].value
+        return node

@@ -198,3 +198,16 @@ class TestExternalTransformer:
             sources=['tests.robot']
         )
         compare_file('ExternalTransformer', 'tests.robot')
+
+
+@patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
+class TestNormalizeSectionHeaderName:
+    TRANSFORMER_NAME = 'NormalizeSectionHeaderName'
+
+    def test_normalize_names(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot')
