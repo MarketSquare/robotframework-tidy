@@ -372,8 +372,8 @@ class AssignmentTypeDetector(ast.NodeVisitor):
 class NormalizeSectionHeaderName(ModelTransformer):
     """
     Normalize section headers names.
-    Robot Framework is quite flexible with the section header naming. Therefore *setting or *** SETTINGS are both
-    recognized as *** Settings ***. This transformer normalize naming to follow *** SectionName *** format
+    Robot Framework is quite flexible with the section header naming. Therefore `*setting` or `*** SETTINGS` are both
+    recognized as `*** Settings ***`. This transformer normalize naming to follow `*** SectionName ***` format
     (with plurar variant). Optional data after section header (for example data driven column names) is preserved.
     """
     def __init__(self, uppercase: bool = False):
