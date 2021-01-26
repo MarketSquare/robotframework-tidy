@@ -64,8 +64,8 @@ class DiscardEmptySections(ModelTransformer):
     """
     Remove empty sections. Sections are considered empty if there is no data or there are only comments inside
     (with the exception for *** Comments *** section).
-    You can leave sections with only comments by configuring `allow_only_comments` to True.
-    Supports global formatting params: `--startline` and `--endline`
+    You can leave sections with only comments by setting `allow_only_comments` parameter to True.
+    Supports global formatting params: `--startline` and `--endline`.
     """
     def __init__(self, allow_only_comments: bool = False):
         # If True then sections only with comments are not considered as empty
@@ -272,7 +272,7 @@ class AssignmentNormalizer(ModelTransformer):
             ${var}   Keyword2
             ${var}    Keyword
 
-    You can configure that behaviour to automatically add desired equal sign with `equal_sign_type` configurable
+    You can configure that behaviour to automatically add desired equal sign with `equal_sign_type` parameter
     (possible types are: `remove`, `equal_sign` ('='), `space_and_equal_sign` (' =').
 
     """
@@ -373,6 +373,7 @@ class NormalizeSettingName(ModelTransformer):
     Normalize setting name.
     Ensure that settings names like ``Library`` or ``[Arguments]`` are title case without leading
     or trailing whitespace.
+    Supports global formatting params: `--startline` and `--endline`.
     """
     @check_start_end_line
     def visit_Statement(self, node):  # noqa
@@ -398,6 +399,8 @@ class NormalizeSectionHeaderName(ModelTransformer):
     Robot Framework is quite flexible with the section header naming. Therefore ``*setting`` or ``*** SETTINGS`` are
     both recognized as ``*** Settings ***``. This transformer normalize naming to follow ``*** SectionName ***`` format
     (with plurar variant). Optional data after section header (for example data driven column names) is preserved.
+    It is possible to upper case section header names by passing uppercase=True parameter.
+    Supports global formatting params: `--startline` and `--endline`.
     """
     def __init__(self, uppercase: bool = False):
         self.uppercase = uppercase
