@@ -105,7 +105,7 @@ class TestDiscardEmptySections:
 class TestReplaceRunKeywordIf:
     TRANSFORMER_NAME = 'ReplaceRunKeywordIf'
 
-    def test_run_keyword_if_replaced(self):
+    def test_run_keyword_if_replaced_selected(self):
         run_tidy(
             self.TRANSFORMER_NAME,
             args=f'--transform {self.TRANSFORMER_NAME} --startline 18 --endline 20'.split(),
@@ -117,7 +117,7 @@ class TestReplaceRunKeywordIf:
             'tests_selected.robot'
         )
 
-    def test_run_keyword_if_replaced_selected(self):
+    def test_run_keyword_if_replaced(self):
         run_tidy(
             self.TRANSFORMER_NAME,
             args=f'--transform {self.TRANSFORMER_NAME}'.split(),
@@ -211,3 +211,11 @@ class TestNormalizeSectionHeaderName:
             sources=['tests.robot']
         )
         compare_file(self.TRANSFORMER_NAME, 'tests.robot')
+
+    def test_uppercase_names(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}:uppercase=True'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'uppercase.robot')
