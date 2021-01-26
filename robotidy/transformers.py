@@ -370,7 +370,8 @@ class AssignmentTypeDetector(ast.NodeVisitor):
 class NormalizeSettingName(ModelTransformer):
     """
     Normalize setting name.
-    Ensure that settings names like Library or [Arguments] are title case without leading or trailing whitespace.
+    Ensure that settings names like ``Library`` or ``[Arguments]`` are title case without leading
+    or trailing whitespace.
     """
     @check_start_end_line
     def visit_Statement(self, node):  # noqa
