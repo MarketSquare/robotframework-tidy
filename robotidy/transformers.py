@@ -24,6 +24,7 @@ from robot.api.parsing import (
     Comment,
     KeywordCall,
     CommentSection,
+    SectionHeader,
     If,
     End,
     IfHeader,
@@ -388,3 +389,25 @@ class NormalizeSettingName(ModelTransformer):
     @staticmethod
     def normalize_name(name):
         return normalize_whitespace(name).strip().title()
+
+
+@transformer
+class NormalizeSectionHeaderName(ModelTransformer):
+    """
+    Normalize section headers names.
+    Robot Framework is quite flexible with the section header naming. Therefore ``*setting`` or ``*** SETTINGS`` are
+    both recognized as ``*** Settings ***``. This transformer normalize naming to follow ``*** SectionName ***`` format
+    (with plurar variant). Optional data after section header (for example data driven column names) is preserved.
+    """
+    def __init__(self, uppercase: bool = False):
+        self.uppercase = uppercase
+
+    @check_start_end_line
+    def visit_SectionHeader(self, node):  # noqa
+        normalized_section = SectionHeader.from_params(type=node.type)
+        normalized_name = normalized_section.data_tokens[0].value
+        if self.uppercase:
+            normalized_name = normalized_name.upper()
+        # we only modify header token value in order to preserver optional data driven testing column names
+        node.data_tokens[0].value = normalized_name
+        return node

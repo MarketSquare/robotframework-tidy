@@ -69,7 +69,7 @@ class TestDiscardEmptySections:
     def test_removes_empty_sections(self):
         run_tidy(
             self.TRANSFORMER_NAME,
-            args='--transform DiscardEmptySections'.split(),
+            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
             sources=['removes_empty_sections.robot']
         )
         compare_file(self.TRANSFORMER_NAME, 'removes_empty_sections.robot')
@@ -77,7 +77,7 @@ class TestDiscardEmptySections:
     def test_removes_empty_sections_except_comments(self):
         run_tidy(
             self.TRANSFORMER_NAME,
-            args='--transform DiscardEmptySections:allow_only_comments=True'.split(),
+            args=f'--transform {self.TRANSFORMER_NAME}:allow_only_comments=True'.split(),
             sources=['removes_empty_sections.robot']
         )
         # we're using the same actual name (since we used the same source) but different expected
@@ -91,7 +91,7 @@ class TestDiscardEmptySections:
     def test_remove_selected_empty_node(self):
         run_tidy(
             self.TRANSFORMER_NAME,
-            args='--transform DiscardEmptySections --startline 17 --endline 18'.split(),
+            args=f'--transform {self.TRANSFORMER_NAME} --startline 17 --endline 18'.split(),
             sources=['removes_empty_sections.robot']
         )
         compare_file(
@@ -105,7 +105,7 @@ class TestDiscardEmptySections:
 class TestReplaceRunKeywordIf:
     TRANSFORMER_NAME = 'ReplaceRunKeywordIf'
 
-    def test_run_keyword_if_replaced(self):
+    def test_run_keyword_if_replaced_selected(self):
         run_tidy(
             self.TRANSFORMER_NAME,
             args=f'--transform {self.TRANSFORMER_NAME} --startline 18 --endline 20'.split(),
@@ -117,7 +117,7 @@ class TestReplaceRunKeywordIf:
             'tests_selected.robot'
         )
 
-    def test_run_keyword_if_replaced_selected(self):
+    def test_run_keyword_if_replaced(self):
         run_tidy(
             self.TRANSFORMER_NAME,
             args=f'--transform {self.TRANSFORMER_NAME}'.split(),
@@ -216,6 +216,35 @@ class TestNormalizeSettingName:
         run_tidy(
             self.TRANSFORMER_NAME,
             args=f'--transform {self.TRANSFORMER_NAME} --startline 12 --endline 15'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'selected.robot')
+
+
+@patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
+class TestNormalizeSectionHeaderName:
+    TRANSFORMER_NAME = 'NormalizeSectionHeaderName'
+
+    def test_normalize_names(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot')
+
+    def test_uppercase_names(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}:uppercase=True'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'uppercase.robot')
+
+    def test_normalize_names_selected(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME} --startline 5 --endline 6'.split(),
             sources=['tests.robot']
         )
         compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'selected.robot')
