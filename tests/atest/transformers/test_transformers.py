@@ -211,3 +211,11 @@ class TestNormalizeSettingName:
             sources=['tests.robot']
         )
         compare_file(self.TRANSFORMER_NAME, 'tests.robot')
+
+    def test_normalize_setting_name_selected(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME} --startline 12 --endline 15'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'selected.robot')

@@ -372,6 +372,7 @@ class NormalizeSettingName(ModelTransformer):
     Normalize setting name.
     Ensure that settings names like Library or [Arguments] are title case without leading or trailing whitespace.
     """
+    @check_start_end_line
     def visit_Statement(self, node):  # noqa
         if node.type not in Token.SETTING_TOKENS:
             return node
