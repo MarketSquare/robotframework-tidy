@@ -86,6 +86,9 @@ You can list available options by running ``robotidy --help``::
 
      -v, --verbose
      --config FILE                   Read configuration from FILE path.
+     --list-transformers             List available transformers and exit.
+     --describe-transformer TRANSFORMER_NAME
+                                     Show documentation for selected transformer.
      --version                       Show the version and exit.
      --help                          Show this message and exit.
 
