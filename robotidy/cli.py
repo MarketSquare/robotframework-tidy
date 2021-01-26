@@ -142,22 +142,6 @@ def get_paths(src: Tuple[str, ...]):
     return sources
 
 
-def list_transformers_option(ctx: click.Context, param: click.Parameter, value: Optional[str]) -> Optional[str]:
-    names = ctx.params.get("src", '')
-    transformers = load_transformers(None)
-    if not names:
-        click.echo('Run --list-transformers <transformer_name> to get more details. Transformers:')
-        for transformer in transformers:
-            click.echo(transformer)
-        ctx.exit(0)
-    for name in names:
-        if name in transformers:
-            click.echo(transformers[name].__doc__)
-        else:
-            click.echo(f"Transformer with name '{name}' does not exist")
-    ctx.exit(0)
-
-
 @click.command()
 @click.option(
     '--transform',
