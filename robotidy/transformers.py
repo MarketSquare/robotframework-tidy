@@ -411,4 +411,3 @@ class NormalizeSectionHeaderName(ModelTransformer):
         # we only modify header token value in order to preserver optional data driven testing column names
         node.data_tokens[0].value = normalized_name
         return node
-
