@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from pathlib import Path
 
-from unittest.mock import MagicMock,Mock
+from unittest.mock import MagicMock, Mock
 import pytest
 
 from .utils import run_tidy, save_tmp_model
@@ -12,6 +12,7 @@ from robotidy.cli import (
     read_config
 )
 from robotidy.utils import node_within_lines
+from robotidy.transformers import ReplaceRunKeywordIf
 
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
@@ -133,3 +134,12 @@ class TestCli:
     ])
     def test_skip_node_start_end_line_setting(self, node_start, node_end, start_line, end_line, expected):
         assert node_within_lines(node_start, node_end, start_line, end_line) == expected
+
+    def test_list_transformers(self):
+        result = run_tidy(['--list-transformers'])
+        assert 'Run --describe-transformer <transformer_name> to get more details. Transformers:' in result.output
+        assert 'ReplaceRunKeywordIf\n' in result.output
+
+    def test_describe_transformer(self):
+        result = run_tidy(['--describe-transformer', 'ReplaceRunKeywordIf'])
+        assert ReplaceRunKeywordIf.__doc__ in result.output
