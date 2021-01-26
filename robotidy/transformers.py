@@ -379,6 +379,7 @@ class NormalizeSectionHeaderName(ModelTransformer):
     def __init__(self, uppercase: bool = False):
         self.uppercase = uppercase
 
+    @check_start_end_line
     def visit_SectionHeader(self, node):  # noqa
         normalized_section = SectionHeader.from_params(type=node.type)
         normalized_name = normalized_section.data_tokens[0].value
