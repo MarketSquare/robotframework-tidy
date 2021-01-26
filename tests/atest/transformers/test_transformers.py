@@ -201,6 +201,27 @@ class TestExternalTransformer:
 
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
+class TestNormalizeSettingName:
+    TRANSFORMER_NAME = 'NormalizeSettingName'
+
+    def test_normalize_setting_name(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot')
+
+    def test_normalize_setting_name_selected(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME} --startline 12 --endline 15'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'selected.robot')
+
+
+@patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
 class TestNormalizeSectionHeaderName:
     TRANSFORMER_NAME = 'NormalizeSectionHeaderName'
 
