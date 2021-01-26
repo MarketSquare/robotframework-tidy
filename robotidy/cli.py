@@ -13,6 +13,7 @@ import toml
 
 from robotidy.version import __version__
 from robotidy.app import Robotidy
+from robotidy.transformers import load_transformers
 from robotidy.utils import GlobalFormattingConfig, split_args_from_name_or_path
 
 
@@ -227,6 +228,18 @@ def get_paths(src: Tuple[str, ...]):
     callback=read_config,
     help="Read configuration from FILE path.",
 )
+@click.option(
+    '--list-transformers',
+    is_eager=True,
+    is_flag=True,
+    help='List available transformers and exit.'
+)
+@click.option(
+    '--describe-transformer',
+    default=None,
+    metavar='TRANSFORMER_NAME',
+    help='Show documentation for selected transformer.'
+)
 @click.version_option(version=__version__, prog_name='robotidy')
 @click.pass_context
 def cli(
@@ -240,9 +253,26 @@ def cli(
         usepipes: bool,
         verbose: bool,
         config: Optional[str],
-        startline: int,
-        endline: int
+        startline: Optional[int],
+        endline: Optional[int],
+        list_transformers: bool,
+        describe_transformer: Optional[str]
 ):
+    if list_transformers:
+        transformers = load_transformers(None)
+        click.echo('Run --describe-transformer <transformer_name> to get more details. Transformers:')
+        for transformer in transformers:
+            click.echo(transformer)
+        ctx.exit(0)
+    if describe_transformer is not None:
+        transformers = load_transformers(None)
+        if describe_transformer in transformers:
+            click.echo(f"Transformer {describe_transformer}:")
+            click.echo(transformers[describe_transformer].__doc__)
+        else:
+            click.echo(f"Transformer with the name '{describe_transformer}' does not exist")
+        ctx.exit(0)
+
     if config and verbose:
         click.echo(f'Loaded {config} configuration file')
 

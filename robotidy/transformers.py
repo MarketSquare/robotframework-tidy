@@ -62,10 +62,15 @@ def load_transformers(allowed_transformers):
 @transformer
 class DiscardEmptySections(ModelTransformer):
     """
-    Remove empty sections. Sections are considered empty if there is no data or there are only comments inside
-    (with the exception for *** Comments *** section).
-    You can leave sections with only comments by configuring `allow_only_comments` to True.
-    Supports global formatting params: `--startline` and `--endline`
+    Remove empty sections.
+    Sections are considered empty if there is no data or there are only comments inside (with the exception
+    for ``*** Comments ***`` section).
+    You can leave sections with only comments by setting ``allow_only_comments`` parameter to True::
+
+        *** Variables ***
+        # this section would be removed if not for ``alow_only_comments`` parameter
+
+    Supports global formatting params: ``--startline`` and ``--endline``.
     """
     def __init__(self, allow_only_comments: bool = False):
         # If True then sections only with comments are not considered as empty
@@ -106,8 +111,8 @@ def insert_separators(indent, tokens, formatting_config):
 @transformer
 class ReplaceRunKeywordIf(ModelTransformer):
     """
-    Replace `Run Keyword If` keyword calls with IF END blocks.
-    Supports global formatting params: `--spacecount`, `--startline` and `--endline`.
+    Replace ``Run Keyword If`` keyword calls with IF END blocks.
+    Supports global formatting params: ``--spacecount``, ``--startline`` and ``--endline``.
 
     Following code::
 
@@ -238,7 +243,7 @@ class AssignmentNormalizer(ModelTransformer):
     Normalize assignments. By default it detects most common assignment sign
     and apply it to every assignment in given file.
 
-    In this code most common is no equal sign at all. We should remove `=` signs from the all lines::
+    In this code most common is no equal sign at all. We should remove ``=`` signs from the all lines::
 
         *** Variables ***
         ${var} =  ${1}
@@ -272,8 +277,8 @@ class AssignmentNormalizer(ModelTransformer):
             ${var}   Keyword2
             ${var}    Keyword
 
-    You can configure that behaviour to automatically add desired equal sign with `equal_sign_type` configurable
-    (possible types are: `remove`, `equal_sign` ('='), `space_and_equal_sign` (' =').
+    You can configure that behaviour to automatically add desired equal sign with ``equal_sign_type`` parameter
+    (possible types are: ``remove``, ``equal_sign`` ('='), ``space_and_equal_sign`` (' =').
 
     """
     def __init__(self, equal_sign_type: str = 'autodetect'):
@@ -371,8 +376,31 @@ class AssignmentTypeDetector(ast.NodeVisitor):
 class NormalizeSettingName(ModelTransformer):
     """
     Normalize setting name.
-    Ensure that settings names like ``Library`` or ``[Arguments]`` are title case without leading
-    or trailing whitespace.
+    Ensure that setting names are title case without leading or trailing whitespace. For example from::
+
+        *** Settings ***
+        library    library.py
+        test template    Template
+        FORCE taGS    tag1
+
+        *** Keywords ***
+        Keyword
+            [arguments]    ${arg}
+            [ SETUP]   Setup Keyword
+
+    To::
+
+        *** Settings ***
+        Library    library.py
+        Test Template    Template
+        Force Tags    tag1
+
+        *** Keywords ***
+        Keyword
+            [Arguments]    ${arg}
+            [Setup]   Setup Keyword
+
+    Supports global formatting params: ``--startline`` and ``--endline``.
     """
     @check_start_end_line
     def visit_Statement(self, node):  # noqa
@@ -395,9 +423,26 @@ class NormalizeSettingName(ModelTransformer):
 class NormalizeSectionHeaderName(ModelTransformer):
     """
     Normalize section headers names.
-    Robot Framework is quite flexible with the section header naming. Therefore ``*setting`` or ``*** SETTINGS`` are
-    both recognized as ``*** Settings ***``. This transformer normalize naming to follow ``*** SectionName ***`` format
-    (with plurar variant). Optional data after section header (for example data driven column names) is preserved.
+    Robot Framework is quite flexible with the section header naming. Following lines are equal::
+
+        *setting
+        *** SETTINGS
+        *** SettingS ***
+
+    This transformer normalize naming to follow ``*** SectionName ***`` format (with plurar variant)::
+
+        *** Settings ***
+        *** Keywords ***
+        *** Test Cases ***
+        *** Variables ***
+        *** Comments ***
+
+    Optional data after section header (for example data driven column names) is preserved.
+    It is possible to upper case section header names by passing ``uppercase=True`` parameter::
+
+        *** SETTINGS ***
+
+    Supports global formatting params: ``--startline`` and ``--endline``.
     """
     def __init__(self, uppercase: bool = False):
         self.uppercase = uppercase
