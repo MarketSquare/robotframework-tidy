@@ -462,6 +462,18 @@ class NormalizeSectionHeaderName(ModelTransformer):
 
 @transformer
 class NormalizeNewLines(ModelTransformer):
+    """
+    Normalize new lines.
+
+    Ensure that there is exactly:
+    * ``section_lines = 1`` empty lines between sections,
+    * ``test_case_lines = 1`` empty lines between test cases,
+    * ``keyword_lines = test_case_lines`` empty lines between keywords.
+    Removes empty lines after section (and before any data) and append 1 empty line in the end of file.
+
+    If the suite contains Test Template tests will not be separated by empty lines unless ``separate_templated_tests``
+    is set to True.
+    """
     def __init__(self, test_case_lines: int = 1, keyword_lines: Optional[int] = None, section_lines: int = 1,
                  separate_templated_tests: bool = False):
         self.test_case_lines = test_case_lines
