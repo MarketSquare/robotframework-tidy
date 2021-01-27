@@ -248,3 +248,48 @@ class TestNormalizeSectionHeaderName:
             sources=['tests.robot']
         )
         compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'selected.robot')
+
+
+@patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
+class TestNormalizeNewLines:
+    TRANSFORMER_NAME = 'NormalizeNewLines'
+
+    def test_normalize_new_lines(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot')
+
+    def test_normalize_new_lines_three_lines_after_section(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}:section_lines=3'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'tests_three_lines_section.robot')
+
+    def test_normalize_new_lines_two_lines_keywords(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}:keyword_lines=2'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'tests_two_lines_keywords.robot')
+
+    def test_templated_tests(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
+            sources=['templated_tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'templated_tests.robot')
+
+    def test_templated_tests_separated(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}:separate_templated_tests=True'.split(),
+            sources=['templated_tests.robot']
+        )
+        compare_file(self.TRANSFORMER_NAME, 'templated_tests.robot', 'templated_tests_with_1_line.robot')
