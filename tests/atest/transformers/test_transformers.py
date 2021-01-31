@@ -248,3 +248,19 @@ class TestNormalizeSectionHeaderName:
             sources=['tests.robot']
         )
         compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'selected.robot')
+
+
+@patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
+class TestSplitTooLongLine:
+    TRANSFORMER_NAME = 'SplitTooLongLine'
+
+    def test_split_too_long_lines(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
+            sources=['tests.robot']
+        )
+        compare_file(
+            self.TRANSFORMER_NAME,
+            'tests.robot'
+        )
