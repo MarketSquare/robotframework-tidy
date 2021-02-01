@@ -12,7 +12,7 @@ from robotidy.cli import (
     read_config
 )
 from robotidy.utils import node_within_lines
-from robotidy.transformers import ReplaceRunKeywordIf
+from robotidy.transformers.ReplaceRunKeywordIf import ReplaceRunKeywordIf
 
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
