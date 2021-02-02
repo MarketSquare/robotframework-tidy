@@ -15,7 +15,7 @@ class NormalizeNewLines(ModelTransformer):
     * ``section_lines = 1`` empty lines between sections,
     * ``test_case_lines = 1`` empty lines between test cases,
     * ``keyword_lines = test_case_lines`` empty lines between keywords.
-    Removes empty lines after section (and before any data) and append 1 empty line in the end of file.
+    Removes empty lines after section (and before any data) and append 1 empty line at the end of file.
 
     If the suite contains Test Template tests will not be separated by empty lines unless ``separate_templated_tests``
     is set to True.
@@ -31,7 +31,7 @@ class NormalizeNewLines(ModelTransformer):
         self.last_keyword = None
         self.templated = False
 
-    def visit_File(self, node):
+    def visit_File(self, node):  # noqa
         self.templated = not self.separate_templated_tests and self.is_templated(node)
         self.last_section = node.sections[-1] if node.sections else None
         return self.generic_visit(node)
