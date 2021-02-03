@@ -12,7 +12,8 @@ TRANSFORMERS = frozenset((
     'DiscardEmptySections',
     'NormalizeSectionHeaderName',
     'NormalizeSettingName',
-    'ReplaceRunKeywordIf'
+    'ReplaceRunKeywordIf',
+    'SplitTooLongLine'
 ))
 
 
