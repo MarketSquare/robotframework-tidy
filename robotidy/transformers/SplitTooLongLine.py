@@ -19,10 +19,12 @@ class SplitTooLongLine(ModelTransformer):
         return self.split_keyword_call(node)
 
     def split_keyword_call(self, node):
+        separator = Token(Token.SEPARATOR, self.formatting_config.space_count * ' ')
+
         is_single_line = node.lineno == node.end_lineno
 
         indent = node.tokens[0]
-        assignment = list(self.insert_seperator(node.get_tokens(Token.ASSIGN)))
+        assignment = list(self.insert_seperator(node.get_tokens(Token.ASSIGN), separator))
         keyword = node.get_token(Token.KEYWORD)
 
         if is_single_line:
@@ -35,7 +37,7 @@ class SplitTooLongLine(ModelTransformer):
                     if token.type != Token.COMMENT]
 
             lines = []
-            for tokenized_line in self.pack_arguments(head, tail, indent):
+            for tokenized_line in self.pack_arguments(head, tail, indent, separator):
                 lines.extend(tokenized_line)
 
         else:
@@ -44,7 +46,7 @@ class SplitTooLongLine(ModelTransformer):
         node.tokens = lines
         return node
 
-    def pack_arguments(self, tokens_so_far, remaining_tokens, indent):
+    def pack_arguments(self, tokens_so_far, remaining_tokens, indent, separator):
         if not remaining_tokens:
             return []
 
@@ -62,9 +64,9 @@ class SplitTooLongLine(ModelTransformer):
                 continue
 
             next_tokens = (
-                [self.separator(), token, self.separator(), next_token]
+                [separator, token, separator, next_token]
                 if next_token.type == Token.COMMENT else
-                [self.separator(), token]
+                [separator, token]
             )
 
             if self.cols_remaining(line + next_tokens) == 0:
@@ -86,13 +88,10 @@ class SplitTooLongLine(ModelTransformer):
         next(shifted_by_one, None)
         return zip(iterable, shifted_by_one)
 
-    def separator(self):
-        return Token(Token.SEPARATOR, self.formatting_config.space_count * ' ')
-
-    def insert_seperator(self, iterator):
+    def insert_seperator(self, iterator, separator):
         for elem in iterator:
             yield elem
-            yield self.separator()
+            yield separator
 
     def arg_continuation(self, indent):
         return [indent, Token(Token.CONTINUATION)]
