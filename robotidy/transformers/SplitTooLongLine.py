@@ -31,8 +31,8 @@ class SplitTooLongLine(ModelTransformer):
 
             head = comment_line + [indent] + assignment + [keyword]
 
-            tail = node.tokens[node.tokens.index(keyword) + 1:]
-            tail = list(filter(lambda t: t.type != Token.COMMENT, tail))
+            tail = [token for token in node.tokens[node.tokens.index(keyword) + 1:]
+                    if token.type != Token.COMMENT]
 
             lines = []
             for tokenized_line in self.pack_arguments(head, tail, indent):
