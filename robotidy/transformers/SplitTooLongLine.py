@@ -72,7 +72,7 @@ class SplitTooLongLine(ModelTransformer):
             if self.cols_remaining(line + next_tokens) == 0:
                 line.append(EOL)
                 yield line
-                line = self.arg_continuation(indent)
+                line = [indent, Token(Token.CONTINUATION)]
 
             line.extend(next_tokens)
 
@@ -92,9 +92,6 @@ class SplitTooLongLine(ModelTransformer):
         for elem in iterator:
             yield elem
             yield separator
-
-    def arg_continuation(self, indent):
-        return [indent, Token(Token.CONTINUATION)]
 
     @staticmethod
     def len_token_text(tokens):
