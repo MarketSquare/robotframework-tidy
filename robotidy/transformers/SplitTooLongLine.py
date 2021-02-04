@@ -16,8 +16,6 @@ class SplitTooLongLine(ModelTransformer):
     def visit_KeywordCall(self, node):  # noqa
         if all(line[-1].end_col_offset < self.line_length for line in node.lines):
             return node
-        if not node.get_tokens(Token.ARGUMENT):  # return if there are no arguments - nothing to split
-            return node
         return self.split_keyword_call(node)
 
     def split_keyword_call(self, node):
