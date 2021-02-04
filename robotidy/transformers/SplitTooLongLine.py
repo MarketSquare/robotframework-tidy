@@ -6,8 +6,7 @@ from robot.api.parsing import (
 )
 
 
-def eol():
-    return Token(Token.EOL)
+EOL = Token(Token.EOL)
 
 
 class SplitTooLongLine(ModelTransformer):
@@ -30,7 +29,7 @@ class SplitTooLongLine(ModelTransformer):
 
         if is_single_line:
             comment = node.get_tokens(Token.COMMENT)
-            comment_line = [indent] + comment + [eol()] if comment else []
+            comment_line = [indent] + comment + [EOL] if comment else []
 
             head = comment_line + [indent] + assignment + [keyword]
 
@@ -71,13 +70,13 @@ class SplitTooLongLine(ModelTransformer):
             )
 
             if self.cols_remaining(line + next_tokens) == 0:
-                line.append(eol())
+                line.append(EOL)
                 yield line
                 line = self.arg_continuation(indent)
 
             line.extend(next_tokens)
 
-        line.append(eol())
+        line.append(EOL)
         yield line  # last line
 
     def cols_remaining(self, tokens):
@@ -107,6 +106,6 @@ class SplitTooLongLine(ModelTransformer):
     @staticmethod
     def last_line_of(tokens):
         """Return the tokens from after the last EOL in the given list"""
-        if eol() not in tokens:
+        if EOL not in tokens:
             return tokens
-        return tokens[len(tokens) - tokens[::-1].index(eol()):]
+        return tokens[len(tokens) - tokens[::-1].index(EOL):]
