@@ -34,7 +34,6 @@ class SplitTooLongLine(ModelTransformer):
         comments, tail, line = [], [], []
 
         rest = node.tokens[node.tokens.index(keyword) + 1:]
-        breakpoint()
         for token in rest:
             if token.type in {Token.EOL, Token.SEPARATOR, Token.CONTINUATION}:
                 continue
