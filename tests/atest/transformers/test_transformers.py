@@ -257,7 +257,7 @@ class TestSplitTooLongLine:
     def test_split_too_long_lines(self):
         run_tidy(
             self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
+            args=f'--transform {self.TRANSFORMER_NAME}:line_length=80 -s 4'.split(),
             sources=['tests.robot']
         )
         compare_file(
