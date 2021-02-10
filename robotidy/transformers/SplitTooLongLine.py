@@ -9,7 +9,7 @@ CONTINUATION = Token(Token.CONTINUATION)
 
 
 class SplitTooLongLine(ModelTransformer):
-    def __init__(self, line_length: int = 120, split_on_every_arg: bool = True):
+    def __init__(self, line_length: int = 120, split_on_every_arg: bool = False):
         super().__init__()
         self.line_length = line_length
         self.split_on_every_arg = split_on_every_arg
