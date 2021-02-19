@@ -1,7 +1,7 @@
 import filecmp
 from difflib import unified_diff
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 from unittest.mock import patch
 
 import pytest
@@ -62,42 +62,40 @@ def display_file_diff(expected, actual):
     print(colorized_output)
 
 
+def run_tidy_and_compare(transformer_name: str, sources: List[str],
+                         expected: Optional[List[str]] = None, config: str = ''):
+    if expected is None:
+        expected = sources
+    run_tidy(
+        transformer_name,
+        args=f'--transform {transformer_name}{config}'.split(),
+        sources=sources
+    )
+    for source_path, expected_path in zip(sources, expected):
+        compare_file(transformer_name, source_path, expected_path)
+
+
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
 class TestDiscardEmptySections:
     TRANSFORMER_NAME = 'DiscardEmptySections'
 
     def test_removes_empty_sections(self):
-        run_tidy(
-            self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
-            sources=['removes_empty_sections.robot']
-        )
-        compare_file(self.TRANSFORMER_NAME, 'removes_empty_sections.robot')
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['removes_empty_sections.robot'])
 
     def test_removes_empty_sections_except_comments(self):
-        run_tidy(
+        run_tidy_and_compare(
             self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}:allow_only_comments=True'.split(),
-            sources=['removes_empty_sections.robot']
-        )
-        # we're using the same actual name (since we used the same source) but different expected
-        # that's because our expected changed with modified transformation configuration
-        compare_file(
-            self.TRANSFORMER_NAME,
-            'removes_empty_sections.robot',
-            'removes_empty_sections_except_comments.robot'
+            sources=['removes_empty_sections.robot'],
+            expected=['removes_empty_sections_except_comments.robot'],
+            config=':allow_only_comments=True'
         )
 
     def test_remove_selected_empty_node(self):
-        run_tidy(
+        run_tidy_and_compare(
             self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME} --startline 17 --endline 18'.split(),
-            sources=['removes_empty_sections.robot']
-        )
-        compare_file(
-            self.TRANSFORMER_NAME,
-            'removes_empty_sections.robot',
-            'removes_selected_empty_section.robot'
+            sources=['removes_empty_sections.robot'],
+            expected=['removes_selected_empty_section.robot'],
+            config=' --startline 17 --endline 18'
         )
 
 
@@ -106,31 +104,18 @@ class TestReplaceRunKeywordIf:
     TRANSFORMER_NAME = 'ReplaceRunKeywordIf'
 
     def test_run_keyword_if_replaced_selected(self):
-        run_tidy(
+        run_tidy_and_compare(
             self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME} --startline 18 --endline 20'.split(),
-            sources=['tests.robot']
-        )
-        compare_file(
-            self.TRANSFORMER_NAME,
-            'tests.robot',
-            'tests_selected.robot'
+            sources=['tests.robot'],
+            expected=['tests_selected.robot'],
+            config=' --startline 18 --endline 20'
         )
 
     def test_run_keyword_if_replaced(self):
-        run_tidy(
-            self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
-            sources=['tests.robot']
-        )
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['tests.robot'])
 
     def test_invalid_data(self):
-        run_tidy(
-            self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
-            sources=['invalid_data.robot']
-        )
-        compare_file(self.TRANSFORMER_NAME, 'invalid_data.robot')
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['invalid_data.robot'])
 
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
@@ -143,36 +128,31 @@ class TestAssignmentNormalizer:
         'common_space_and_equal_sign.robot'
     ])
     def test_autodetect(self, filename):
-        run_tidy(
-            self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
-            sources=[filename]
-        )
-        compare_file(self.TRANSFORMER_NAME, filename)
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=[filename])
 
     def test_remove(self):
-        run_tidy(
+        run_tidy_and_compare(
             self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}:equal_sign_type=remove'.split(),
-            sources=['tests.robot']
+            sources=['tests.robot'],
+            expected=['remove.robot'],
+            config=':equal_sign_type=remove'
         )
-        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'remove.robot')
 
     def test_add_equal_sign(self):
-        run_tidy(
+        run_tidy_and_compare(
             self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}:equal_sign_type=equal_sign'.split(),
-            sources=['tests.robot']
+            sources=['tests.robot'],
+            expected=['equal_sign.robot'],
+            config=':equal_sign_type=equal_sign'
         )
-        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'equal_sign.robot')
 
     def test_add_space_and_equal_sign(self):
-        run_tidy(
+        run_tidy_and_compare(
             self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}:equal_sign_type=space_and_equal_sign'.split(),
-            sources=['tests.robot']
+            sources=['tests.robot'],
+            expected=['space_and_equal_sign.robot'],
+            config=':equal_sign_type=space_and_equal_sign'
         )
-        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'space_and_equal_sign.robot')
 
     def test_invalid_equal_sign_type(self):
         result = run_tidy(
@@ -205,20 +185,15 @@ class TestNormalizeSettingName:
     TRANSFORMER_NAME = 'NormalizeSettingName'
 
     def test_normalize_setting_name(self):
-        run_tidy(
-            self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
-            sources=['tests.robot']
-        )
-        compare_file(self.TRANSFORMER_NAME, 'tests.robot')
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['tests.robot'])
 
     def test_normalize_setting_name_selected(self):
-        run_tidy(
+        run_tidy_and_compare(
             self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME} --startline 12 --endline 15'.split(),
-            sources=['tests.robot']
+            sources=['tests.robot'],
+            expected=['selected.robot'],
+            config=' --startline 12 --endline 15'
         )
-        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'selected.robot')
 
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
@@ -226,25 +201,55 @@ class TestNormalizeSectionHeaderName:
     TRANSFORMER_NAME = 'NormalizeSectionHeaderName'
 
     def test_normalize_names(self):
-        run_tidy(
-            self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}'.split(),
-            sources=['tests.robot']
-        )
-        compare_file(self.TRANSFORMER_NAME, 'tests.robot')
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['tests.robot'])
 
     def test_uppercase_names(self):
-        run_tidy(
+        run_tidy_and_compare(
             self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}:uppercase=True'.split(),
-            sources=['tests.robot']
+            sources=['tests.robot'],
+            expected=['uppercase.robot'],
+            config=':uppercase=True'
         )
-        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'uppercase.robot')
 
     def test_normalize_names_selected(self):
-        run_tidy(
+        run_tidy_and_compare(
             self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME} --startline 5 --endline 6'.split(),
-            sources=['tests.robot']
+            sources=['tests.robot'],
+            expected=['selected.robot'],
+            config=' --startline 5 --endline 6'
         )
-        compare_file(self.TRANSFORMER_NAME, 'tests.robot', 'selected.robot')
+
+
+@patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
+class TestNormalizeNewLines:
+    TRANSFORMER_NAME = 'NormalizeNewLines'
+
+    def test_normalize_new_lines(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['tests.robot'])
+
+    def test_normalize_new_lines_three_lines_after_section(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['tests.robot'],
+            expected=['tests_three_lines_section.robot'],
+            config=':section_lines=3'
+        )
+
+    def test_normalize_new_lines_two_lines_keywords(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['tests.robot'],
+            expected=['tests_two_lines_keywords.robot'],
+            config=':keyword_lines=2'
+        )
+
+    def test_templated_tests(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['templated_tests.robot'])
+
+    def test_templated_tests_separated(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['templated_tests.robot'],
+            expected=['templated_tests_with_1_line.robot'],
+            config=':separate_templated_tests=True'
+        )

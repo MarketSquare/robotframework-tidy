@@ -10,6 +10,7 @@ from robot.utils.importer import Importer
 TRANSFORMERS = frozenset((
     'AssignmentNormalizer',
     'DiscardEmptySections',
+    'NormalizeNewLines',
     'NormalizeSectionHeaderName',
     'NormalizeSettingName',
     'ReplaceRunKeywordIf'
