@@ -46,7 +46,7 @@ Different keyword calls
     ...    or
     ...    without
     ...    that
-    
+
     # Edge case here →→→→→→→→→→→→→→→→                                    HERE
     This is a keyword
     ...    these
@@ -126,7 +126,7 @@ Newlines
 
 
 For loop
-    FOR   ${i}   IN    1  2  3  4  5  6  7  8  9  10  11  12  13  14  15  16  17  18  20  
+    FOR   ${i}   IN    1  2  3  4  5  6  7  8  9  10  11  12  13  14  15  16  17  18  20
         This is a keyword     fits even with its    # comment
 
         # comment, but has bad spacing
@@ -169,7 +169,7 @@ For loop
         ...    or
         ...    without
         ...    that
-        
+
         # Edge case here →→→→→→→→→→→→→→→→                                    HERE
         This is a keyword
         ...    these

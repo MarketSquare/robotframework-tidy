@@ -22,7 +22,7 @@ Different keyword calls
     # comment
     This is a keyword    these    arguments    wont    fit    with    or
     ...    without    that
-    
+
     # Edge case here →→→→→→→→→→→→→→→→                                    HERE
     This is a keyword    these    args    have    an    interesting    ${EMPTY}
     ...    More arguments here
@@ -71,7 +71,7 @@ Newlines
 
 
 For loop
-    FOR   ${i}   IN    1  2  3  4  5  6  7  8  9  10  11  12  13  14  15  16  17  18  20  
+    FOR   ${i}   IN    1  2  3  4  5  6  7  8  9  10  11  12  13  14  15  16  17  18  20
         This is a keyword     fits even with its    # comment
 
         # comment, but has bad spacing
@@ -91,10 +91,10 @@ For loop
         # comment
         This is a keyword    these    arguments    wont    fit    with    or
         ...    without    that
-        
+
         # Edge case here →→→→→→→→→→→→→→→→                                    HERE
         This is a keyword    these    args    have    an    interesting
-        ...    ${EMPTY}   More arguments here
+        ...    ${EMPTY}    More arguments here
 
         This is a keyword     and     these      are       its     args
         ...    here   are   some    more    args      to      split
@@ -103,7 +103,7 @@ For loop
         ${assignment}=    This keyword sets the variable    using    these
         ...    args
 
-        ${assignment}=    This keyword sets the variable    using    these    
+        ${assignment}=    This keyword sets the variable    using    these
         ...    args    here    are    some    more    args    to    split
         ...    with    irregular    spacing
 
