@@ -254,6 +254,21 @@ class TestNormalizeSectionHeaderName:
 class TestSplitTooLongLine:
     TRANSFORMER_NAME = 'SplitTooLongLine'
 
+    def test_split_too_long_lines(self):
+        run_tidy(
+            self.TRANSFORMER_NAME,
+            args=(f'--transform {self.TRANSFORMER_NAME}'
+                  f':line_length=80'
+                  f':split_on_every_arg=False '
+                  f'-s 4').split(),
+            sources=['tests.robot']
+        )
+        compare_file(
+            self.TRANSFORMER_NAME,
+            actual_name='tests.robot',
+            expected_name='feed_until_line_length.robot'
+        )
+
     def test_split_too_long_lines_split_on_every_arg(self):
         run_tidy(
             self.TRANSFORMER_NAME,
