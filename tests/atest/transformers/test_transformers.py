@@ -265,5 +265,6 @@ class TestSplitTooLongLine:
         )
         compare_file(
             self.TRANSFORMER_NAME,
-            'tests.robot'
+            actual_name='tests.robot',
+            expected_name='split_on_every_arg.robot'
         )
