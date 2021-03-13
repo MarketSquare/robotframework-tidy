@@ -40,7 +40,7 @@ Different keyword calls
 
     This is a keyword     and     these      are       its     arg   # Comment 1
     ...    here   are   some    more    args                         # Comment 2
-    ...    with                irregular                     spacing # Comment 3
+    ...    with                irregular                     spacing # Not really a comment
 
 
     ${assignment}=    This keyword sets the variable   using   these  args  # Comment

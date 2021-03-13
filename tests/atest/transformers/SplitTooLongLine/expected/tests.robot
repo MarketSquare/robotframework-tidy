@@ -89,8 +89,7 @@ Different keyword calls
     ...    args
     ...    with
     ...    irregular
-    ...    spacing # Comment 3
-
+    ...    spacing # Not really a comment
 
     # Comment
     ${assignment}=    This keyword sets the variable
