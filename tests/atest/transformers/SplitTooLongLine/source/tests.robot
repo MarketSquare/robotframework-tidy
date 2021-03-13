@@ -48,3 +48,13 @@ Different keyword calls
     ${assignment}=    This keyword sets the variable   using   these     args
     ...    here   are   some    more    args      to      split            # Comment
     ...    with                irregular                       spacing
+
+
+Newlines
+    Keyword
+
+    # Newlines with trailing space are not changed
+        
+        
+
+    Keyword

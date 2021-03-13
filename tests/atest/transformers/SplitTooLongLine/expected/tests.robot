@@ -112,3 +112,13 @@ Different keyword calls
     ...    with
     ...    irregular
     ...    spacing
+
+
+Newlines
+    Keyword
+
+    # Newlines with trailing space are not changed
+        
+        
+
+    Keyword
