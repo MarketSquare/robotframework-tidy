@@ -260,31 +260,17 @@ class TestSplitTooLongLine:
     TRANSFORMER_NAME = 'SplitTooLongLine'
 
     def test_split_too_long_lines(self):
-        run_tidy(
+        run_tidy_and_compare(
             self.TRANSFORMER_NAME,
-            args=(f'--transform {self.TRANSFORMER_NAME}'
-                  f':line_length=80'
-                  f':split_on_every_arg=False '
-                  f'-s 4').split(),
-            sources=['tests.robot']
-        )
-        compare_file(
-            self.TRANSFORMER_NAME,
-            actual_name='tests.robot',
-            expected_name='feed_until_line_length.robot'
+            sources=['tests.robot'],
+            expected=['feed_until_line_length.robot'],
+            config=':line_length=80:split_on_every_arg=False -s 4'
         )
 
     def test_split_too_long_lines_split_on_every_arg(self):
-        run_tidy(
+        run_tidy_and_compare(
             self.TRANSFORMER_NAME,
-            args=(f'--transform {self.TRANSFORMER_NAME}'
-                  f':line_length=80'
-                  f':split_on_every_arg=True '
-                  f'-s 4').split(),
-            sources=['tests.robot']
-        )
-        compare_file(
-            self.TRANSFORMER_NAME,
-            actual_name='tests.robot',
-            expected_name='split_on_every_arg.robot'
+            sources=['tests.robot'],
+            expected=['split_on_every_arg.robot'],
+            config=':line_length=80:split_on_every_arg=True -s 4'
         )
