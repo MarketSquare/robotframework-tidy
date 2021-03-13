@@ -31,7 +31,7 @@ class SplitTooLongLine(ModelTransformer):
         else:
             head = [indent, keyword]
 
-        comments, tail, line = [], [], []
+        comments, tail, line = [], [], head
 
         # Comments with separators inside them are split into
         # [COMMENT, SEPARATOR, COMMENT] tokens in the AST, so in order to preserve the
@@ -72,7 +72,7 @@ class SplitTooLongLine(ModelTransformer):
         line.append(EOL)
         tail += line
 
-        node.tokens = comments + head + tail
+        node.tokens = comments + tail
         return node
 
     def cols_remaining(self, tokens):
