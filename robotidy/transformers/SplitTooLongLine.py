@@ -33,12 +33,29 @@ class SplitTooLongLine(ModelTransformer):
 
         comments, tail, line = [], [], []
 
+        # Comments with separators inside them are split into
+        # [COMMENT, SEPARATOR, COMMENT] tokens in the AST, so in order to preserve the
+        # original comment, we need a lookback on the separator tokens.
+        last_separator = None
+
         rest = node.tokens[node.tokens.index(keyword) + 1:]
         for token in rest:
-            if token.type in {Token.EOL, Token.SEPARATOR, Token.CONTINUATION}:
+            if token.type == Token.SEPARATOR:
+                last_separator = token
+            elif token.type in {Token.EOL, Token.CONTINUATION}:
                 continue
             elif token.type == Token.COMMENT:
-                comments += [indent, token, EOL]
+                # AST splits comments with separators, e.g.
+                #
+                # "# Comment     rest" -> ["# Comment", "     ", "rest"].
+                #
+                # Notice the third value not starting with a hash - that's what this
+                # condition is about:
+                if not str(token).startswith('#'):
+                    # -2 because -1 is the EOL
+                    comments[-2].value += last_separator.value + token.value
+                else:
+                    comments += [indent, token, EOL]
             elif token.type == Token.ARGUMENT:
                 if self.cols_remaining(line + [separator, token]) == 0:
                     line.append(EOL)
