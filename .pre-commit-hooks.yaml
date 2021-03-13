@@ -1,0 +1,6 @@
+-   id: robotidy
+    name: robotidy
+    entry: robotidy
+    files: '.*\.(robot|resource)$'
+    language: python
+    description: "RobotFramework source code formatter"
