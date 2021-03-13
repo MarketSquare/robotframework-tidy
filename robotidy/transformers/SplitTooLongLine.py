@@ -57,6 +57,8 @@ class SplitTooLongLine(ModelTransformer):
                 else:
                     comments += [indent, token, EOL]
             elif token.type == Token.ARGUMENT:
+                if token.value == '':
+                    token.value = '${EMPTY}'
                 if self.cols_remaining(line + [separator, token]) == 0:
                     line.append(EOL)
                     tail += line

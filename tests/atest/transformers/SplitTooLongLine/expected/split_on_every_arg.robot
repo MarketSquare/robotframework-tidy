@@ -54,7 +54,7 @@ Different keyword calls
     ...    have
     ...    an
     ...    interesting
-    ...    
+    ...    ${EMPTY}
     ...    More arguments here
 
     This is a keyword     and     these      are       its     args
@@ -177,7 +177,7 @@ For loop
         ...    have
         ...    an
         ...    interesting
-        ...    
+        ...    ${EMPTY}
         ...    More arguments here
 
         This is a keyword     and     these      are       its     args
