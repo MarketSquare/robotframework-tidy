@@ -269,3 +269,55 @@ For loop
         ...    irregular
         ...    spacing
     END
+
+
+If - else if - else clause
+    IF    ${some variable with a very long name} == ${some other variable with a long name}
+        # Comment
+        ${assignment}=    This keyword sets the variable
+        ...    using
+        ...    these
+        ...    args
+        ...    here
+        ...    are
+        ...    some
+        ...    more
+        ...    args
+        ...    to
+        ...    split
+        ...    with
+        ...    irregular
+        ...    spacing
+    ELSE IF    ${random} > ${NUMBER_TO_PASS_ON}
+        # Comment
+        ${assignment}=    This keyword sets the variable
+        ...    using
+        ...    these
+        ...    args
+        ...    here
+        ...    are
+        ...    some
+        ...    more
+        ...    args
+        ...    to
+        ...    split
+        ...    with
+        ...    irregular
+        ...    spacing
+    ELSE
+        # Comment
+        ${assignment}=    This keyword sets the variable
+        ...    using
+        ...    these
+        ...    args
+        ...    here
+        ...    are
+        ...    some
+        ...    more
+        ...    args
+        ...    to
+        ...    split
+        ...    with
+        ...    irregular
+        ...    spacing
+    END

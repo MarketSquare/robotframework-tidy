@@ -108,3 +108,19 @@ For loop
         ...    here   are   some    more    args      to      split            # Comment
         ...    with                irregular                       spacing
     END
+
+
+If - else if - else clause
+    IF    ${some variable with a very long name} == ${some other variable with a long name}
+        ${assignment}=    This keyword sets the variable   using   these     args
+        ...    here   are   some    more    args      to      split            # Comment
+        ...    with                irregular                       spacing
+    ELSE IF    ${random} > ${NUMBER_TO_PASS_ON}
+        ${assignment}=    This keyword sets the variable   using   these     args
+        ...    here   are   some    more    args      to      split            # Comment
+        ...    with                irregular                       spacing
+    ELSE
+        ${assignment}=    This keyword sets the variable   using   these     args
+        ...    here   are   some    more    args      to      split            # Comment
+        ...    with                irregular                       spacing
+    END
