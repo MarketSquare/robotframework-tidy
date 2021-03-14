@@ -119,3 +119,6 @@ Test Content Merged Into One Keyword
     ELSE
         Normal Keyword    abc
     END
+
+Empty
+    Run Keyword If
