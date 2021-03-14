@@ -143,3 +143,14 @@ class TestCli:
     def test_describe_transformer(self):
         result = run_tidy(['--describe-transformer', 'ReplaceRunKeywordIf'])
         assert ReplaceRunKeywordIf.__doc__ in result.output
+
+    @pytest.mark.parametrize('source, return_status', [
+        ('golden.robot', 0),
+        ('not_golden.robot', 1)
+    ])
+    def test_check(self, source, return_status):
+        source = Path(Path(__file__).parent, 'testdata', 'check', source)
+        run_tidy(
+            ['--check', '--overwrite', '--transform', 'NormalizeSectionHeaderName', str(source)],
+            exit_code=return_status
+        )

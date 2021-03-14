@@ -85,7 +85,7 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
         raise click.FileError(
             filename=value, hint=f"Error reading configuration file: {e}"
         )
-
+    click.echo(f'Reading config from {value}')
     if not config:
         return None
     else:
@@ -162,20 +162,29 @@ def get_paths(src: Tuple[str, ...]):
 @click.option(
     '--overwrite/--no-overwrite',
     default=True,
-    help='Overwrite source files.'
+    help='Overwrite source files.',
+    show_default=True
 )
 @click.option(
     '--diff',
     is_flag=True,
-    help='Output diff of each processed file.'
+    help='Output diff of each processed file.',
+    show_default=True
+)
+@click.option(
+    '--check',
+    is_flag=True,
+    help="Don't overwrite files and just return status. Return code 0 means nothing would change. "
+         "Return code 1 means that at least 1 file would change. Any internal error will overwrite this status.",
+    show_default=True
 )
 @click.option(
     '-s',
     '--spacecount',
     type=click.types.INT,
     default=4,
-    help='The number of spaces between cells in the plain text format.\n'
-         'Default is 4.'
+    help='The number of spaces between cells in the plain text format.\n',
+    show_default=True
 )
 @click.option(
     '-l',
@@ -185,13 +194,15 @@ def get_paths(src: Tuple[str, ...]):
     help="Line separator to use in outputs. The default is 'native'.\n"
          "native:  use operating system's native line separators\n"
          "windows: use Windows line separators (CRLF)\n"
-         "unix:    use Unix line separators (LF)"
+         "unix:    use Unix line separators (LF)",
+    show_default=True
 )
 @click.option(
     '-p',
     '--usepipes',
     is_flag=True,
-    help="Use pipe ('|') as a column separator in the plain text format."
+    help="Use pipe ('|') as a column separator in the plain text format.",
+    show_default=True
 )
 @click.option(
     '-sl',
@@ -199,7 +210,8 @@ def get_paths(src: Tuple[str, ...]):
     default=None,
     type=int,
     help="Limit robotidy only to selected area. If --endline is not provided, format text only at --startline. "
-         "Line numbers start from 1."
+         "Line numbers start from 1.",
+    show_default=True
 )
 @click.option(
     '-el',
@@ -207,12 +219,14 @@ def get_paths(src: Tuple[str, ...]):
     default=None,
     type=int,
     help="Limit robotidy only to selected area. "
-         "Line numbers start from 1."
+         "Line numbers start from 1.",
+    show_default=True
 )
 @click.option(
     '-v',
     '--verbose',
-    is_flag=True
+    is_flag=True,
+    show_default=True
 )
 @click.option(
     "--config",
@@ -248,6 +262,7 @@ def cli(
         src: Tuple[str, ...],
         overwrite: bool,
         diff: bool,
+        check: bool,
         spacecount: int,
         lineseparator: str,
         usepipes: bool,
@@ -258,6 +273,7 @@ def cli(
         list_transformers: bool,
         describe_transformer: Optional[str]
 ):
+    click.echo(overwrite)
     if list_transformers:
         transformers = load_transformers(None)
         click.echo('Run --describe-transformer <transformer_name> to get more details. Transformers:')
@@ -290,7 +306,9 @@ def cli(
         overwrite=overwrite,
         show_diff=diff,
         formatting_config=formatting_config,
-        verbose=verbose
+        verbose=verbose,
+        check=check
     )
-    tidy.transform_files()
-
+    status = tidy.transform_files()
+    click.echo(status)
+    ctx.exit(status)

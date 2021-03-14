@@ -16,6 +16,9 @@ class StatementLinesCollector(ModelVisitor):
         for token in node.tokens:
             self.text += token.value
 
+    def __eq__(self, other):
+        return other.text == self.text
+
 
 class GlobalFormattingConfig:
     def __init__(self, use_pipes: bool, space_count: int, line_sep: str, start_line: int, end_line: int):

@@ -117,6 +117,9 @@ class TestReplaceRunKeywordIf:
     def test_invalid_data(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['invalid_data.robot'])
 
+    def test_golden_file(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['golden.robot'])
+
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
 class TestAssignmentNormalizer:
