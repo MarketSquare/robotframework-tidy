@@ -22,7 +22,7 @@ class SplitTooLongLine(ModelTransformer):
         Keyword With Longer Name    ${arg1}
         ...    ${arg2}    ${arg3}
 
-    Using ``split_on_every_arg`` (default is False) flag you can force formatter to put every argument in new line::
+    Using ``split_on_every_arg`` flag (``False`` by default), you can force the formatter to put every argument in a new line::
 
         Keyword With Longer Name
         ...    ${arg1}
