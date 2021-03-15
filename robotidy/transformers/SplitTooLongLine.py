@@ -12,7 +12,7 @@ CONTINUATION = Token(Token.CONTINUATION)
 class SplitTooLongLine(ModelTransformer):
     """
     Split too long lines.
-    If any line in keyword call exceed given limit (configurable using ``line_length``. Default is 120) it will be
+    If any line in keyword call exceeds given length limit (configurable using ``line_length``, 120 by default) it will be
     split::
 
         Keyword With Longer Name    ${arg1}    ${arg2}    ${arg3}  # let's assume that arg2 is at 120 char
