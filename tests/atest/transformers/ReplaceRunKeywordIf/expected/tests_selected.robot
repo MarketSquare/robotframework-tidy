@@ -77,3 +77,6 @@ Test Content Merged Into One Keyword
     Run Keyword If  "${var}"=="a"    Run Keywords  First Keyword  AND  Second Keyword  1  2
     ...  ELSE IF  ${var}==1  Run Keywords  Single Keyword  ${argument}
     ...  ELSE  Normal Keyword  abc
+
+Empty
+    Run Keyword If
