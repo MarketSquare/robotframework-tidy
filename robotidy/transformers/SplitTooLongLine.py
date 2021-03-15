@@ -2,6 +2,7 @@ from robot.api.parsing import (
     ModelTransformer,
     Token
 )
+from robotidy.decorators import check_start_end_line
 
 
 EOL = Token(Token.EOL)
@@ -9,11 +10,33 @@ CONTINUATION = Token(Token.CONTINUATION)
 
 
 class SplitTooLongLine(ModelTransformer):
+    """
+    Split too long lines.
+    If any line in keyword call exceed given limit (configurable using ``line_length``. Default is 120) it will be
+    split::
+
+        Keyword With Longer Name    ${arg1}    ${arg2}    ${arg3}  # let's assume that arg2 is at 120 char
+
+    To::
+
+        Keyword With Longer Name    ${arg1}
+        ...    ${arg2}    ${arg3}
+
+    Using ``split_on_every_arg`` (default is False) flag you can force formatter to put every argument in new line::
+
+        Keyword With Longer Name
+        ...    ${arg1}
+        ...    ${arg2}
+        ...    ${arg3}
+
+    Supports global formatting params: ``space_count``, ``--startline`` and ``--endline``.
+    """
     def __init__(self, line_length: int = 120, split_on_every_arg: bool = False):
         super().__init__()
         self.line_length = line_length
         self.split_on_every_arg = split_on_every_arg
 
+    @check_start_end_line
     def visit_KeywordCall(self, node):  # noqa
         if all(line[-1].end_col_offset < self.line_length for line in node.lines):
             return node
