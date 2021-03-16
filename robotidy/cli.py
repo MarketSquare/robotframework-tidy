@@ -352,5 +352,4 @@ def cli(
         check=check
     )
     status = tidy.transform_files()
-    click.echo(status)
     ctx.exit(status)
