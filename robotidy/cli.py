@@ -18,6 +18,48 @@ from robotidy.utils import GlobalFormattingConfig, split_args_from_name_or_path
 
 
 INCLUDE_EXT = ('.robot', '.resource')
+HELP_MSG = f"""
+Version: {__version__}
+
+Robotidy is a tool for formatting Robot Framework source code.
+See examples at the end of this help message too see how you can use Robotidy.
+For more documentation check README section at https://github.com/MarketSquare/robotframework-tidy
+"""
+EPILOG = """
+Examples:
+  # Format `path/to/src.robot` file
+  $ robotidy path/to/src.robot
+
+  # Format every Robot Framework file inside `dir_name` directory
+  $ robotidy dir_name
+
+  # List available transformers:
+  $ robotidy --list-transformers
+  
+  # Display transformer documentation
+  $ robotidy --describe-transformer <TRANSFORMER_NAME>
+
+  # Format `src.robot` file using `SplitTooLongLine` transformer only
+  $ robotidy --transform SplitTooLongLine src.robot
+
+  # Format `src.robot` file using `SplitTooLongLine` transformer only and configured line length 140
+  $ robotidy --transform SplitTooLongLine:line_length=140 src.robot
+
+"""
+
+
+class RawHelp(click.Command):
+    def format_help_text(self, ctx, formatter):
+        if self.help:
+            formatter.write_paragraph()
+            for line in self.help.split('\n'):
+                formatter.write_text(line)
+
+    def format_epilog(self, ctx, formatter):
+        if self.epilog:
+            formatter.write_paragraph()
+            for line in self.epilog.split('\n'):
+                formatter.write_text(line)
 
 
 class TransformType(click.ParamType):
@@ -142,7 +184,7 @@ def get_paths(src: Tuple[str, ...]):
     return sources
 
 
-@click.command()
+@click.command(cls=RawHelp, help=HELP_MSG, epilog=EPILOG)
 @click.option(
     '--transform',
     type=TransformType(),
