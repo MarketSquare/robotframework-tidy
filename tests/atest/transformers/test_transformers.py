@@ -266,7 +266,6 @@ class TestNormalizeNewLines:
         )
 
 
-
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
 class TestSplitTooLongLine:
     TRANSFORMER_NAME = 'SplitTooLongLine'
