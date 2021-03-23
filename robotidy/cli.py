@@ -273,7 +273,6 @@ def cli(
         list_transformers: bool,
         describe_transformer: Optional[str]
 ):
-    click.echo(overwrite)
     if list_transformers:
         transformers = load_transformers(None)
         click.echo('Run --describe-transformer <transformer_name> to get more details. Transformers:')
@@ -310,5 +309,4 @@ def cli(
         check=check
     )
     status = tidy.transform_files()
-    click.echo(status)
     ctx.exit(status)
