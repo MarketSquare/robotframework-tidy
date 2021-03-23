@@ -72,7 +72,7 @@ class NormalizeNewLines(ModelTransformer):
         tokens = []
         for line in node.lines:
             if line[-1].type == Token.EOL:
-                line[-1].value = '\n'
+                line[-1].value = '\n'  # TODO: use global formatting in the future
             tokens.extend(line)
         node.tokens = tokens
         return node
