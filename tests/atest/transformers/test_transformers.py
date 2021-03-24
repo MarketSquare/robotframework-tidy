@@ -285,3 +285,11 @@ class TestSplitTooLongLine:
             expected=['split_on_every_arg.robot'],
             config=':line_length=80:split_on_every_arg=True -s 4'
         )
+
+
+@patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
+class TestAlignVariablesSection:
+    TRANSFORMER_NAME = 'AlignVariablesSection'
+
+    def test_align_variables(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['tests.robot'])

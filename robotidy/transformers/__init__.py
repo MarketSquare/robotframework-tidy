@@ -8,6 +8,7 @@ need to inherit from ``ModelTransformer`` or ``ast.NodeTransformer`` class. Fina
 from robot.utils.importer import Importer
 
 TRANSFORMERS = frozenset((
+    'AlignVariablesSection',
     'AssignmentNormalizer',
     'DiscardEmptySections',
     'NormalizeNewLines',
