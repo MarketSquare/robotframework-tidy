@@ -257,6 +257,14 @@ class TestNormalizeNewLines:
             config=':separate_templated_tests=True'
         )
 
+    @pytest.mark.parametrize('lines_at_the_end', [0, 1])
+    def test_test_case_last(self, lines_at_the_end):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=[f'test_case_last_{lines_at_the_end}_lines.robot'],
+            expected=['test_case_last.robot']
+        )
+
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
 class TestSplitTooLongLine:

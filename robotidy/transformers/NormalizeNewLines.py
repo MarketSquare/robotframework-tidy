@@ -3,7 +3,8 @@ import ast
 
 from robot.api.parsing import (
     ModelTransformer,
-    EmptyLine
+    EmptyLine,
+    Token
 )
 
 
@@ -41,7 +42,6 @@ class NormalizeNewLines(ModelTransformer):
         self.trim_trailing_empty_lines(node)
         empty_line = EmptyLine.from_params()
         if node is self.last_section:
-            node.body.append(empty_line)
             return self.generic_visit(node)
         node.body.extend([empty_line] * self.section_lines)
         return self.generic_visit(node)
@@ -57,23 +57,31 @@ class NormalizeNewLines(ModelTransformer):
     def visit_TestCase(self, node):  # noqa
         self.trim_leading_empty_lines(node)
         self.trim_trailing_empty_lines(node)
-        if node is self.last_test:
-            return node
-        if not self.templated:
+        if node is not self.last_test and not self.templated:
             node.body.extend([EmptyLine.from_params()] * self.test_case_lines)
-        return node
+        return self.generic_visit(node)
 
     def visit_Keyword(self, node):  # noqa
         self.trim_leading_empty_lines(node)
         self.trim_trailing_empty_lines(node)
-        if node is self.last_keyword:
-            return node
-        node.body.extend([EmptyLine.from_params()] * self.keyword_lines)
+        if node is not self.last_keyword:
+            node.body.extend([EmptyLine.from_params()] * self.keyword_lines)
+        return self.generic_visit(node)
+
+    def visit_Statement(self, node):  # noqa
+        tokens = []
+        for line in node.lines:
+            if line[-1].type == Token.EOL:
+                line[-1].value = '\n'  # TODO: use global formatting in the future
+            tokens.extend(line)
+        node.tokens = tokens
         return node
 
     @staticmethod
     def trim_trailing_empty_lines(node):
-        while hasattr(node, 'body') and node.body and isinstance(node.body[-1], EmptyLine):
+        if not hasattr(node, 'body'):
+            return
+        while node.body and isinstance(node.body[-1], EmptyLine):
             node.body.pop()
 
     @staticmethod
