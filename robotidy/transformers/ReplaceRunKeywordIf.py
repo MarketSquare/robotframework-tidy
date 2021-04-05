@@ -71,8 +71,6 @@ class ReplaceRunKeywordIf(ModelTransformer):
     def visit_KeywordCall(self, node):  # noqa
         if not node.keyword:
             return node
-        if 'builtin' in node.keyword.lower():
-            pass
         if after_last_dot(normalize_name(node.keyword)) == 'runkeywordif':
             return self.create_branched(node)
         return node

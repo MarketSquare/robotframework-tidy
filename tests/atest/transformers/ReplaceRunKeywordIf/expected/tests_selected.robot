@@ -80,3 +80,6 @@ Test Content Merged Into One Keyword
 
 Empty
     Run Keyword If
+
+With BuiltIn
+    ${var}    BuiltIn.Run Keyword If    ${condition}    Keyword    ELSE    Set Variable  ${1}
