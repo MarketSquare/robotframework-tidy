@@ -296,3 +296,6 @@ class TestAlignVariablesSection:
 
     def test_align_with_optional_equal_signs(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['optional_equal_sign.robot'])
+
+    def test_align_with_long_comment(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['long_comment.robot'])
