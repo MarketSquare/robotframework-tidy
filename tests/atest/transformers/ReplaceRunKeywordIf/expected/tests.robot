@@ -122,3 +122,10 @@ Test Content Merged Into One Keyword
 
 Empty
     Run Keyword If
+
+With BuiltIn
+    IF    ${condition}
+        ${var}    Keyword
+    ELSE
+        ${var}    Set Variable    ${1}
+    END
