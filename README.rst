@@ -25,7 +25,7 @@ Installation
 
 You can install Robotidy by running::
 
-    pip install git+git://github.com/MarketSquare/robotframework-tidy
+    pip install robotframework-tidy
 
 Usage
 -----
