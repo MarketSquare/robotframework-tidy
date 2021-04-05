@@ -35,7 +35,7 @@ class AlignVariablesSection(ModelTransformer):
     def visit_VariableSection(self, node):  # noqa
         statements = []
         for child in node.body:
-            if child.type == 'EOL':
+            if child.type in (Token.EOL, Token.COMMENT):
                 statements.append(child)
             else:
                 statements.append(list(self.tokens_by_lines(child)))
