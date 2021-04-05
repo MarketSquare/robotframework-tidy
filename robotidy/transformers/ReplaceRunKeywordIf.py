@@ -8,7 +8,7 @@ from robot.api.parsing import (
     ElseIfHeader,
     KeywordCall
 )
-from robotidy.utils import normalize_name
+from robotidy.utils import normalize_name, after_last_dot
 from robotidy.decorators import check_start_end_line
 
 
@@ -71,7 +71,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
     def visit_KeywordCall(self, node):  # noqa
         if not node.keyword:
             return node
-        if normalize_name(node.keyword) == 'runkeywordif':
+        if after_last_dot(normalize_name(node.keyword)) == 'runkeywordif':
             return self.create_branched(node)
         return node
 

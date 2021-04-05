@@ -53,6 +53,10 @@ def normalize_name(name):
     return name.lower().replace('_', '').replace(' ', '')
 
 
+def after_last_dot(name):
+    return name.split('.')[-1]
+
+
 def node_within_lines(node_start, node_end, start_line, end_line):
     if start_line:
         if node_start < start_line:
