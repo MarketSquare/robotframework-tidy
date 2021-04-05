@@ -8,3 +8,5 @@ ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
 &{MULTILINE}                            a=b
 ...                                     b=c
 ...                                     d=1
+${invalid}
+${invalid_more}

@@ -54,20 +54,26 @@ class AlignVariablesSection(ModelTransformer):
                 continue
             aligned_statement = []
             for line in st:
-                for index, token in enumerate(line[:-1]):
+                for index, token in enumerate(line[:-2]):
                     aligned_statement.append(token)
                     aligned_statement.append(Token(Token.SEPARATOR, (look_up[index] - len(token.value) + 4) * ' '))
-                aligned_statement.append(line[-1])
-                aligned_statement.append(Token(Token.EOL, '\n'))  # TODO: use global newline
+                last_token = line[-2]
+                # remove leading whitespace before token
+                last_token.value = last_token.value.strip() if last_token.value else last_token.value
+                aligned_statement.append(last_token)
+                aligned_statement.append(line[-1])  # eol
             aligned_statements.append(Statement.from_tokens(aligned_statement))
         return aligned_statements
 
     def tokens_by_lines(self, node):
         for index, line in enumerate(node.lines):
-            if line and line[0].type == Token.VARIABLE and not line[0].value:
-                # if variable is prefixed with spaces
-                line = line[1:]
-            yield [token for token in line if token.type not in ('SEPARATOR', 'EOL', 'EOS')]
+            if line:
+                if line[0].type == Token.VARIABLE and not line[0].value:
+                    # if variable is prefixed with spaces
+                    line = line[1:]
+                elif line[0].type == Token.ARGUMENT:
+                    line[0].value = line[0].value.strip() if line[0].value else line[0].value
+            yield [token for token in line if token.type not in ('SEPARATOR', 'EOS')]
 
     @staticmethod
     def create_look_up(statements):
