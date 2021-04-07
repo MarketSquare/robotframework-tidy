@@ -6,7 +6,7 @@ from robot.api.parsing import (
 )
 from robot.parsing.model import Statement
 
-from robotidy.decorators import check_start_end_line
+from robotidy.utils import node_outside_selection
 
 
 class AlignVariablesSection(ModelTransformer):
@@ -31,11 +31,13 @@ class AlignVariablesSection(ModelTransformer):
 
     Supports global formatting params: ``--startline`` and ``--endline``.
     """
-    @check_start_end_line
+
     def visit_VariableSection(self, node):  # noqa
+        if node_outside_selection(node, self.formatting_config):
+            return node
         statements = []
         for child in node.body:
-            if child.type in (Token.EOL, Token.COMMENT):
+            if child.type in (Token.EOL, Token.COMMENT) or node_outside_selection(child, self.formatting_config):
                 statements.append(child)
             else:
                 statements.append(list(self.tokens_by_lines(child)))

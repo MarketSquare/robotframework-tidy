@@ -299,3 +299,19 @@ class TestAlignVariablesSection:
 
     def test_align_with_long_comment(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['long_comment.robot'])
+
+    def test_align_selected_whole(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['align_selected.robot'],
+            expected=['align_selected_whole.robot'],
+            config=' --startline 5 --endline 17'
+        )
+
+    def test_align_selected_part(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['align_selected.robot'],
+            expected=['align_selected_part.robot'],
+            config=' --startline 10 --endline 12'
+        )
