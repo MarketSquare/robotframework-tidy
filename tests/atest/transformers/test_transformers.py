@@ -315,4 +315,3 @@ class TestAlignVariablesSection:
             expected=['align_selected_part.robot'],
             config=' --startline 10 --endline 12'
         )
-
