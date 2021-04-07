@@ -70,6 +70,17 @@ def node_within_lines(node_start, node_end, start_line, end_line):
     return True
 
 
+def node_outside_selection(node, formatting_config):
+    """
+    Contrary to ``node_within_lines`` it just checks if node is fully outside selected lines.
+    Partial selection is usefull for transformers like aligning code.
+    """
+    if formatting_config.start_line and formatting_config.start_line > node.end_lineno or \
+            formatting_config.end_line and formatting_config.end_line < node.lineno:
+        return True
+    return False
+
+
 def split_args_from_name_or_path(name):
     """Split arguments embedded to name or path like ``Example:arg1:arg2``.
 
