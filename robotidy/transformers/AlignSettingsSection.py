@@ -22,7 +22,7 @@ class AlignSettingsSection(ModelTransformer):
         Test Timeout  1 min
             # this should be left aligned
 
-    Will be transformed to::
+    will be transformed to::
 
         *** Settings ***
         Library         SeleniumLibrary

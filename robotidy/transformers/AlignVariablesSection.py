@@ -21,7 +21,7 @@ class AlignVariablesSection(ModelTransformer):
         &{MULTILINE}  a=b
         ...  b=c
 
-    Will be transformed to::
+    will be transformed to::
 
         *** Variables ***
         ${VAR}          1
