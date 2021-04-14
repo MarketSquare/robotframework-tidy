@@ -57,7 +57,7 @@ class SplitTooLongLine(ModelTransformer):
         comments, tail, line = [], [], head
 
         # Comments with separators inside them are split into
-        # [COMMENT, SEPARATOR, COMMENT] tokens in theF AST, so in order to preserve the
+        # [COMMENT, SEPARATOR, COMMENT] tokens in the AST, so in order to preserve the
         # original comment, we need a lookback on the separator tokens.
         last_separator = None
 
