@@ -73,7 +73,7 @@ def node_within_lines(node_start, node_end, start_line, end_line):
 def node_outside_selection(node, formatting_config):
     """
     Contrary to ``node_within_lines`` it just checks if node is fully outside selected lines.
-    Partial selection is usefull for transformers like aligning code.
+    Partial selection is useful for transformers like aligning code.
     """
     if formatting_config.start_line and formatting_config.start_line > node.end_lineno or \
             formatting_config.end_line and formatting_config.end_line < node.lineno:
