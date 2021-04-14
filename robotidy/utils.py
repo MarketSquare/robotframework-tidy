@@ -1,7 +1,11 @@
 import os
 from typing import List
 
-from robot.parsing.model.visitor import ModelVisitor
+from robot.api.parsing import (
+    ModelVisitor,
+    Token
+)
+from robot.parsing.model import Statement
 
 
 class StatementLinesCollector(ModelVisitor):
@@ -73,7 +77,7 @@ def node_within_lines(node_start, node_end, start_line, end_line):
 def node_outside_selection(node, formatting_config):
     """
     Contrary to ``node_within_lines`` it just checks if node is fully outside selected lines.
-    Partial selection is usefull for transformers like aligning code.
+    Partial selection is useful for transformers like aligning code.
     """
     if formatting_config.start_line and formatting_config.start_line > node.end_lineno or \
             formatting_config.end_line and formatting_config.end_line < node.lineno:
@@ -108,3 +112,29 @@ def _get_arg_separator_index_from_name_or_path(name):
     if semicolon_index == -1:
         return colon_index
     return min(colon_index, semicolon_index)
+
+
+def round_to_four(number):
+    div = number % 4
+    if div:
+        return number + 4 - div
+    return number
+
+
+def tokens_by_lines(node):
+    for index, line in enumerate(node.lines):
+        if line:
+            if line[0].type == Token.VARIABLE and not line[0].value:
+                # if variable is prefixed with spaces
+                line = line[1:]
+            elif line[0].type == Token.ARGUMENT:
+                line[0].value = line[0].value.strip() if line[0].value else line[0].value
+        yield [token for token in line if token.type not in ('SEPARATOR', 'EOS')]
+
+
+def left_align(node):
+    """ remove leading separator token """
+    tokens = list(node.tokens)
+    if tokens:
+        tokens[0].value = tokens[0].value.lstrip(' \t')
+    return Statement.from_tokens(tokens)
