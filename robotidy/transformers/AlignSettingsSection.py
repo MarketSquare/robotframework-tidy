@@ -6,7 +6,12 @@ from robot.api.parsing import (
 )
 from robot.parsing.model import Statement
 
-from robotidy.utils import node_outside_selection
+from robotidy.utils import (
+    node_outside_selection,
+    round_to_four,
+    tokens_by_lines,
+    left_align
+)
 
 
 class AlignSettingsSection(ModelTransformer):
@@ -47,12 +52,12 @@ class AlignSettingsSection(ModelTransformer):
             return node
         statements = []
         for child in node.body:
-            if child.type == Token.EOL or node_outside_selection(child, self.formatting_config):
+            if node_outside_selection(child, self.formatting_config):
                 statements.append(child)
-            elif child.type == Token.COMMENT:
-                statements.append(self.left_align(child))
+            elif child.type in (Token.EOL, Token.COMMENT):
+                statements.append(left_align(child))
             else:
-                statements.append(list(self.tokens_by_lines(child)))
+                statements.append(list(tokens_by_lines(child)))
         nodes_to_be_aligned = [st for st in statements if isinstance(st, list)]
         if not nodes_to_be_aligned:
             return node
@@ -82,24 +87,6 @@ class AlignSettingsSection(ModelTransformer):
             aligned_statements.append(Statement.from_tokens(aligned_statement))
         return aligned_statements
 
-    def tokens_by_lines(self, node):
-        for index, line in enumerate(node.lines):
-            if line:
-                if line[0].type == Token.VARIABLE and not line[0].value:
-                    # if variable is prefixed with spaces
-                    line = line[1:]
-                elif line[0].type == Token.ARGUMENT:
-                    line[0].value = line[0].value.strip() if line[0].value else line[0].value
-            yield [token for token in line if token.type not in ('SEPARATOR', 'EOS')]
-
-    @staticmethod
-    def left_align(node):
-        """ remove leading separator token """
-        tokens = list(node.tokens)
-        while tokens and tokens[0].type == Token.SEPARATOR:
-            tokens.pop(0)
-        return Statement.from_tokens(tokens)
-
     @staticmethod
     def create_look_up(statements, up_to_column=-1):
         look_up = defaultdict(int)
@@ -108,11 +95,4 @@ class AlignSettingsSection(ModelTransformer):
                 up_to = up_to_column if up_to_column != -1 else len(line)
                 for index, token in enumerate(line[:up_to]):
                     look_up[index] = max(look_up[index], len(token.value))
-        return {index: AlignSettingsSection.round_to_four(length) for index, length in look_up.items()}
-
-    @staticmethod
-    def round_to_four(number):
-        div = number % 4
-        if div:
-            return number + 4 - div
-        return number
+        return {index: round_to_four(length) for index, length in look_up.items()}

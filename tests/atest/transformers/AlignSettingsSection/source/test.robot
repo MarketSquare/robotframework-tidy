@@ -17,11 +17,11 @@ Documentation     Example using the space separated format.
 Default Tags       default tag 1    default tag 2    default tag 3    default tag 4    default tag 5
 Test Setup       Open Application    App A
 Test Teardown    Close Application
-
+    
 Metadata  Version  2.0
 Metadata      More Info  For more information about *Robot Framework* see http://robotframework.org
 Metadata     Executed At  {HOST}
-
+ # this should be left aligned
 Test Template
 
 *** Keywords ***
