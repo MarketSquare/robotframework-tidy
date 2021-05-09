@@ -315,3 +315,47 @@ class TestAlignVariablesSection:
             expected=['align_selected_part.robot'],
             config=' --startline 10 --endline 12'
         )
+
+
+@patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
+class TestAlignSettingsSection:
+    TRANSFORMER_NAME = 'AlignSettingsSection'
+
+    def test_align_settings(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['test.robot'],
+            expected=['all_columns.robot']
+        )
+
+    def test_align_two_columns(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['test.robot'],
+            expected=['two_columns.robot'],
+            config=':up_to_column=2'
+        )
+
+    def test_align_three_columns(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['test.robot'],
+            expected=['three_columns.robot'],
+            config=':up_to_column=3'
+        )
+
+    def test_align_selected_whole(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['test.robot'],
+            expected=['selected_whole.robot'],
+            config=' --startline 1 --endline 25'
+        )
+
+    def test_align_selected_part(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['test.robot'],
+            expected=['selected_part.robot'],
+            config=' --startline 9 --endline 14'
+        )
