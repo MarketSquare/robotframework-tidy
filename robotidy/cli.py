@@ -106,6 +106,9 @@ def find_project_root(srcs: Iterable[str]) -> Path:
         if (directory / "robotidy.toml").is_file():
             return directory
 
+        if (directory / "pyproject.toml").is_file():
+            return directory
+
     return directory
 
 
@@ -115,49 +118,58 @@ def find_config(src_paths: Iterable[str]) -> Optional[str]:
     return str(config_path) if config_path.is_file() else None
 
 
-def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]) -> Optional[str]:
-    # if --config was not used, try to find robotidy.toml file
-    if not value:
-        value = find_config(ctx.params.get("src", ()))
-        if value is None:
-            return None
+def find_and_read_config(src_paths: Iterable[str]) -> Dict[str, Any]:
+    project_root = find_project_root(src_paths)
+    config_path = project_root / 'robotidy.toml'
+    if config_path.is_file():
+        return read_robotidy_config(str(config_path))
+    pyproject_path = project_root / 'pyproject.toml'
+    if pyproject_path.is_file():
+        return read_pyproject_config(str(pyproject_path))
+
+
+def load_toml_file(path: str) -> Dict[str, Any]:
     try:
-        config = parse_config(value)
+        return toml.load(path)
     except (toml.TomlDecodeError, OSError) as e:
         raise click.FileError(
-            filename=value, hint=f"Error reading configuration file: {e}"
+            filename=path, hint=f"Error reading configuration file: {e}"
         )
-    click.echo(f'Reading config from {value}')
-    if not config:
-        return None
+
+
+def read_pyproject_config(path: str) -> Dict[str, Any]:
+    click.echo('Reading pyproject.toml')
+    config = load_toml_file(path)
+    config = config.get("tool", {}).get("robotidy", {})
+    return {k.replace('--', '').replace('-', '_'): v for k, v in config.items()}
+
+
+def read_robotidy_config(path: str) -> Dict[str, Any]:
+    config = load_toml_file(path)
+    return {k.replace('--', '').replace('-', '_'): v for k, v in config.items()}
+
+
+def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]) -> Optional[str]:
+    # if --config was not used, try to find pyproject.toml or robotidy.toml file
+    if value:
+        config = read_robotidy_config(value)
     else:
-        # Sanitize the values to be Click friendly. For more information please see:
-        # https://github.com/psf/black/issues/1458
-        # https://github.com/pallets/click/issues/1567
-        config = {
-            k: str(v) if not isinstance(v, (list, dict)) else v
-            for k, v in config.items()
-        }
+        config = find_and_read_config(ctx.params.get("src", ()))
+    if not config:
+        return
+    # Sanitize the values to be Click friendly. For more information please see:
+    # https://github.com/psf/black/issues/1458
+    # https://github.com/pallets/click/issues/1567
+    config = {
+        k: str(v) if not isinstance(v, (list, dict)) else v
+        for k, v in config.items()
+    }
 
     default_map: Dict[str, Any] = {}
     if ctx.default_map:
         default_map.update(ctx.default_map)
-    default_map.update(config.get('main', {}))
-
-    transformers = []
-    for transformer, configurables in config.get('transformers', {}).items():
-        if configurables:
-            transformer += ':' + ':'.join(f'{key}={value}' for key, value in configurables.items())
-        transformers.append(transformer)
-    default_map['transform'] = transformers
-
+    default_map.update(config)
     ctx.default_map = default_map
-    return value
-
-
-def parse_config(path: str) -> Dict[str, Any]:
-    config = toml.load(path)
-    return {k.replace('--', '').replace('-', '_'): v for k, v in config.items()}
 
 
 def iterate_dir(paths: Iterable[Path]) -> Iterator[Path]:

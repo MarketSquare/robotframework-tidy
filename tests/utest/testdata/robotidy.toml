@@ -1,9 +1,7 @@
-[main]
 overwrite = false
 diff = false
 spacecount = 4
-
-[transformers]
-    [transformers.DiscardEmptySections]
-        allow_only_comments = true
-    [transformers.ReplaceRunKeywordIf]
+transform = [
+   "DiscardEmptySections:allow_only_comments=True",
+   "ReplaceRunKeywordIf"
+]

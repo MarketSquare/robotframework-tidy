@@ -8,7 +8,7 @@ from .utils import run_tidy, save_tmp_model
 from robotidy.cli import (
     find_project_root,
     find_config,
-    parse_config,
+    read_robotidy_config,
     read_config
 )
 from robotidy.utils import node_within_lines
@@ -71,26 +71,8 @@ class TestCli:
         path = find_config([src])
         assert path == str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
 
-    def test_parse_config(self):
+    def test_read_robotidy_config(self):
         expected_config = {
-            'main': {
-                'overwrite': False,
-                'diff': False,
-                'spacecount': 4
-            },
-            'transformers': {
-                'DiscardEmptySections': {
-                    'allow_only_comments': True
-                },
-                'ReplaceRunKeywordIf': {}
-            }
-        }
-        config_path = str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
-        config = parse_config(config_path)
-        assert config == expected_config
-
-    def test_read_config_from_param(self):
-        expected_parsed_config = {
             'overwrite': False,
             'diff': False,
             'spacecount': 4,
@@ -100,17 +82,30 @@ class TestCli:
             ]
         }
         config_path = str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
+        config = read_robotidy_config(config_path)
+        assert config == expected_config
+
+    def test_read_config_from_param(self):
+        expected_parsed_config = {
+            'overwrite': 'False',
+            'diff': 'False',
+            'spacecount': '4',
+            'transform': [
+                'DiscardEmptySections:allow_only_comments=True',
+                'ReplaceRunKeywordIf'
+            ]
+        }
+        config_path = str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
         ctx_mock = MagicMock()
         param_mock = Mock()
-        config = read_config(ctx_mock, param_mock, config_path)
+        read_config(ctx_mock, param_mock, config_path)
         assert ctx_mock.default_map == expected_parsed_config
-        assert config == config_path
 
     def test_read_config_without_param(self):
         expected_parsed_config = {
-            'overwrite': False,
-            'diff': False,
-            'spacecount': 4,
+            'overwrite': 'False',
+            'diff': 'False',
+            'spacecount': '4',
             'transform': [
                 'DiscardEmptySections:allow_only_comments=True',
                 'ReplaceRunKeywordIf'
@@ -120,9 +115,8 @@ class TestCli:
         ctx_mock = MagicMock()
         ctx_mock.params = {'src': [config_path]}
         param_mock = Mock()
-        config = read_config(ctx_mock, param_mock, value=None)
+        read_config(ctx_mock, param_mock, value=None)
         assert ctx_mock.default_map == expected_parsed_config
-        assert config == config_path
 
     @pytest.mark.parametrize('node_start, node_end, start_line, end_line, expected', [
         (15, 30, 15, None, True),

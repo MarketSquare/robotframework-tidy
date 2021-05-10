@@ -3,6 +3,6 @@ overwrite = false
 diff = false
 spacecount = 4
 
-[transformers]
-    [transformers.DiscardEmptySections]
+[transform]
+    [transform.DiscardEmptySections]
         allow_only_comments = true
