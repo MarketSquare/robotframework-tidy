@@ -3,16 +3,18 @@ from pathlib import Path
 
 from unittest.mock import MagicMock, Mock
 import pytest
+from click import FileError
 
 from .utils import run_tidy, save_tmp_model
 from robotidy.cli import (
     find_project_root,
-    find_config,
     read_robotidy_config,
+    read_pyproject_config,
     read_config
 )
 from robotidy.utils import node_within_lines
 from robotidy.transformers.ReplaceRunKeywordIf import ReplaceRunKeywordIf
+from robotidy.version import __version__
 
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
@@ -66,11 +68,6 @@ class TestCli:
         path = find_project_root([src])
         assert path == Path(Path(__file__).parent, 'testdata')
 
-    def test_find_config_toml_from_src(self):
-        src = Path(Path(__file__).parent, 'testdata', 'nested', 'test.robot')
-        path = find_config([src])
-        assert path == str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
-
     def test_read_robotidy_config(self):
         expected_config = {
             'overwrite': False,
@@ -84,6 +81,43 @@ class TestCli:
         config_path = str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
         config = read_robotidy_config(config_path)
         assert config == expected_config
+
+    def test_read_pyproject_config(self):
+        expected_parsed_config = {
+            'overwrite': False,
+            'diff': False,
+            'startline': 10,
+            'transform': [
+                'DiscardEmptySections:allow_only_comments=True',
+                'SplitTooLongLine'
+            ]
+        }
+        config_path = str(Path(Path(__file__).parent, 'testdata', 'only_pyproject', 'pyproject.toml'))
+        config = read_pyproject_config(config_path)
+        assert config == expected_parsed_config
+
+    def test_read_pyproject_config_e2e(self):
+        expected_parsed_config = {
+            'overwrite': 'False',
+            'diff': 'False',
+            'startline': '10',
+            'transform': [
+                'DiscardEmptySections:allow_only_comments=True',
+                'SplitTooLongLine'
+            ]
+        }
+        config_path = str(Path(Path(__file__).parent, 'testdata', 'only_pyproject'))
+        ctx_mock = MagicMock()
+        ctx_mock.params = {'src': [config_path]}
+        param_mock = Mock()
+        read_config(ctx_mock, param_mock, value=None)
+        assert ctx_mock.default_map == expected_parsed_config
+
+    def test_read_invalid_config(self):
+        config_path = str(Path(Path(__file__).parent, 'testdata', 'invalid_pyproject', 'pyproject.toml'))
+        with pytest.raises(FileError) as err:
+            read_pyproject_config(config_path)
+        assert 'Error reading configuration file: ' in str(err)
 
     def test_read_config_from_param(self):
         expected_parsed_config = {
@@ -138,6 +172,10 @@ class TestCli:
         result = run_tidy(['--describe-transformer', 'ReplaceRunKeywordIf'])
         assert ReplaceRunKeywordIf.__doc__ in result.output
 
+    def test_help(self):
+        result = run_tidy(['--help'])
+        assert f'Version: {__version__}' in result.output
+
     @pytest.mark.parametrize('source, return_status', [
         ('golden.robot', 0),
         ('not_golden.robot', 1)
@@ -148,3 +186,9 @@ class TestCli:
             ['--check', '--overwrite', '--transform', 'NormalizeSectionHeaderName', str(source)],
             exit_code=return_status
         )
+
+    def test_diff(self):
+        source = Path(Path(__file__).parent, 'testdata', 'check', 'not_golden.robot')
+        result = run_tidy(['--diff', '--no-overwrite', '--transform', 'NormalizeSectionHeaderName', str(source)])
+        assert "*** settings ***" in result.output
+        assert "*** Settings ***" in result.output

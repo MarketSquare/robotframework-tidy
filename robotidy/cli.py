@@ -112,12 +112,6 @@ def find_project_root(srcs: Iterable[str]) -> Path:
     return directory
 
 
-def find_config(src_paths: Iterable[str]) -> Optional[str]:
-    project_root = find_project_root(src_paths)
-    config_path = project_root / 'robotidy.toml'
-    return str(config_path) if config_path.is_file() else None
-
-
 def find_and_read_config(src_paths: Iterable[str]) -> Dict[str, Any]:
     project_root = find_project_root(src_paths)
     config_path = project_root / 'robotidy.toml'
@@ -130,7 +124,9 @@ def find_and_read_config(src_paths: Iterable[str]) -> Dict[str, Any]:
 
 def load_toml_file(path: str) -> Dict[str, Any]:
     try:
-        return toml.load(path)
+        config = toml.load(path)
+        click.echo(f"Loaded configuration from {path}")
+        return config
     except (toml.TomlDecodeError, OSError) as e:
         raise click.FileError(
             filename=path, hint=f"Error reading configuration file: {e}"
