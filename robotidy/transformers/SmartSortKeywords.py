@@ -3,6 +3,40 @@ from robot.parsing.model.blocks import Keyword
 
 
 class SmartSortKeywords(ModelTransformer):
+    """
+    Sort keywords in *** Keywords *** section.
+
+    By default sortin is case insensitve, but keywords with leading underscore go to the bottom. Other underscores are treated as spaces.
+    Empty lines (or lack of them) between keywords is preserved.
+
+    Following code::
+    *** Keywords ***
+    _my secrete keyword
+        Kw2
+
+    My Keyword
+        Kw1
+
+
+    my_another_cool_keyword
+    my another keyword
+        Kw3
+
+    Will be transformed to::
+    *** Keywords ***
+    my_another_cool_keyword
+
+    my another keyword
+        Kw3
+
+
+    My Keyword
+        Kw1
+    _my secrete keyword
+        Kw2
+
+    Default behavior could be changed using following parameters: ``case_insensitive``, ``ignore_leading_underscore`` and ``ignore_other_underscore``
+    """
 
     def __init__(self, case_insensitive=True, ignore_leading_underscore=False, ignore_other_underscore=True):
         self.ci = case_insensitive
