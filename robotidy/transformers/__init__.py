@@ -16,7 +16,8 @@ TRANSFORMERS = frozenset((
     'NormalizeSectionHeaderName',
     'NormalizeSettingName',
     'ReplaceRunKeywordIf',
-    'SplitTooLongLine'
+    'SplitTooLongLine',
+    'SmartSortKeywords'
 ))
 
 
