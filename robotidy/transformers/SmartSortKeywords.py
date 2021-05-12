@@ -56,10 +56,8 @@ class SmartSortKeywords(ModelTransformer):
         all_empty = []
         for kw in node.body:
             kw_empty = []
-            for index in range(len(kw.body) - 1, -1, -1):
-                if not isinstance(kw.body[index], EmptyLine):
-                    break
-                kw_empty.insert(0, kw.body.pop(index))
+            while kw.body and isistance(kw.body[-1], EmptyLine):
+                kw_empty.insert(0, kw.body.pop())
             all_empty.append(kw_empty)
         return all_empty
 
