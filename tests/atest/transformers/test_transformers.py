@@ -426,3 +426,17 @@ class TestSmartSortKeywords:
             expected=['sort_.robot'],
             config=":case_insensitive=False:ignore_other_underscore=False"
         )
+
+    def test_empty_section(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['empty_before_fist_keyword.robot'],
+            expected=['empty_before_fist_keyword.robot']
+        )
+
+    def test_multiple_sections(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['multiple_sections.robot'],
+            expected=['multiple_sections.robot']
+        )

@@ -46,9 +46,11 @@ class SmartSortKeywords(ModelTransformer):
     def visit_KeywordSection(self, node):  # noqa
         if not node.body:
             return node
+        before, after = self.leave_only_keywords(node)
         empty_lines = self.pop_empty_lines(node)
         node.body.sort(key=self.sort_function)
         self.append_empty_lines(node, empty_lines)
+        node.body = before + node.body + after
         return node
 
     @staticmethod
@@ -56,10 +58,19 @@ class SmartSortKeywords(ModelTransformer):
         all_empty = []
         for kw in node.body:
             kw_empty = []
-            while kw.body and isistance(kw.body[-1], EmptyLine):
+            while kw.body and isinstance(kw.body[-1], EmptyLine):
                 kw_empty.insert(0, kw.body.pop())
             all_empty.append(kw_empty)
         return all_empty
+
+    def leave_only_keywords(self, node):
+        before = []
+        after = []
+        while node.body and not isinstance(node.body[0], Keyword):
+            before.append(node.body.pop(0))
+        while node.body and not isinstance(node.body[-1], Keyword):
+            after.append(node.body.pop(-1))
+        return before, after
 
     def sort_function(self, kw):
         name = kw.name
