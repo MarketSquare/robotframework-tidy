@@ -96,12 +96,12 @@ You can list available options by running ``robotidy --help``::
 Configuration file
 -------------------
 Robotidy can read configuration from files with ``toml`` type. Options are loaded in following order:
- - auto-discovered configuration file (``robotidy.toml``)
+ - auto-discovered configuration file (``robotidy.toml`` or ``pyproject.toml`` inside ``[tool.robotidy]`` section)
  - configuration file passed with ``--config``
  - command line arguments
 
-By default if ``--config`` argument is not used, robotidy look for configuration file named ``robotidy.toml``
-in common directories for passed sources and execution directory.
+By default if ``--config`` argument is not used, robotidy look for configuration file in common directories
+for passed sources and execution directory.
 
 It is possible to mix configuration between config file and command line, but if the same parameters are used
 command line parameter value will be used instead (reference to loading order). It's important because
@@ -110,16 +110,13 @@ in one place.
 
 Example configuration file::
 
-    [main]
-    overwrite = false
-    diff = false
-    spacecount = 4
-
-    [transformers]
-        [transformers.DiscardEmptySections]
-            allow_only_comments = true
-        [transformers.ReplaceRunKeywordIf]
-
+   overwrite = false
+   diff = false
+   spacecount = 4
+   transform = [
+       "DiscardEmptySections:allow_only_comments=True",
+       "ReplaceRunKeywordIf"
+   ]
 
 .. Badges links
 
