@@ -13,6 +13,7 @@ from robotidy.cli import (
     read_config
 )
 from robotidy.utils import node_within_lines
+from robotidy.transformers import load_transformers
 from robotidy.transformers.ReplaceRunKeywordIf import ReplaceRunKeywordIf
 from robotidy.version import __version__
 
@@ -192,3 +193,11 @@ class TestCli:
         result = run_tidy(['--diff', '--no-overwrite', '--transform', 'NormalizeSectionHeaderName', str(source)])
         assert "*** settings ***" in result.output
         assert "*** Settings ***" in result.output
+
+    def test_disabled_transformer(self):
+        transformers = load_transformers(None)
+        assert 'SmartSortKeywords' not in transformers
+
+    def test_enable_disable_transformer(self):
+        transformers = load_transformers([('SmartSortKeywords', [])])
+        assert 'SmartSortKeywords' in transformers

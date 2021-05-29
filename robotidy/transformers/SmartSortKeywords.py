@@ -6,7 +6,8 @@ class SmartSortKeywords(ModelTransformer):
     """
     Sort keywords in *** Keywords *** section.
 
-    By default sortin is case insensitve, but keywords with leading underscore go to the bottom. Other underscores are treated as spaces.
+    By default sortin is case insensitve, but keywords with leading underscore go to the bottom. Other underscores are
+    treated as spaces.
     Empty lines (or lack of them) between keywords is preserved.
 
     Following code::
@@ -35,8 +36,10 @@ class SmartSortKeywords(ModelTransformer):
     _my secrete keyword
         Kw2
 
-    Default behaviour could be changed using following parameters: ``case_insensitive``, ``ignore_leading_underscore`` and ``ignore_other_underscore``
+    Default behaviour could be changed using following parameters: ``case_insensitive``, ``ignore_leading_underscore``
+    and ``ignore_other_underscore``.
     """
+    ENABLED = False
 
     def __init__(self, case_insensitive=True, ignore_leading_underscore=False, ignore_other_underscore=True):
         self.ci = case_insensitive
@@ -63,7 +66,8 @@ class SmartSortKeywords(ModelTransformer):
             all_empty.append(kw_empty)
         return all_empty
 
-    def leave_only_keywords(self, node):
+    @staticmethod
+    def leave_only_keywords(node):
         before = []
         after = []
         while node.body and not isinstance(node.body[0], Keyword):
@@ -85,6 +89,6 @@ class SmartSortKeywords(ModelTransformer):
 
     @staticmethod
     def append_empty_lines(node, empty_lines):
-        for kw, empty_lines in zip(node.body, empty_lines):
-            for line in empty_lines:
+        for kw, lines in zip(node.body, empty_lines):
+            for line in lines:
                 kw.body.append(line)
