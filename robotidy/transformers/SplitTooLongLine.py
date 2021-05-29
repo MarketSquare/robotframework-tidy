@@ -42,15 +42,21 @@ class SplitTooLongLine(ModelTransformer):
             return node
         return self.split_keyword_call(node)
 
+    @staticmethod
+    def join_on_separator(tokens, separator):
+        for token in tokens:
+            yield token
+            yield separator
+
     def split_keyword_call(self, node):
         separator = Token(Token.SEPARATOR, self.formatting_config.space_count * ' ')
         indent = node.tokens[0]
 
-        assignment = node.get_token(Token.ASSIGN)
+        assignment = node.get_tokens(Token.ASSIGN)
         keyword = node.get_token(Token.KEYWORD)
 
         if assignment:
-            head = [indent, assignment, separator, keyword]
+            head = [indent, *self.join_on_separator(assignment, separator), keyword]
         else:
             head = [indent, keyword]
 
