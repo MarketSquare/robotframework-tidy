@@ -60,7 +60,7 @@ class MergeAndOrderSections(ModelTransformer):
             new_line = [Token(Token.EOL, '\n')]
             if hasattr(last_statement, 'body'):
                 last_statement = last_statement.body[-1]
-                if hasattr(last_statement, 'end'):
+                if getattr(last_statement, 'end', None):
                     node.body[-1].body[-1].end = Statement.from_tokens(list(last_statement.end.tokens[:-1]) + new_line)
                 else:
                     node.body[-1].body[-1] = Statement.from_tokens(list(last_statement.tokens[:-1]) + new_line)

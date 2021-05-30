@@ -445,10 +445,13 @@ class TestMergeAndOrderSections:
         run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['both_test_and_task.robot'])
 
     def test_multiple_header_comments(self):
-        run_tidy_and_compare(self.TRANSFORMER_NAME,sources=['multiple_header_comments.robot'])
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['multiple_header_comments.robot'])
 
     def test_nested_blocks(self):
-        run_tidy_and_compare(self.TRANSFORMER_NAME,sources=['nested_blocks.robot'])
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['nested_blocks.robot'])
+
+    def test_nested_block_for(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['nested_block_for.robot'])
 
     def test_empty_section(self):
-        run_tidy_and_compare(self.TRANSFORMER_NAME,sources=['empty_section.robot'])
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['empty_section.robot'])
