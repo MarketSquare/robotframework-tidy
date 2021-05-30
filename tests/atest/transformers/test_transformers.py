@@ -455,3 +455,6 @@ class TestMergeAndOrderSections:
 
     def test_empty_section(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['empty_section.robot'])
+
+    def test_parsing_error(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['parsing_error.robot'])

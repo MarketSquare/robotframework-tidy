@@ -18,6 +18,7 @@ class MergeAndOrderSections(ModelTransformer):
         )
 
     def visit_File(self, node):
+        print(node.source)
         if len(node.sections) < 2:
             return node
         sections = {}
@@ -33,7 +34,7 @@ class MergeAndOrderSections(ModelTransformer):
                 }
             else:
                 if len(header.data_tokens) > 1:
-                    print('Merged duplicated section has section header comments. '
+                    print(f'{node.source}: Merged duplicated section has section header comments. '
                           'Only header comments from first section header of the same type are preserved.')
                 sections[section_type]['body'] += body
         node.sections = []
@@ -60,8 +61,11 @@ class MergeAndOrderSections(ModelTransformer):
             new_line = [Token(Token.EOL, '\n')]
             if hasattr(last_statement, 'body'):
                 last_statement = last_statement.body[-1]
-                if getattr(last_statement, 'end', None):
-                    node.body[-1].body[-1].end = Statement.from_tokens(list(last_statement.end.tokens[:-1]) + new_line)
+                if hasattr(last_statement, 'end'):
+                    if last_statement.end:
+                        node.body[-1].body[-1].end = Statement.from_tokens(
+                            list(last_statement.end.tokens[:-1]) + new_line
+                        )
                 else:
                     node.body[-1].body[-1] = Statement.from_tokens(list(last_statement.tokens[:-1]) + new_line)
             else:
