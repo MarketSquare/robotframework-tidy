@@ -428,15 +428,27 @@ class TestSmartSortKeywords:
         )
 
     def test_empty_section(self):
-        run_tidy_and_compare(
-            self.TRANSFORMER_NAME,
-            sources=['empty_before_fist_keyword.robot'],
-            expected=['empty_before_fist_keyword.robot']
-        )
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['empty_before_fist_keyword.robot'])
 
     def test_multiple_sections(self):
-        run_tidy_and_compare(
-            self.TRANSFORMER_NAME,
-            sources=['multiple_sections.robot'],
-            expected=['multiple_sections.robot']
-        )
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['multiple_sections.robot'])
+
+
+@patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
+class TestMergeAndOrderSections:
+    TRANSFORMER_NAME = 'MergeAndOrderSections'
+
+    def test_merging_and_ordering(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['tests.robot'])
+
+    def test_both_test_and_task(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['both_test_and_task.robot'])
+
+    def test_multiple_header_comments(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME,sources=['multiple_header_comments.robot'])
+
+    def test_nested_blocks(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME,sources=['nested_blocks.robot'])
+
+    def test_empty_section(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME,sources=['empty_section.robot'])
