@@ -18,7 +18,6 @@ class MergeAndOrderSections(ModelTransformer):
         )
 
     def visit_File(self, node):
-        print(node.source)
         if len(node.sections) < 2:
             return node
         sections = {}
