@@ -11,6 +11,7 @@ then add ``ENABLED = False`` class attribute inside.
 from robot.utils.importer import Importer
 
 TRANSFORMERS = frozenset((
+    'MergeAndOrderSections',
     'AlignSettingsSection',
     'AlignVariablesSection',
     'AssignmentNormalizer',
