@@ -27,18 +27,18 @@ TRANSFORMERS = [
 
 def load_transformers(allowed_transformers):
     """ Dynamically load all classes from this file with attribute `name` defined in allowed_transformers """
-    loaded_transformers = dict()
+    loaded_transformers = []
     if allowed_transformers:
 
         for name, args in allowed_transformers:
             import_name = f'robotidy.transformers.{name}' if name in TRANSFORMERS else name
-            loaded_transformers[name] = Importer().import_class_or_module(
+            loaded_transformers.append(Importer().import_class_or_module(
                 import_name,
                 instantiate_with_args=args
-            )
+            ))
     else:
         for name in TRANSFORMERS:
             imported_class = Importer().import_class_or_module(f'robotidy.transformers.{name}', instantiate_with_args=())
             if getattr(imported_class, 'ENABLED', True):
-                loaded_transformers[name] = imported_class
+                loaded_transformers.append(imported_class)
     return loaded_transformers
