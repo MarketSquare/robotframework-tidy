@@ -376,6 +376,11 @@ class TestAlignSettingsSection:
             config=' --startline 9 --endline 14'
         )
 
+    def test_empty_lines_inside_statement(self):
+        # bug from #75
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['empty_lines.robot'])
+
+
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
 class TestSmartSortKeywords:
     TRANSFORMER_NAME = 'SmartSortKeywords'
