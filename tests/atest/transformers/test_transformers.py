@@ -479,3 +479,11 @@ class TestMergeAndOrderSections:
 
     def test_parsing_error(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['parsing_error.robot'])
+
+
+@patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
+class TestRemoveEmptySettings:
+    TRANSFORMER_NAME = 'RemoveEmptySettings'
+
+    def test_remove_empty_settings(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['test.robot'])
