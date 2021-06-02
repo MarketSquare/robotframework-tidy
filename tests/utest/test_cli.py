@@ -196,8 +196,8 @@ class TestCli:
 
     def test_disabled_transformer(self):
         transformers = load_transformers(None)
-        assert 'SmartSortKeywords' not in transformers
+        assert all(transformer.__class__.__name__ != 'SmartSortKeywords' for transformer in transformers)
 
     def test_enable_disable_transformer(self):
         transformers = load_transformers([('SmartSortKeywords', [])])
-        assert 'SmartSortKeywords' in transformers
+        assert transformers[0].__class__.__name__ == 'SmartSortKeywords'

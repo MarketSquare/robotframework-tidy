@@ -37,7 +37,7 @@ class Robotidy:
                 click.echo(f'Transforming {source} file')
             model = get_model(source)
             old_model = StatementLinesCollector(model)
-            for transformer in self.transformers.values():
+            for transformer in self.transformers:
                 # inject global settings TODO: handle it better
                 setattr(transformer, 'formatting_config', self.formatting_config)
                 transformer.visit(model)

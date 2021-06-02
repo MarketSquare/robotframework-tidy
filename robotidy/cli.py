@@ -327,13 +327,14 @@ def cli(
         transformers = load_transformers(None)
         click.echo('Run --describe-transformer <transformer_name> to get more details. Transformers:')
         for transformer in transformers:
-            click.echo(transformer)
+            click.echo(transformer.__class__.__name__)
         ctx.exit(0)
     if describe_transformer is not None:
         transformers = load_transformers(None)
-        if describe_transformer in transformers:
+        transformer_by_names = {transformer.__class__.__name__: transformer for transformer in transformers}
+        if describe_transformer in transformer_by_names:
             click.echo(f"Transformer {describe_transformer}:")
-            click.echo(transformers[describe_transformer].__doc__)
+            click.echo(transformer_by_names[describe_transformer].__doc__)
         else:
             click.echo(f"Transformer with the name '{describe_transformer}' does not exist")
         ctx.exit(0)
