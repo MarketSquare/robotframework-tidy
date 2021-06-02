@@ -34,8 +34,15 @@ class AlignVariablesSection(ModelTransformer):
         &{MULTILINE}    a=b
         ...             b=c
 
+    You can configure how many columns should be aligned to longest token in given column. The remaining columns
+    will use fixed length separator length ``--space_count``. To only align first two columns::
+
+       robotidy --transform AlignVariablesSection:up_to_column=2
+
     Supports global formatting params: ``--startline`` and ``--endline``.
     """
+    def __init__(self, up_to_column: int = 0):
+        self.up_to_column = up_to_column - 1
 
     def visit_VariableSection(self, node):  # noqa
         if node_outside_selection(node, self.formatting_config):
@@ -63,9 +70,12 @@ class AlignVariablesSection(ModelTransformer):
                 continue
             aligned_statement = []
             for line in st:
+                up_to = self.up_to_column if self.up_to_column != -1 else len(line) - 2
                 for index, token in enumerate(line[:-2]):
                     aligned_statement.append(token)
-                    aligned_statement.append(Token(Token.SEPARATOR, (look_up[index] - len(token.value) + 4) * ' '))
+                    separator = (look_up[index] - len(token.value) + 4) * ' ' if index < up_to else \
+                        self.formatting_config.space_count * ' '
+                    aligned_statement.append(Token(Token.SEPARATOR, separator))
                 last_token = line[-2]
                 # remove leading whitespace before token
                 last_token.value = last_token.value.strip() if last_token.value else last_token.value
@@ -74,11 +84,11 @@ class AlignVariablesSection(ModelTransformer):
             aligned_statements.append(Statement.from_tokens(aligned_statement))
         return aligned_statements
 
-    @staticmethod
-    def create_look_up(statements):
+    def create_look_up(self, statements):
         look_up = defaultdict(int)
         for st in statements:
             for line in st:
-                for index, token in enumerate(line):
+                up_to = self.up_to_column if self.up_to_column != -1 else len(line)
+                for index, token in enumerate(line[:up_to]):
                     look_up[index] = max(look_up[index], len(token.value))
         return {index: round_to_four(length) for index, length in look_up.items()}
