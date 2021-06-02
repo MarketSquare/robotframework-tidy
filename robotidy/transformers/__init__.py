@@ -10,19 +10,19 @@ then add ``ENABLED = False`` class attribute inside.
 """
 from robot.utils.importer import Importer
 
-TRANSFORMERS = frozenset((
+TRANSFORMERS = [
+    'DiscardEmptySections',
     'MergeAndOrderSections',
     'AlignSettingsSection',
     'AlignVariablesSection',
     'AssignmentNormalizer',
-    'DiscardEmptySections',
     'NormalizeNewLines',
     'NormalizeSectionHeaderName',
     'NormalizeSettingName',
     'ReplaceRunKeywordIf',
     'SplitTooLongLine',
     'SmartSortKeywords'
-))
+]
 
 
 def load_transformers(allowed_transformers):
