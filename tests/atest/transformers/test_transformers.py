@@ -495,3 +495,6 @@ class TestMergeAndOrderSections:
 
     def test_parsing_error(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['parsing_error.robot'])
+
+    def test_too_few_calls_in_keyword(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['too_few_calls_in_keyword.robot'])
