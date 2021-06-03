@@ -1,16 +1,9 @@
 *** Settings ***
-Documentation  doc
-Suite Setup    Keyword
-Suite Teardown    Keyword
 Metadata    doc=1
 Test Setup    Keyword
 Test Teardown    Keyword
-Test Template    Keyword
-Force Tags    tag
+Test Timeout    1 min
 Default Tags    tag
-Library    stuff.py
-Resource    resource.robot
-Variables    vars.py
 
 
 *** Test Cases ***
