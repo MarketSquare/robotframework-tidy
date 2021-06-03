@@ -50,7 +50,7 @@ class AssignmentNormalizer(ModelTransformer):
             ${var}    Keyword
 
     You can configure that behaviour to automatically add desired equal sign with ``equal_sign_type`` parameter
-    (possible types are: ``remove``, ``equal_sign`` ('='), ``space_and_equal_sign`` (' =').
+    (possible types are: ``autodetect`` (default), ``remove``, ``equal_sign`` ('='), ``space_and_equal_sign`` (' =').
 
     """
     def __init__(self, equal_sign_type: str = 'autodetect'):
