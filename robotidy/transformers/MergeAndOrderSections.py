@@ -1,7 +1,8 @@
 from robot.api.parsing import (
     Token,
     ModelTransformer,
-    SectionHeader
+    SectionHeader,
+    EmptyLine
 )
 from robot.parsing.model.blocks import Section
 from robot.parsing.model.statements import Statement
@@ -59,14 +60,17 @@ class MergeAndOrderSections(ModelTransformer):
             last_statement = node.body[-1]
             new_line = [Token(Token.EOL, '\n')]
             if hasattr(last_statement, 'body'):
-                last_statement = last_statement.body[-1]
-                if hasattr(last_statement, 'end'):
-                    if last_statement.end:
-                        node.body[-1].body[-1].end = Statement.from_tokens(
-                            list(last_statement.end.tokens[:-1]) + new_line
-                        )
+                if not last_statement.body:
+                    node.body[-1].body.append(EmptyLine.from_params(eol='\n'))
                 else:
-                    node.body[-1].body[-1] = Statement.from_tokens(list(last_statement.tokens[:-1]) + new_line)
+                    last_statement = last_statement.body[-1]
+                    if hasattr(last_statement, 'end'):
+                        if last_statement.end:
+                            node.body[-1].body[-1].end = Statement.from_tokens(
+                                list(last_statement.end.tokens[:-1]) + new_line
+                            )
+                    else:
+                        node.body[-1].body[-1] = Statement.from_tokens(list(last_statement.tokens[:-1]) + new_line)
             else:
                 node.body[-1] = Statement.from_tokens(list(last_statement.tokens[:-1]) + new_line)
         else:

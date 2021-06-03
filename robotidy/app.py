@@ -33,6 +33,7 @@ class Robotidy:
     def transform_files(self):
         changed_files = 0
         for source in self.sources:
+            print(source)
             if self.verbose:
                 click.echo(f'Transforming {source} file')
             model = get_model(source)
