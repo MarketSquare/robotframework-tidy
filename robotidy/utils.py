@@ -6,6 +6,7 @@ from robot.api.parsing import (
     Token
 )
 from robot.parsing.model import Statement
+from click import style
 
 
 class StatementLinesCollector(ModelVisitor):
@@ -42,13 +43,13 @@ def decorate_diff_with_color(contents: List[str]) -> str:
     """Inject the ANSI color codes to the diff."""
     for i, line in enumerate(contents):
         if line.startswith("+++") or line.startswith("---"):
-            line = f"\033[1;37m{line}\033[0m"  # bold white, reset
+            line = style(line, bold=True, reset=True)
         elif line.startswith("@@"):
-            line = f"\033[36m{line}\033[0m"  # cyan, reset
+            line = style(line, fg='cyan', reset=True)
         elif line.startswith("+"):
-            line = f"\033[32m{line}\033[0m"  # green, reset
+            line = style(line, fg='green', reset=True)
         elif line.startswith("-"):
-            line = f"\033[31m{line}\033[0m"  # red, reset
+            line = style(line, fg='red', reset=True)
         contents[i] = line
     return '\n'.join(contents)
 

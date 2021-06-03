@@ -25,8 +25,8 @@ class TestUtils:
             'signs + in the - middle @@ +++ ---'
         ]
         expected_lines = [
-            '\033[1;37m+++ color category\033[0m',
-            '\033[1;37m--- color category\033[0m',
+            '\033[1m+++ color category\033[0m',
+            '\033[1m--- color category\033[0m',
             '\033[32m+ new line\033[0m',
             '\033[31m- removed line\033[0m',
             '\033[36m@@ line numbers\033[0m',
