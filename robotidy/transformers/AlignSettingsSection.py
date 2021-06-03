@@ -61,11 +61,11 @@ class AlignSettingsSection(ModelTransformer):
         nodes_to_be_aligned = [st for st in statements if isinstance(st, list)]
         if not nodes_to_be_aligned:
             return node
-        look_up = self.create_look_up(nodes_to_be_aligned, self.up_to_column)  # for every col find longest value
-        node.body = self.align_rows(statements, look_up, self.up_to_column)
+        look_up = self.create_look_up(nodes_to_be_aligned)  # for every col find longest value
+        node.body = self.align_rows(statements, look_up)
         return node
 
-    def align_rows(self, statements, look_up, up_to_column=-1):
+    def align_rows(self, statements, look_up):
         aligned_statements = []
         for st in statements:
             if not isinstance(st, list):
@@ -73,7 +73,7 @@ class AlignSettingsSection(ModelTransformer):
                 continue
             aligned_statement = []
             for line in st:
-                up_to = up_to_column if up_to_column != -1 else len(line) - 2
+                up_to = self.up_to_column if self.up_to_column != -1 else len(line) - 2
                 for index, token in enumerate(line[:-2]):
                     aligned_statement.append(token)
                     separator = (look_up[index] - len(token.value) + 4) * ' ' if index < up_to else \
@@ -87,12 +87,11 @@ class AlignSettingsSection(ModelTransformer):
             aligned_statements.append(Statement.from_tokens(aligned_statement))
         return aligned_statements
 
-    @staticmethod
-    def create_look_up(statements, up_to_column=-1):
+    def create_look_up(self, statements):
         look_up = defaultdict(int)
         for st in statements:
             for line in st:
-                up_to = up_to_column if up_to_column != -1 else len(line)
+                up_to = self.up_to_column if self.up_to_column != -1 else len(line)
                 for index, token in enumerate(line[:up_to]):
                     look_up[index] = max(look_up[index], len(token.value))
         return {index: round_to_four(length) for index, length in look_up.items()}

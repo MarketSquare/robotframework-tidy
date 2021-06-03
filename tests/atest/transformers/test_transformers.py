@@ -310,6 +310,22 @@ class TestAlignVariablesSection:
     def test_align_variables(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['tests.robot'])
 
+    def test_align_two_columns(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['tests.robot'],
+            expected=['two_columns.robot'],
+            config=':up_to_column=2'
+        )
+
+    def test_align_three_columns(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['tests.robot'],
+            expected=['three_columns.robot'],
+            config=':up_to_column=3'
+        )
+
     def test_align_with_optional_equal_signs(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['optional_equal_sign.robot'])
 
@@ -479,7 +495,9 @@ class TestMergeAndOrderSections:
 
     def test_parsing_error(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['parsing_error.robot'])
-
+        
+    def test_too_few_calls_in_keyword(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['too_few_calls_in_keyword.robot'])
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
 class TestRemoveEmptySettings:
@@ -504,3 +522,4 @@ class TestRemoveEmptySettings:
             expected=[f'{source}_{work_mode}_{more_explicit}.robot'],
             config=f'{work_mode_config}{more_explicit_config}'
         )
+
