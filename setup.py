@@ -40,7 +40,8 @@ setup(
     install_requires=[
         'robotframework>=4.0',
         'Click>=7.0',
-        'toml>=0.10.2'
+        'toml>=0.10.2',
+        'colorama>=0.4.3'
     ],
     extras_requires={
         'dev': ['pytest', 'pylama', 'pylama_pylint', 'coverage'],
