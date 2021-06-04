@@ -7,8 +7,8 @@ Variables  variables.py
 Test Timeout  1 min
 
 # this should be left aligned
-Library             CustomLibrary                                   WITH NAME       name
-Library             ArgsedLibrary                                   ${1}            ${2}    ${3}
+Library             CustomLibrary    WITH NAME    name
+Library             ArgsedLibrary    ${1}    ${2}    ${3}
 
 Documentation       Example using the space separated format.
 ...                 and this documentation is multiline
