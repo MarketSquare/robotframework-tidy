@@ -3,6 +3,7 @@ from difflib import unified_diff
 
 import click
 from robot.api import get_model
+from robot.errors import DataError
 
 from robotidy.transformers import load_transformers
 from robotidy.utils import (
@@ -33,20 +34,27 @@ class Robotidy:
     def transform_files(self):
         changed_files = 0
         for source in self.sources:
-            if self.verbose:
-                click.echo(f'Transforming {source} file')
-            model = get_model(source)
-            old_model = StatementLinesCollector(model)
-            for transformer in self.transformers:
-                # inject global settings TODO: handle it better
-                setattr(transformer, 'formatting_config', self.formatting_config)
-                transformer.visit(model)
-            new_model = StatementLinesCollector(model)
-            if new_model != old_model:
-                changed_files += 1
-            self.output_diff(model.source, old_model, new_model)
-            if not self.check:
-                self.save_model(model)
+            try:
+                print(source)
+                if self.verbose:
+                    click.echo(f'Transforming {source} file')
+                model = get_model(source)
+                old_model = StatementLinesCollector(model)
+                for transformer in self.transformers:
+                    # inject global settings TODO: handle it better
+                    setattr(transformer, 'formatting_config', self.formatting_config)
+                    transformer.visit(model)
+                new_model = StatementLinesCollector(model)
+                if new_model != old_model:
+                    changed_files += 1
+                self.output_diff(model.source, old_model, new_model)
+                if not self.check:
+                    self.save_model(model)
+            except DataError:
+                click.echo(
+                    f"Failed to decode {source}. Default supported encoding by Robot Framework is UTF-8. Skipping file"
+                )
+                pass
         if not self.check or not changed_files:
             return 0
         return 1

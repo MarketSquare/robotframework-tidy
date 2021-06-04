@@ -499,6 +499,37 @@ class TestMergeAndOrderSections:
     def test_too_few_calls_in_keyword(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['too_few_calls_in_keyword.robot'])
 
+    def test_default_order(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['order.robot'])
+
+    def test_custom_order(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['order.robot'],
+            expected=['order_settings_comments_keywords_variables_testcases.robot'],
+            config=':order=settings,comments,keyword,variables,testcases'
+        )
+
+    @pytest.mark.parametrize('parameter', [
+        'settings,variables,testcases,keyword',
+        'comments,settings,variables,testcases,variables,variables',
+        'comments,settings,variables,testcases,variables,INVALID'
+    ])
+    def test_invalid_order_parameter(self, parameter):
+        result = run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}:order={parameter}'.split(),
+            sources=['order.robot'],
+            exit_code=1
+        )
+        expected_output = f"Importing 'robotidy.transformers.{self.TRANSFORMER_NAME}' failed: " \
+                          "Creating instance failed: BadOptionUsage: Invalid configurable value: " \
+                          f"'{parameter}' for order for {self.TRANSFORMER_NAME} transformer. " \
+                          "Custom order should be provided in comma separated list with all section names:\n" \
+                          "order=comments,settings,variables,testcases,variables"
+        assert expected_output in str(result.exception)
+
+
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
 class TestRemoveEmptySettings:
     TRANSFORMER_NAME = 'RemoveEmptySettings'

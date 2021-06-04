@@ -131,9 +131,12 @@ def tokens_by_lines(node):
         if not any_non_sep(line):
             continue
         if line:
-            if line[0].type == Token.VARIABLE and not line[0].value:
-                # if variable is prefixed with spaces
-                line = line[1:]
+            if line[0].type == Token.VARIABLE:
+                if line[0].value:
+                    line[0].value = line[0].value.lstrip()
+                else:
+                    # if variable is prefixed with spaces
+                    line = line[1:]
             elif line[0].type == Token.ARGUMENT:
                 line[0].value = line[0].value.strip() if line[0].value else line[0].value
         yield [token for token in line if token.type not in (Token.SEPARATOR, Token.EOS)]

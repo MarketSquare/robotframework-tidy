@@ -13,3 +13,4 @@ ${invalid_more}
 
 # should be left aligned
 # should be left aligned
+${variable}                             1
