@@ -60,13 +60,13 @@ class RemoveEmptySettings(ModelTransformer):
             indent = node.tokens[0].value if node.tokens[0].type == Token.SEPARATOR else ''
             setting_token = node.data_tokens[0]
             separator = Token(Token.SEPARATOR, self.formatting_config.space_count * ' ')
-            return Statement.from_tokens([
+            node.tokens = [
                 Token(Token.SEPARATOR, indent),
                 setting_token,
                 separator,
                 Token(Token.ARGUMENT, 'NONE'),
-                Token(Token.EOL, '\n')]
-            )
+                Token(Token.EOL, '\n')
+            ]
         return node
 
     def visit_File(self, node):  # noqa

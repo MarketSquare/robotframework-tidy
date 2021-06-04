@@ -265,6 +265,18 @@ class TestNormalizeNewLines:
             expected=['test_case_last.robot']
         )
 
+    @pytest.mark.parametrize('empty_lines', [
+        0,
+        1,
+        2
+    ])
+    def test_consecutive_empty_lines(self, empty_lines):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['consecutive_empty_lines.robot'],
+            expected=[f'consecutive_empty_lines_{empty_lines}line.robot'],
+            config=f':consecutive_lines={empty_lines}')
+
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
 class TestSplitTooLongLine:
@@ -310,20 +322,20 @@ class TestAlignVariablesSection:
     def test_align_variables(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['tests.robot'])
 
-    def test_align_two_columns(self):
-        run_tidy_and_compare(
-            self.TRANSFORMER_NAME,
-            sources=['tests.robot'],
-            expected=['two_columns.robot'],
-            config=':up_to_column=2'
-        )
-
     def test_align_three_columns(self):
         run_tidy_and_compare(
             self.TRANSFORMER_NAME,
             sources=['tests.robot'],
             expected=['three_columns.robot'],
             config=':up_to_column=3'
+        )
+
+    def test_align_all_columns(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['tests.robot'],
+            expected=['all_columns.robot'],
+            config=':up_to_column=0'
         )
 
     def test_align_with_optional_equal_signs(self):
@@ -353,19 +365,15 @@ class TestAlignVariablesSection:
 class TestAlignSettingsSection:
     TRANSFORMER_NAME = 'AlignSettingsSection'
 
-    def test_align_settings(self):
-        run_tidy_and_compare(
-            self.TRANSFORMER_NAME,
-            sources=['test.robot'],
-            expected=['all_columns.robot']
-        )
+    def test_align(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['test.robot'])
 
-    def test_align_two_columns(self):
+    def test_align_all_columns(self):
         run_tidy_and_compare(
             self.TRANSFORMER_NAME,
             sources=['test.robot'],
-            expected=['two_columns.robot'],
-            config=':up_to_column=2'
+            expected=['all_columns.robot'],
+            config=':up_to_column=0'
         )
 
     def test_align_three_columns(self):
@@ -498,6 +506,37 @@ class TestMergeAndOrderSections:
         
     def test_too_few_calls_in_keyword(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['too_few_calls_in_keyword.robot'])
+
+    def test_default_order(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['order.robot'])
+
+    def test_custom_order(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['order.robot'],
+            expected=['order_settings_comments_keywords_variables_testcases.robot'],
+            config=':order=settings,comments,keyword,variables,testcases'
+        )
+
+    @pytest.mark.parametrize('parameter', [
+        'settings,variables,testcases,keyword',
+        'comments,settings,variables,testcases,variables,variables',
+        'comments,settings,variables,testcases,variables,INVALID'
+    ])
+    def test_invalid_order_parameter(self, parameter):
+        result = run_tidy(
+            self.TRANSFORMER_NAME,
+            args=f'--transform {self.TRANSFORMER_NAME}:order={parameter}'.split(),
+            sources=['order.robot'],
+            exit_code=1
+        )
+        expected_output = f"Importing 'robotidy.transformers.{self.TRANSFORMER_NAME}' failed: " \
+                          "Creating instance failed: BadOptionUsage: Invalid configurable value: " \
+                          f"'{parameter}' for order for {self.TRANSFORMER_NAME} transformer. " \
+                          "Custom order should be provided in comma separated list with all section names:\n" \
+                          "order=comments,settings,variables,testcases,variables"
+        assert expected_output in str(result.exception)
+
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
 class TestRemoveEmptySettings:
