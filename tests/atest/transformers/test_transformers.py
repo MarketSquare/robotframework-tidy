@@ -265,6 +265,9 @@ class TestNormalizeNewLines:
             expected=['test_case_last.robot']
         )
 
+    def test_consecutive_empty_lines(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['consecutive_empty_lines.robot'])
+
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
 class TestSplitTooLongLine:

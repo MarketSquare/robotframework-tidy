@@ -38,8 +38,7 @@ class NormalizeNewLines(ModelTransformer):
         return self.generic_visit(node)
 
     def visit_Section(self, node):  # noqa
-        self.trim_leading_empty_lines(node)
-        self.trim_trailing_empty_lines(node)
+        self.trim_empty_lines(node)
         empty_line = EmptyLine.from_params()
         if node is self.last_section:
             return self.generic_visit(node)
@@ -55,15 +54,13 @@ class NormalizeNewLines(ModelTransformer):
         return self.visit_Section(node)
 
     def visit_TestCase(self, node):  # noqa
-        self.trim_leading_empty_lines(node)
-        self.trim_trailing_empty_lines(node)
+        self.trim_empty_lines(node)
         if node is not self.last_test and not self.templated:
             node.body.extend([EmptyLine.from_params()] * self.test_case_lines)
         return self.generic_visit(node)
 
     def visit_Keyword(self, node):  # noqa
-        self.trim_leading_empty_lines(node)
-        self.trim_trailing_empty_lines(node)
+        self.trim_empty_lines(node)
         if node is not self.last_keyword:
             node.body.extend([EmptyLine.from_params()] * self.keyword_lines)
         return self.generic_visit(node)
@@ -77,6 +74,11 @@ class NormalizeNewLines(ModelTransformer):
         node.tokens = tokens
         return node
 
+    def trim_empty_lines(self, node):
+        self.trim_leading_empty_lines(node)
+        self.trim_trailing_empty_lines(node)
+        self.trim_consecutive_empty_lines(node)
+
     @staticmethod
     def trim_trailing_empty_lines(node):
         if not hasattr(node, 'body'):
@@ -88,6 +90,16 @@ class NormalizeNewLines(ModelTransformer):
     def trim_leading_empty_lines(node):
         while node.body and isinstance(node.body[0], EmptyLine):
             node.body.pop(0)
+
+    @staticmethod
+    def trim_consecutive_empty_lines(node):
+        previous_empty = False
+        nodes = []
+        for child in node.body:
+            if not previous_empty or not isinstance(child, EmptyLine):
+                nodes.append(child)
+            previous_empty = isinstance(child, EmptyLine)
+        node.body = nodes
 
     @staticmethod
     def is_templated(node):
