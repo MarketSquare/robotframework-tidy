@@ -16,17 +16,22 @@ class NormalizeNewLines(ModelTransformer):
     * ``section_lines = 1`` empty lines between sections,
     * ``test_case_lines = 1`` empty lines between test cases,
     * ``keyword_lines = test_case_lines`` empty lines between keywords.
+
     Removes empty lines after section (and before any data) and appends 1 empty line at the end of file.
+
+    Consecutive empty lines inside settings, variables, keywords and test cases are also removed
+    (configurable via ``consecutive_lines = 1``). If set to 0 all empty lines will be removed.
 
     If the suite contains Test Template tests will not be separated by empty lines unless ``separate_templated_tests``
     is set to True.
     """
     def __init__(self, test_case_lines: int = 1, keyword_lines: Optional[int] = None, section_lines: int = 1,
-                 separate_templated_tests: bool = False):
+                 separate_templated_tests: bool = False, consecutive_lines: int = 1):
         self.test_case_lines = test_case_lines
         self.keyword_lines = keyword_lines if keyword_lines is not None else test_case_lines
         self.section_lines = section_lines
         self.separate_templated_tests = separate_templated_tests
+        self.consecutive_lines = consecutive_lines
         self.last_section = None
         self.last_test = None
         self.last_keyword = None
@@ -91,14 +96,16 @@ class NormalizeNewLines(ModelTransformer):
         while node.body and isinstance(node.body[0], EmptyLine):
             node.body.pop(0)
 
-    @staticmethod
-    def trim_consecutive_empty_lines(node):
-        previous_empty = False
+    def trim_consecutive_empty_lines(self, node):
+        empty_count = 0
         nodes = []
         for child in node.body:
-            if not previous_empty or not isinstance(child, EmptyLine):
+            if isinstance(child, EmptyLine):
+                empty_count += 1
+            else:
+                empty_count = 0
+            if empty_count <= self.consecutive_lines:
                 nodes.append(child)
-            previous_empty = isinstance(child, EmptyLine)
         node.body = nodes
 
     @staticmethod

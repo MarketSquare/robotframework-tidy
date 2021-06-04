@@ -265,8 +265,17 @@ class TestNormalizeNewLines:
             expected=['test_case_last.robot']
         )
 
-    def test_consecutive_empty_lines(self):
-        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['consecutive_empty_lines.robot'])
+    @pytest.mark.parametrize('empty_lines', [
+        0,
+        1,
+        2
+    ])
+    def test_consecutive_empty_lines(self, empty_lines):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['consecutive_empty_lines.robot'],
+            expected=[f'consecutive_empty_lines_{empty_lines}line.robot'],
+            config=f':consecutive_lines={empty_lines}')
 
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
