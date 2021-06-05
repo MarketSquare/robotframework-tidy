@@ -299,6 +299,7 @@ def get_paths(src: Tuple[str, ...]):
 @click.option(
     '--list-transformers',
     '--list',
+    '-l',
     is_eager=True,
     is_flag=True,
     help='List available transformers and exit.'
@@ -306,6 +307,7 @@ def get_paths(src: Tuple[str, ...]):
 @click.option(
     '--describe-transformer',
     '--desc',
+    '-d',
     default=None,
     metavar='TRANSFORMER_NAME',
     help='Show documentation for selected transformer.'
