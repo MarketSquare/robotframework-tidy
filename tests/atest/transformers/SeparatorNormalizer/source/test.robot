@@ -34,3 +34,8 @@ Another Keyword
    Keyword
         END
    END
+
+Keyword With Tabulators
+    Keyword
+    ...  2
+	...  ${arg}
