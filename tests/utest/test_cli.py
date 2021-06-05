@@ -171,12 +171,17 @@ class TestCli:
         result = run_tidy(['--list'])
         assert 'Run --desc <transformer_name> to get more details. Transformers:' in result.output
         assert 'ReplaceRunKeywordIf\n' in result.output
+        result = run_tidy(['-l'])
+        assert 'Run --desc <transformer_name> to get more details. Transformers:' in result.output
+        assert 'ReplaceRunKeywordIf\n' in result.output
 
     def test_describe_transformer(self):
         expected_doc = ReplaceRunKeywordIf.__doc__.replace('::', ':').replace("``", "'")
         result = run_tidy(['--describe-transformer', 'ReplaceRunKeywordIf'])
         assert expected_doc in result.output
         result = run_tidy(['--desc', 'ReplaceRunKeywordIf'])
+        assert expected_doc in result.output
+        result = run_tidy(['-d', 'ReplaceRunKeywordIf'])
         assert expected_doc in result.output
 
     def test_help(self):
