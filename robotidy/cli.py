@@ -248,13 +248,6 @@ def get_paths(src: Tuple[str, ...]):
     show_default=True
 )
 @click.option(
-    '-p',
-    '--usepipes',
-    is_flag=True,
-    help="Use pipe ('|') as a column separator in the plain text format.",
-    show_default=True
-)
-@click.option(
     '-sl',
     '--startline',
     default=None,
@@ -315,7 +308,6 @@ def cli(
         check: bool,
         spacecount: int,
         lineseparator: str,
-        usepipes: bool,
         verbose: bool,
         config: Optional[str],
         startline: Optional[int],
@@ -343,7 +335,6 @@ def cli(
         click.echo(f'Loaded {config} configuration file')
 
     formatting_config = GlobalFormattingConfig(
-        use_pipes=usepipes,
         space_count=spacecount,
         line_sep=lineseparator,
         start_line=startline,

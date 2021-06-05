@@ -562,3 +562,21 @@ class TestRemoveEmptySettings:
             config=f'{work_mode_config}{more_explicit_config}'
         )
 
+
+@patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
+class TestSeparatorNormalizer:
+    TRANSFORMER_NAME = 'SeparatorNormalizer'
+
+    def test_normalize_separators(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['test.robot'])
+
+    def test_normalize_with_8_spaces(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['test.robot'],
+            expected=['test_8spaces.robot'],
+            config=' --spacecount 8'
+        )
+
+    def test_pipes(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['pipes.robot'])
