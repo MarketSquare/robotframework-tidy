@@ -14,7 +14,11 @@ import toml
 from robotidy.version import __version__
 from robotidy.app import Robotidy
 from robotidy.transformers import load_transformers
-from robotidy.utils import GlobalFormattingConfig, split_args_from_name_or_path
+from robotidy.utils import (
+    GlobalFormattingConfig,
+    split_args_from_name_or_path,
+    remove_rst_formatting
+)
 
 
 INCLUDE_EXT = ('.robot', '.resource')
@@ -294,12 +298,14 @@ def get_paths(src: Tuple[str, ...]):
 )
 @click.option(
     '--list-transformers',
+    '--list',
     is_eager=True,
     is_flag=True,
     help='List available transformers and exit.'
 )
 @click.option(
     '--describe-transformer',
+    '--desc',
     default=None,
     metavar='TRANSFORMER_NAME',
     help='Show documentation for selected transformer.'
@@ -325,7 +331,7 @@ def cli(
 ):
     if list_transformers:
         transformers = load_transformers(None)
-        click.echo('Run --describe-transformer <transformer_name> to get more details. Transformers:')
+        click.echo('Run --desc <transformer_name> to get more details. Transformers:')
         for transformer in transformers:
             click.echo(transformer.__class__.__name__)
         ctx.exit(0)
@@ -334,7 +340,7 @@ def cli(
         transformer_by_names = {transformer.__class__.__name__: transformer for transformer in transformers}
         if describe_transformer in transformer_by_names:
             click.echo(f"Transformer {describe_transformer}:")
-            click.echo(transformer_by_names[describe_transformer].__doc__)
+            click.echo(remove_rst_formatting(transformer_by_names[describe_transformer].__doc__))
         else:
             click.echo(f"Transformer with the name '{describe_transformer}' does not exist")
         ctx.exit(0)

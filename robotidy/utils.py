@@ -148,3 +148,7 @@ def left_align(node):
     if tokens:
         tokens[0].value = tokens[0].value.lstrip(' \t')
     return Statement.from_tokens(tokens)
+
+
+def remove_rst_formatting(text):
+    return text.replace('::', ':').replace("``", "'")
