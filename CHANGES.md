@@ -15,6 +15,7 @@
 - 
 
 ### Features
+- New option ``--configure`` or ``-c`` for configuring transformer parameters. It works the same way configuring through ``--transform`` works. The benefit of using ``--configure`` is that you can configure selected transformers and still run all transformers [#96](https://github.com/MarketSquare/robotframework-tidy/issues/96)
 - Transformers can now be disabled by default if you add ``ENABLED = False`` class attribute to your class. Those transformers will be only run when selected explictly with ``--transform`` option [#10](https://github.com/MarketSquare/robotframework-tidy/issues/10)
 - Support for ``pyproject.toml`` configuration files. Because of the required changes there are backward incompatible changes done to ``robotidy.toml`` syntax. See example from [README](https://github.com/MarketSquare/robotframework-tidy/blob/main/README.rst#configuration-file) [#66](https://github.com/MarketSquare/robotframework-tidy/issues/66)
 - ``--list-transformers`` output is now ordered. Also transformers themselves will always run in the same predefined order [#69](https://github.com/MarketSquare/robotframework-tidy/issues/69)

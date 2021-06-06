@@ -43,9 +43,14 @@ You can run robotidy with selected transformers. Use ``--transform`` argument fo
 
     robotidy --transform ReplaceRunKeywordIf src
 
-Some transformers provide configurable parameters. You can modify them by adding `:` after transformer name::
+Some transformers provide configurable parameters. You can pass your own values using --config/-c TRANSFORMER_NAME:param=value syntax::
 
-    robotidy --transform DiscardEmptySections:allow_only_comments=True src
+    robotidy --configure DiscardEmptySections:allow_only_comments=True src
+
+It is also possible to supply parameters using ``--transform`` option. The main difference is that ``--transform`` works like
+include option in Robot Framework while ``--configure`` allows you to configure selected transformers and still run all of them::
+
+   robotidy --transform DiscardEmptySections:allow_only_comments=True src
 
 It is possible to develop your own transformers. You can use module name (if it is installed in your env) or path to
 file with class::
@@ -54,44 +59,7 @@ file with class::
 
 Command line options
 --------------------
-You can list available options by running ``robotidy --help``::
-
-   Usage: robotidy [OPTIONS] [PATH(S)]
-
-   Options:
-     --transform TRANSFORMER_NAME    Transform files from [PATH(S)] with given
-                                     transformer
-
-     --overwrite / --no-overwrite    Overwrite source files.
-     --diff                          Output diff of each processed file.
-     -s, --spacecount INTEGER        The number of spaces between cells in the
-                                     plain text format. Default is 4.
-
-     -l, --lineseparator [native|windows|unix]
-                                     Line separator to use in outputs. The
-                                     default is 'native'.
-                                     native:  use operating system's native line separators
-                                     windows: use Windows line separators (CRLF)
-                                     unix:    use Unix line separators (LF)
-
-     -p, --usepipes                  Use pipe ('|') as a column separator in the
-                                     plain text format.
-
-     -sl, --startline INTEGER        Limit robotidy only to selected area. If
-                                     --endline is not provided, format text only
-                                     at --startline. Line numbers start from 1.
-
-     -el, --endline INTEGER          Limit robotidy only to selected area. Line
-                                     numbers start from 1.
-
-     -v, --verbose
-     --config FILE                   Read configuration from FILE path.
-     --list-transformers             List available transformers and exit.
-     --describe-transformer TRANSFORMER_NAME
-                                     Show documentation for selected transformer.
-     --version                       Show the version and exit.
-     --help                          Show this message and exit.
-
+You can list available options by running ``robotidy --help``
 
 Configuration file
 -------------------
@@ -116,6 +84,9 @@ Example configuration file::
    transform = [
        "DiscardEmptySections:allow_only_comments=True",
        "ReplaceRunKeywordIf"
+   ]
+   configure = [
+       "DiscardEmptySections:allow_only_comments=False"
    ]
 
 .. Badges links

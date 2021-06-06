@@ -1,4 +1,4 @@
-from typing import List, Tuple, Dict, Set
+from typing import List, Tuple, Dict, Set, Any
 from difflib import unified_diff
 
 import click
@@ -15,7 +15,8 @@ from robotidy.utils import (
 
 class Robotidy:
     def __init__(self,
-                 transformers: List[Tuple[str, Dict]],
+                 transformers: List[Tuple[str, List]],
+                 transformers_config: Dict[str, List],
                  src: Set,
                  overwrite: bool,
                  show_diff: bool,
@@ -29,7 +30,7 @@ class Robotidy:
         self.check = check
         self.verbose = verbose
         self.formatting_config = formatting_config
-        self.transformers = load_transformers(transformers)
+        self.transformers = load_transformers(transformers, transformers_config)
 
     def transform_files(self):
         changed_files = 0
