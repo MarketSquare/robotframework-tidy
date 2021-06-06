@@ -6,3 +6,6 @@ transform = [
    "DiscardEmptySections:allow_only_comments=True",
    "SplitTooLongLine"
 ]
+configure = [
+    "DiscardEmptySections:allow_only_comments=False"
+]

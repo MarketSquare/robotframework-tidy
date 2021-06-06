@@ -52,8 +52,7 @@ class TestCli:
         assert expected_output in str(result.exception)
 
     def test_too_many_arguments_for_transform(self):
-        expected_output = "Importing 'robotidy.transformers.DiscardEmptySections' failed:  " \
-                          "'DiscardEmptySections' expected 0 to 1 arguments, got 2."
+        expected_output = "not enough values to unpack (expected 2, got 1)"
         args = '--transform DiscardEmptySections:allow_only_comments:False'.split()
         result = run_tidy(args, exit_code=1)
         assert expected_output == str(result.exception)
@@ -91,6 +90,9 @@ class TestCli:
             'transform': [
                 'DiscardEmptySections:allow_only_comments=True',
                 'SplitTooLongLine'
+            ],
+            'configure': [
+                'DiscardEmptySections:allow_only_comments=False'
             ]
         }
         config_path = str(Path(Path(__file__).parent, 'testdata', 'only_pyproject', 'pyproject.toml'))
@@ -105,6 +107,9 @@ class TestCli:
             'transform': [
                 'DiscardEmptySections:allow_only_comments=True',
                 'SplitTooLongLine'
+            ],
+            'configure': [
+                'DiscardEmptySections:allow_only_comments=False'
             ]
         }
         config_path = str(Path(Path(__file__).parent, 'testdata', 'only_pyproject'))
@@ -206,9 +211,27 @@ class TestCli:
         assert "*** Settings ***" in result.output
 
     def test_disabled_transformer(self):
-        transformers = load_transformers(None)
+        transformers = load_transformers(None, {})
         assert all(transformer.__class__.__name__ != 'SmartSortKeywords' for transformer in transformers)
 
     def test_enable_disable_transformer(self):
-        transformers = load_transformers([('SmartSortKeywords', [])])
+        transformers = load_transformers([('SmartSortKeywords', [])], {})
         assert transformers[0].__class__.__name__ == 'SmartSortKeywords'
+
+    def test_configure_transformer(self):
+        transformers = load_transformers(
+            None,
+            {'AlignVariablesSection': ['up_to_column=4']}
+        )
+        transformers_not_configured = load_transformers(None, {})
+        assert len(transformers) == len(transformers_not_configured)
+        for transformer in transformers:
+            if transformer.__class__.__name__ == 'AlignVariablesSection':
+                assert transformer.up_to_column + 1 == 4
+
+    def test_configure_transformer_overwrite(self):
+        transformers = load_transformers(
+            [('AlignVariablesSection', ['up_to_column=3'])],
+            {'AlignVariablesSection': ['up_to_column=4']}
+        )
+        assert transformers[0].up_to_column + 1 == 4

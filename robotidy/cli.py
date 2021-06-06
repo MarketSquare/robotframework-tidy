@@ -10,6 +10,7 @@ from typing import (
 from pathlib import Path
 import click
 import toml
+from collections import defaultdict
 
 from robotidy.version import __version__
 from robotidy.app import Robotidy
@@ -38,10 +39,10 @@ Examples:
   $ robotidy dir_name
 
   # List available transformers:
-  $ robotidy --list-transformers
+  $ robotidy --list
   
   # Display transformer documentation
-  $ robotidy --describe-transformer <TRANSFORMER_NAME>
+  $ robotidy --desc <TRANSFORMER_NAME>
 
   # Format `src.robot` file using `SplitTooLongLine` transformer only
   $ robotidy --transform SplitTooLongLine src.robot
@@ -78,6 +79,13 @@ class TransformType(click.ParamType):
                   f'Parameters should be provided in format name=value, delimited by :'
             raise ValueError(exc)
         return name, args
+
+
+def convert_configure(configure: List[Tuple[str, List]]) -> Dict[str, List]:
+    config_map = defaultdict(list)
+    for transformer, args in configure:
+        config_map[transformer].extend(args)
+    return config_map
 
 
 def find_project_root(srcs: Iterable[str]) -> Path:
@@ -205,6 +213,14 @@ def get_paths(src: Tuple[str, ...]):
     metavar='TRANSFORMER_NAME',
     help="Transform files from [PATH(S)] with given transformer"
 )
+@click.option(
+    '--configure',
+    '-c',
+    type=TransformType(),
+    multiple=True,
+    metavar='TRANSFORMER_NAME:PARAM=VALUE',
+    help='Configure transformers'
+)
 @click.argument(
     "src",
     nargs=-1,
@@ -310,7 +326,8 @@ def get_paths(src: Tuple[str, ...]):
 @click.pass_context
 def cli(
         ctx: click.Context,
-        transform: List[Tuple[str, Dict]],
+        transform: List[Tuple[str, List]],
+        configure: List[Tuple[str, List]],
         src: Tuple[str, ...],
         overwrite: bool,
         diff: bool,
@@ -325,13 +342,13 @@ def cli(
         describe_transformer: Optional[str]
 ):
     if list_transformers:
-        transformers = load_transformers(None)
+        transformers = load_transformers(None, {})
         click.echo('Run --desc <transformer_name> to get more details. Transformers:')
         for transformer in transformers:
             click.echo(transformer.__class__.__name__)
         ctx.exit(0)
     if describe_transformer is not None:
-        transformers = load_transformers(None)
+        transformers = load_transformers(None, {})
         transformer_by_names = {transformer.__class__.__name__: transformer for transformer in transformers}
         if describe_transformer in transformer_by_names:
             click.echo(f"Transformer {describe_transformer}:")
@@ -350,8 +367,10 @@ def cli(
         end_line=endline
     )
     sources = get_paths(src)
+    configure_transform = convert_configure(configure)
     tidy = Robotidy(
         transformers=transform,
+        transformers_config=configure_transform,
         src=sources,
         overwrite=overwrite,
         show_diff=diff,
