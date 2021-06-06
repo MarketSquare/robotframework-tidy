@@ -12,7 +12,7 @@ from robot.utils.importer import Importer
 
 
 TRANSFORMERS = [
-    'SeparatorNormalizer',
+    'NormalizeSeparators',
     'DiscardEmptySections',
     'MergeAndOrderSections',
     'RemoveEmptySettings',
