@@ -564,8 +564,8 @@ class TestRemoveEmptySettings:
 
 
 @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
-class TestSeparatorNormalizer:
-    TRANSFORMER_NAME = 'SeparatorNormalizer'
+class TestNormalizeSeparators:
+    TRANSFORMER_NAME = 'NormalizeSeparators'
 
     def test_normalize_separators(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, sources=['test.robot'])

@@ -8,7 +8,7 @@ from robot.api.parsing import (
 from robotidy.decorators import check_start_end_line
 
 
-class SeparatorNormalizer(ModelTransformer):
+class NormalizeSeparators(ModelTransformer):
     """
     Normalize separators and indents.
 

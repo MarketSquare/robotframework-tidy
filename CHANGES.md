@@ -8,7 +8,7 @@
 - AlignVariablesSection now supports ``up_to_column`` parameter so it is possible to chose how much column are width aligned
 - AlignVariablesSection and AlignSettingsSection change ``up_to_column`` default value from 0 (meaning all columns) to 2 (only first two columns are width aligned, rest use fixed length) #
 - New AlignSettingsSection for aligning ``*** Settings ***`` section into columns [#60](https://github.com/MarketSquare/robotframework-tidy/issues/60)
-- New SeparatorNormalizer for normalizing all separators and indents to fixed length (according to global ``--spacecount`` option) [#32](https://github.com/MarketSquare/robotframework-tidy/issues/32)
+- New NormalizeSeparators for normalizing all separators and indents to fixed length (according to global ``--spacecount`` option) [#32](https://github.com/MarketSquare/robotframework-tidy/issues/32)
 - New RemoveEmptySettings transformer for removing empty settings such like `Suite Setup` or `[Arguments]`. Settings that are overwriting suite settings (like empty `[Tags]` overwriting `Default Tags`) are preserved. See the docs for config options [#78](https://github.com/MarketSquare/robotframework-tidy/issues/78)
 - New SmartSortKeywords transformer (disabled by default) for sorting out keywords inside ``*** Keywords ***`` section [#52](https://github.com/MarketSquare/robotframework-tidy/issues/52)
 - New MergeAndOrderSections transformer for merging duplicated sections and ordering them (order is configurable) [#70](https://github.com/MarketSquare/robotframework-tidy/issues/70)
@@ -31,7 +31,7 @@
 - Fix issue where variable was not left aligned if name was prefixed with space (`` {variable} 4``) [#88](https://github.com/MarketSquare/robotframework-tidy/issues/88)
 
 ### Other
-- Support for pipes is now removed. All pipes will be converted to spaces by SeparatorNormalizer transformer. It can be restored if people that use pipe syntax request for it
+- Support for pipes is now removed. All pipes will be converted to spaces by NormalizeSeparators transformer. It can be restored if people that use pipe syntax request for it
 - Files with invalid encoding will now not stop robotidy execution - warning will be printed instead
 
 ## 1.1.1
