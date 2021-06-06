@@ -199,6 +199,7 @@ def get_paths(src: Tuple[str, ...]):
 @click.command(cls=RawHelp, help=HELP_MSG, epilog=EPILOG)
 @click.option(
     '--transform',
+    '-t',
     type=TransformType(),
     multiple=True,
     metavar='TRANSFORMER_NAME',
