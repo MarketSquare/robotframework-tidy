@@ -26,8 +26,7 @@ class StatementLinesCollector(ModelVisitor):
 
 
 class GlobalFormattingConfig:
-    def __init__(self, use_pipes: bool, space_count: int, line_sep: str, start_line: int, end_line: int):
-        self.use_pipes = use_pipes
+    def __init__(self, space_count: int, line_sep: str, start_line: int, end_line: int):
         self.space_count = space_count
         self.start_line = start_line
         self.end_line = end_line

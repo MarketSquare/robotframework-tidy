@@ -5,7 +5,7 @@ from robot.api.parsing import (
     ModelTransformer,
     Token
 )
-from robot.parsing.model.statements import Statement
+
 from robotidy.decorators import check_start_end_line
 
 

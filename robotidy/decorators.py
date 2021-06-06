@@ -13,6 +13,8 @@ def check_start_end_line(func):
     """
     @functools.wraps(func)
     def wrapper(self, node):
+        if not node:
+            return return_node_untouched(node)
         if not node_within_lines(
                 node.lineno,
                 node.end_lineno,
