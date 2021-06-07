@@ -1,11 +1,10 @@
+import click
 from robot.api.parsing import (
     ModelTransformer,
     EmptyLine,
-    Comment,
-    CommentSection,
     Token
 )
-import click
+
 from robotidy.decorators import check_start_end_line
 
 
