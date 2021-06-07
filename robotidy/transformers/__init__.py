@@ -18,6 +18,7 @@ TRANSFORMERS = [
     'MergeAndOrderSections',
     'RemoveEmptySettings',
     'AssignmentNormalizer',
+    'OrderSettings',
     'AlignSettingsSection',
     'AlignVariablesSection',
     'NormalizeNewLines',
@@ -25,7 +26,7 @@ TRANSFORMERS = [
     'NormalizeSettingName',
     'ReplaceRunKeywordIf',
     'SplitTooLongLine',
-    'SmartSortKeywords'
+    'SmartSortKeywords',
 ]
 
 
