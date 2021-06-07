@@ -78,11 +78,8 @@ class OrderSettings(ModelTransformer):
         if not order:
             return []
         splitted = order.lower().split(',')
-        parsed_order = []
         try:
-            for split in splitted:
-                parsed_order.append(name_map[split])
-            return parsed_order
+            return [name_map[split] for split in splitted]
         except KeyError:
             raise click.BadOptionUsage(
                 option_name='transform',

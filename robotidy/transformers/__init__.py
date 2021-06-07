@@ -19,6 +19,7 @@ TRANSFORMERS = [
     'RemoveEmptySettings',
     'AssignmentNormalizer',
     'OrderSettings',
+    'OrderSettingsSection',
     'AlignSettingsSection',
     'AlignVariablesSection',
     'NormalizeNewLines',
