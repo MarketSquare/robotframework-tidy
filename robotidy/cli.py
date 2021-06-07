@@ -1,18 +1,16 @@
+from pathlib import Path
 from typing import (
     Tuple,
     Dict,
     List,
-    Iterator,
     Iterable,
     Optional,
     Any
 )
-from pathlib import Path
+
 import click
 import toml
-from collections import defaultdict
 
-from robotidy.version import __version__
 from robotidy.app import Robotidy
 from robotidy.transformers import load_transformers
 from robotidy.utils import (
@@ -20,9 +18,9 @@ from robotidy.utils import (
     split_args_from_name_or_path,
     remove_rst_formatting
 )
+from robotidy.version import __version__
 
 
-INCLUDE_EXT = ('.robot', '.resource')
 HELP_MSG = f"""
 Version: {__version__}
 
@@ -81,13 +79,6 @@ class TransformType(click.ParamType):
         return name, args
 
 
-def convert_configure(configure: List[Tuple[str, List]]) -> Dict[str, List]:
-    config_map = defaultdict(list)
-    for transformer, args in configure:
-        config_map[transformer].extend(args)
-    return config_map
-
-
 def find_project_root(srcs: Iterable[str]) -> Path:
     """Return a directory containing .git, or robotidy.toml.
     That directory will be a common parent of all files and directories
@@ -132,6 +123,7 @@ def find_and_read_config(src_paths: Iterable[str]) -> Dict[str, Any]:
     pyproject_path = project_root / 'pyproject.toml'
     if pyproject_path.is_file():
         return read_pyproject_config(str(pyproject_path))
+    return {}
 
 
 def load_toml_file(path: str) -> Dict[str, Any]:
@@ -178,30 +170,6 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
         default_map.update(ctx.default_map)
     default_map.update(config)
     ctx.default_map = default_map
-
-
-def iterate_dir(paths: Iterable[Path]) -> Iterator[Path]:
-    for path in paths:
-        if path.is_file():
-            if path.suffix not in INCLUDE_EXT:
-                continue
-            yield path
-        elif path.is_dir():
-            yield from iterate_dir(path.iterdir())
-
-
-def get_paths(src: Tuple[str, ...]):
-    sources = set()
-    for s in src:
-        path = Path(s).resolve()
-        if path.is_file():
-            sources.add(path)
-        elif path.is_dir():
-            sources.update(iterate_dir(path.iterdir()))
-        elif s == '-':
-            sources.add(path)
-
-    return sources
 
 
 @click.command(cls=RawHelp, help=HELP_MSG, epilog=EPILOG)
@@ -366,12 +334,10 @@ def cli(
         start_line=startline,
         end_line=endline
     )
-    sources = get_paths(src)
-    configure_transform = convert_configure(configure)
     tidy = Robotidy(
         transformers=transform,
-        transformers_config=configure_transform,
-        src=sources,
+        transformers_config=configure,
+        src=src,
         overwrite=overwrite,
         show_diff=diff,
         formatting_config=formatting_config,

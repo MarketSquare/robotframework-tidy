@@ -87,6 +87,7 @@ class TestCli:
             'overwrite': False,
             'diff': False,
             'startline': 10,
+            'endline': 20,
             'transform': [
                 'DiscardEmptySections:allow_only_comments=True',
                 'SplitTooLongLine'
@@ -104,6 +105,7 @@ class TestCli:
             'overwrite': 'False',
             'diff': 'False',
             'startline': '10',
+            'endline': '20',
             'transform': [
                 'DiscardEmptySections:allow_only_comments=True',
                 'SplitTooLongLine'
