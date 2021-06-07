@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.2.0
+
 ### Transformers
 
 - AlignVariablesSection now supports ``--startline`` and ``--endline`` options for aligning only part of ``*** Variables ***`` section [#62](https://github.com/MarketSquare/robotframework-tidy/issues/62)
