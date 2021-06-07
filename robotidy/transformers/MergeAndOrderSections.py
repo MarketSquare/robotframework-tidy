@@ -24,9 +24,26 @@ class MergeAndOrderSections(ModelTransformer):
 
     If both ``*** Test Cases ***`` and ``*** Tasks ***`` are defined in one file they will be merged into one (header
     name will be taken from first encountered section).
+
+    Any data before first section is treated as comment in Robot Framework. This transformer add ``*** Comments ***``
+    section for such lines::
+
+        i am comment
+        # robocop: disable
+        *** Settings ***
+
+    To::
+
+        *** Comments ***
+        i am comment
+        # robocop: disable
+        *** Settings ***
+
+    You can disable this behaviour by setting ``create_comment_section`` to False.
     """
-    def __init__(self, order: str = ''):
+    def __init__(self, order: str = '', create_comment_section: bool = True):
         self.sections_order = self.parse_order(order)
+        self.create_comment_section = create_comment_section
 
     @staticmethod
     def parse_order(order):
@@ -118,8 +135,7 @@ class MergeAndOrderSections(ModelTransformer):
                 node.header = Statement.from_tokens(list(node.header.tokens[:-1]) + [Token(Token.EOL, '\n')])
         return node
 
-    @staticmethod
-    def get_section_type(section):
+    def get_section_type(self, section):
         header_tokens = (Token.COMMENT_HEADER, Token.TESTCASE_HEADER, Token.SETTING_HEADER, Token.KEYWORD_HEADER,
                          Token.VARIABLE_HEADER)
         if section.header:
@@ -127,5 +143,6 @@ class MergeAndOrderSections(ModelTransformer):
             section_type = name_token.type
         else:
             section_type = Token.COMMENT_HEADER
-            section.header = SectionHeader.from_params(section_type, '*** Comments ***')
+            if self.create_comment_section:
+                section.header = SectionHeader.from_params(section_type, '*** Comments ***')
         return section_type
