@@ -28,12 +28,13 @@ class OrderSettingsSection(ModelTransformer):
       - ``imports_order = library,resource,variables``
       - ``settings_order = suite_setup,suite_teardown,test_setup,test_teardown,test_timeout,test_template``
 
-    Omitted setting names from custom order will be removed from the file. In following example we are missing metadata
+    Setting names omitted from custom order will be removed from the file. In following example we are missing metadata
     therefore all metadata will be removed::
 
         robotidy --configure OrderSettingsSection:documentation_order=documentation
 
     Libraries are grouped into built in libraries and custom libraries.
+    Parsing errors (such as Resources instead of Resource, duplicated settings) are moved to the end of section.
     """
     def __init__(self, new_lines_between_groups: int = 1, group_order: str = None, documentation_order: str = None,
                  imports_order: str = None, settings_order: str = None, tags_order: str = None):
