@@ -26,7 +26,7 @@ TRANSFORMERS = [
     'NormalizeSettingName',
     'ReplaceRunKeywordIf',
     'SplitTooLongLine',
-    'SmartSortKeywords',
+    'SmartSortKeywords'
 ]
 
 
