@@ -12,7 +12,7 @@
 - New RemoveEmptySettings transformer for removing empty settings such like `Suite Setup` or `[Arguments]`. Settings that are overwriting suite settings (like empty `[Tags]` overwriting `Default Tags`) are preserved. See the docs for config options [#78](https://github.com/MarketSquare/robotframework-tidy/issues/78)
 - New SmartSortKeywords transformer (disabled by default) for sorting out keywords inside ``*** Keywords ***`` section [#52](https://github.com/MarketSquare/robotframework-tidy/issues/52)
 - New MergeAndOrderSections transformer for merging duplicated sections and ordering them (order is configurable) [#70](https://github.com/MarketSquare/robotframework-tidy/issues/70)
-- 
+- New OrderSettings transformer for ordering settings like [Arguments], [Setup], [Return] inside Keywords and Test Cases [#59](https://github.com/MarketSquare/robotframework-tidy/issues/59)
 
 ### Features
 - New option ``--configure`` or ``-c`` for configuring transformer parameters. It works the same way configuring through ``--transform`` works. The benefit of using ``--configure`` is that you can configure selected transformers and still run all transformers [#96](https://github.com/MarketSquare/robotframework-tidy/issues/96)
