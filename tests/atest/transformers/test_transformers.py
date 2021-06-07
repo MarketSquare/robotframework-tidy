@@ -518,6 +518,14 @@ class TestMergeAndOrderSections:
             config=':order=settings,comments,keyword,variables,testcases'
         )
 
+    def test_do_not_create_comment_section(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            sources=['tests.robot'],
+            expected=['tests_without_comment_section.robot'],
+            config=':create_comment_section=False'
+        )
+
     @pytest.mark.parametrize('parameter', [
         'settings,variables,testcases,keyword',
         'comments,settings,variables,testcases,variables,variables',
