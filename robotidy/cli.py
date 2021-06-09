@@ -173,11 +173,6 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     ctx.default_map = default_map
 
 
-@click.command(name='--list')
-def list_command():
-    pass
-
-
 @click.command(cls=RawHelp, help=HELP_MSG, epilog=EPILOG, context_settings=CONTEXT_SETTINGS)
 @click.option(
     '--transform',
