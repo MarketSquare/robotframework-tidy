@@ -10,6 +10,7 @@
 
 ### Other
 - Removed ``'--describe-transformer`` and ``--list-transformers`` aliases for ``--list`` and ``--desc``
+- Added ``-h`` alias for ``--help`` command
 
 ## 1.2.0
 
