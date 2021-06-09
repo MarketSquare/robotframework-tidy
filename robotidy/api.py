@@ -9,7 +9,7 @@ from robotidy.utils import GlobalFormattingConfig
 
 
 class RobotidyAPI(Robotidy):
-    def __init__(self, src: str, **kwargs):
+    def __init__(self, src: str, output: Optional[str], **kwargs):
         config = find_and_read_config([src])
         config = {
             k: str(v) if not isinstance(v, (list, dict)) else v
@@ -32,20 +32,22 @@ class RobotidyAPI(Robotidy):
             show_diff=False,
             formatting_config=formatting_config,
             verbose=False,
-            check=False
+            check=False,
+            output=output
         )
 
 
-def transform_model(model, root_dir: str, **kwargs) -> Optional[str]:
+def transform_model(model, root_dir: str, output: Optional[str] = None, **kwargs) -> Optional[str]:
     """
     :param model: The model to be transformed.
     :param root_dir: Root directory. Configuration file is searched based
     on this directory or one of its parents.
+    :param output: Path where transformed model should be saved
     :param kwargs: Default values for global formatting parameters
     such as ``spacecount``, ``startline`` and ``endline``.
     :return: The transformed model converted to string or None if no transformation took place.
     """
-    transformer = RobotidyAPI(root_dir, **kwargs)
+    transformer = RobotidyAPI(root_dir, output, **kwargs)
     diff, _, new_model = transformer.transform(model)
     if not diff:
         return None
