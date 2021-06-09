@@ -316,24 +316,24 @@ def cli(
         config: Optional[str],
         startline: Optional[int],
         endline: Optional[int],
-        list_transformers: bool,
-        describe_transformer: Optional[str],
+        list: bool,
+        desc: Optional[str],
         output: Optional[Path]
 ):
-    if list_transformers:
+    if list:
         transformers = load_transformers(None, {})
         click.echo('Run --desc <transformer_name> to get more details. Transformers:')
         for transformer in transformers:
             click.echo(transformer.__class__.__name__)
         ctx.exit(0)
-    if describe_transformer is not None:
+    if desc is not None:
         transformers = load_transformers(None, {})
         transformer_by_names = {transformer.__class__.__name__: transformer for transformer in transformers}
-        if describe_transformer in transformer_by_names:
-            click.echo(f"Transformer {describe_transformer}:")
-            click.echo(remove_rst_formatting(transformer_by_names[describe_transformer].__doc__))
+        if desc in transformer_by_names:
+            click.echo(f"Transformer {desc}:")
+            click.echo(remove_rst_formatting(transformer_by_names[desc].__doc__))
         else:
-            click.echo(f"Transformer with the name '{describe_transformer}' does not exist")
+            click.echo(f"Transformer with the name '{desc}' does not exist")
         ctx.exit(0)
 
     if config and verbose:
