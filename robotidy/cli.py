@@ -21,6 +21,7 @@ from robotidy.utils import (
 from robotidy.version import __version__
 
 
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 HELP_MSG = f"""
 Version: {__version__}
 
@@ -172,7 +173,12 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     ctx.default_map = default_map
 
 
-@click.command(cls=RawHelp, help=HELP_MSG, epilog=EPILOG)
+@click.command(name='--list')
+def list_command():
+    pass
+
+
+@click.command(cls=RawHelp, help=HELP_MSG, epilog=EPILOG, context_settings=CONTEXT_SETTINGS)
 @click.option(
     '--transform',
     '-t',
@@ -199,9 +205,23 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     metavar='[PATH(S)]'
 )
 @click.option(
+    "--config",
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        allow_dash=False,
+        path_type=str,
+    ),
+    is_eager=True,
+    callback=read_config,
+    help="Read configuration from FILE path.",
+)
+@click.option(
     '--overwrite/--no-overwrite',
     default=True,
-    help='Overwrite source files.',
+    help='Write changes back to file',
     show_default=True
 )
 @click.option(
@@ -226,11 +246,11 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     show_default=True
 )
 @click.option(
-    '-l',
+    '-ls',
     '--lineseparator',
     type=click.types.Choice(['native', 'windows', 'unix']),
     default='native',
-    help="Line separator to use in outputs. The default is 'native'.\n"
+    help="Line separator to use in outputs.\n"
          "native:  use operating system's native line separators\n"
          "windows: use Windows line separators (CRLF)\n"
          "unix:    use Unix line separators (LF)",
@@ -255,27 +275,6 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     show_default=True
 )
 @click.option(
-    '-v',
-    '--verbose',
-    is_flag=True,
-    show_default=True
-)
-@click.option(
-    "--config",
-    type=click.Path(
-        exists=True,
-        file_okay=True,
-        dir_okay=False,
-        readable=True,
-        allow_dash=False,
-        path_type=str,
-    ),
-    is_eager=True,
-    callback=read_config,
-    help="Read configuration from FILE path.",
-)
-@click.option(
-    '--list-transformers',
     '--list',
     '-l',
     is_eager=True,
@@ -283,7 +282,6 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     help='List available transformers and exit.'
 )
 @click.option(
-    '--describe-transformer',
     '--desc',
     '-d',
     default=None,
@@ -299,6 +297,13 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     default=None,
     metavar='PATH',
     help='Path to output file where source file will be saved'
+)
+@click.option(
+    '-v',
+    '--verbose',
+    is_flag=True,
+    help="More verbose output",
+    show_default=True
 )
 @click.version_option(version=__version__, prog_name='robotidy')
 @click.pass_context
