@@ -290,6 +290,16 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     metavar='TRANSFORMER_NAME',
     help='Show documentation for selected transformer.'
 )
+@click.option(
+    '--output',
+    '-o',
+    type=click.Path(
+        file_okay=True, dir_okay=False, writable=True, allow_dash=False
+    ),
+    default=None,
+    metavar='PATH',
+    help='Path to output file where source file will be saved'
+)
 @click.version_option(version=__version__, prog_name='robotidy')
 @click.pass_context
 def cli(
@@ -307,7 +317,8 @@ def cli(
         startline: Optional[int],
         endline: Optional[int],
         list_transformers: bool,
-        describe_transformer: Optional[str]
+        describe_transformer: Optional[str],
+        output: Optional[Path]
 ):
     if list_transformers:
         transformers = load_transformers(None, {})
@@ -342,7 +353,8 @@ def cli(
         show_diff=diff,
         formatting_config=formatting_config,
         verbose=verbose,
-        check=check
+        check=check,
+        output=output
     )
     status = tidy.transform_files()
     ctx.exit(status)

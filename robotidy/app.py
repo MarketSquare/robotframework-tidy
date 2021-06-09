@@ -1,7 +1,7 @@
 from collections import defaultdict
 from difflib import unified_diff
 from pathlib import Path
-from typing import List, Tuple, Dict, Iterator, Iterable
+from typing import List, Tuple, Dict, Iterator, Iterable, Optional
 
 import click
 from robot.api import get_model
@@ -26,7 +26,8 @@ class Robotidy:
                  show_diff: bool,
                  formatting_config: GlobalFormattingConfig,
                  verbose: bool,
-                 check: bool
+                 check: bool,
+                 output: Optional[Path]
                  ):
         self.sources = self.get_paths(src)
         self.overwrite = overwrite
@@ -34,6 +35,7 @@ class Robotidy:
         self.check = check
         self.verbose = verbose
         self.formatting_config = formatting_config
+        self.output = output
         transformers_config = self.convert_configure(transformers_config)
         self.transformers = load_transformers(transformers, transformers_config)
         for transformer in self.transformers:
@@ -71,7 +73,7 @@ class Robotidy:
 
     def save_model(self, model):
         if self.overwrite:
-            model.save()
+            model.save(output=self.output)
 
     def output_diff(self, path: str, old_model: StatementLinesCollector, new_model: StatementLinesCollector):
         if not self.show_diff:

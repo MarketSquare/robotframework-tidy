@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Features
+- New option ``--output`` option for saving transformed file to provided path instead of overwriting source file [#108](https://github.com/MarketSquare/robotframework-tidy/issues/108)
+
 ## 1.2.0
 
 ### Transformers
