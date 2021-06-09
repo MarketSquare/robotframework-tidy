@@ -297,8 +297,8 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
         file_okay=True, dir_okay=False, writable=True, allow_dash=False
     ),
     default=None,
-    metavar='OUTPUT_PATH',
-    help='Path to output file. If provided this path will be used instead of overwriting source file(s)'
+    metavar='PATH',
+    help='Path to output file where source file will be saved'
 )
 @click.version_option(version=__version__, prog_name='robotidy')
 @click.pass_context
