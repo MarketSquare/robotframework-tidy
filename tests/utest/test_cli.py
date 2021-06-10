@@ -14,6 +14,7 @@ from robotidy.cli import (
 )
 from robotidy.utils import node_within_lines
 from robotidy.transformers import load_transformers
+from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
 from robotidy.transformers.ReplaceRunKeywordIf import ReplaceRunKeywordIf
 from robotidy.version import __version__
 
@@ -173,18 +174,26 @@ class TestCli:
 
     def test_list_transformers(self):
         result = run_tidy(['--list'])
-        assert 'Run --desc <transformer_name> to get more details. Transformers:' in result.output
+        assert 'To see detailed docs run --desc <transformer_name> or --desc all.\nAvailable transformers:\n'\
+               in result.output
         assert 'ReplaceRunKeywordIf\n' in result.output
         result = run_tidy(['-l'])
-        assert 'Run --desc <transformer_name> to get more details. Transformers:' in result.output
+        assert 'To see detailed docs run --desc <transformer_name> or --desc all.\nAvailable transformers:\n'\
+               in result.output
         assert 'ReplaceRunKeywordIf\n' in result.output
 
     def test_describe_transformer(self):
         expected_doc = ReplaceRunKeywordIf.__doc__.replace('::', ':').replace("``", "'")
+        expected_doc2 = AlignSettingsSection.__doc__.replace('::', ':').replace("``", "'")
         result = run_tidy(['--desc', 'ReplaceRunKeywordIf'])
         assert expected_doc in result.output
+        assert expected_doc2 not in result.output
         result = run_tidy(['-d', 'ReplaceRunKeywordIf'])
         assert expected_doc in result.output
+        assert expected_doc2 not in result.output
+        result = run_tidy(['--desc', 'all'])
+        assert expected_doc in result.output
+        assert expected_doc2 in result.output
 
     def test_help(self):
         result = run_tidy(['--help'])
