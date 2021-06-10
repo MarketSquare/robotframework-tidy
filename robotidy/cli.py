@@ -16,7 +16,8 @@ from robotidy.transformers import load_transformers
 from robotidy.utils import (
     GlobalFormattingConfig,
     split_args_from_name_or_path,
-    remove_rst_formatting
+    remove_rst_formatting,
+    RecommendationFinder
 )
 from robotidy.version import __version__
 
@@ -184,7 +185,11 @@ def print_description(name: str):
         click.echo(f"Transformer {name}:")
         click.echo(remove_rst_formatting(transformer_by_names[name].__doc__))
     else:
-        click.echo(f"Transformer with the name '{name}' does not exist")
+        rec_finder = RecommendationFinder()
+        similar = rec_finder.find_similar(name, transformer_by_names.keys())
+        click.echo(f"Transformer with the name '{name}' does not exist.{similar}")
+        return 1
+    return 0
 
 
 def print_transformers_list():
@@ -361,8 +366,8 @@ def cli(
         print_transformers_list()
         ctx.exit(0)
     if desc is not None:
-        print_description(desc)
-        ctx.exit(0)
+        return_code = print_description(desc)
+        ctx.exit(return_code)
     if not src:
         print("No source path provided. Run robotidy --help to see how to use robotidy")
         ctx.exit(0)
