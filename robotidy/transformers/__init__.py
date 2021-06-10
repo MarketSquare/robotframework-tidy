@@ -17,7 +17,7 @@ TRANSFORMERS = [
     'DiscardEmptySections',
     'MergeAndOrderSections',
     'RemoveEmptySettings',
-    'AssignmentNormalizer',
+    'NormalizeAssignments',
     'OrderSettings',
     'OrderSettingsSection',
     'AlignSettingsSection',
