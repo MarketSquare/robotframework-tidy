@@ -55,7 +55,7 @@ class TestCli:
         expected_output = "not enough values to unpack (expected 2, got 1)"
         args = '--transform DiscardEmptySections:allow_only_comments:False -'.split()
         result = run_tidy(args, exit_code=1)
-        assert expected_output == str(result.exception)
+        assert str(result.exception) == expected_output
 
     # def test_invalid_argument_type_for_transform(self):
     #     expected_output = "Importing 'robotidy.transformers.DiscardEmptySections' failed:  'DicardEmptySection'"
@@ -172,9 +172,6 @@ class TestCli:
         assert node_within_lines(node_start, node_end, start_line, end_line) == expected
 
     def test_list_transformers(self):
-        result = run_tidy(['--list-transformers'])
-        assert 'Run --desc <transformer_name> to get more details. Transformers:' in result.output
-        assert 'ReplaceRunKeywordIf\n' in result.output
         result = run_tidy(['--list'])
         assert 'Run --desc <transformer_name> to get more details. Transformers:' in result.output
         assert 'ReplaceRunKeywordIf\n' in result.output
@@ -184,8 +181,6 @@ class TestCli:
 
     def test_describe_transformer(self):
         expected_doc = ReplaceRunKeywordIf.__doc__.replace('::', ':').replace("``", "'")
-        result = run_tidy(['--describe-transformer', 'ReplaceRunKeywordIf'])
-        assert expected_doc in result.output
         result = run_tidy(['--desc', 'ReplaceRunKeywordIf'])
         assert expected_doc in result.output
         result = run_tidy(['-d', 'ReplaceRunKeywordIf'])

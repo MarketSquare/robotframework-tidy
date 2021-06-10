@@ -21,6 +21,7 @@ from robotidy.utils import (
 from robotidy.version import __version__
 
 
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 HELP_MSG = f"""
 Version: {__version__}
 
@@ -172,7 +173,7 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     ctx.default_map = default_map
 
 
-@click.command(cls=RawHelp, help=HELP_MSG, epilog=EPILOG)
+@click.command(cls=RawHelp, help=HELP_MSG, epilog=EPILOG, context_settings=CONTEXT_SETTINGS)
 @click.option(
     '--transform',
     '-t',
@@ -199,9 +200,23 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     metavar='[PATH(S)]'
 )
 @click.option(
+    "--config",
+    type=click.Path(
+        exists=True,
+        file_okay=True,
+        dir_okay=False,
+        readable=True,
+        allow_dash=False,
+        path_type=str,
+    ),
+    is_eager=True,
+    callback=read_config,
+    help="Read configuration from FILE path.",
+)
+@click.option(
     '--overwrite/--no-overwrite',
     default=True,
-    help='Overwrite source files.',
+    help='Write changes back to file',
     show_default=True
 )
 @click.option(
@@ -226,11 +241,11 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     show_default=True
 )
 @click.option(
-    '-l',
+    '-ls',
     '--lineseparator',
     type=click.types.Choice(['native', 'windows', 'unix']),
     default='native',
-    help="Line separator to use in outputs. The default is 'native'.\n"
+    help="Line separator to use in outputs.\n"
          "native:  use operating system's native line separators\n"
          "windows: use Windows line separators (CRLF)\n"
          "unix:    use Unix line separators (LF)",
@@ -255,27 +270,6 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     show_default=True
 )
 @click.option(
-    '-v',
-    '--verbose',
-    is_flag=True,
-    show_default=True
-)
-@click.option(
-    "--config",
-    type=click.Path(
-        exists=True,
-        file_okay=True,
-        dir_okay=False,
-        readable=True,
-        allow_dash=False,
-        path_type=str,
-    ),
-    is_eager=True,
-    callback=read_config,
-    help="Read configuration from FILE path.",
-)
-@click.option(
-    '--list-transformers',
     '--list',
     '-l',
     is_eager=True,
@@ -283,7 +277,6 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     help='List available transformers and exit.'
 )
 @click.option(
-    '--describe-transformer',
     '--desc',
     '-d',
     default=None,
@@ -299,6 +292,21 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     default=None,
     metavar='PATH',
     help='Path to output file where source file will be saved'
+)
+@click.option(
+    '-v',
+    '--verbose',
+    is_flag=True,
+    help="More verbose output",
+    show_default=True
+)
+@click.option(  # deprecated
+    '--list-transformers',
+    is_flag=True
+)
+@click.option(  # deprecated
+    '--describe-transformer',
+    default=None
 )
 @click.version_option(version=__version__, prog_name='robotidy')
 @click.pass_context
@@ -316,24 +324,32 @@ def cli(
         config: Optional[str],
         startline: Optional[int],
         endline: Optional[int],
+        list: bool,
+        desc: Optional[str],
+        output: Optional[Path],
         list_transformers: bool,
-        describe_transformer: Optional[str],
-        output: Optional[Path]
+        describe_transformer: Optional[str]
 ):
     if list_transformers:
+        print('--list-transformers is deprecated in 1.3.0. Use --list instead')
+        ctx.exit(0)
+    if describe_transformer:
+        print('--describe-transformer is deprecated in 1.3.0. Use --desc NAME instead')
+        ctx.exit(0)
+    if list:
         transformers = load_transformers(None, {})
         click.echo('Run --desc <transformer_name> to get more details. Transformers:')
         for transformer in transformers:
             click.echo(transformer.__class__.__name__)
         ctx.exit(0)
-    if describe_transformer is not None:
+    if desc is not None:
         transformers = load_transformers(None, {})
         transformer_by_names = {transformer.__class__.__name__: transformer for transformer in transformers}
-        if describe_transformer in transformer_by_names:
-            click.echo(f"Transformer {describe_transformer}:")
-            click.echo(remove_rst_formatting(transformer_by_names[describe_transformer].__doc__))
+        if desc in transformer_by_names:
+            click.echo(f"Transformer {desc}:")
+            click.echo(remove_rst_formatting(transformer_by_names[desc].__doc__))
         else:
-            click.echo(f"Transformer with the name '{describe_transformer}' does not exist")
+            click.echo(f"Transformer with the name '{desc}' does not exist")
         ctx.exit(0)
     if not src:
         print("No source path provided. Run robotidy --help to see how to use robotidy")
