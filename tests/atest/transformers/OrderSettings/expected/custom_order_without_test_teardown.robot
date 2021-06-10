@@ -65,3 +65,10 @@ Comment Before setting
     Keyword
     # I want to be here
     [Return]    ${value}
+
+Return first and comment last
+    Keyword
+    [Return]  stuff
+    # I want to be here
+
+# what will happend with me?
