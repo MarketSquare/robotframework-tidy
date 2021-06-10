@@ -2,9 +2,13 @@
 
 ## Unreleased
 
+### Transformers
+- ``AssignmentNormalizer`` was renamed to ``NormalizeAssignment`` for consistent naming with other transformers [#115](https://github.com/MarketSquare/robotframework-tidy/issues/115)
+
 ### Features
 - New option ``--output`` option for saving transformed file to provided path instead of overwriting source file [#108](https://github.com/MarketSquare/robotframework-tidy/issues/108)
-- ``--desc`` now accepts ``all`` for printing out description of all transformers
+- ``--desc`` now accepts ``all`` for printing out description of all transformers [#105](https://github.com/MarketSquare/robotframework-tidy/issues/105)
+- Robotidy will now suggest similar names for invalid transformer names used with ``--transform`` or ``--desc`` options  [#107](https://github.com/MarketSquare/robotframework-tidy/issues/107)
 
 ### Fixes
 - Renamed short version of ``--lineseparator`` to ``-ls`` to avoid collision with ``--list\-l``

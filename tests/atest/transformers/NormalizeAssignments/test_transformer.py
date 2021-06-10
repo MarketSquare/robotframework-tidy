@@ -3,8 +3,8 @@ import pytest
 from .. import run_tidy_and_compare, run_tidy
 
 
-class TestAssignmentNormalizer:
-    TRANSFORMER_NAME = 'AssignmentNormalizer'
+class TestNormalizeAssignments:
+    TRANSFORMER_NAME = 'NormalizeAssignments'
 
     @pytest.mark.parametrize('filename', [
         'common_remove.robot',
@@ -45,7 +45,7 @@ class TestAssignmentNormalizer:
             source='tests.robot',
             exit_code=1
         )
-        expected_output = "Importing 'robotidy.transformers.AssignmentNormalizer' failed: " \
+        expected_output = f"Importing 'robotidy.transformers.{self.TRANSFORMER_NAME}' failed: " \
                           "Creating instance failed: BadOptionUsage: Invalid configurable value: = " \
                           "for equal_sign_type for AssignmentNormalizer transformer. " \
                           "Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign"
