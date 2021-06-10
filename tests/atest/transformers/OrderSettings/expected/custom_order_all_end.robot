@@ -15,6 +15,15 @@ Test case 2
     [Template]  Template
     [Timeout]  timeout
 
+Test case with comment at the end
+    [Teardown]  Keyword
+    #  comment
+
+# comment
+
+Test case 3
+    Golden Keyword
+
 *** Keywords ***
 Keyword
     Keyword
@@ -36,3 +45,17 @@ Keyword
 Another Keyword ${var}
     No Operation
     [Timeout]
+
+Keyword With Comment
+    Keyword
+    [Return]  ${value}
+    # I am comment
+
+Keyword With Empty Line And Comment
+    Keyword
+    [Return]  ${value}
+
+# I am comment in new line
+
+Another Keyword
+    No Operation

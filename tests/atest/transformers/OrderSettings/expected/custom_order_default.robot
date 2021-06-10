@@ -15,6 +15,15 @@ Test case 2
     Keyword
     [Timeout]  timeout2  # this is error because it is duplicate
 
+Test case with comment at the end
+    [Teardown]  Keyword
+    #  comment
+
+# comment
+
+Test case 3
+    Golden Keyword
+
 *** Keywords ***
 Keyword
     [Documentation]  this is
@@ -35,4 +44,18 @@ Keyword
 
 Another Keyword ${var}
     [Timeout]
+    No Operation
+
+Keyword With Comment
+    Keyword
+    [Return]  ${value}
+    # I am comment
+
+Keyword With Empty Line And Comment
+    Keyword
+    [Return]  ${value}
+
+# I am comment in new line
+
+Another Keyword
     No Operation

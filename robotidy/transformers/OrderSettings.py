@@ -2,6 +2,7 @@ import click
 from robot.api.parsing import (
     ModelTransformer,
     EmptyLine,
+    Comment,
     Token
 )
 
@@ -149,9 +150,9 @@ class OrderSettings(ModelTransformer):
                 settings[child.type] = child
             else:
                 rest.append(child)
-        trailing_empty = []
-        while rest and isinstance(rest[-1], EmptyLine):
-            trailing_empty.append(rest.pop())
+        trailing_non_data = []
+        while rest and isinstance(rest[-1], (Comment, EmptyLine)):
+            trailing_non_data.insert(0, rest.pop())
         for token_type in before:
             if token_type in settings:
                 new_body.append(settings[token_type])
@@ -159,6 +160,6 @@ class OrderSettings(ModelTransformer):
         for token_type in after:
             if token_type in settings:
                 new_body.append(settings[token_type])
-        new_body.extend(trailing_empty)
+        new_body.extend(trailing_non_data)
         node.body = new_body
         return node
