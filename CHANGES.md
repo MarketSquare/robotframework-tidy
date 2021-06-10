@@ -4,6 +4,7 @@
 
 ### Transformers
 - ``AssignmentNormalizer`` was renamed to ``NormalizeAssignment`` for consistent naming with other transformers [#115](https://github.com/MarketSquare/robotframework-tidy/issues/115)
+- ``OrderSettings`` now put settings before comments and empty lines at the end of keyword/test case body [#118](https://github.com/MarketSquare/robotframework-tidy/issues/118)
 
 ### Features
 - New option ``--output`` option for saving transformed file to provided path instead of overwriting source file [#108](https://github.com/MarketSquare/robotframework-tidy/issues/108)

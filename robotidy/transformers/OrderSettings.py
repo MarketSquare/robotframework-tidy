@@ -143,20 +143,27 @@ class OrderSettings(ModelTransformer):
         if not node.body:
             return node
         settings = dict()
-        rest = []
+        rest_before = []
+        rest_after = []
         new_body = []
+        after_seen = False
         for child in node.body:
+            after_seen = after_seen or getattr(child, 'type', 'invalid') in after
             if getattr(child, 'type', 'invalid') in setting_types:
                 settings[child.type] = child
             else:
-                rest.append(child)
+                if after_seen:
+                    rest_after.append(child)
+                else:
+                    rest_before.append(child)
         trailing_non_data = []
-        while rest and isinstance(rest[-1], (Comment, EmptyLine)):
-            trailing_non_data.insert(0, rest.pop())
+        while rest_after and isinstance(rest_after[-1], (Comment, EmptyLine)):
+            trailing_non_data.insert(0, rest_after.pop())
+        rest_before.extend(rest_after)
         for token_type in before:
             if token_type in settings:
                 new_body.append(settings[token_type])
-        new_body.extend(rest)
+        new_body.extend(rest_before)
         for token_type in after:
             if token_type in settings:
                 new_body.append(settings[token_type])

@@ -59,3 +59,9 @@ Keyword With Empty Line And Comment
 
 Another Keyword
     No Operation
+    # innocent comment
+
+Comment Before setting
+    Keyword
+    # I want to be here
+    [Return]    ${value}
