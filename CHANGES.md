@@ -5,6 +5,9 @@
 ### Features
 - New option ``--output`` option for saving transformed file to provided path instead of overwriting source file [#108](https://github.com/MarketSquare/robotframework-tidy/issues/108)
 
+# Other
+- Warn user instead of doing nothing when invoking robotidy without any arguments [#106](https://github.com/MarketSquare/robotframework-tidy/issues/106)
+
 ## 1.2.0
 
 ### Transformers

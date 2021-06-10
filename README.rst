@@ -29,8 +29,7 @@ You can install Robotidy by running::
 
 Usage
 -----
-When called without any arguments, robotidy will not do anything. It requires at least one argument: source to file/directory
-with robot files::
+Call robotidy with path(s) to file/directory with robot files::
 
     robotidy tests
     robotidy test.robot
