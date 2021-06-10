@@ -188,6 +188,8 @@ def print_description(name: str):
         rec_finder = RecommendationFinder()
         similar = rec_finder.find_similar(name, transformer_by_names.keys())
         click.echo(f"Transformer with the name '{name}' does not exist.{similar}")
+        return 1
+    return 0
 
 
 def print_transformers_list():
@@ -364,8 +366,8 @@ def cli(
         print_transformers_list()
         ctx.exit(0)
     if desc is not None:
-        print_description(desc)
-        ctx.exit(0)
+        return_code = print_description(desc)
+        ctx.exit(return_code)
     if not src:
         print("No source path provided. Run robotidy --help to see how to use robotidy")
         ctx.exit(0)

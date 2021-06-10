@@ -179,12 +179,9 @@ class TestCli:
     def test_skip_node_start_end_line_setting(self, node_start, node_end, start_line, end_line, expected):
         assert node_within_lines(node_start, node_end, start_line, end_line) == expected
 
-    def test_list_transformers(self):
-        result = run_tidy(['--list'])
-        assert 'To see detailed docs run --desc <transformer_name> or --desc all.\nAvailable transformers:\n'\
-               in result.output
-        assert 'ReplaceRunKeywordIf\n' in result.output
-        result = run_tidy(['-l'])
+    @pytest.mark.parametrize('flag', ['--list', '-l'])
+    def test_list_transformers(self, flag):
+        result = run_tidy([flag])
         assert 'To see detailed docs run --desc <transformer_name> or --desc all.\nAvailable transformers:\n'\
                in result.output
         assert 'ReplaceRunKeywordIf\n' in result.output
@@ -202,8 +199,21 @@ class TestCli:
         assert expected_doc in result.output
         assert expected_doc2 in result.output
 
-    def test_help(self):
-        result = run_tidy(['--help'])
+    @pytest.mark.parametrize('name, similar', [
+        ('NotExisting', ''),
+        ('AlignSettings', ' Did you mean:\n    AlignSettingsSection'),
+        ('align', ' Did you mean:\n    AlignSettingsSection\n    AlignVariablesSection'),
+        ('splittoolongline', ' Did you mean:\n    SplitTooLongLine')
+    ])
+    def test_describe_invalid_transformer(self, name, similar):
+        expected_output = f"Transformer with the name '{name}' does not exist.{similar}"
+        args = f'--desc {name} -'.split()
+        result = run_tidy(args, exit_code=1)
+        assert expected_output in str(result.output)
+
+    @pytest.mark.parametrize('flag', ['--help', '-h'])
+    def test_help(self, flag):
+        result = run_tidy([flag])
         assert f'Version: {__version__}' in result.output
 
     @pytest.mark.parametrize('source, return_status', [
