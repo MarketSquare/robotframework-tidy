@@ -175,7 +175,7 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
 
 
 def print_description(name: str):
-    transformers = load_transformers(None, {})
+    transformers = load_transformers(None, {}, allow_disabled=True)
     transformer_by_names = {transformer.__class__.__name__: transformer for transformer in transformers}
     if name == 'all':
         for tr_name, transformer in transformer_by_names.items():
@@ -193,10 +193,13 @@ def print_description(name: str):
 
 
 def print_transformers_list():
-    transformers = load_transformers(None, {})
-    click.echo('To see detailed docs run --desc <transformer_name> or --desc all.\nAvailable transformers:\n')
+    transformers = load_transformers(None, {}, allow_disabled=True)
+    click.echo('To see detailed docs run --desc <transformer_name> or --desc all. '
+               'Transformers with (disabled) tag \nare executed only when selected explictly with --transform. '
+               'Available transformers:\n')
     for transformer in transformers:
-        click.echo(transformer.__class__.__name__)
+        disabled = ' (disabled)' if not getattr(transformer, 'ENABLED', True) else ''
+        click.echo(transformer.__class__.__name__ + disabled)
 
 
 @click.command(cls=RawHelp, help=HELP_MSG, epilog=EPILOG, context_settings=CONTEXT_SETTINGS)
