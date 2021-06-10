@@ -12,6 +12,7 @@
 
 ### Fixes
 - Renamed short version of ``--lineseparator`` to ``-ls`` to avoid collision with ``--list\-l``
+- Description for disabled transformers can be now displayed & disabled transformers are in ``--list`` output [#114](https://github.com/MarketSquare/robotframework-tidy/issues/114)
 
 ### Other
 - Removed ``'--describe-transformer`` and ``--list-transformers`` aliases for ``--list`` and ``--desc``
