@@ -320,9 +320,6 @@ def cli(
         describe_transformer: Optional[str],
         output: Optional[Path]
 ):
-    if not src:
-        print("No source path provided. Run robotidy --help to see how to use robotidy")
-        ctx.exit(0)
     if list_transformers:
         transformers = load_transformers(None, {})
         click.echo('Run --desc <transformer_name> to get more details. Transformers:')
@@ -337,6 +334,9 @@ def cli(
             click.echo(remove_rst_formatting(transformer_by_names[describe_transformer].__doc__))
         else:
             click.echo(f"Transformer with the name '{describe_transformer}' does not exist")
+        ctx.exit(0)
+    if not src:
+        print("No source path provided. Run robotidy --help to see how to use robotidy")
         ctx.exit(0)
 
     if config and verbose:
