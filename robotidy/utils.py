@@ -192,9 +192,10 @@ class RecommendationFinder:
         norm_cand = {cand.lower(): [cand] for cand in candidates}
         # most popular typos
         norm_cand['align'] = ['AlignSettingsSection', 'AlignVariablesSection']
-        norm_cand['normalize'] = ['NormalizeNewLines', 'NormalizeSectionHeaderName', 'NormalizeSeparators',
-                                  'NormalizeSettingName']
+        norm_cand['normalize'] = ['NormalizeAssignments', 'NormalizeNewLines', 'NormalizeSectionHeaderName',
+                                  'NormalizeSeparators', 'NormalizeSettingName']
         norm_cand['order'] = ['OrderSettings', 'OrderSettingsSection']
         norm_cand['alignsettings'] = ['AlignSettingsSection']
         norm_cand['alignvariables'] = ['AlignVariablesSection']
+        norm_cand['assignmentnormalizer'] = ['NormalizeAssignments']
         return norm_cand

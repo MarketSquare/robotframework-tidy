@@ -33,7 +33,8 @@ class TestCli:
         ('NotExisting', ''),
         ('AlignSettings', ' Did you mean:\n    AlignSettingsSection'),
         ('align', ' Did you mean:\n    AlignSettingsSection\n    AlignVariablesSection'),
-        ('splittoolongline', ' Did you mean:\n    SplitTooLongLine')
+        ('splittoolongline', ' Did you mean:\n    SplitTooLongLine'),
+        ('AssignmentNormalizer', ' Did you mean:\n    NormalizeAssignments')
     ])
     def test_not_existing_transformer(self, name, similar):
         expected_output = f"Importing transformer '{name}' failed. " \
@@ -203,7 +204,8 @@ class TestCli:
         ('NotExisting', ''),
         ('AlignSettings', ' Did you mean:\n    AlignSettingsSection'),
         ('align', ' Did you mean:\n    AlignSettingsSection\n    AlignVariablesSection'),
-        ('splittoolongline', ' Did you mean:\n    SplitTooLongLine')
+        ('splittoolongline', ' Did you mean:\n    SplitTooLongLine'),
+        ('AssignmentNormalizer', ' Did you mean:\n    NormalizeAssignments')
     ])
     def test_describe_invalid_transformer(self, name, similar):
         expected_output = f"Transformer with the name '{name}' does not exist.{similar}"

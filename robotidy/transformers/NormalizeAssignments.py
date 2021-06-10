@@ -10,7 +10,7 @@ from robot.api.parsing import (
 )
 
 
-class AssignmentNormalizer(ModelTransformer):
+class NormalizeAssignments(ModelTransformer):
     """
     Normalize assignments. By default it detects most common assignment sign
     and apply it to every assignment in given file.
