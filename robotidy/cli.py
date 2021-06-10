@@ -173,6 +173,27 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     ctx.default_map = default_map
 
 
+def print_description(name: str):
+    transformers = load_transformers(None, {})
+    transformer_by_names = {transformer.__class__.__name__: transformer for transformer in transformers}
+    if name == 'all':
+        for tr_name, transformer in transformer_by_names.items():
+            click.echo(f"Transformer {tr_name}:")
+            click.echo(remove_rst_formatting(transformer.__doc__))
+    elif name in transformer_by_names:
+        click.echo(f"Transformer {name}:")
+        click.echo(remove_rst_formatting(transformer_by_names[name].__doc__))
+    else:
+        click.echo(f"Transformer with the name '{name}' does not exist")
+
+
+def print_transformers_list():
+    transformers = load_transformers(None, {})
+    click.echo('To see detailed docs run --desc <transformer_name> or --desc all.\nAvailable transformers:\n')
+    for transformer in transformers:
+        click.echo(transformer.__class__.__name__)
+
+
 @click.command(cls=RawHelp, help=HELP_MSG, epilog=EPILOG, context_settings=CONTEXT_SETTINGS)
 @click.option(
     '--transform',
@@ -337,19 +358,10 @@ def cli(
         print('--describe-transformer is deprecated in 1.3.0. Use --desc NAME instead')
         ctx.exit(0)
     if list:
-        transformers = load_transformers(None, {})
-        click.echo('Run --desc <transformer_name> to get more details. Transformers:')
-        for transformer in transformers:
-            click.echo(transformer.__class__.__name__)
+        print_transformers_list()
         ctx.exit(0)
     if desc is not None:
-        transformers = load_transformers(None, {})
-        transformer_by_names = {transformer.__class__.__name__: transformer for transformer in transformers}
-        if desc in transformer_by_names:
-            click.echo(f"Transformer {desc}:")
-            click.echo(remove_rst_formatting(transformer_by_names[desc].__doc__))
-        else:
-            click.echo(f"Transformer with the name '{desc}' does not exist")
+        print_description(desc)
         ctx.exit(0)
     if not src:
         print("No source path provided. Run robotidy --help to see how to use robotidy")
