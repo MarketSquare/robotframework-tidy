@@ -43,12 +43,12 @@ def import_transformer(name, args):
         return Importer().import_class_or_module(name, instantiate_with_args=args)
     except DataError as err:
         if 'Creating instance failed' in str(err):
-            raise err
+            raise err from None
         short_name = name.split('.')[-1]
         similar_finder = RecommendationFinder()
         similar = similar_finder.find_similar(short_name, TRANSFORMERS)
         raise ImportTransformerError(f"Importing transformer '{short_name}' failed. "
-                                     f"Verify if correct name or configuration was provided.{similar}")
+                                     f"Verify if correct name or configuration was provided.{similar}") from None
 
 
 def load_transformers(allowed_transformers, config):
