@@ -4,6 +4,7 @@
 
 ### Features
 - New option ``--output`` option for saving transformed file to provided path instead of overwriting source file [#108](https://github.com/MarketSquare/robotframework-tidy/issues/108)
+- ``--desc`` now accepts ``all`` for printing out description of all transformers
 
 ### Fixes
 - Renamed short version of ``--lineseparator`` to ``-ls`` to avoid collision with ``--list\-l``
