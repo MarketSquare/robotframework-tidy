@@ -300,6 +300,14 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     help="More verbose output",
     show_default=True
 )
+@click.option(  # deprecated
+    '--list-transformers',
+    is_flag=True
+)
+@click.option(  # deprecated
+    '--describe-transformer',
+    default=None
+)
 @click.version_option(version=__version__, prog_name='robotidy')
 @click.pass_context
 def cli(
@@ -318,8 +326,16 @@ def cli(
         endline: Optional[int],
         list: bool,
         desc: Optional[str],
-        output: Optional[Path]
+        output: Optional[Path],
+        list_transformers: bool,
+        describe_transformer: Optional[str]
 ):
+    if list_transformers:
+        print('--list-transformers is deprecated in 1.3.0. Use --list instead')
+        ctx.exit(0)
+    if describe_transformer:
+        print('--describe-transformer is deprecated in 1.3.0. Use --desc NAME instead')
+        ctx.exit(0)
     if list:
         transformers = load_transformers(None, {})
         click.echo('Run --desc <transformer_name> to get more details. Transformers:')
