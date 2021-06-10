@@ -148,8 +148,8 @@ class OrderSettings(ModelTransformer):
         new_body = []
         after_seen = False
         for child in node.body:
-            after_seen = after_seen or getattr(child, 'type', 'invalid') in after
             if getattr(child, 'type', 'invalid') in setting_types:
+                after_seen = after_seen or getattr(child, 'type', 'invalid') in after
                 settings[child.type] = child
             else:
                 if after_seen:
