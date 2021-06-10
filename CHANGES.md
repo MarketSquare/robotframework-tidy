@@ -5,6 +5,13 @@
 ### Features
 - New option ``--output`` option for saving transformed file to provided path instead of overwriting source file [#108](https://github.com/MarketSquare/robotframework-tidy/issues/108)
 
+### Fixes
+- Renamed short version of ``--lineseparator`` to ``-ls`` to avoid collision with ``--list\-l``
+
+### Other
+- Removed ``'--describe-transformer`` and ``--list-transformers`` aliases for ``--list`` and ``--desc``
+- Added ``-h`` alias for ``--help`` command
+
 ## 1.2.0
 
 ### Transformers
