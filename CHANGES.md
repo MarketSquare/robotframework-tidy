@@ -11,6 +11,7 @@
 ### Other
 - Removed ``'--describe-transformer`` and ``--list-transformers`` aliases for ``--list`` and ``--desc``
 - Added ``-h`` alias for ``--help`` command
+- Warn user instead of doing nothing when invoking robotidy without any arguments [#106](https://github.com/MarketSquare/robotframework-tidy/issues/106)
 
 ## 1.2.0
 

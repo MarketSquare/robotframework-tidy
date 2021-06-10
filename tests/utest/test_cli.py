@@ -30,7 +30,7 @@ class TestCli:
 
     def test_not_existing_transformer(self):
         expected_output = "Importing 'NotExisting' failed: ModuleNotFoundError: No module named 'NotExisting'"
-        args = '--transform NotExisting --transform MissingTransformer --transform DiscardEmptySections'.split()
+        args = '--transform NotExisting --transform MissingTransformer --transform DiscardEmptySections -'.split()
         result = run_tidy(args, exit_code=1)
         assert expected_output in str(result.exception)
 
@@ -47,13 +47,13 @@ class TestCli:
     def test_invalid_configurable_usage(self):
         expected_output = "Importing 'DiscardEmptySections=allow_only_comments=False' failed: " \
                           "ModuleNotFoundError: No module named 'DiscardEmptySections=allow_only_comments=False'"
-        args = '--transform DiscardEmptySections=allow_only_comments=False'.split()
+        args = '--transform DiscardEmptySections=allow_only_comments=False -'.split()
         result = run_tidy(args, exit_code=1)
         assert expected_output in str(result.exception)
 
     def test_too_many_arguments_for_transform(self):
         expected_output = "not enough values to unpack (expected 2, got 1)"
-        args = '--transform DiscardEmptySections:allow_only_comments:False'.split()
+        args = '--transform DiscardEmptySections:allow_only_comments:False -'.split()
         result = run_tidy(args, exit_code=1)
         assert str(result.exception) == expected_output
 

@@ -351,6 +351,9 @@ def cli(
         else:
             click.echo(f"Transformer with the name '{desc}' does not exist")
         ctx.exit(0)
+    if not src:
+        print("No source path provided. Run robotidy --help to see how to use robotidy")
+        ctx.exit(0)
 
     if config and verbose:
         click.echo(f'Loaded {config} configuration file')
