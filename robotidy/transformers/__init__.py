@@ -10,6 +10,9 @@ then add ``ENABLED = False`` class attribute inside.
 """
 from itertools import chain
 from robot.utils.importer import Importer
+from robot.errors import DataError
+
+from robotidy.utils import RecommendationFinder
 
 
 TRANSFORMERS = [
@@ -31,6 +34,23 @@ TRANSFORMERS = [
 ]
 
 
+class ImportTransformerError(ValueError):
+    pass
+
+
+def import_transformer(name, args):
+    try:
+        return Importer().import_class_or_module(name, instantiate_with_args=args)
+    except DataError as err:
+        if 'Creating instance failed' in str(err):
+            raise err
+        short_name = name.split('.')[-1]
+        similar_finder = RecommendationFinder()
+        similar = similar_finder.find_similar(short_name, TRANSFORMERS)
+        raise ImportTransformerError(f"Importing transformer '{short_name}' failed. "
+                                     f"Verify if correct name or configuration was provided.{similar}")
+
+
 def load_transformers(allowed_transformers, config):
     """ Dynamically load all classes from this file with attribute `name` defined in allowed_transformers """
     loaded_transformers = []
@@ -44,16 +64,15 @@ def load_transformers(allowed_transformers, config):
                 temp_args[param] = value
             args = [f'{key}={value}' for key, value in temp_args.items()]
             import_name = f'robotidy.transformers.{name}' if name in TRANSFORMERS else name
-            loaded_transformers.append(Importer().import_class_or_module(
-                import_name,
-                instantiate_with_args=args
-            ))
+            imported_class = import_transformer(import_name, args)
+            if imported_class is None:
+                return []
+            loaded_transformers.append(imported_class)
     else:
         for name in TRANSFORMERS:
-            imported_class = Importer().import_class_or_module(
-                f'robotidy.transformers.{name}',
-                instantiate_with_args=config.get(name, ())
-            )
+            imported_class = import_transformer(f'robotidy.transformers.{name}', config.get(name, ()))
+            if imported_class is None:
+                return []
             if getattr(imported_class, 'ENABLED', True):
                 loaded_transformers.append(imported_class)
     return loaded_transformers

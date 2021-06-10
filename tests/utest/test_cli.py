@@ -29,9 +29,16 @@ class TestCli:
         """ It should recursively search and find `testdata/test.robot` file """
         run_tidy(src)
 
-    def test_not_existing_transformer(self):
-        expected_output = "Importing 'NotExisting' failed: ModuleNotFoundError: No module named 'NotExisting'"
-        args = '--transform NotExisting --transform MissingTransformer --transform DiscardEmptySections -'.split()
+    @pytest.mark.parametrize('name, similar', [
+        ('NotExisting', ''),
+        ('AlignSettings', ' Did you mean:\n    AlignSettingsSection'),
+        ('align', ' Did you mean:\n    AlignSettingsSection\n    AlignVariablesSection'),
+        ('splittoolongline', ' Did you mean:\n    SplitTooLongLine')
+    ])
+    def test_not_existing_transformer(self, name, similar):
+        expected_output = f"Importing transformer '{name}' failed. " \
+                          f"Verify if correct name or configuration was provided.{similar}"
+        args = f'--transform {name} --transform MissingTransformer --transform DiscardEmptySections -'.split()
         result = run_tidy(args, exit_code=1)
         assert expected_output in str(result.exception)
 
@@ -46,8 +53,8 @@ class TestCli:
     #     assert expected_output == result.output
 
     def test_invalid_configurable_usage(self):
-        expected_output = "Importing 'DiscardEmptySections=allow_only_comments=False' failed: " \
-                          "ModuleNotFoundError: No module named 'DiscardEmptySections=allow_only_comments=False'"
+        expected_output = "Importing transformer 'DiscardEmptySections=allow_only_comments=False' failed. " \
+                          "Verify if correct name or configuration was provided"
         args = '--transform DiscardEmptySections=allow_only_comments=False -'.split()
         result = run_tidy(args, exit_code=1)
         assert expected_output in str(result.exception)
