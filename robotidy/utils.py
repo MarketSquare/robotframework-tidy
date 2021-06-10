@@ -1,8 +1,6 @@
 import os
 from typing import List
 import difflib
-from collections import defaultdict
-import re
 
 from robot.api.parsing import (
     ModelVisitor,
