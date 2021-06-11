@@ -154,11 +154,10 @@ class OrderSettings(ModelTransformer):
                 trailing_non_data.append(child)
             else:
                 not_settings.append(child)
-        node.body = self.add_in_order(before, settings, not_settings) + self.add_in_order(after, settings, trailing_non_data)
+        node.body = self.add_in_order(before, settings) + not_settings + \
+                    self.add_in_order(after, settings) + trailing_non_data
         return node
 
     @staticmethod
-    def add_in_order(order, settings_in_node, trailing_nodes):
-        body = [settings_in_node[token_type] for token_type in order if token_type in settings_in_node]
-        body.extend(trailing_nodes)
-        return body
+    def add_in_order(order, settings_in_node):
+        return [settings_in_node[token_type] for token_type in order if token_type in settings_in_node]
