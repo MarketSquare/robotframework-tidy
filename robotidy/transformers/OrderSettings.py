@@ -2,6 +2,7 @@ import click
 from robot.api.parsing import (
     ModelTransformer,
     EmptyLine,
+    Comment,
     Token
 )
 
@@ -137,28 +138,26 @@ class OrderSettings(ModelTransformer):
     def visit_TestCase(self, node):  # noqa
         return self.order_settings(node, self.test_settings, self.test_before, self.test_after)
 
-    @staticmethod
-    def order_settings(node, setting_types, before, after):
+    def order_settings(self, node, setting_types, before, after):
         if not node.body:
             return node
         settings = dict()
-        rest = []
-        new_body = []
+        not_settings, trailing_non_data = [], []
+        after_seen = False
+        # when after_seen is set to True then all non data go to trailing_non_data and will be appended after tokens
+        # defined in `after` set (like [Return])
         for child in node.body:
             if getattr(child, 'type', 'invalid') in setting_types:
+                after_seen = after_seen or child.type in after
                 settings[child.type] = child
+            elif after_seen and isinstance(child, (Comment, EmptyLine)):
+                trailing_non_data.append(child)
             else:
-                rest.append(child)
-        trailing_empty = []
-        while rest and isinstance(rest[-1], EmptyLine):
-            trailing_empty.append(rest.pop())
-        for token_type in before:
-            if token_type in settings:
-                new_body.append(settings[token_type])
-        new_body.extend(rest)
-        for token_type in after:
-            if token_type in settings:
-                new_body.append(settings[token_type])
-        new_body.extend(trailing_empty)
-        node.body = new_body
+                not_settings.append(child)
+        node.body = self.add_in_order(before, settings) + not_settings + \
+                    self.add_in_order(after, settings) + trailing_non_data
         return node
+
+    @staticmethod
+    def add_in_order(order, settings_in_node):
+        return [settings_in_node[token_type] for token_type in order if token_type in settings_in_node]
