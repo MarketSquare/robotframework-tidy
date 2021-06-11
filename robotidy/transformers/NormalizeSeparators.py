@@ -41,7 +41,6 @@ class NormalizeSeparators(ModelTransformer):
         splitted = sections.split(',')
         parsed_sections = set()
         for split in splitted:
-            # normalization to also accept test_cases, setting, variable
             split = split.replace('_', '')
             if split and split[-1] != 's':
                 split += 's'
@@ -70,7 +69,7 @@ class NormalizeSeparators(ModelTransformer):
         return self.should_visit('settings', node)
 
     def visit_VariableSection(self, node):  # noqa
-        return self.should_visit('settings', node)
+        return self.should_visit('variables', node)
 
     def visit_KeywordSection(self, node):  # noqa
         return self.should_visit('keywords', node)
