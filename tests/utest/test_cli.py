@@ -16,6 +16,7 @@ from robotidy.utils import node_within_lines
 from robotidy.transformers import load_transformers
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
 from robotidy.transformers.ReplaceRunKeywordIf import ReplaceRunKeywordIf
+from robotidy.transformers.SmartSortKeywords import SmartSortKeywords
 from robotidy.version import __version__
 
 
@@ -183,19 +184,26 @@ class TestCli:
     @pytest.mark.parametrize('flag', ['--list', '-l'])
     def test_list_transformers(self, flag):
         result = run_tidy([flag])
-        assert 'To see detailed docs run --desc <transformer_name> or --desc all.\nAvailable transformers:\n'\
+        assert 'To see detailed docs run --desc <transformer_name> or --desc all. Transformers with (disabled) tag \n' \
+               'are executed only when selected explictly with --transform. Available transformers:\n'\
                in result.output
         assert 'ReplaceRunKeywordIf\n' in result.output
+        assert 'SmartSortKeywords (disabled)\n' in result.output  # this transformer is disabled by default
 
-    def test_describe_transformer(self):
+    @pytest.mark.parametrize('flag', ['--desc', '-d'])
+    @pytest.mark.parametrize('name, expected_doc', [
+        ('ReplaceRunKeywordIf', ReplaceRunKeywordIf.__doc__.replace('::', ':').replace("``", "'")),
+        ('SmartSortKeywords', SmartSortKeywords.__doc__.replace('::', ':').replace("``", "'"))
+    ])
+    def test_describe_transformer(self, flag, name, expected_doc):
+        not_expected_doc = AlignSettingsSection.__doc__.replace('::', ':').replace("``", "'")
+        result = run_tidy([flag, name])
+        assert expected_doc in result.output
+        assert not_expected_doc not in result.output
+
+    def test_describe_transformer_all(self):
         expected_doc = ReplaceRunKeywordIf.__doc__.replace('::', ':').replace("``", "'")
         expected_doc2 = AlignSettingsSection.__doc__.replace('::', ':').replace("``", "'")
-        result = run_tidy(['--desc', 'ReplaceRunKeywordIf'])
-        assert expected_doc in result.output
-        assert expected_doc2 not in result.output
-        result = run_tidy(['-d', 'ReplaceRunKeywordIf'])
-        assert expected_doc in result.output
-        assert expected_doc2 not in result.output
         result = run_tidy(['--desc', 'all'])
         assert expected_doc in result.output
         assert expected_doc2 in result.output
