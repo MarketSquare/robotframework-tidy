@@ -51,7 +51,7 @@ def import_transformer(name, args):
                                      f"Verify if correct name or configuration was provided.{similar}") from None
 
 
-def load_transformers(allowed_transformers, config):
+def load_transformers(allowed_transformers, config, allow_disabled=False):
     """ Dynamically load all classes from this file with attribute `name` defined in allowed_transformers """
     loaded_transformers = []
     if allowed_transformers:
@@ -73,6 +73,6 @@ def load_transformers(allowed_transformers, config):
             imported_class = import_transformer(f'robotidy.transformers.{name}', config.get(name, ()))
             if imported_class is None:
                 return []
-            if getattr(imported_class, 'ENABLED', True):
+            if allow_disabled or getattr(imported_class, 'ENABLED', True):
                 loaded_transformers.append(imported_class)
     return loaded_transformers
