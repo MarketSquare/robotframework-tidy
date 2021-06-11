@@ -138,35 +138,30 @@ class OrderSettings(ModelTransformer):
     def visit_TestCase(self, node):  # noqa
         return self.order_settings(node, self.test_settings, self.test_before, self.test_after)
 
-    @staticmethod
-    def order_settings(node, setting_types, before, after):
+    def order_settings(self, node, setting_types, before, after):
         if not node.body:
             return node
         settings = dict()
-        rest_before = []
-        rest_after = []
-        new_body = []
+        not_settings, trailing_non_data = [], []
         after_seen = False
+        # when after_seen is set to True then all non data go to trailing_non_data and will be appended after tokens
+        # defined in `after` set (like [Return])
         for child in node.body:
             if getattr(child, 'type', 'invalid') in setting_types:
                 after_seen = after_seen or getattr(child, 'type', 'invalid') in after
                 settings[child.type] = child
             else:
-                if after_seen:
-                    rest_after.append(child)
+                if after_seen and isinstance(child, (Comment, EmptyLine)):
+                    trailing_non_data.append(child)
                 else:
-                    rest_before.append(child)
-        trailing_non_data = []
-        while rest_after and isinstance(rest_after[-1], (Comment, EmptyLine)):
-            trailing_non_data.insert(0, rest_after.pop())
-        rest_before.extend(rest_after)
-        for token_type in before:
-            if token_type in settings:
-                new_body.append(settings[token_type])
-        new_body.extend(rest_before)
-        for token_type in after:
-            if token_type in settings:
-                new_body.append(settings[token_type])
-        new_body.extend(trailing_non_data)
+                    not_settings.append(child)
+        new_body = self.add_in_order(before, settings, not_settings)
+        new_body.extend(self.add_in_order(after, settings, trailing_non_data))
         node.body = new_body
         return node
+
+    @staticmethod
+    def add_in_order(order, settings_in_node, trailing_nodes):
+        body = [settings_in_node[token_type] for token_type in order if token_type in settings_in_node]
+        body.extend(trailing_nodes)
+        return body
