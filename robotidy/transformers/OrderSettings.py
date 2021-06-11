@@ -150,14 +150,11 @@ class OrderSettings(ModelTransformer):
             if getattr(child, 'type', 'invalid') in setting_types:
                 after_seen = after_seen or child.type in after
                 settings[child.type] = child
+            elif after_seen and isinstance(child, (Comment, EmptyLine)):
+                trailing_non_data.append(child)
             else:
-                if after_seen and isinstance(child, (Comment, EmptyLine)):
-                    trailing_non_data.append(child)
-                else:
-                    not_settings.append(child)
-        new_body = self.add_in_order(before, settings, not_settings)
-        new_body.extend(self.add_in_order(after, settings, trailing_non_data))
-        node.body = new_body
+                not_settings.append(child)
+        node.body = self.add_in_order(before, settings, not_settings) + self.add_in_order(after, settings, trailing_non_data)
         return node
 
     @staticmethod
