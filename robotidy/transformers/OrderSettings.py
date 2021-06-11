@@ -148,7 +148,7 @@ class OrderSettings(ModelTransformer):
         # defined in `after` set (like [Return])
         for child in node.body:
             if getattr(child, 'type', 'invalid') in setting_types:
-                after_seen = after_seen or getattr(child, 'type', 'invalid') in after
+                after_seen = after_seen or child.type in after
                 settings[child.type] = child
             else:
                 if after_seen and isinstance(child, (Comment, EmptyLine)):
