@@ -1,3 +1,5 @@
+# this is        comment
+
 *** Settings ***
 Library        library.py        WITH NAME        alias
 
@@ -7,6 +9,10 @@ Force Tags        tag
 Documentation        doc
 ...        multi
 ...        line
+
+*** Variables ***
+${var}        3
+ ${var2}        4
 
 *** Test Cases ***
 Test case

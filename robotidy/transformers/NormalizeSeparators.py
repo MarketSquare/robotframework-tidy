@@ -1,5 +1,6 @@
 from itertools import takewhile
 
+import click
 from robot.api.parsing import (
     ModelTransformer,
     Token
@@ -15,14 +16,66 @@ class NormalizeSeparators(ModelTransformer):
     All separators (pipes included) are converted to fixed length of 4 spaces (configurable via global argument
     ``--spacecount``).
 
+    You can decide which sections should be transformed by configuring
+    ``sections = comments,settings,variables,keywords,testcases`` param.
+
     Supports global formatting params: ``--startline`` and ``--endline``.
     """
-    def __init__(self):
+    def __init__(self, sections: str = None):
         self.indent = 0
+        self.sections = self.parse_sections(sections)
+
+    @staticmethod
+    def parse_sections(sections):
+        default = {
+            'comments',
+            'settings',
+            'testcases',
+            'keywords',
+            'variables'
+        }
+        if sections is None:
+            return default
+        if not sections:
+            return {}
+        splitted = sections.split(',')
+        parsed_sections = set()
+        for split in splitted:
+            split = split.replace('_', '')
+            if split and split[-1] != 's':
+                split += 's'
+            if split not in default:
+                raise click.BadOptionUsage(
+                    option_name='transform',
+                    message=f"Invalid configurable value: '{sections}' for sections for NormalizeSeparators transformer."
+                            f" Sections to be transformed should be provided in comma separated list with valid section"
+                            f" names:\n{sorted(default)}")
+            parsed_sections.add(split)
+        return parsed_sections
 
     def visit_File(self, node):  # noqa
         self.indent = 0
         return self.generic_visit(node)
+
+    def should_visit(self, name, node):
+        if name in self.sections:
+            return self.generic_visit(node)
+        return node
+
+    def visit_CommentSection(self, node):  # noqa
+        return self.should_visit('comments', node)
+
+    def visit_SettingSection(self, node):  # noqa
+        return self.should_visit('settings', node)
+
+    def visit_VariableSection(self, node):  # noqa
+        return self.should_visit('variables', node)
+
+    def visit_KeywordSection(self, node):  # noqa
+        return self.should_visit('keywords', node)
+
+    def visit_TestCaseSection(self, node):  # noqa
+        return self.should_visit('testcases', node)
 
     def visit_TestCase(self, node):  # noqa
         self.visit_Statement(node.header)

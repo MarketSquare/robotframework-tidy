@@ -1,4 +1,4 @@
-  # this is   comment
+# this is    comment
 
 *** Settings ***
 Library  library.py  WITH NAME          alias
@@ -32,16 +32,16 @@ Test case with structures
 *** Keywords ***
 Keyword
 Another Keyword
-          [Arguments]  ${arg}
-       Should Be Equal  1
-       ...  ${arg}
-   IF  ${condition}
-        FOR  ${v}  IN RANGE  10
-   Keyword
+    [Arguments]    ${arg}
+    Should Be Equal    1
+    ...    ${arg}
+    IF    ${condition}
+        FOR    ${v}    IN RANGE    10
+            Keyword
         END
-   END
+    END
 
 Keyword With Tabulators
     Keyword
-    ...  2
-	...  ${arg}
+    ...    2
+    ...    ${arg}

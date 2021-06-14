@@ -1,18 +1,18 @@
-  # this is   comment
+# this is    comment
 
 *** Settings ***
-Library  library.py  WITH NAME          alias
+Library    library.py    WITH NAME    alias
 
-Force Tags           tag
-...   tag
+Force Tags    tag
+...    tag
 
-Documentation  doc
-...      multi
-...  line
+Documentation    doc
+...    multi
+...    line
 
 *** Variables ***
-${var}     3
- ${var2}  4
+${var}    3
+ ${var2}    4
 
 *** Test Cases ***
 Test case

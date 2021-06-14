@@ -4,6 +4,7 @@
 
 ### Transformers
 - ``AssignmentNormalizer`` was renamed to ``NormalizeAssignment`` for consistent naming with other transformers [#115](https://github.com/MarketSquare/robotframework-tidy/issues/115)
+- It is now possible to select what sections are normalized in ``NormalizeSeparators`` transformer with ``sections`` param [#116](https://github.com/MarketSquare/robotframework-tidy/issues/116)
 - ``OrderSettings`` now puts settings before comments and empty lines at the end of keyword/test case body [#118](https://github.com/MarketSquare/robotframework-tidy/issues/118)
 
 ### Features
