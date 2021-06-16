@@ -16,7 +16,7 @@ from robotidy.utils import (
 
 class AlignSettingsSection(ModelTransformer):
     """
-    Align lines in ``*** Settings ***`` section to columns.
+    Align statements in ``*** Settings ***`` section to columns.
 
     Following code::
 

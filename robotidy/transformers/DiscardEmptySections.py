@@ -20,7 +20,7 @@ class DiscardEmptySections(ModelTransformer):
     Supports global formatting params: ``--startline`` and ``--endline``.
     """
     def __init__(self, allow_only_comments: bool = False):
-        # If True then sections only with comments are not considered as empty
+        # If True then sections only with comments are not is considered to be empty
         self.allow_only_comments = allow_only_comments
 
     @check_start_end_line
