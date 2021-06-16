@@ -40,7 +40,7 @@ class AlignVariablesSection(ModelTransformer):
 
        robotidy --transform AlignVariablesSection:up_to_column=3
 
-    To align all columns set ``up_to_column` to 0.
+    To align all columns set ``up_to_column`` to 0.
 
     Supports global formatting params: ``--startline`` and ``--endline``.
     """
