@@ -142,18 +142,23 @@ class OrderSettings(ModelTransformer):
         if not node.body:
             return node
         settings = dict()
-        not_settings, trailing_non_data = [], []
+        not_settings, trailing_after = [], []
         after_seen = False
-        # when after_seen is set to True then all non data go to trailing_non_data and will be appended after tokens
-        # defined in `after` set (like [Return])
+        # when after_seen is set to True then all statements go to trailing_after and last non data
+        # will be appended after tokens defined in `after` set (like [Return])
         for child in node.body:
             if getattr(child, 'type', 'invalid') in setting_types:
                 after_seen = after_seen or child.type in after
                 settings[child.type] = child
-            elif after_seen and isinstance(child, (Comment, EmptyLine)):
-                trailing_non_data.append(child)
+            elif after_seen:
+                trailing_after.append(child)
             else:
                 not_settings.append(child)
+        # comments after last data statement are considered as comment outside body
+        trailing_non_data = []
+        while trailing_after and isinstance(trailing_after[-1], (EmptyLine, Comment)):
+            trailing_non_data.insert(0, trailing_after.pop())
+        not_settings += trailing_after
         node.body = self.add_in_order(before, settings) + not_settings + \
                     self.add_in_order(after, settings) + trailing_non_data
         return node
