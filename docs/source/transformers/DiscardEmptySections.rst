@@ -27,7 +27,7 @@ run separately with::
 
 
         *** Keywords ***
-        # This section considered as empty.
+        # This section is considered to be empty.
 
 
         *** Variables ***
@@ -59,9 +59,6 @@ You can leave sections with only comments by setting ``allow_only_comments`` par
 
     .. code-tab:: robotframework ``allow_only_comments=False`` (default)
 
-        *** Settings ***
-
-
         *** Test Cases ***
         Test
             [Documentation]  doc
@@ -69,13 +66,6 @@ You can leave sections with only comments by setting ``allow_only_comments`` par
             Pass
             Keyword
             One More
-
-
-        *** Keywords ***
-        # This section considered as empty.
-
-
-        *** Variables ***
 
         *** Comments ***
         robocop: disable=all
@@ -90,10 +80,8 @@ You can leave sections with only comments by setting ``allow_only_comments`` par
             Keyword
             One More
 
-
         *** Keywords ***
-        # This section considered as empty.
-
+        # This section is considered to be empty.
 
         *** Comments ***
         robocop: disable=all
