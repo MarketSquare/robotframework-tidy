@@ -8,15 +8,17 @@ Transformers
 
     *
 
-Order of transformers
----------------------
+See :ref:`configuring-transformers` to learn how transformers can be configured.
+
+.. rubric:: Order of transformers
+
 By default all transformers run in the same order. Whether called with::
 
    robotidy src
 
 or::
 
-   robotidy --transform ReplaceRunKeywordIf --replace SplitTooLongLine src
+   robotidy --transform ReplaceRunKeywordIf --transform SplitTooLongLine src
 
 or::
 
@@ -27,3 +29,4 @@ It will transform files according to internal order (in this example ``ReplaceRu
 
    robotidy --transform SplitTooLongLine src
    robotidy --transform ReplaceRunKeywordIf src
+
