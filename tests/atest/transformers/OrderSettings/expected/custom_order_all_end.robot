@@ -24,6 +24,14 @@ Test case with comment at the end
 Test case 3
     Golden Keyword
 
+Test case 4
+   Keyword1
+   # comment1
+   Keyword2
+   # comment2
+   Keyword3
+   [Teardown]  teardown
+
 *** Keywords ***
 Keyword
     Keyword
