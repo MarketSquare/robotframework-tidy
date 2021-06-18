@@ -2,7 +2,7 @@
 Resource    resource.robot
 
 
-Defalt Tags    tag
+Default Tags    tag
 
 Documentation    doc
 

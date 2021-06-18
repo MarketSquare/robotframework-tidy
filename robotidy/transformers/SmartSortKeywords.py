@@ -38,8 +38,8 @@ class SmartSortKeywords(ModelTransformer):
         _my secrete keyword
             Kw2
 
-    Default behaviour could be changed using following parameters: ``case_insensitive``, ``ignore_leading_underscore``
-    and ``ignore_other_underscore``.
+    Default behaviour could be changed using following parameters: ``case_insensitive = True``,
+    ``ignore_leading_underscore = False`` and ``ignore_other_underscore = True``.
     """
     ENABLED = False
 

@@ -19,7 +19,8 @@ class RemoveEmptySettings(ModelTransformer):
           Test Teardown, Test Template, Test Timeout or Default Tags)
         - always : works on every settings
 
-    Empty settings that are overwriting suite settings will be converted to be more explicit::
+    Empty settings that are overwriting suite settings will be converted to be more explicit
+    (given that there is related suite settings present)::
 
         No timeout
         [Documentation]    Empty timeout means no timeout even when Test Timeout has been used.

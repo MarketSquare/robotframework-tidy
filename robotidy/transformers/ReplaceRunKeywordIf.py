@@ -23,8 +23,7 @@ def insert_separators(indent, tokens, space_count):
 
 class ReplaceRunKeywordIf(ModelTransformer):
     """
-    Replace ``Run Keyword If`` keyword calls with IF END blocks.
-    Supports global formatting params: ``--spacecount``, ``--startline`` and ``--endline``.
+    Replace ``Run Keyword If`` keyword calls with IF expressions.
 
     Following code::
 
@@ -66,6 +65,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
             Keyword2
         END
 
+    Supports global formatting params: ``--spacecount``, ``--startline`` and ``--endline``.
     """
     @check_start_end_line
     def visit_KeywordCall(self, node):  # noqa
