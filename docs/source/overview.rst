@@ -32,3 +32,4 @@ All command line options can be displayed in help message by executing::
 
     robotidy --help
 
+Navigate to sections on the left side of the page such as :ref:`transformers` or :ref:`configuration` to read more.

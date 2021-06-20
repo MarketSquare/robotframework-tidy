@@ -5,24 +5,23 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 # -- Path setup --------------------------------------------------------------
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
+import datetime
+from robotidy.version import __version__
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
 
 
 # -- Project information -----------------------------------------------------
 
 project = 'Robotidy'
-copyright = '2021, Bartłomiej Hirsz'
+copyright = f'{datetime.datetime.now().year}, Bartlomiej Hirsz'
 author = 'Bartłomiej Hirsz'
 
 # The full version, including alpha/beta/rc tags
-release = '1.2.0'
+release = __version__
+version = __version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -30,7 +29,10 @@ release = '1.2.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx_tabs.tabs']
+extensions = [
+    'sphinx_tabs.tabs',
+    'sphinx_copybutton'
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
