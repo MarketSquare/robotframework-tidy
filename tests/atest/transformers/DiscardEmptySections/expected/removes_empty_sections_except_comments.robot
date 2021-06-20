@@ -8,7 +8,7 @@ Test
 
 
 *** Keywords ***
-# This section considered as empty.
+# This section is considered to be empty.
 
 
 *** Comments ***

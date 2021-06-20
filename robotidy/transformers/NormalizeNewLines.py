@@ -13,9 +13,9 @@ class NormalizeNewLines(ModelTransformer):
     Normalize new lines.
 
     Ensure that there is exactly:
-    * ``section_lines = 1`` empty lines between sections,
-    * ``test_case_lines = 1`` empty lines between test cases,
-    * ``keyword_lines = test_case_lines`` empty lines between keywords.
+    - ``section_lines = 1`` empty lines between sections,
+    - ``test_case_lines = 1`` empty lines between test cases,
+    - ``keyword_lines = test_case_lines`` empty lines between keywords.
 
     Removes empty lines after section (and before any data) and appends 1 empty line at the end of file.
 

@@ -16,7 +16,7 @@ from robotidy.utils import (
 
 class AlignSettingsSection(ModelTransformer):
     """
-    Align lines in *** Settings *** section to columns.
+    Align statements in ``*** Settings ***`` section to columns.
 
     Following code::
 
@@ -42,7 +42,7 @@ class AlignSettingsSection(ModelTransformer):
 
        robotidy --transform AlignSettingsSection:up_to_column=3
 
-    To align all columns set ``up_to_column` to 0.
+    To align all columns set ``up_to_column`` to 0.
 
     Supports global formatting params: ``--startline``, ``--endline`` and ``--space_count``
     (for columns with fixed length).
