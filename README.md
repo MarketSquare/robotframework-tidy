@@ -25,7 +25,7 @@ It is spiritual descendant of Robot Framework's internal robot.tidy package.
 
 Documentation <a name="documentation"></a>
 -------------
-Full documentation available [here](https://robocop.readthedocs.io). :open_book:
+Full documentation available [here](https://robotidy.readthedocs.io). :open_book:
 
 Requirements <a name="requirements"></a>
 ------------
