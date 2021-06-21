@@ -6,7 +6,7 @@ It is spiritual descendant of Robot Framework's internal robot.tidy package.
 
 Documentation
 -------------
-Full documentation available Full documentation available `here <https://robotidy.readthedocs.io>`_.
+Full documentation available `here <https://robotidy.readthedocs.io>`_.
 
 Requirements
 ------------
