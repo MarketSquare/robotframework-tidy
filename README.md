@@ -6,7 +6,7 @@
 
 ---
 
-<img style="float:right" width="30%" src="https://raw.githubusercontent.com/MarketSquare/robotframework-tidy/main/docs/images/robotidy_logo.png">
+<img style="float:right" src="https://raw.githubusercontent.com/MarketSquare/robotframework-tidy/main/docs/source/_static/robotidy_logo_small.png">
 
 Robotidy
 ===============
