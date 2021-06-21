@@ -32,3 +32,14 @@ It will transform files according to internal order (in this example ``ReplaceRu
    robotidy --transform SplitTooLongLine src
    robotidy --transform ReplaceRunKeywordIf src
 
+
+.. rubric:: List of transformers
+
+To see list of all transformers currently implemented in robotidy run::
+
+    robotidy --list
+
+To see brief docs for selected transformer run::
+
+    robotidy --desc TRANSFORMER_NAME
+
