@@ -11,7 +11,7 @@ run separately with::
 
     robotidy --transform NormalizeAssignments src
 
-In this code most common is no equal sign at all. It should remove ``=`` signs from the all lines:
+In this code most common is no equal sign at all. It should remove ``=`` signs from all lines:
 
 .. tabs::
 
