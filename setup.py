@@ -4,7 +4,7 @@ from robotidy.version import __version__
 
 
 HERE = pathlib.Path(__file__).parent
-README = (HERE / "README.rst").read_text()
+README = (HERE / "README.md").read_text()
 CLASSIFIERS = """
 Development Status :: 1 - Planning
 License :: OSI Approved :: Apache Software License
@@ -26,7 +26,7 @@ setup(
     version=__version__,
     description='Code autoformatter for Robot Framework',
     long_description=README,
-    long_description_content_type="text/x-rst",
+    long_description_content_type="text/markdown",
     url="https://github.com/MarketSquare/robotframework-tidy",
     author="MarketSquare - Robot Framework community",
     author_email="bartek.hirsz@gmail.com",
