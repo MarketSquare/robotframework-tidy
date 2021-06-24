@@ -15,7 +15,7 @@ class NormalizeAssignments(ModelTransformer):
     Normalize assignments. By default it detects most common assignment sign
     and apply it to every assignment in given file.
 
-    In this code most common is no equal sign at all. We should remove ``=`` signs from the all lines::
+    In this code most common is no equal sign at all. We should remove ``=`` signs from all lines::
 
         *** Variables ***
         ${var} =  ${1}

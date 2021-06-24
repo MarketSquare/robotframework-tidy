@@ -26,7 +26,7 @@ Call robotidy with path(s) to file/directory with robot files::
 
     robotidy tests
     robotidy test.robot
-    robotidy tests/resources  test.robot
+    robotidy tests/resources test.robot
 
 All command line options can be displayed in help message by executing::
 
