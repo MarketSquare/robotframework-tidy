@@ -140,7 +140,7 @@ def load_toml_file(path: str) -> Dict[str, Any]:
 
 
 def read_pyproject_config(path: str) -> Dict[str, Any]:
-    click.echo('Reading pyproject.toml')
+    click.echo(f'Reading {path}')
     config = load_toml_file(path)
     config = config.get("tool", {}).get("robotidy", {})
     return {k.replace('--', '').replace('-', '_'): v for k, v in config.items()}
@@ -154,7 +154,7 @@ def read_robotidy_config(path: str) -> Dict[str, Any]:
 def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]) -> Optional[str]:
     # if --config was not used, try to find pyproject.toml or robotidy.toml file
     if value:
-        config = read_robotidy_config(value)
+        config = read_pyproject_config(value)
     else:
         config = find_and_read_config(ctx.params.get("src", ()))
     if not config:
