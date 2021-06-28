@@ -8,7 +8,6 @@ from click import FileError
 from .utils import run_tidy, save_tmp_model
 from robotidy.cli import (
     find_project_root,
-    read_robotidy_config,
     read_pyproject_config,
     read_config
 )
@@ -79,6 +78,7 @@ class TestCli:
         assert path == Path(Path(__file__).parent, 'testdata')
 
     def test_read_robotidy_config(self):
+        """ robotidy.toml follow the same format as pyproject starting from 1.2.0 """
         expected_config = {
             'overwrite': False,
             'diff': False,
@@ -89,7 +89,7 @@ class TestCli:
             ]
         }
         config_path = str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
-        config = read_robotidy_config(config_path)
+        config = read_pyproject_config(config_path)
         assert config == expected_config
 
     def test_read_pyproject_config(self):

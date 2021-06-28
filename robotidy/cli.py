@@ -121,7 +121,7 @@ def find_and_read_config(src_paths: Iterable[str]) -> Dict[str, Any]:
     project_root = find_project_root(src_paths)
     config_path = project_root / 'robotidy.toml'
     if config_path.is_file():
-        return read_robotidy_config(str(config_path))
+        return read_pyproject_config(str(config_path))
     pyproject_path = project_root / 'pyproject.toml'
     if pyproject_path.is_file():
         return read_pyproject_config(str(pyproject_path))
@@ -143,11 +143,6 @@ def read_pyproject_config(path: str) -> Dict[str, Any]:
     click.echo(f'Reading {path}')
     config = load_toml_file(path)
     config = config.get("tool", {}).get("robotidy", {})
-    return {k.replace('--', '').replace('-', '_'): v for k, v in config.items()}
-
-
-def read_robotidy_config(path: str) -> Dict[str, Any]:
-    config = load_toml_file(path)
     return {k.replace('--', '').replace('-', '_'): v for k, v in config.items()}
 
 
