@@ -1,3 +1,4 @@
+[tool.robotidy]
 overwrite = false
 diff = false
 spacecount = 4
