@@ -78,7 +78,7 @@ class TestCli:
         assert path == Path(Path(__file__).parent, 'testdata')
 
     def test_read_robotidy_config(self):
-        """ robotidy.toml follow the same format as pyproject starting from 1.2.0 """
+        """ robotidy.toml follows the same format as pyproject starting from 1.2.0 """
         expected_config = {
             'overwrite': False,
             'diff': False,
