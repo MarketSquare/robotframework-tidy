@@ -87,7 +87,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
             Token(Token.EOL)
         ])
         prev_if = None
-        for branch in reversed(list(self.split_args_on_delimeters(raw_args, ('ELSE', 'ELSE IF'), assign=assign))):
+        for branch in reversed(list(self.split_args_on_delimiters(raw_args, ('ELSE', 'ELSE IF'), assign=assign))):
             if branch[0].value == 'ELSE':
                 header = ElseHeader([
                     separator,
@@ -128,7 +128,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
     def create_keywords(self, arg_tokens, assign, indent):
         if normalize_name(arg_tokens[0].value) == 'runkeywords':
             return [self.args_to_keyword(keyword[1:], assign, indent)
-                    for keyword in self.split_args_on_delimeters(arg_tokens, ('AND',))]
+                    for keyword in self.split_args_on_delimiters(arg_tokens, ('AND',))]
         return self.args_to_keyword(arg_tokens, assign, indent)
 
     def args_to_keyword(self, arg_tokens, assign, indent):
@@ -140,7 +140,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
         return KeywordCall.from_tokens(separated_tokens)
 
     @staticmethod
-    def split_args_on_delimeters(args, delimiters, assign=None):
+    def split_args_on_delimiters(args, delimiters, assign=None):
         split_points = [index for index, arg in enumerate(args) if arg.value in delimiters]
         prev_index = 0
         for split_point in split_points:
