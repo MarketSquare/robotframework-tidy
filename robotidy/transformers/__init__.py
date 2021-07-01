@@ -52,7 +52,7 @@ def import_transformer(name, args):
 
 
 def load_transformer(name, args, config):
-    # if we are configure the same param from both --transform and --configure we need to overwrite it
+    # if we configure the same parameter for both --transform and --configure we need to overwrite it
     # it is done by converting to dict and back to list in format of key=value
     temp_args = {}
     for arg in chain(args, config.get(name, ())):
