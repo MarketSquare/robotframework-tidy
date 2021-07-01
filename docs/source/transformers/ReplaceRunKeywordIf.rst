@@ -60,4 +60,20 @@ Run Keywords inside Run Keyword If will be splitted into separate keywords.
             Keyword2
         END
 
+Run Keyword If that assigns values but does not provide default branch will receive ELSE branch with Set Variable:
+
+.. tabs::
+
+    .. code-tab:: robotframework Before
+
+        ${var}  Run Keyword If  ${condition}  Keyword
+
+    .. code-tab:: robotframework After
+
+        IF    ${condition}
+            ${var}    Keyword
+        ELSE
+            ${var}    Set Variable    ${None}
+        END
+
 Supports global formatting params: ``--spacecount``, ``--startline`` and ``--endline``.

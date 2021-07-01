@@ -11,11 +11,15 @@ Leave existing if blocks
 Single Return Value
     IF    ${condition}
         ${var}    Keyword With ${var}    ${arg}
+    ELSE
+        ${var}    Set Variable    ${None}
     END
 
 Multiple Return Values
     IF    ${condition}
         ${var}    ${var2}    Keyword With ${var}    ${arg}
+    ELSE
+        ${var}    ${var2}    Set Variable    ${None}    ${None}
     END
 
 Run keyword if with else if

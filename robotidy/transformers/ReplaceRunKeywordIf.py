@@ -87,7 +87,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
             Token(Token.EOL)
         ])
         prev_if = None
-        for branch in reversed(list(self.split_args_on_delimeters(raw_args, ('ELSE', 'ELSE IF')))):
+        for branch in reversed(list(self.split_args_on_delimeters(raw_args, ('ELSE', 'ELSE IF'), assign=assign))):
             if branch[0].value == 'ELSE':
                 header = ElseHeader([
                     separator,
@@ -140,10 +140,13 @@ class ReplaceRunKeywordIf(ModelTransformer):
         return KeywordCall.from_tokens(separated_tokens)
 
     @staticmethod
-    def split_args_on_delimeters(args, delimeters):
+    def split_args_on_delimeters(args, delimeters, assign=None):
         split_points = [index for index, arg in enumerate(args) if arg.value in delimeters]
         prev_index = 0
         for split_point in split_points:
             yield args[prev_index:split_point]
             prev_index = split_point
         yield args[prev_index:len(args)]
+        if assign and 'ELSE' in delimeters and not any(arg.value == 'ELSE' for arg in args):
+            values = [Token(Token.ARGUMENT, '${None}')] * len(assign)
+            yield [Token(Token.ELSE), Token(Token.ARGUMENT, 'Set Variable'), *values]
