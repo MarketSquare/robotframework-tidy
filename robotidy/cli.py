@@ -190,7 +190,7 @@ def print_description(name: str):
 def print_transformers_list():
     transformers = load_transformers(None, {}, allow_disabled=True)
     click.echo('To see detailed docs run --desc <transformer_name> or --desc all. '
-               'Transformers with (disabled) tag \nare executed only when selected explictly with --transform. '
+               'Transformers with (disabled) tag \nare executed only when selected explicitly with --transform. '
                'Available transformers:\n')
     transformer_names = []
     for transformer in transformers:
