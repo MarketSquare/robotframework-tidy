@@ -147,7 +147,6 @@ class ReplaceRunKeywordIf(ModelTransformer):
             yield args[prev_index:split_point]
             prev_index = split_point
         yield args[prev_index:len(args)]
-        if assign and 'ELSE' in delimeters:
-            if not any(arg.value == 'ELSE' for arg in args):
-                values = [Token(Token.ARGUMENT, '${None}')] * len(assign)
-                yield [Token(Token.ELSE), Token(Token.ARGUMENT, 'Set Variable'), *values]
+        if assign and 'ELSE' in delimeters and not any(arg.value == 'ELSE' for arg in args):
+            values = [Token(Token.ARGUMENT, '${None}')] * len(assign)
+            yield [Token(Token.ELSE), Token(Token.ARGUMENT, 'Set Variable'), *values]
