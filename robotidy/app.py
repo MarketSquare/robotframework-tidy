@@ -27,7 +27,8 @@ class Robotidy:
                  formatting_config: GlobalFormattingConfig,
                  verbose: bool,
                  check: bool,
-                 output: Optional[Path]
+                 output: Optional[Path],
+                 force_order: bool
                  ):
         self.sources = self.get_paths(src)
         self.overwrite = overwrite

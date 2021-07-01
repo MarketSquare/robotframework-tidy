@@ -192,9 +192,12 @@ def print_transformers_list():
     click.echo('To see detailed docs run --desc <transformer_name> or --desc all. '
                'Transformers with (disabled) tag \nare executed only when selected explictly with --transform. '
                'Available transformers:\n')
+    transformer_names = []
     for transformer in transformers:
         disabled = ' (disabled)' if not getattr(transformer, 'ENABLED', True) else ''
-        click.echo(transformer.__class__.__name__ + disabled)
+        transformer_names.append(transformer.__class__.__name__ + disabled)
+    for name in sorted(transformer_names):
+        click.echo(name)
 
 
 @click.command(cls=RawHelp, help=HELP_MSG, epilog=EPILOG, context_settings=CONTEXT_SETTINGS)
@@ -332,6 +335,11 @@ def print_transformers_list():
     '--describe-transformer',
     default=None
 )
+@click.option(
+    '--force-order',
+    is_flag=True,
+    help='Transform files using transformers in order provided in cli'
+)
 @click.version_option(version=__version__, prog_name='robotidy')
 @click.pass_context
 def cli(
@@ -352,7 +360,8 @@ def cli(
         desc: Optional[str],
         output: Optional[Path],
         list_transformers: bool,
-        describe_transformer: Optional[str]
+        describe_transformer: Optional[str],
+        force_order: bool
 ):
     if list_transformers:
         print('--list-transformers is deprecated in 1.3.0. Use --list instead')
@@ -388,7 +397,8 @@ def cli(
         formatting_config=formatting_config,
         verbose=verbose,
         check=check,
-        output=output
+        output=output,
+        force_order=force_order
     )
     status = tidy.transform_files()
     ctx.exit(status)
