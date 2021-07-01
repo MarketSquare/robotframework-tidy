@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.3.0
+
 ### Transformers
 - ``AssignmentNormalizer`` was renamed to ``NormalizeAssignment`` for consistent naming with other transformers [#115](https://github.com/MarketSquare/robotframework-tidy/issues/115)
 - It is now possible to select what sections are normalized in ``NormalizeSeparators`` transformer with ``sections`` param [#116](https://github.com/MarketSquare/robotframework-tidy/issues/116)
