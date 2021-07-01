@@ -33,7 +33,8 @@ class RobotidyAPI(Robotidy):
             formatting_config=formatting_config,
             verbose=False,
             check=False,
-            output=output
+            output=output,
+            force_order=False
         )
 
 

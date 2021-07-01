@@ -11,12 +11,14 @@
 - New option ``--output`` option for saving transformed file to provided path instead of overwriting source file [#108](https://github.com/MarketSquare/robotframework-tidy/issues/108)
 - ``--desc`` now accepts ``all`` for printing out description of all transformers [#105](https://github.com/MarketSquare/robotframework-tidy/issues/105)
 - Robotidy will now suggest similar names for invalid transformer names used with ``--transform`` or ``--desc`` options  [#107](https://github.com/MarketSquare/robotframework-tidy/issues/107)
+- ``--list`` now prints transformers in alphabetical order [#141](https://github.com/MarketSquare/robotframework-tidy/issues/141)
 
 ### Fixes
 - Renamed short version of ``--lineseparator`` to ``-ls`` to avoid collision with ``--list\-l``
 - Description for disabled transformers can be now displayed & disabled transformers are in ``--list`` output [#114](https://github.com/MarketSquare/robotframework-tidy/issues/114)
 - Robotidy should now correctly load configuration files from path when using ``--config`` [#138](https://github.com/MarketSquare/robotframework-tidy/issues/138)
 - ReplaceRunKeywordIf will now set variable values to `None` if there is no ELSE branch [#140](https://github.com/MarketSquare/robotframework-tidy/issues/140)
+- Transformers should always use the same order. If you need to use custom order, provide --force-order flag [#142](https://github.com/MarketSquare/robotframework-tidy/issues/142)
 
 ### Other
 - Removed ``'--describe-transformer`` and ``--list-transformers`` aliases for ``--list`` and ``--desc``

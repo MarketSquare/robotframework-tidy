@@ -32,6 +32,11 @@ It will transform files according to internal order (in this example ``ReplaceRu
    robotidy --transform SplitTooLongLine src
    robotidy --transform ReplaceRunKeywordIf src
 
+You can also add ``--force-order`` flag to use order provided in cli:
+   robotidy --force-order --transform SplitTooLongLine --transform ReplaceRunKeywordIf src
+
+External transformers are used last. If you want to change this behaviour (for example run your custom transformer
+before default ones) you need to use ``--force-order`` flag.
 
 .. rubric:: List of transformers
 
