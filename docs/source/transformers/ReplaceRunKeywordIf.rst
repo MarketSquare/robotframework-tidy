@@ -60,7 +60,7 @@ Run Keywords inside Run Keyword If will be splitted into separate keywords.
             Keyword2
         END
 
-Run Keyword If that assign values but does not provide default branch will receive ELSE branch with Set Variable:
+Run Keyword If that assigns values but does not provide default branch will receive ELSE branch with Set Variable:
 
 .. tabs::
 
