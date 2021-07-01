@@ -43,13 +43,26 @@ class TestCli:
         result = run_tidy(args, exit_code=1)
         assert expected_output in str(result.exception)
 
+    def test_transformer_order(self):
+        order_1 = ['NormalizeSeparators', 'OrderSettings']
+        order_2 = ['OrderSettings', 'NormalizeSeparators']
+        transformers_1 = load_transformers([(transf, []) for transf in order_1], {})
+        transformers_2 = load_transformers([(transf, []) for transf in order_2], {})
+        assert all(t1.__class__.__name__ == t2.__class__.__name__ for t1, t2 in zip(transformers_1, transformers_2))
+
+    def test_transformer_force_order(self):
+        # default_order = ['NormalizeSeparators', 'OrderSettings']
+        custom_order = ['OrderSettings', 'NormalizeSeparators']
+        transformers = load_transformers([(transf, []) for transf in custom_order], {}, force_order=True)
+        assert all(t1.__class__.__name__ == t2 for t1, t2 in zip(transformers, custom_order))
+
     # TODO: raise exception if kwarg does not match
     # def test_not_existing_configurable(self):
     #     expected_output = "Usage: cli [OPTIONS] [PATH(S)]\n\n" \
     #                       "Error: Invalid configurable name: 'missing_configurable' for transformer: " \
     #                       "'DiscardEmptySections'\n"
     #
-    #     args = '--transform DiscardEmptySections:allow_only_commentss=True'.split()
+    #     args = '--transform DiscardEmptySections:allow_only_commentss=True -'.split()
     #     result = run_tidy(args, exit_code=2)
     #     assert expected_output == result.output
 
@@ -189,6 +202,7 @@ class TestCli:
                in result.output
         assert 'ReplaceRunKeywordIf\n' in result.output
         assert 'SmartSortKeywords (disabled)\n' in result.output  # this transformer is disabled by default
+        assert 'Available transformers:\n\nAlignSettingsSection\n' in result.output  # assert order
 
     @pytest.mark.parametrize('flag', ['--desc', '-d'])
     @pytest.mark.parametrize('name, expected_doc', [
