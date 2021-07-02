@@ -56,7 +56,7 @@ class MergeAndOrderSections(ModelTransformer):
         )
         if not order:
             return default_order
-        splitted = order.lower().split(',')
+        parts = order.lower().split(',')
         map = {
             'comments': Token.COMMENT_HEADER,
             'comment': Token.COMMENT_HEADER,
@@ -70,8 +70,8 @@ class MergeAndOrderSections(ModelTransformer):
             'keyword': Token.KEYWORD_HEADER
         }
         parsed_order = []
-        for split in splitted:
-            parsed_order.append(map.get(split, None))
+        for part in parts:
+            parsed_order.append(map.get(part, None))
         if any(header not in parsed_order for header in default_order) and len(parsed_order) != len(default_order):
             raise click.BadOptionUsage(
                 option_name='transform',

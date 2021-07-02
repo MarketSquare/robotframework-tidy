@@ -198,7 +198,7 @@ class TestCli:
     def test_list_transformers(self, flag):
         result = run_tidy([flag])
         assert 'To see detailed docs run --desc <transformer_name> or --desc all. Transformers with (disabled) tag \n' \
-               'are executed only when selected explictly with --transform. Available transformers:\n'\
+               'are executed only when selected explicitly with --transform. Available transformers:\n'\
                in result.output
         assert 'ReplaceRunKeywordIf\n' in result.output
         assert 'SmartSortKeywords (disabled)\n' in result.output  # this transformer is disabled by default

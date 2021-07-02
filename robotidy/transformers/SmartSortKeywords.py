@@ -6,7 +6,7 @@ class SmartSortKeywords(ModelTransformer):
     """
     Sort keywords in *** Keywords *** section.
 
-    By default sorting is case insensitve, but keywords with leading underscore go to the bottom. Other underscores are
+    By default sorting is case insensitive, but keywords with leading underscore go to the bottom. Other underscores are
     treated as spaces.
     Empty lines (or lack of them) between keywords are preserved.
 

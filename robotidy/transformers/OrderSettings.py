@@ -78,9 +78,9 @@ class OrderSettings(ModelTransformer):
             return default
         if not order:
             return []
-        splitted = order.lower().split(',')
+        parts = order.lower().split(',')
         try:
-            return [name_map[split] for split in splitted]
+            return [name_map[part] for part in parts]
         except KeyError:
             raise click.BadOptionUsage(
                 option_name='transform',

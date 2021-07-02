@@ -108,14 +108,14 @@ class OrderSettingsSection(ModelTransformer):
             return default
         if not order:
             return []
-        splitted = order.lower().split(',')
-        if any(split not in default for split in splitted):
+        parts = order.lower().split(',')
+        if any(part not in default for part in parts):
             raise click.BadOptionUsage(
                 option_name='transform',
                 message=f"Invalid configurable value: '{order}' for group_order for OrderSettingsSection transformer."
                         f" Custom order should be provided in comma separated list with valid group names:\n{default}"
             )
-        return splitted
+        return parts
 
     @staticmethod
     def parse_order_in_group(order, default, mapping):
@@ -123,9 +123,9 @@ class OrderSettingsSection(ModelTransformer):
             return default
         if not order:
             return []
-        splitted = order.lower().split(',')
+        parts = order.lower().split(',')
         try:
-            return [mapping[split] for split in splitted]
+            return [mapping[part] for part in parts]
         except KeyError:
             raise click.BadOptionUsage(
                 option_name='transform',
