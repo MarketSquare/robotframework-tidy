@@ -38,19 +38,19 @@ class NormalizeSeparators(ModelTransformer):
             return default
         if not sections:
             return {}
-        splitted = sections.split(',')
+        parts = sections.split(',')
         parsed_sections = set()
-        for split in splitted:
-            split = split.replace('_', '')
-            if split and split[-1] != 's':
-                split += 's'
-            if split not in default:
+        for part in parts:
+            part = part.replace('_', '')
+            if part and part[-1] != 's':
+                part += 's'
+            if part not in default:
                 raise click.BadOptionUsage(
                     option_name='transform',
                     message=f"Invalid configurable value: '{sections}' for sections for NormalizeSeparators transformer."
                             f" Sections to be transformed should be provided in comma separated list with valid section"
                             f" names:\n{sorted(default)}")
-            parsed_sections.add(split)
+            parsed_sections.add(part)
         return parsed_sections
 
     def visit_File(self, node):  # noqa

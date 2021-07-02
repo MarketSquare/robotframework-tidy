@@ -85,7 +85,7 @@
 ### Transformers
 
 - DiscardEmptySections - empty sections are removed
-- SplitTooLongLine - keywords with too long lines are splitted
+- SplitTooLongLine - keywords with too long lines are split
 - NormalizeSettingName - ensure that setting names are Title Case - Test Template, Library
 - AssignmentNormalizer - use only one type of assignment
 - NormalizeNewLines - ensure proper number of empty lines between keywords, test cases and sections

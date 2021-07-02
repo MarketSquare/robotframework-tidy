@@ -45,7 +45,7 @@ Any return value will be applied to every ELSE/ELSE IF branch.
             ${var}    Keyword2
         END
 
-Run Keywords inside Run Keyword If will be splitted into separate keywords.
+Run Keywords inside Run Keyword If will be split into separate keywords.
 
 .. tabs::
 

@@ -54,7 +54,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
             ${var}    Keyword2
         END
 
-    Run Keywords inside Run Keyword If will be splitted into separate keywords::
+    Run Keywords inside Run Keyword If will be split into separate keywords::
 
        Run Keyword If  ${condition}  Run Keywords  Keyword  ${arg}  AND  Keyword2
 
