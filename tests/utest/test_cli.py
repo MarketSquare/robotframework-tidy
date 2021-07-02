@@ -116,7 +116,8 @@ class TestCli:
                 'SplitTooLongLine'
             ],
             'configure': [
-                'DiscardEmptySections:allow_only_comments=False'
+                'DiscardEmptySections:allow_only_comments=False',
+                'OrderSettings: keyword_before = documentation,tags,timeout,arguments'
             ]
         }
         config_path = str(Path(Path(__file__).parent, 'testdata', 'only_pyproject', 'pyproject.toml'))
@@ -134,7 +135,8 @@ class TestCli:
                 'SplitTooLongLine'
             ],
             'configure': [
-                'DiscardEmptySections:allow_only_comments=False'
+                'DiscardEmptySections:allow_only_comments=False',
+                'OrderSettings: keyword_before = documentation,tags,timeout,arguments'
             ]
         }
         config_path = str(Path(Path(__file__).parent, 'testdata', 'only_pyproject'))
