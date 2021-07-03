@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixes
+- Wrong option names in pyproject.toml file will now stop Robotidy (with optional hint message) [#150](https://github.com/MarketSquare/robotframework-tidy/issues/150)
+
 ## 1.3.0
 
 ### Transformers
