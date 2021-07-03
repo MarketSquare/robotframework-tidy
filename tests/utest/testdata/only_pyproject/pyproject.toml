@@ -8,5 +8,6 @@ transform = [
    "SplitTooLongLine"
 ]
 configure = [
-    "DiscardEmptySections:allow_only_comments=False"
+    "DiscardEmptySections:allow_only_comments=False",
+    "OrderSettings: keyword_before = documentation,tags,timeout,arguments"
 ]

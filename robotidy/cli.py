@@ -73,7 +73,7 @@ class TransformType(click.ParamType):
     def convert(self, value, param, ctx):
         name = ''
         try:
-            name, args = split_args_from_name_or_path(value)
+            name, args = split_args_from_name_or_path(value.replace(' ', ''))
         except ValueError:
             exc = f'Invalid {name} transformer configuration. ' \
                   f'Parameters should be provided in format name=value, delimited by :'
