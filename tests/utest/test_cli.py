@@ -3,7 +3,7 @@ from pathlib import Path
 
 from unittest.mock import MagicMock, Mock
 import pytest
-from click import FileError
+from click import FileError, NoSuchOption
 
 from .utils import run_tidy, save_tmp_model
 from robotidy.cli import (
@@ -142,6 +142,7 @@ class TestCli:
         config_path = str(Path(Path(__file__).parent, 'testdata', 'only_pyproject'))
         ctx_mock = MagicMock()
         ctx_mock.params = {'src': [config_path]}
+        ctx_mock.command.params = None
         param_mock = Mock()
         read_config(ctx_mock, param_mock, value=None)
         assert ctx_mock.default_map == expected_parsed_config
@@ -151,6 +152,19 @@ class TestCli:
         with pytest.raises(FileError) as err:
             read_pyproject_config(config_path)
         assert 'Error reading configuration file: ' in str(err)
+
+    @pytest.mark.parametrize('option, correct', [
+        ('confgure', 'configure'),
+        ('idontexist', None)
+    ])
+    def test_read_invalid_option_config(self, option, correct):
+        config_path = str(Path(Path(__file__).parent, 'testdata', 'invalid_options_config', f'pyproject_{option}.toml'))
+        ctx_mock = MagicMock()
+        param_mock = MagicMock()
+        with pytest.raises(NoSuchOption) as err:
+            read_config(ctx_mock, param_mock, config_path)
+        similar = '' if correct is None else f' Did you mean {correct}'
+        assert f'no such option: {option}{similar}'
 
     def test_read_config_from_param(self):
         expected_parsed_config = {
@@ -164,6 +178,7 @@ class TestCli:
         }
         config_path = str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
         ctx_mock = MagicMock()
+        ctx_mock.command.params = None
         param_mock = Mock()
         read_config(ctx_mock, param_mock, config_path)
         assert ctx_mock.default_map == expected_parsed_config
@@ -181,6 +196,7 @@ class TestCli:
         config_path = str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
         ctx_mock = MagicMock()
         ctx_mock.params = {'src': [config_path]}
+        ctx_mock.command.params = None
         param_mock = Mock()
         read_config(ctx_mock, param_mock, value=None)
         assert ctx_mock.default_map == expected_parsed_config

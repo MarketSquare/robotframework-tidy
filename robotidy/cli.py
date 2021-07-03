@@ -140,10 +140,26 @@ def load_toml_file(path: str) -> Dict[str, Any]:
 
 
 def read_pyproject_config(path: str) -> Dict[str, Any]:
-    click.echo(f'Reading {path}')
     config = load_toml_file(path)
     config = config.get("tool", {}).get("robotidy", {})
     return {k.replace('--', '').replace('-', '_'): v for k, v in config.items()}
+
+
+def parse_opt(opt):
+    while opt and opt[0] == '-':
+        opt = opt[1:]
+    return opt.replace('-', '_')
+
+
+def validate_config_options(params, config):
+    if params is None:
+        return
+    allowed = {parse_opt(opt) for param in params for opt in param.opts}
+    for conf in config:
+        if conf not in allowed:
+            rec_finder = RecommendationFinder()
+            similar = rec_finder.find(conf, list(allowed))
+            raise click.NoSuchOption(conf, possibilities=similar)
 
 
 def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]) -> Optional[str]:
@@ -161,7 +177,7 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
         k: str(v) if not isinstance(v, (list, dict)) else v
         for k, v in config.items()
     }
-
+    validate_config_options(ctx.command.params, config)
     default_map: Dict[str, Any] = {}
     if ctx.default_map:
         default_map.update(ctx.default_map)
