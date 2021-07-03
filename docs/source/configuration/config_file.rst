@@ -21,6 +21,7 @@ Flag-like options like ``--diff``, ``--overwrite/no-overwrite``, ``--check`` req
 ``--transform`` and ``--configure`` require defining list of strings.
 
 See example:
+
   .. code-block:: toml
 
     [tool.robotidy]
@@ -34,4 +35,25 @@ See example:
     ]
     configure = [
         "SplitTooLongLine:split_on_every_arg=False"
+    ]
+
+Transformers with multiple parameters can be configured in one line (each param delimited by `:`) or in multi lines:
+
+  .. code-block:: toml
+
+    [tool.robotidy]
+    configure = [
+        "OrderSettings:keyword_before=documentation,tags,timeout,arguments:keyword_after=return"
+        "OrderSettingsSection:group_order=documentation,imports,settings,tags",
+        "OrderSettingsSection:imports_order=library,resource,variables"
+    ]
+
+Transformer configuration can contain spaces for better readability:
+
+  .. code-block:: toml
+
+    [tool.robotidy]
+    configure = [
+        "OrderSettingsSection: group_order = documentation,imports,settings,tags",
+        "OrderSettingsSection: imports_order = library, resource, variables"
     ]

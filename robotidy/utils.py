@@ -162,6 +162,8 @@ class RecommendationFinder:
         if not matches:
             return ''
         matches = self.get_original_candidates(matches, norm_cand)
+        if len(matches) == 1 and matches[0] == name:
+            return ''
         suggestion = ' Did you mean:\n'
         suggestion += '\n'.join(f'    {match}' for match in matches)
         return suggestion

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Features
+- Allow to use spaces in pyproject.toml configuration file [#148](https://github.com/MarketSquare/robotframework-tidy/issues/148)
+
 ## 1.3.0
 
 ### Transformers
