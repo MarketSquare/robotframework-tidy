@@ -38,7 +38,7 @@ class Robotidy:
         self.formatting_config = formatting_config
         self.output = output
         transformers_config = self.convert_configure(transformers_config)
-        self.transformers = load_transformers(transformers, transformers_config)
+        self.transformers = load_transformers(transformers, transformers_config, force_order=force_order)
         for transformer in self.transformers:
             # inject global settings TODO: handle it better
             setattr(transformer, 'formatting_config', self.formatting_config)
