@@ -2,12 +2,16 @@
 
 ## Unreleased
 
+## 1.4.0
+
 ### Fixes
 - Invalid option names in pyproject.toml file will now stop Robotidy (with optional hint message) [#150](https://github.com/MarketSquare/robotframework-tidy/issues/150)
 
 ### Features
 - Allow to use spaces in pyproject.toml configuration file [#148](https://github.com/MarketSquare/robotframework-tidy/issues/148)
 
+## Other
+- Fixed spelling issues in source code and docs [#146](https://github.com/MarketSquare/robotframework-tidy/issues/146)
 
 ## 1.3.0
 
