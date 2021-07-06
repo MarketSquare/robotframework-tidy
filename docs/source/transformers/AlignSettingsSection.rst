@@ -105,6 +105,7 @@ to 0.
         Suite Teardown      Close Session
 
    .. code-tab:: argument_indent=2
+
         *** Settings ***
         Suite Setup         Start Session
         ...                   host=${IPADDRESS}
@@ -113,6 +114,7 @@ to 0.
         Suite Teardown      Close Session
 
    .. code-tab:: argument_indent=0
+
         *** Settings ***
         Suite Setup         Start Session
         ...                 host=${IPADDRESS}
