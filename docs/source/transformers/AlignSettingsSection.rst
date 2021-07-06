@@ -87,6 +87,39 @@ You can configure it to align three columns::
 
 To align all columns set ``up_to_column`` to 0.
 
+Extra indent for keyword arguments
+-----------------------------------
+Arguments inside keywords in Suite Setup, Suite Teardown, Test Setup and Test Teardown are indented by additional
+``argument_indent`` (default ``4``) spaces. You can configure the indent or disable it by setting ``argument_indent``
+to 4.
+
+.. tabs::
+
+   .. code-tab:: argument_indent=4 (default)
+
+        *** Settings ***
+        Suite Setup         Start Session
+        ...                     host=${IPADDRESS}
+        ...                     user=${USERNAME}
+        ...                     password=${PASSWORD}
+        Suite Teardown      Close Session
+
+   .. code-tab:: argument_indent=2
+        *** Settings ***
+        Suite Setup         Start Session
+        ...                   host=${IPADDRESS}
+        ...                   user=${USERNAME}
+        ...                   password=${PASSWORD}
+        Suite Teardown      Close Session
+
+   .. code-tab:: argument_indent=0
+        *** Settings ***
+        Suite Setup         Start Session
+        ...                 host=${IPADDRESS}
+        ...                 user=${USERNAME}
+        ...                 password=${PASSWORD}
+        Suite Teardown      Close Session
+
 Select lines to transform
 -------------------------
 AlignSettingsSection does also support global formatting params ``startline`` and ``endline``::
