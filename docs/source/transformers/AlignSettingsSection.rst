@@ -91,7 +91,7 @@ Extra indent for keyword arguments
 -----------------------------------
 Arguments inside keywords in Suite Setup, Suite Teardown, Test Setup and Test Teardown are indented by additional
 ``argument_indent`` (default ``4``) spaces. You can configure the indent or disable it by setting ``argument_indent``
-to 4.
+to 0.
 
 .. tabs::
 
