@@ -2,13 +2,19 @@
 
 ## Unreleased
 
-## 1.4.0
+### Features
+- Add extra indent for arguments in Suite Setup/Teardown, Test Setup/Teardown in AlignSettingsSection [#155](https://github.com/MarketSquare/robotframework-tidy/issues/155)
 
 ### Fixes
-- Invalid option names in pyproject.toml file will now stop Robotidy (with optional hint message) [#150](https://github.com/MarketSquare/robotframework-tidy/issues/150)
+- Do not count documentation length when aligning all columns in settings section  [#156](https://github.com/MarketSquare/robotframework-tidy/issues/156)
+
+## 1.4.0
 
 ### Features
 - Allow to use spaces in pyproject.toml configuration file [#148](https://github.com/MarketSquare/robotframework-tidy/issues/148)
+
+### Fixes
+- Invalid option names in pyproject.toml file will now stop Robotidy (with optional hint message) [#150](https://github.com/MarketSquare/robotframework-tidy/issues/150)
 
 ## Other
 - Fixed spelling issues in source code and docs [#146](https://github.com/MarketSquare/robotframework-tidy/issues/146)

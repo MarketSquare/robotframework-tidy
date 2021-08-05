@@ -1,3 +1,5 @@
+import pytest
+
 from .. import run_tidy_and_compare
 
 
@@ -42,3 +44,23 @@ class TestAlignSettingsSection:
     def test_empty_lines_inside_statement(self):
         # bug from #75
         run_tidy_and_compare(self.TRANSFORMER_NAME, source='empty_lines.robot')
+
+    def test_continued_statement_style(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, source='multiline_keywords.robot')
+
+    def test_continued_statement_style_all_columns(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            source='multiline_keywords.robot',
+            expected='multiline_keywords_all_col.robot',
+            config=':up_to_column=3'
+        )
+
+    @pytest.mark.parametrize('indent', (0, 2, 20))
+    def test_continued_statement_style_all_columns_configure_indent(self, indent):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            source='multiline_keywords.robot',
+            expected=f'multiline_keywords_{indent}indent.robot',
+            config=f':up_to_column=3:argument_indent={indent}'
+        )

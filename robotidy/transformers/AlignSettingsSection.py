@@ -44,11 +44,26 @@ class AlignSettingsSection(ModelTransformer):
 
     To align all columns set ``up_to_column`` to 0.
 
+    Arguments inside keywords in Suite Setup, Suite Teardown, Test Setup and Test Teardown are indented by additional
+    ``argument_indent`` (default ``4``) spaces::
+
+        *** Settings ***
+        Suite Setup         Start Session
+        ...                     host=${IPADDRESS}
+        ...                     user=${USERNAME}
+        ...                     password=${PASSWORD}
+        Suite Teardown      Close Session
+
+    To disable it configure ``argument_indent`` with ``0``.
+
     Supports global formatting params: ``--startline``, ``--endline`` and ``--space_count``
     (for columns with fixed length).
     """
-    def __init__(self, up_to_column: int = 2):
+    TOKENS_WITH_KEYWORDS = {Token.SUITE_SETUP, Token.SUITE_TEARDOWN, Token.TEST_SETUP, Token.TEST_TEARDOWN}
+
+    def __init__(self, up_to_column: int = 2, argument_indent: int = 4):
         self.up_to_column = up_to_column - 1
+        self.argument_indent = argument_indent
 
     def visit_SettingSection(self, node):  # noqa
         if node_outside_selection(node, self.formatting_config):
@@ -74,13 +89,22 @@ class AlignSettingsSection(ModelTransformer):
             if not isinstance(st, list):
                 aligned_statements.append(st)
                 continue
+            keyword_statement = st[0][0].type in self.TOKENS_WITH_KEYWORDS
             aligned_statement = []
             for line in st:
+                keyword_arg = keyword_statement and line[0].type == Token.CONTINUATION
                 up_to = self.up_to_column if self.up_to_column != -1 else len(line) - 2
                 for index, token in enumerate(line[:-2]):
                     aligned_statement.append(token)
-                    separator = (look_up[index] - len(token.value) + 4) * ' ' if index < up_to else \
-                        self.formatting_config.space_count * ' '
+                    if index < up_to:
+                        arg_indent = self.argument_indent if keyword_arg else 0
+                        if keyword_arg and index != 0:
+                            separator = max((look_up[index] - len(token.value) - arg_indent + 4),
+                                            self.formatting_config.space_count) * ' '
+                        else:
+                            separator = (look_up[index] - len(token.value) + arg_indent + 4) * ' '
+                    else:
+                        separator = self.formatting_config.space_count * ' '
                     aligned_statement.append(Token(Token.SEPARATOR, separator))
                 last_token = line[-2]
                 # remove leading whitespace before token
@@ -93,8 +117,14 @@ class AlignSettingsSection(ModelTransformer):
     def create_look_up(self, statements):
         look_up = defaultdict(int)
         for st in statements:
+            is_doc = st[0][0].type == Token.DOCUMENTATION
             for line in st:
-                up_to = self.up_to_column if self.up_to_column != -1 else len(line)
+                if is_doc:
+                    up_to = 1
+                elif self.up_to_column != -1:
+                    up_to = self.up_to_column
+                else:
+                    up_to = len(line)
                 for index, token in enumerate(line[:up_to]):
                     look_up[index] = max(look_up[index], len(token.value))
         return {index: round_to_four(length) for index, length in look_up.items()}
