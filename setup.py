@@ -6,7 +6,7 @@ from robotidy.version import __version__
 HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 CLASSIFIERS = """
-Development Status :: 1 - Planning
+Development Status :: 5 - Production/Stable
 License :: OSI Approved :: Apache Software License
 Operating System :: OS Independent
 Programming Language :: Python
