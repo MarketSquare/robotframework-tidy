@@ -10,6 +10,16 @@ Transformers
 
     *
 
+.. rubric:: List of transformers
+
+To see list of all transformers currently implemented in robotidy run::
+
+    robotidy --list
+
+To see brief docs for selected transformer run::
+
+    robotidy --desc TRANSFORMER_NAME
+
 See :ref:`configuring-transformers` to learn how transformers can be configured.
 
 .. rubric:: Order of transformers
@@ -32,19 +42,9 @@ It will transform files according to internal order (in this example ``ReplaceRu
    robotidy --transform SplitTooLongLine src
    robotidy --transform ReplaceRunKeywordIf src
 
-You can also add ``--force-order`` flag to use order provided in cli:
+You can also add ``--force-order`` flag to use order provided in cli::
+
    robotidy --force-order --transform SplitTooLongLine --transform ReplaceRunKeywordIf src
 
 External transformers are used last. If you want to change this behaviour (for example run your custom transformer
 before default ones) you need to use ``--force-order`` flag.
-
-.. rubric:: List of transformers
-
-To see list of all transformers currently implemented in robotidy run::
-
-    robotidy --list
-
-To see brief docs for selected transformer run::
-
-    robotidy --desc TRANSFORMER_NAME
-
