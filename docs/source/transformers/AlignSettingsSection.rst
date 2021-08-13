@@ -65,7 +65,7 @@ You can configure it to align three columns::
 
 .. tabs::
 
-   .. code-tab:: robotframeworkrobotframework Before
+   .. code-tab:: robotframework Before
 
       *** Settings ***
       Library    CustomLibrary   WITH NAME  name
