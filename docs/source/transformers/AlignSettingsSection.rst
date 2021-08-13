@@ -65,7 +65,7 @@ You can configure it to align three columns::
 
 .. tabs::
 
-   .. code-tab:: robotframework Before
+   .. code-tab:: robotframeworkrobotframework Before
 
       *** Settings ***
       Library    CustomLibrary   WITH NAME  name
@@ -95,7 +95,7 @@ to 0.
 
 .. tabs::
 
-   .. code-tab:: argument_indent=4 (default)
+   .. code-tab:: robotframework argument_indent=4 (default)
 
         *** Settings ***
         Suite Setup         Start Session
@@ -104,7 +104,7 @@ to 0.
         ...                     password=${PASSWORD}
         Suite Teardown      Close Session
 
-   .. code-tab:: argument_indent=2
+   .. code-tab:: robotframework argument_indent=2
 
         *** Settings ***
         Suite Setup         Start Session
@@ -113,7 +113,7 @@ to 0.
         ...                   password=${PASSWORD}
         Suite Teardown      Close Session
 
-   .. code-tab:: argument_indent=0
+   .. code-tab:: robotframework argument_indent=0
 
         *** Settings ***
         Suite Setup         Start Session
