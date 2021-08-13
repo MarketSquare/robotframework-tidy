@@ -5,14 +5,16 @@ from typing import (
     List,
     Iterable,
     Optional,
-    Any
+    Any,
+    Pattern
 )
 
 import click
-import toml
+import re
 
 from robotidy.app import Robotidy
 from robotidy.transformers import load_transformers
+from robotidy.files import read_pyproject_config, find_and_read_config, DEFAULT_EXCLUDES
 from robotidy.utils import (
     GlobalFormattingConfig,
     split_args_from_name_or_path,
@@ -81,70 +83,6 @@ class TransformType(click.ParamType):
         return name, args
 
 
-def find_project_root(srcs: Iterable[str]) -> Path:
-    """Return a directory containing .git, or robotidy.toml.
-    That directory will be a common parent of all files and directories
-    passed in `srcs`.
-    If no directory in the tree contains a marker that would specify it's the
-    project root, the root of the file system is returned.
-    """
-    if not srcs:
-        return Path("/").resolve()
-
-    path_srcs = [Path(Path.cwd(), src).resolve() for src in srcs]
-
-    # A list of lists of parents for each 'src'. 'src' is included as a
-    # "parent" of itself if it is a directory
-    src_parents = [
-        list(path.parents) + ([path] if path.is_dir() else []) for path in path_srcs
-    ]
-
-    common_base = max(
-        set.intersection(*(set(parents) for parents in src_parents)),
-        key=lambda path: path.parts,
-    )
-
-    for directory in (common_base, *common_base.parents):
-        if (directory / ".git").exists():
-            return directory
-
-        if (directory / "robotidy.toml").is_file():
-            return directory
-
-        if (directory / "pyproject.toml").is_file():
-            return directory
-
-    return directory
-
-
-def find_and_read_config(src_paths: Iterable[str]) -> Dict[str, Any]:
-    project_root = find_project_root(src_paths)
-    config_path = project_root / 'robotidy.toml'
-    if config_path.is_file():
-        return read_pyproject_config(str(config_path))
-    pyproject_path = project_root / 'pyproject.toml'
-    if pyproject_path.is_file():
-        return read_pyproject_config(str(pyproject_path))
-    return {}
-
-
-def load_toml_file(path: str) -> Dict[str, Any]:
-    try:
-        config = toml.load(path)
-        click.echo(f"Loaded configuration from {path}")
-        return config
-    except (toml.TomlDecodeError, OSError) as e:
-        raise click.FileError(
-            filename=path, hint=f"Error reading configuration file: {e}"
-        )
-
-
-def read_pyproject_config(path: str) -> Dict[str, Any]:
-    config = load_toml_file(path)
-    config = config.get("tool", {}).get("robotidy", {})
-    return {k.replace('--', '').replace('-', '_'): v for k, v in config.items()}
-
-
 def parse_opt(opt):
     while opt and opt[0] == '-':
         opt = opt[1:]
@@ -183,6 +121,21 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
         default_map.update(ctx.default_map)
     default_map.update(config)
     ctx.default_map = default_map
+
+
+def validate_regex_callback(
+    ctx: click.Context,
+    param: click.Parameter,
+    value: Optional[str],
+) -> Optional[Pattern]:
+    return validate_regex(value)
+
+
+def validate_regex(value: Optional[str]) -> Optional[Pattern]:
+    try:
+        return re.compile(value) if value is not None else None
+    except re.error:
+        raise click.BadParameter("Not a valid regular expression")
 
 
 def print_description(name: str):
@@ -241,6 +194,27 @@ def print_transformers_list():
     ),
     is_eager=True,
     metavar='[PATH(S)]'
+)
+@click.option(
+    "--exclude",
+    type=str,
+    callback=validate_regex_callback,
+    help=(
+        "A regular expression that matches files and directories that should be"
+        " excluded on recursive searches. An empty value means no paths are excluded."
+        " Use forward slashes for directories on all platforms."
+        f" [default: '{DEFAULT_EXCLUDES}']"
+    ),
+    show_default=False,
+)
+@click.option(
+    "--extend-exclude",
+    type=str,
+    callback=validate_regex_callback,
+    help=(
+        "Like --exclude, but adds additional files and directories on top of the"
+        " excluded ones. (Useful if you simply want to add to the default)"
+    ),
 )
 @click.option(
     "--config",
@@ -363,6 +337,8 @@ def cli(
         transform: List[Tuple[str, List]],
         configure: List[Tuple[str, List]],
         src: Tuple[str, ...],
+        exclude: Optional[Pattern],
+        extend_exclude: Optional[Pattern],
         overwrite: bool,
         diff: bool,
         check: bool,
@@ -395,6 +371,9 @@ def cli(
         print("No source path provided. Run robotidy --help to see how to use robotidy")
         ctx.exit(0)
 
+    if exclude is None:
+        exclude = re.compile(DEFAULT_EXCLUDES)
+
     if config and verbose:
         click.echo(f'Loaded {config} configuration file')
 
@@ -408,6 +387,8 @@ def cli(
         transformers=transform,
         transformers_config=configure,
         src=src,
+        exclude=exclude,
+        extend_exclude=extend_exclude,
         overwrite=overwrite,
         show_diff=diff,
         formatting_config=formatting_config,

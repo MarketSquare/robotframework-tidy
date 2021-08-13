@@ -4,13 +4,14 @@ Methods for transforming Robot Framework ast model programmatically.
 from typing import Optional
 
 from robotidy.app import Robotidy
-from robotidy.cli import find_and_read_config, TransformType
+from robotidy.cli import find_and_read_config, TransformType, validate_regex
+from robotidy.files import DEFAULT_EXCLUDES
 from robotidy.utils import GlobalFormattingConfig
 
 
 class RobotidyAPI(Robotidy):
     def __init__(self, src: str, output: Optional[str], **kwargs):
-        config = find_and_read_config([src])
+        config = find_and_read_config((src,))
         config = {
             k: str(v) if not isinstance(v, (list, dict)) else v
             for k, v in config.items()
@@ -24,10 +25,17 @@ class RobotidyAPI(Robotidy):
             start_line=kwargs.get('startline', None) or int(config['startline']) if 'startline' in config else None,
             end_line=kwargs.get('endline', None) or int(config['endline']) if 'endline' in config else None
         )
+        exclude = config.get('exclude', None)
+        extend_exclude = config.get('extend_exclude', None)
+        if exclude is None:
+            exclude = validate_regex(DEFAULT_EXCLUDES)
+        extend_exclude = validate_regex(extend_exclude)
         super().__init__(
             transformers=transformers,
             transformers_config=configurations,
             src=(),
+            exclude=exclude,
+            extend_exclude=extend_exclude,
             overwrite=False,
             show_diff=False,
             formatting_config=formatting_config,

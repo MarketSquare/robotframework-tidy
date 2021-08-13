@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Features
+- Ignore paths from .gitignore and ``--exclude`` option, allow to ignore paths through using ``--extend-exclude`` [#110](https://github.com/MarketSquare/robotframework-tidy/issues/110)
 - Add extra indent for arguments in Suite Setup/Teardown, Test Setup/Teardown in AlignSettingsSection [#155](https://github.com/MarketSquare/robotframework-tidy/issues/155)
 - OrderSettingsSection will now preserve order of imports. It can be configured to work as before and other settings order can be also preserved [#167](https://github.com/MarketSquare/robotframework-tidy/issues/167)
 - Allow to disable selected transformers [#170](https://github.com/MarketSquare/robotframework-tidy/issues/170)
