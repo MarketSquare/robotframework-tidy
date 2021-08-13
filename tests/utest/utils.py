@@ -1,22 +1,19 @@
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from click.testing import CliRunner
 
 from robotidy.cli import cli
 
 
-def save_tmp_model(self, model):
-    """ Decorator that disables default robotidy save to file mechanism and replace with mocked one.
-    That way we can save output to 'actual' directory for easy comparison with expected files.  """
-    path = Path(Path(__file__).parent, 'actual', Path(model.source).name)
-    print(path)
-    model.save(output=path)
-
-
-def run_tidy(args: List[str] = None, exit_code: int = 0):
+def run_tidy(args: List[str] = None, exit_code: int = 0, output: Optional[str] = None):
     runner = CliRunner()
     arguments = args if args is not None else []
+    if output:
+        output_path = str(Path(Path(__file__).parent, 'actual', output))
+    else:
+        output_path = str(Path(Path(__file__).parent, 'actual', 'tmp'))
+    arguments = ['--output', output_path] + arguments
     result = runner.invoke(cli, arguments)
     if result.exit_code != exit_code:
         print(result.output)

@@ -1,25 +1,24 @@
-from unittest.mock import patch
+import os
 from pathlib import Path
-
 from unittest.mock import MagicMock, Mock
+
 import pytest
 from click import FileError, NoSuchOption
 
-from .utils import run_tidy, save_tmp_model
 from robotidy.cli import (
     find_project_root,
     read_pyproject_config,
     read_config
 )
-from robotidy.utils import node_within_lines
 from robotidy.transformers import load_transformers
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
 from robotidy.transformers.ReplaceRunKeywordIf import ReplaceRunKeywordIf
 from robotidy.transformers.SmartSortKeywords import SmartSortKeywords
+from robotidy.utils import node_within_lines
 from robotidy.version import __version__
+from .utils import run_tidy
 
 
-@patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
 class TestCli:
     @pytest.mark.parametrize('src', [
         None,
@@ -88,7 +87,7 @@ class TestCli:
     def test_find_project_root_from_src(self):
         src = Path(Path(__file__).parent, 'testdata', 'nested', 'test.robot')
         path = find_project_root([src])
-        assert path == Path(Path(__file__).parent, 'testdata')
+        assert path == Path(Path(__file__).parent, 'testdata', 'nested')
 
     def test_read_robotidy_config(self):
         """ robotidy.toml follows the same format as pyproject starting from 1.2.0 """
@@ -101,7 +100,7 @@ class TestCli:
                 'ReplaceRunKeywordIf'
             ]
         }
-        config_path = str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
+        config_path = str(Path(Path(__file__).parent, 'testdata', 'config', 'robotidy.toml'))
         config = read_pyproject_config(config_path)
         assert config == expected_config
 
@@ -176,7 +175,7 @@ class TestCli:
                 'ReplaceRunKeywordIf'
             ]
         }
-        config_path = str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
+        config_path = str(Path(Path(__file__).parent, 'testdata', 'config', 'robotidy.toml'))
         ctx_mock = MagicMock()
         ctx_mock.command.params = None
         param_mock = Mock()
@@ -193,7 +192,7 @@ class TestCli:
                 'ReplaceRunKeywordIf'
             ]
         }
-        config_path = str(Path(Path(__file__).parent, 'testdata', 'robotidy.toml'))
+        config_path = str(Path(Path(__file__).parent, 'testdata', 'config', 'robotidy.toml'))
         ctx_mock = MagicMock()
         ctx_mock.params = {'src': [config_path]}
         ctx_mock.command.params = None
@@ -300,3 +299,25 @@ class TestCli:
             {'AlignVariablesSection': ['up_to_column=4']}
         )
         assert transformers[0].up_to_column + 1 == 4
+
+    @pytest.mark.parametrize('line_sep', ['unix', 'windows', 'native', None])
+    def test_line_sep(self, line_sep):
+        source = Path(Path(__file__).parent, 'testdata', 'line_sep', 'test.robot')
+        expected = Path(Path(__file__).parent, 'testdata', 'line_sep', 'expected.robot')
+        actual = Path(Path(__file__).parent, 'actual', 'test.robot')
+        if line_sep is not None:
+            run_tidy(['--lineseparator', line_sep, str(source)], output='test.robot')
+        else:
+            run_tidy([str(source)], output='test.robot')
+        line_end = {
+            'unix': '\n',
+            'windows': '\r\n',
+            'native': os.linesep,
+            None: os.linesep
+        }[line_sep]
+        with open(str(expected)) as f:
+            expected_str = f.read()
+        expected_str = expected_str.replace('\n', line_end)
+        with open(str(actual), newline='') as f:
+            actual_str = f.read()
+        assert actual_str == expected_str, 'Line endings does not match'
