@@ -11,6 +11,7 @@ run separately with::
     robotidy --transform OrderSettingsSection src
 
 Settings are grouped in following groups:
+
 - documentation (Documentation, Metadata),
 - imports (Library, Resource, Variables),
 - settings (Suite Setup and Teardown, Test Setup and Teardown, Test Timeout, Test Template),
@@ -19,8 +20,9 @@ Settings are grouped in following groups:
 Then ordered by groups (according to ``group_order = documentation,imports,settings,tags`` order). Every
 group is separated by ``new_lines_between_groups = 1`` new lines.
 Settings are grouped inside group. Default order can be modified through following parameters:
+
 - ``documentation_order = documentation,metadata``
-- ``imports_order = library,resource,variables``
+- ``imports_order = preserved``
 - ``settings_order = suite_setup,suite_teardown,test_setup,test_teardown,test_timeout,test_template``
 
 .. tabs::
@@ -59,11 +61,11 @@ Settings are grouped inside group. Default order can be modified through followi
         ...  another line
         Metadata  value  param
 
-        Library  Collections
-        Library  Stuff
-        Library  stuff.py  WITH NAME  alias
-        Resource    robot.resource
         Variables   variables.py
+        Library  Stuff
+        Library  Collections
+        Resource    robot.resource
+        Library  stuff.py  WITH NAME  alias
 
         Suite Setup  Keyword
         Suite Teardown  Keyword2
@@ -121,25 +123,29 @@ Using the same example with non default group order we will move tags from end t
 
 Order of setting inside common group can also be changed::
 
-    robotidy --configure OrderSettingsSection:imports_order=variables,library,resource, src
+    robotidy --configure OrderSettingsSection:settings_order=suite_teardown,suite_setup,test_setup,test_teardown,test_timeout,test_template src
 
 .. tabs::
 
     .. code-tab:: robotframework Default order
 
-        Library  Collections
-        Library  Stuff
-        Library  stuff.py  WITH NAME  alias
-        Resource    robot.resource
-        Variables   variables.py
+        Suite Setup    Suite Setup Keyword
+        Suite Teardown    Suite Teardown Keyword
+        Test Timeout    1min
 
     .. code-tab:: robotframework Configured order
 
-        Variables   variables.py
-        Library  Collections
-        Library  Stuff
-        Library  stuff.py  WITH NAME  alias
-        Resource    robot.resource
+        Suite Teardown    Suite Teardown Keyword
+        Suite Setup    Suite Setup Keyword
+        Test Timeout    1min
+
+By default order of imports is preserved. You can overwrite this behaviour::
+
+    robotidy --configure OrderSettingsSections:imports_order=library,resource,variables
+
+You can also preserve order inside any group by passing ``preserved`` instead of setting names::
+
+    robotidy --configure OrderSettingsSections:tags=preserved
 
 Setting names omitted from custom order will be removed from the file. In following example we are missing metadata
 therefore all metadata will be removed::
@@ -190,7 +196,7 @@ Group of settings are separated by ``new_lines_between_groups = 1`` new lines. I
 
         Default Tags    tag
 
-Libraries are grouped into built in libraries and custom libraries.
+If you're not preserving the default order of libraries they will be grouped into built in libraries and custom libraries.
 Parsing errors (such as Resources instead of Resource, duplicated settings) are moved to the end of section.
 
 .. tabs::

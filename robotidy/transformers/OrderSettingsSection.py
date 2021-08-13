@@ -25,8 +25,16 @@ class OrderSettingsSection(ModelTransformer):
     group is separated by ``new_lines_between_groups = 1`` new lines.
     Settings are grouped inside group. Default order can be modified through following parameters:
       - ``documentation_order = documentation,metadata``
-      - ``imports_order = library,resource,variables``
+      - ``imports_order = preserved``
       - ``settings_order = suite_setup,suite_teardown,test_setup,test_teardown,test_timeout,test_template``
+
+    By default order of imports is preserved. You can overwrite this behaviour::
+
+        robotidy --configure OrderSettingsSections:imports_order=library,resource,variables
+
+    You can also preserve order inside any group by passing ``preserved`` instead of setting names::
+
+        robotidy --configure OrderSettingsSections:tags=preserved
 
     Setting names omitted from custom order will be removed from the file. In following example we are missing metadata
     therefore all metadata will be removed::
@@ -35,13 +43,17 @@ class OrderSettingsSection(ModelTransformer):
 
     Libraries are grouped into built in libraries and custom libraries.
     Parsing errors (such as Resources instead of Resource, duplicated settings) are moved to the end of section.
+
+    See https://robotidy.readthedocs.io/en/latest/transformers/OrderSettingsSection.html for more examples.
     """
     def __init__(self, new_lines_between_groups: int = 1, group_order: str = None, documentation_order: str = None,
-                 imports_order: str = None, settings_order: str = None, tags_order: str = None):
+                 imports_order: str = 'preserved', settings_order: str = None, tags_order: str = None):
         self.last_section = None
+        self.disabled_group = set()
         self.new_lines_between_groups = new_lines_between_groups
         self.group_order = self.parse_group_order(group_order)
         self.documentation_order = self.parse_order_in_group(
+            'documentation',
             documentation_order,
             (
                 Token.DOCUMENTATION,
@@ -53,6 +65,7 @@ class OrderSettingsSection(ModelTransformer):
             }
         )
         self.imports_order = self.parse_order_in_group(
+            'imports',
             imports_order,
             (
                 Token.LIBRARY,
@@ -66,6 +79,7 @@ class OrderSettingsSection(ModelTransformer):
             }
         )
         self.settings_order = self.parse_order_in_group(
+            'settings',
             settings_order,
             (
                 Token.SUITE_SETUP,
@@ -85,6 +99,7 @@ class OrderSettingsSection(ModelTransformer):
             }
         )
         self.tags_order = self.parse_order_in_group(
+            'tags',
             tags_order,
             (
                 Token.FORCE_TAGS,
@@ -117,12 +132,14 @@ class OrderSettingsSection(ModelTransformer):
             )
         return parts
 
-    @staticmethod
-    def parse_order_in_group(order, default, mapping):
+    def parse_order_in_group(self, name, order, default, mapping):
         if order is None:
             return default
         if not order:
             return []
+        if order == 'preserved':
+            self.disabled_group.add(name)
+            return default
         parts = order.lower().split(',')
         try:
             return [mapping[part] for part in parts]
@@ -176,14 +193,19 @@ class OrderSettingsSection(ModelTransformer):
         last_index = len(order_of_groups) - 1
         for index, group in enumerate(order_of_groups):
             unordered = groups[group]
-            if group == 'imports':
-                unordered = self.sort_builtin_libs(unordered)
-            order = group_map[group]
-            for token_type in order:
+            if group in self.disabled_group:
                 for comment_lines, child in unordered:
-                    if child.type == token_type:
-                        new_body.extend(comment_lines)
-                        new_body.append(child)
+                    new_body.extend(comment_lines)
+                    new_body.append(child)
+            else:
+                if group == 'imports':
+                    unordered = self.sort_builtin_libs(unordered)
+                order = group_map[group]
+                for token_type in order:
+                    for comment_lines, child in unordered:
+                        if child.type == token_type:
+                            new_body.extend(comment_lines)
+                            new_body.append(child)
             if index != last_index:
                 new_body.extend([empty_line] * self.new_lines_between_groups)
 

@@ -3,11 +3,11 @@ Documentation  doc  # this is comment
 ...  another line
 Metadata  value  param
 
-Library  Collections
-Library  Stuff
-Library  stuff.py  WITH NAME  alias
-Resource    robot.resource
 Variables   variables.py
+Library  Stuff
+Library  Collections
+Resource    robot.resource
+Library  stuff.py  WITH NAME  alias
 
 Suite Setup  Keyword
 # We all

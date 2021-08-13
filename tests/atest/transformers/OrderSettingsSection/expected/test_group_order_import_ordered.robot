@@ -1,13 +1,17 @@
 *** Settings ***
+Force Tags  tag
+...  tag
+Default Tags  1
+
 Documentation  doc  # this is comment
 ...  another line
 Metadata  value  param
 
-Variables   variables.py
-Library  Stuff
 Library  Collections
-Resource    robot.resource
+Library  Stuff
 Library  stuff.py  WITH NAME  alias
+Resource    robot.resource
+Variables   variables.py
 
 Suite Setup  Keyword
 # We all
