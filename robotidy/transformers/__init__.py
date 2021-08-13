@@ -54,13 +54,23 @@ def import_transformer(name, args):
 def load_transformer(name, args, config):
     # if we configure the same parameter for both --transform and --configure we need to overwrite it
     # it is done by converting to dict and back to list in format of key=value
-    temp_args = {}
-    for arg in chain(args, config.get(name, ())):
-        param, value = arg.split('=', maxsplit=1)
-        temp_args[param] = value
-    args = [f'{key}={value}' for key, value in temp_args.items()]
+    args, enabled = parse_params(args, config)
+    if not enabled:
+        return None
     import_name = f'robotidy.transformers.{name}' if name in TRANSFORMERS else name
     return import_transformer(import_name, args)
+
+
+def parse_params(args, config):
+    temp_args = {}
+    enabled = True
+    for arg in chain(args, config):
+        param, value = arg.split('=', maxsplit=1)
+        if param == 'enabled':
+            enabled = value.lower() == 'true'
+        else:
+            temp_args[param] = value
+    return [f'{key}={value}' for key, value in temp_args.items()], enabled
 
 
 def load_transformers(allowed_transformers, config, allow_disabled=False, force_order=False):
@@ -69,22 +79,16 @@ def load_transformers(allowed_transformers, config, allow_disabled=False, force_
     allowed_mapped = {name: args for name, args in allowed_transformers} if allowed_transformers else {}
     if not force_order:
         for name in TRANSFORMERS:
-            if allowed_mapped:
-                if name in allowed_mapped:
-                    imported_class = load_transformer(name, allowed_mapped[name], config)
-                    if imported_class is None:
-                        return []
-                    loaded_transformers.append(imported_class)
-            else:
-                imported_class = import_transformer(f'robotidy.transformers.{name}', config.get(name, ()))
+            if not allowed_mapped or name in allowed_mapped:
+                imported_class = load_transformer(name, allowed_mapped.get(name, ()), config.get(name, ()))
                 if imported_class is None:
-                    return []
-                if allow_disabled or getattr(imported_class, 'ENABLED', True):
+                    continue
+                if allowed_mapped or allow_disabled or getattr(imported_class, 'ENABLED', True):
                     loaded_transformers.append(imported_class)
     for name in allowed_mapped:
         if force_order or name not in TRANSFORMERS:
-            imported_class = load_transformer(name, allowed_mapped[name], config)
+            imported_class = load_transformer(name, allowed_mapped[name], config.get(name, ()))
             if imported_class is None:
-                return []
+                continue
             loaded_transformers.append(imported_class)
     return loaded_transformers

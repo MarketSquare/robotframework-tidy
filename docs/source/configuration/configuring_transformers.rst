@@ -13,6 +13,11 @@ transformers will be used. For example::
 In first command robotidy will run only ``NormalizeNewLines`` transformer and it will configure it with ``test_case_lines = 2``.
 In second command robotidy will run all of the transformers but will configure ``NormalizeNewLines`` with ``test_case_lines = 2``.
 
+You can also run all transformers except selected ones. For that you need to configure transformer you want to exclude
+with ``enabled`` parameter::
+
+   robotidy --configure TRANSFORMER_NAME:enabled=False
+
 .. note::
     To see list of available transformers run:
 

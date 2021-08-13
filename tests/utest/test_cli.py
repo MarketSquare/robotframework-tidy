@@ -321,3 +321,30 @@ class TestCli:
         with open(str(actual), newline='') as f:
             actual_str = f.read()
         assert actual_str == expected_str, 'Line endings does not match'
+
+    @pytest.mark.parametrize('force_order', [True, False])
+    @pytest.mark.parametrize('allow_disabled', [True, False])
+    @pytest.mark.parametrize('transformers, configure, present', [
+        (None, {}, True),
+        (None, {'AlignVariablesSection': ['enabled=True']}, True),
+        (None, {'AlignVariablesSection': ['enabled=false']}, False),
+        ([('NormalizeAssignments', [])], {}, False),
+        ([('NormalizeAssignments', []), ('AlignVariablesSection', [])], {}, True),
+        ([('NormalizeAssignments', []), ('AlignVariablesSection', ['up_to_column=4'])], {}, True),
+        ([('NormalizeAssignments', []), ('AlignVariablesSection', ['up_to_column=4', 'enabled=True'])], {}, True),
+        ([('NormalizeAssignments', []), ('AlignVariablesSection', ['up_to_column=4', 'enabled=False'])], {}, False),
+        ([('NormalizeAssignments', []), ('AlignVariablesSection', ['up_to_column=4'])],
+         {'AlignVariablesSection': ['enabled=True']}, True),
+        ([('NormalizeAssignments', []), ('AlignVariablesSection', ['up_to_column=4'])],
+         {'AlignVariablesSection': ['enabled=False']}, False)
+    ])
+    def test_disable_transformers(self, transformers, configure, present, force_order, allow_disabled):
+        if force_order and not transformers:
+            present = False
+        disabled_transformer = 'AlignVariablesSection'
+        transformers = load_transformers(transformers, configure, allow_disabled=allow_disabled,
+                                         force_order=force_order)
+        if present:
+            assert any(transformer.__class__.__name__ == disabled_transformer for transformer in transformers)
+        else:
+            assert all(transformer.__class__.__name__ != disabled_transformer for transformer in transformers)
