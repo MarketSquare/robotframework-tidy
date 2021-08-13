@@ -196,7 +196,7 @@ Group of settings are separated by ``new_lines_between_groups = 1`` new lines. I
 
         Default Tags    tag
 
-If you're not preserving the default order of libraries libraries will be grouped into built in libraries and custom libraries.
+If you're not preserving the default order of libraries they will be grouped into built in libraries and custom libraries.
 Parsing errors (such as Resources instead of Resource, duplicated settings) are moved to the end of section.
 
 .. tabs::
