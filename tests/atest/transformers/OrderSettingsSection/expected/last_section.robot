@@ -1,3 +1,3 @@
 *** Settings ***
-Library  library.py
 Resource  resource.robot
+Library  library.py

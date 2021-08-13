@@ -49,6 +49,14 @@ class TestOrderSettingsSection:
             config=':group_order=tags,documentation,imports,settings'
         )
 
+    def test_custom_group_order_import_ordered(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            source='test.robot',
+            expected='test_group_order_import_ordered.robot',
+            config=':group_order=tags,documentation,imports,settings:imports_order=library,resource,variables'
+        )
+
     def test_missing_group_from_param(self):
         run_tidy_and_compare(
             self.TRANSFORMER_NAME,
