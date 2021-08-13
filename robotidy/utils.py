@@ -7,6 +7,7 @@ from robot.api.parsing import (
     Token
 )
 from robot.parsing.model import Statement
+from robot.utils.robotio import file_writer
 from click import style
 
 
@@ -201,3 +202,20 @@ class RecommendationFinder:
         norm_cand['alignvariables'] = ['AlignVariablesSection']
         norm_cand['assignmentnormalizer'] = ['NormalizeAssignments']
         return norm_cand
+
+
+class ModelWriter(ModelVisitor):
+    def __init__(self, output, newline):
+        self.writer = file_writer(output, newline=newline)
+        self.close_writer = True
+
+    def write(self, model):
+        try:
+            self.visit(model)
+        finally:
+            if self.close_writer:
+                self.writer.close()
+
+    def visit_Statement(self, statement):  # noqa
+        for token in statement.tokens:
+            self.writer.write(token.value)

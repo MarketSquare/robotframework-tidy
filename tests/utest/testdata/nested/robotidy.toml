@@ -1,0 +1,8 @@
+[tool.robotidy]
+overwrite = false
+diff = false
+spacecount = 4
+transform = [
+   "DiscardEmptySections:allow_only_comments=True",
+   "ReplaceRunKeywordIf"
+]

@@ -11,7 +11,8 @@ from robotidy.transformers import load_transformers
 from robotidy.utils import (
     StatementLinesCollector,
     decorate_diff_with_color,
-    GlobalFormattingConfig
+    GlobalFormattingConfig,
+    ModelWriter
 )
 
 INCLUDE_EXT = ('.robot', '.resource')
@@ -74,7 +75,8 @@ class Robotidy:
 
     def save_model(self, model):
         if self.overwrite:
-            model.save(output=self.output)
+            output = self.output or model.source
+            ModelWriter(output=output, newline=self.formatting_config.line_sep).write(model)
 
     def output_diff(self, path: str, old_model: StatementLinesCollector, new_model: StatementLinesCollector):
         if not self.show_diff:
