@@ -145,7 +145,7 @@ By default order of imports is preserved. You can overwrite this behaviour::
 
 You can also preserve order inside any group by passing ``preserved`` instead of setting names::
 
-    robotidy --configure OrderSettingsSections:tags=preserved
+    robotidy --configure OrderSettingsSections:settings_order=preserved
 
 Setting names omitted from custom order will be removed from the file. In following example we are missing metadata
 therefore all metadata will be removed::
