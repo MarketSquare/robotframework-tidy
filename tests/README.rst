@@ -19,10 +19,7 @@ Unit tests
 
 Unit tests are located under utest/ directory. Test for particular file are located under test_<filename>.py.
 Common methods are stored in utest/utils.py. For running the robotidy itself (through cli) we can use ``run_tidy``
-method. To stop robotidy from overwriting the source file we need to add to our test class monkey patch method for
-saving output::
-
-    @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
+method.
 
 You can run tests by running::
 
@@ -31,36 +28,29 @@ You can run tests by running::
 Acceptance tests
 ----------------
 
-Acceptance tests are located under atest/ directory. Tests for transformers are defined in ``test_transformers.py``
-file. You can add tests for transformer by creating test class and prefixing it with::
-
-    @patch('robotidy.app.Robotidy.save_model', new=save_tmp_model)
-
-It will monkey patch the robotidy method for saving the output. In that way our source files will not be overwritten
-and output will be written to actual/ directory instead. Test data should be stored in directory with the same name as
-transformation (ie. ``DiscardEmptySections\``). Source files should go to ``source`` directory and expected files to
-``expected`` directory.
+Acceptance tests are located under atest/ directory. There is separate directory for each transformer. Tests for
+transformers are defined in ``test_transformer.py`` file under each directory. In the same directory test data is stored.
+Source files should go to ``source`` directory and expected files to ``expected`` directory.
 
 You can add test methods and then run tidy against your source code using::
 
-    run_tidy_and_compare(transformer_name: str, sources: List[str],
-                         expected: Optional[List[str]] = None, config: str = ''):
+    run_tidy_and_compare(transformer_name: str, source: str, expected: Optional[str] = None, config: str = ''):
 
 Transformer name and list of sources are mandatory. Here is minimal example::
 
-    run_tidy_and_compare('MyTransformer', ['test.robot'])
+    run_tidy_and_compare('MyTransformer', 'test.robot')
 
 It will execute following:
 
    robotidy --transform MyTransformer MyTransformer/test.robot
 
-If you did not provide expected filenames list it will use source list (meaning that for ``test.robot`` found in
+If you did not provide expected filename it will use source name (meaning that for ``test.robot`` found in
 ``source`` expected file will be ``test.robot`` stored in ``expected``).
 
 You can use the same source name with different transformer option and different expected files. For example::
 
-    run_tidy_and_compare('MyTransformer', ['test.robot'], ['option1.robot'], config=':option1=True')
-    run_tidy_and_compare('MyTransformer', ['test.robot'], ['option2.robot'], config=':option2=True')
+    run_tidy_and_compare('MyTransformer', 'test.robot', 'option1.robot', config=':option1=True')
+    run_tidy_and_compare('MyTransformer', 'test.robot', 'option2.robot', config=':option2=True')
 
 It's equivalent of executing::
 
