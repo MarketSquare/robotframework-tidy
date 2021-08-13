@@ -84,6 +84,8 @@ class Robotidy:
         old = old_model.text.splitlines()
         new = new_model.text.splitlines()
         lines = list(unified_diff(old, new, fromfile=f'{path}\tbefore', tofile=f'{path}\tafter'))
+        if not lines:
+            return
         colorized_output = decorate_diff_with_color(lines)
         click.echo(colorized_output.encode('ascii', 'ignore').decode('ascii'), color=True)
 

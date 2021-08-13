@@ -8,6 +8,7 @@
 ### Fixes
 - Do not count documentation length when aligning all columns in settings section  [#156](https://github.com/MarketSquare/robotframework-tidy/issues/156)
 - Acknowledge ``--lineseparator`` option [#163](https://github.com/MarketSquare/robotframework-tidy/issues/163)
+- Do not print empty line for file without changes with ``--diff`` option [#160](https://github.com/MarketSquare/robotframework-tidy/issues/160)
 
 ## 1.4.0
 
