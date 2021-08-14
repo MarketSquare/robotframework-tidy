@@ -5,6 +5,7 @@
 ### Features
 - Add extra indent for arguments in Suite Setup/Teardown, Test Setup/Teardown in AlignSettingsSection [#155](https://github.com/MarketSquare/robotframework-tidy/issues/155)
 - OrderSettingsSection will now preserve order of imports. It can be configured to work as before and other settings order can be also preserved [#167](https://github.com/MarketSquare/robotframework-tidy/issues/167)
+- When ordering imports with OrderSettingsSection, Remote library will not be grouped with other standard libs [#175](https://github.com/MarketSquare/robotframework-tidy/issues/175)
 - Allow to disable selected transformers [#170](https://github.com/MarketSquare/robotframework-tidy/issues/170)
 
 ### Fixes

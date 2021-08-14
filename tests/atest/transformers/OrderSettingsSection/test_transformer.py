@@ -100,3 +100,10 @@ class TestOrderSettingsSection:
                           f" Custom order should be provided in comma separated list with valid group names:\n" \
                           f"['documentation', 'metadata']"
         assert expected_output in str(result.exception)
+
+    def test_remote_library_as_external(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            source='remote_library.robot',
+            config=':imports_order=library,resource,variables'
+        )
