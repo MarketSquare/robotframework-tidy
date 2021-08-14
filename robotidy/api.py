@@ -27,8 +27,7 @@ class RobotidyAPI(Robotidy):
         )
         exclude = config.get('exclude', None)
         extend_exclude = config.get('extend_exclude', None)
-        if exclude is None:
-            exclude = validate_regex(DEFAULT_EXCLUDES)
+        exclude = validate_regex(exclude if exclude is not None else DEFAULT_EXCLUDES)
         extend_exclude = validate_regex(extend_exclude)
         super().__init__(
             transformers=transformers,
