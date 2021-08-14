@@ -5,11 +5,8 @@ from unittest.mock import MagicMock, Mock
 import pytest
 from click import FileError, NoSuchOption
 
-from robotidy.cli import (
-    find_project_root,
-    read_pyproject_config,
-    read_config
-)
+from robotidy.cli import read_config, validate_regex
+from robotidy.files import find_project_root, read_pyproject_config, get_paths, DEFAULT_EXCLUDES
 from robotidy.transformers import load_transformers
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
 from robotidy.transformers.ReplaceRunKeywordIf import ReplaceRunKeywordIf
@@ -86,7 +83,7 @@ class TestCli:
 
     def test_find_project_root_from_src(self):
         src = Path(Path(__file__).parent, 'testdata', 'nested', 'test.robot')
-        path = find_project_root([src])
+        path = find_project_root((src,))
         assert path == Path(Path(__file__).parent, 'testdata', 'nested')
 
     def test_read_robotidy_config(self):
@@ -140,7 +137,7 @@ class TestCli:
         }
         config_path = str(Path(Path(__file__).parent, 'testdata', 'only_pyproject'))
         ctx_mock = MagicMock()
-        ctx_mock.params = {'src': [config_path]}
+        ctx_mock.params = {'src': (config_path,)}
         ctx_mock.command.params = None
         param_mock = Mock()
         read_config(ctx_mock, param_mock, value=None)
@@ -194,7 +191,7 @@ class TestCli:
         }
         config_path = str(Path(Path(__file__).parent, 'testdata', 'config', 'robotidy.toml'))
         ctx_mock = MagicMock()
-        ctx_mock.params = {'src': [config_path]}
+        ctx_mock.params = {'src': (config_path,)}
         ctx_mock.command.params = None
         param_mock = Mock()
         read_config(ctx_mock, param_mock, value=None)
@@ -348,3 +345,16 @@ class TestCli:
             assert any(transformer.__class__.__name__ == disabled_transformer for transformer in transformers)
         else:
             assert all(transformer.__class__.__name__ != disabled_transformer for transformer in transformers)
+
+    @pytest.mark.parametrize('exclude, extend_exclude, allowed', [
+        (DEFAULT_EXCLUDES, None, ['nested/test.robot', 'test.resource', 'test.robot']),
+        ('test.resource', None, ['test.robot', 'nested/test.robot']),
+        (DEFAULT_EXCLUDES, 'test.resource', ['test.robot', 'nested/test.robot']),
+        ('test.resource', 'nested/*', ['test.robot'])
+    ])
+    def test_exclude_gitignore(self, exclude, extend_exclude, allowed):
+        source = Path(Path(__file__).parent, 'testdata', 'gitignore')
+        allowed_paths = {Path(source, path) for path in allowed}
+        paths = get_paths((str(source),), exclude=validate_regex(exclude),
+                          extend_exclude=validate_regex(extend_exclude))
+        assert paths == allowed_paths

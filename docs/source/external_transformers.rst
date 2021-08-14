@@ -3,7 +3,7 @@
 External transformers
 -------------------------------
 It is possible to develop your own transformers. You can use module name (if it is installed in your env) or path to
-file with class to run external transformers with robotidy::
+file with class to run external transformers with *robotidy*::
 
     robotidy --transform MyTransformers.YourCustomTransformer src
     robotidy --transform C:\transformers\YourCustomTransformer2.py src
