@@ -232,7 +232,8 @@ class OrderSettingsSection(ModelTransformer):
     def sort_builtin_libs(statements):
         before, after = [], []
         for comments, statement in statements:
-            if isinstance(statement, LibraryImport) and statement.name and statement.name in STDLIBS:
+            if isinstance(statement, LibraryImport) and statement.name and statement.name != 'Remote' \
+                    and statement.name in STDLIBS:
                 before.append((comments, statement))
             else:
                 after.append((comments, statement))
