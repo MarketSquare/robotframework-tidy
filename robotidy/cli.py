@@ -105,7 +105,7 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     if value:
         config = read_pyproject_config(value)
     else:
-        config = find_and_read_config(ctx.params.get("src", ()))
+        config = find_and_read_config(ctx.params['src'] or ('.',))
     if not config:
         return
     # Sanitize the values to be Click friendly. For more information please see:
@@ -115,6 +115,8 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
         k: str(v) if not isinstance(v, (list, dict)) else v
         for k, v in config.items()
     }
+    if 'src' in config:
+        config['src'] = tuple(config['src'])
     validate_config_options(ctx.command.params, config)
     default_map: Dict[str, Any] = {}
     if ctx.default_map:
@@ -368,8 +370,11 @@ def cli(
         return_code = print_description(desc)
         ctx.exit(return_code)
     if not src:
-        print("No source path provided. Run robotidy --help to see how to use robotidy")
-        ctx.exit(0)
+        if ctx.default_map is not None:
+            src = ctx.default_map.get('src', None)
+        if not src:
+            print("No source path provided. Run robotidy --help to see how to use robotidy")
+            ctx.exit(0)
 
     if exclude is None:
         exclude = re.compile(DEFAULT_EXCLUDES)

@@ -1,0 +1,17 @@
+[tool.robotidy]
+verbose = true
+src = [
+    'test.robot',
+    'idontexist.robot',
+    'resources'
+]
+startline = 10
+endline = 20
+transform = [
+   "DiscardEmptySections:allow_only_comments=True",
+   "SplitTooLongLine"
+]
+configure = [
+    "DiscardEmptySections:allow_only_comments=False",
+    "OrderSettings: keyword_before = documentation,tags,timeout,arguments"
+]
