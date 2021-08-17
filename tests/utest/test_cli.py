@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from unittest.mock import MagicMock, Mock
+
 import pytest
 from click import FileError, NoSuchOption
 
