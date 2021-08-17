@@ -36,3 +36,7 @@ jobs:
       with:
         name: codecov-robotidy
       if: always()
+    - name: Codespell
+      uses: codespell-project/actions-codespell@master
+      with:
+        only_warn: 1
