@@ -40,3 +40,4 @@ jobs:
       uses: codespell-project/actions-codespell@master
       with:
         only_warn: 1
+      if: matrix.os == 'ubuntu-latest' and matrix.python-version == 3.9
