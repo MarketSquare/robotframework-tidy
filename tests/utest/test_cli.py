@@ -360,18 +360,18 @@ class TestCli:
         assert paths == allowed_paths
 
     @pytest.mark.parametrize('source, should_parse', [
-        (None, ['test.robot', 'resources/test.robot']),  # calls: robotidy
-        ('test3.robot', ['test3.robot']),  # calls: robotidy test3.robot
-        ('test.robot', ['test.robot']),
+       (None, ['test.robot', 'resources/test.robot']),  # calls: robotidy
+       ('test3.robot', ['test3.robot']),  # calls: robotidy test3.robot
+       ('test.robot', ['test.robot']),
         ('.', ['test.robot', 'test3.robot', 'resources/test.robot']),
     ])
     def test_src_in_configuration(self, source, should_parse):
         source_dir = Path(__file__).parent / 'testdata' / 'pyproject_with_src'
+        os.chdir(source_dir)
         if source is not None:
             source = source_dir / source
             result = run_tidy([str(source)])
         else:
-            os.chdir(source_dir)
             result = run_tidy()
         expected = [f"Loaded configuration from {source_dir / 'pyproject.toml'}"]
         for file in should_parse:

@@ -105,7 +105,7 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     if value:
         config = read_pyproject_config(value)
     else:
-        config = find_and_read_config(ctx.params['src'] or ('.',))
+        config = find_and_read_config(ctx.params['src'] or (str(Path('.').resolve()),))
     if not config:
         return
     # Sanitize the values to be Click friendly. For more information please see:
