@@ -1,4 +1,6 @@
 from collections import defaultdict
+import sys
+from typing import List, Tuple, Dict, Set
 from difflib import unified_diff
 from pathlib import Path
 from typing import List, Tuple, Dict, Iterator, Iterable, Optional, Pattern
@@ -49,7 +51,13 @@ class Robotidy:
         changed_files = 0
         for source in self.sources:
             try:
-                if self.verbose:
+                stdin = False
+                if str(source) == '-':
+                    stdin = True
+                    if self.verbose:
+                        click.echo('Loading file from stdin')
+                    source = self.load_from_stdin()
+                elif self.verbose:
                     click.echo(f'Transforming {source} file')
                 model = get_model(source)
                 diff, old_model, new_model = self.transform(model)
@@ -57,7 +65,10 @@ class Robotidy:
                     changed_files += 1
                 self.output_diff(model.source, old_model, new_model)
                 if not self.check:
-                    self.save_model(model)
+                    if stdin:
+                        self.print_to_stdout(new_model)
+                    else:
+                        self.save_model(model)
             except DataError:
                 click.echo(
                     f"Failed to decode {source}. Default supported encoding by Robot Framework is UTF-8. Skipping file"
@@ -73,6 +84,14 @@ class Robotidy:
             transformer.visit(model)
         new_model = StatementLinesCollector(model)
         return new_model != old_model, old_model, new_model
+
+    @staticmethod
+    def load_from_stdin() -> str:
+        return ''.join(sys.stdin)
+
+    def print_to_stdout(self, collected_lines):
+        if not self.show_diff:
+            click.echo(collected_lines.text)
 
     def save_model(self, model):
         if self.overwrite:

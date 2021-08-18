@@ -1,6 +1,11 @@
 import os
 from pathlib import Path
+<<<<<<< HEAD
 from unittest.mock import MagicMock, Mock
+=======
+import io
+import sys
+>>>>>>> 3195313... add support for formatting content from stdin
 
 import pytest
 from click import FileError, NoSuchOption
@@ -358,3 +363,14 @@ class TestCli:
         paths = get_paths((str(source),), exclude=validate_regex(exclude),
                           extend_exclude=validate_regex(extend_exclude))
         assert paths == allowed_paths
+
+    def test_loading_from_stdin(self, monkeypatch):
+        input_file = '*** Settings ***\nLibrary  SomeLib\n\n\n' \
+                     '*** Variables ***\n\n\n\n' \
+                     '*** Keywords ***\nKeyword\n    Keyword1 ${arg}\n'
+        expected_output = '*** Settings ***\nLibrary  SomeLib\n\n\n' \
+                          '*** Keywords ***\nKeyword\n    Keyword1 ${arg}\n\n'
+        monkeypatch.setattr("robotidy.app.Robotidy.load_from_stdin", lambda x: input_file)
+        args = '--transform DiscardEmptySections -'.split()
+        result = run_tidy(args)
+        assert result.output == expected_output
