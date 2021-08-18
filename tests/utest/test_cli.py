@@ -1,11 +1,6 @@
 import os
 from pathlib import Path
-<<<<<<< HEAD
 from unittest.mock import MagicMock, Mock
-=======
-import io
-import sys
->>>>>>> 3195313... add support for formatting content from stdin
 
 import pytest
 from click import FileError, NoSuchOption
