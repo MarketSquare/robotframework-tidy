@@ -365,7 +365,6 @@ class TestCli:
                      '*** Keywords ***\nKeyword\n    Keyword1 ${arg}\n'
         expected_output = '*** Settings ***\nLibrary  SomeLib\n\n\n' \
                           '*** Keywords ***\nKeyword\n    Keyword1 ${arg}\n\n'
-        monkeypatch.setattr("robotidy.app.Robotidy.load_from_stdin", lambda x: input_file)
         args = '--transform DiscardEmptySections -'.split()
-        result = run_tidy(args)
+        result = run_tidy(args, std_in=input_file)
         assert result.output == expected_output

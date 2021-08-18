@@ -87,7 +87,7 @@ class Robotidy:
 
     @staticmethod
     def load_from_stdin() -> str:
-        return ''.join(sys.stdin)
+        return sys.stdin.read()
 
     def print_to_stdout(self, collected_lines):
         if not self.show_diff:
