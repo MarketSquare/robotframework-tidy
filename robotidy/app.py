@@ -3,6 +3,7 @@ import sys
 from typing import List, Tuple, Dict, Set
 from difflib import unified_diff
 from pathlib import Path
+import io
 from typing import List, Tuple, Dict, Iterator, Iterable, Optional, Pattern
 
 import click
@@ -87,6 +88,8 @@ class Robotidy:
 
     @staticmethod
     def load_from_stdin() -> str:
+        sys.stdin.reconfigure(encoding='utf-8')
+        #io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
         return sys.stdin.read()
 
     def print_to_stdout(self, collected_lines):
