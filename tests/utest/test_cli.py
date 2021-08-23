@@ -358,3 +358,13 @@ class TestCli:
         paths = get_paths((str(source),), exclude=validate_regex(exclude),
                           extend_exclude=validate_regex(extend_exclude))
         assert paths == allowed_paths
+
+    def test_loading_from_stdin(self):
+        input_file = '*** Settings ***\nLibrary  SomeLib\n\n\n' \
+                     '*** Variables ***\n\n\n\n' \
+                     '*** Keywords ***\nKeyword\n    Keyword1 ${arg}\n'
+        expected_output = '*** Settings ***\nLibrary  SomeLib\n\n\n' \
+                          '*** Keywords ***\nKeyword\n    Keyword1 ${arg}\n\n'
+        args = '--transform DiscardEmptySections -'.split()
+        result = run_tidy(args, std_in=input_file)
+        assert result.output == expected_output

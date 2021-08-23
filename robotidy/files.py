@@ -100,6 +100,9 @@ def get_paths(src: Tuple[str, ...], exclude: Pattern, extend_exclude: Optional[P
     gitignore = get_gitignore(root)
     sources = set()
     for s in src:
+        if s == '-':
+            sources.add('-')
+            continue
         path = Path(s).resolve()
         if path.is_file():
             sources.add(path)
