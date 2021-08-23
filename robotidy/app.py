@@ -70,9 +70,9 @@ class Robotidy:
                         self.print_to_stdout(new_model)
                     else:
                         self.save_model(model)
-            except DataError:
+            except DataError as err:
                 click.echo(
-                    f"Failed to decode {source}. Default supported encoding by Robot Framework is UTF-8. Skipping file"
+                    f"Failed to decode {source}. Default supported encoding by Robot Framework is UTF-8. Exception info: {err}. Skipping file"
                 )
                 pass
         if not self.check or not changed_files:
