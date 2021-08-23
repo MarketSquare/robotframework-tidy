@@ -53,7 +53,10 @@ class Robotidy:
         for source in self.sources:
             try:
                 stdin = False
+                print(str(source))
+                print(source.name)
                 if str(source) == '-':
+                    print('inside')
                     stdin = True
                     if self.verbose:
                         click.echo('Loading file from stdin')
@@ -70,9 +73,9 @@ class Robotidy:
                         self.print_to_stdout(new_model)
                     else:
                         self.save_model(model)
-            except DataError as err:
+            except DataError:
                 click.echo(
-                    f"Failed to decode {source}. Default supported encoding by Robot Framework is UTF-8. Exception info: {err}. Skipping file"
+                    f"Failed to decode {source}. Default supported encoding by Robot Framework is UTF-8. Skipping file"
                 )
                 pass
         if not self.check or not changed_files:
