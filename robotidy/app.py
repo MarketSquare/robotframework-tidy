@@ -1,17 +1,15 @@
-from collections import defaultdict
 import sys
-from typing import List, Tuple, Dict, Set
+from collections import defaultdict
 from difflib import unified_diff
 from pathlib import Path
-import io
-from typing import List, Tuple, Dict, Iterator, Iterable, Optional, Pattern
+from typing import List, Tuple, Dict, Optional, Pattern
 
 import click
 from robot.api import get_model
 from robot.errors import DataError
 
-from robotidy.transformers import load_transformers
 from robotidy.files import get_paths
+from robotidy.transformers import load_transformers
 from robotidy.utils import (
     StatementLinesCollector,
     decorate_diff_with_color,
