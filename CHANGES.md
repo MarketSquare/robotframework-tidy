@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 1.5.1
+### Fixes
+- Robotidy will now not crash on directory path [#177](https://github.com/MarketSquare/robotframework-tidy/issues/177)
+
+## 1.5.0
+
 ### Features
 - Ignore paths from .gitignore and ``--exclude`` option, allow to ignore paths through using ``--extend-exclude`` [#110](https://github.com/MarketSquare/robotframework-tidy/issues/110)
 - Add extra indent for arguments in Suite Setup/Teardown, Test Setup/Teardown in AlignSettingsSection [#155](https://github.com/MarketSquare/robotframework-tidy/issues/155)
