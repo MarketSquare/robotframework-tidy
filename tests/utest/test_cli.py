@@ -359,7 +359,7 @@ class TestCli:
                           extend_exclude=validate_regex(extend_exclude))
         assert paths == allowed_paths
 
-    def test_loading_from_stdin(self, monkeypatch):
+    def test_loading_from_stdin(self):
         input_file = '*** Settings ***\nLibrary  SomeLib\n\n\n' \
                      '*** Variables ***\n\n\n\n' \
                      '*** Keywords ***\nKeyword\n    Keyword1 ${arg}\n'

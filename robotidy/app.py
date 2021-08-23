@@ -53,10 +53,7 @@ class Robotidy:
         for source in self.sources:
             try:
                 stdin = False
-                print(str(source))
-                print(source.name)
                 if str(source) == '-':
-                    print('inside')
                     stdin = True
                     if self.verbose:
                         click.echo('Loading file from stdin')
@@ -91,8 +88,6 @@ class Robotidy:
 
     @staticmethod
     def load_from_stdin() -> str:
-        sys.stdin.reconfigure(encoding='utf-8')
-        #io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
         return sys.stdin.read()
 
     def print_to_stdout(self, collected_lines):
