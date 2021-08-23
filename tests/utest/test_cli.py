@@ -379,3 +379,14 @@ class TestCli:
             expected.append(f"Transforming {path} file")
         actual = sorted(line for line in result.output.split('\n') if line.strip())
         assert actual == sorted(expected)
+
+    def test_loading_from_stdin(self):
+        input_file = '*** Settings ***\nLibrary  SomeLib\n\n\n' \
+                     '*** Variables ***\n\n\n\n' \
+                     '*** Keywords ***\nKeyword\n    Keyword1 ${arg}\n'
+        expected_output = '*** Settings ***\nLibrary  SomeLib\n\n\n' \
+                          '*** Keywords ***\nKeyword\n    Keyword1 ${arg}\n\n'
+        args = '--transform DiscardEmptySections -'.split()
+        result = run_tidy(args, std_in=input_file)
+        assert result.output == expected_output
+
