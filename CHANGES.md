@@ -2,14 +2,13 @@
 
 ## Unreleased
 
-## 1.5.1
-### Fixes
-- Robotidy will now not crash on directory path [#177](https://github.com/MarketSquare/robotframework-tidy/issues/177)
-
-## 1.5.0
-
 ### Features
 - It is now possible to provide source paths in configuration file [#154](https://github.com/MarketSquare/robotframework-tidy/issues/154)
+
+## 1.5.1
+
+### Fixes
+- Robotidy will now not crash on directory path [#177](https://github.com/MarketSquare/robotframework-tidy/issues/177)
 
 ## 1.5.0
 
