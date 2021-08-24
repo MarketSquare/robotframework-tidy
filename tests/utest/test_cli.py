@@ -359,6 +359,27 @@ class TestCli:
                           extend_exclude=validate_regex(extend_exclude))
         assert paths == allowed_paths
 
+    @pytest.mark.parametrize('source, should_parse', [
+       (None, ['test.robot', 'resources/test.robot']),  # calls: robotidy
+       ('test3.robot', ['test3.robot']),  # calls: robotidy test3.robot
+       ('test.robot', ['test.robot']),
+        ('.', ['test.robot', 'test3.robot', 'resources/test.robot']),
+    ])
+    def test_src_in_configuration(self, source, should_parse):
+        source_dir = Path(__file__).parent / 'testdata' / 'pyproject_with_src'
+        os.chdir(source_dir)
+        if source is not None:
+            source = source_dir / source
+            result = run_tidy([str(source)])
+        else:
+            result = run_tidy()
+        expected = [f"Loaded configuration from {source_dir / 'pyproject.toml'}"]
+        for file in should_parse:
+            path = source_dir / file
+            expected.append(f"Transforming {path} file")
+        actual = sorted(line for line in result.output.split('\n') if line.strip())
+        assert actual == sorted(expected)
+
     def test_loading_from_stdin(self):
         input_file = '*** Settings ***\nLibrary  SomeLib\n\n\n' \
                      '*** Variables ***\n\n\n\n' \
@@ -368,3 +389,4 @@ class TestCli:
         args = '--transform DiscardEmptySections -'.split()
         result = run_tidy(args, std_in=input_file)
         assert result.output == expected_output
+

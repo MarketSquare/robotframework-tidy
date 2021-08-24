@@ -10,7 +10,7 @@ You can load configuration from the file using ``--config`` option::
 
     robotidy --config path/to/config.toml src
 
-Robotidy will also  look by default for ``pyproject.toml`` file starting from directory of source(s)
+Robotidy will also look by default for ``pyproject.toml`` file starting from directory of source(s)
 passed on the command line and going up to parent directories. It stops when it finds the file or it finds root of the
 project (determined by existence of ``.git`` directory) or root of the file system.
 
@@ -35,6 +35,16 @@ See example:
     ]
     configure = [
         "SplitTooLongLine:split_on_every_arg=False"
+    ]
+
+Source paths can be configured via ``src`` parameter. If the path does not exist it will be silently ignored:
+
+  .. code-block::toml
+
+    [tool.robotidy]
+    src = [
+        test.robot
+        directory
     ]
 
 Transformers with multiple parameters can be configured in one line (each param delimited by `:`) or in multi lines:
