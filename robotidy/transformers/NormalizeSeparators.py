@@ -135,9 +135,8 @@ class NormalizeSeparators(ModelTransformer):
 
     def _normalize_spaces(self, index, token, line_length):
         if token.type == Token.SEPARATOR:
-            spaces = self.formatting_config.space_count * self.indent \
-                if index == 0 else self.formatting_config.space_count
-            token.value = ' ' * spaces
+            count  = self.indent if index == 0 else 1
+            token.value = self.formatting_config.separator * count
         # remove trailing whitespace from last token
         if index == line_length - 2:
             token.value = token.value.rstrip()
