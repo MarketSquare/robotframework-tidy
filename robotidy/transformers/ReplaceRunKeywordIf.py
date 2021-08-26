@@ -12,11 +12,11 @@ from robotidy.utils import normalize_name, after_last_dot
 from robotidy.decorators import check_start_end_line
 
 
-def insert_separators(indent, tokens, space_count):
-    yield Token(Token.SEPARATOR, indent + space_count * ' ')
+def insert_separators(indent, tokens, separator):
+    yield Token(Token.SEPARATOR, indent + separator)
     for token in tokens[:-1]:
         yield token
-        yield Token(Token.SEPARATOR, space_count * ' ')
+        yield Token(Token.SEPARATOR, separator)
     yield tokens[-1]
     yield Token(Token.EOL)
 
@@ -65,7 +65,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
             Keyword2
         END
 
-    Supports global formatting params: ``--spacecount``, ``--startline`` and ``--endline``.
+    Supports global formatting params: ``--spacecount``, ``--separator``, ``--startline`` and ``--endline``.
     """
     @check_start_end_line
     def visit_KeywordCall(self, node):  # noqa
@@ -103,7 +103,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
                 header = ElseIfHeader([
                     separator,
                     Token(Token.ELSE_IF),
-                    Token(Token.SEPARATOR, self.formatting_config.space_count * ' '),
+                    Token(Token.SEPARATOR, self.formatting_config.separator),
                     branch[1],
                     Token(Token.EOL)
                 ])
@@ -114,7 +114,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
                 header = IfHeader([
                     separator,
                     Token(Token.IF),
-                    Token(Token.SEPARATOR, self.formatting_config.space_count * ' '),
+                    Token(Token.SEPARATOR, self.formatting_config.separator),
                     branch[0],
                     Token(Token.EOL)
                 ])
@@ -135,7 +135,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
         separated_tokens = list(insert_separators(
             indent,
             [*assign, Token(Token.KEYWORD, arg_tokens[0].value), *arg_tokens[1:]],
-            self.formatting_config.space_count
+            self.formatting_config.separator
         ))
         return KeywordCall.from_tokens(separated_tokens)
 
