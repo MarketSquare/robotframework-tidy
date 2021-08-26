@@ -8,33 +8,33 @@ from robotidy.utils import (
 class TestUtils:
     def test_not_changed_lines_not_colorized(self):
         lines = [
-            'this is one line',
-            'and another'
+            'this is one line\n',
+            'and another\n'
         ]
         output = decorate_diff_with_color(lines)
-        assert output == '\n'.join(lines)
+        assert output == ''.join(lines)
 
     def test_diff_lines_colorized(self):
         lines = [
-            '+++ color category',
-            '--- color category',
-            '+ new line',
-            '- removed line',
-            '@@ line numbers',
-            'no diff line',
-            'signs + in the - middle @@ +++ ---'
+            '+++ color category\n',
+            '--- color category\n',
+            '+ new line\n',
+            '- removed line\n',
+            '@@ line numbers\n',
+            'no diff line\n',
+            'signs + in the - middle @@ +++ ---\n'
         ]
         expected_lines = [
-            '\033[1m+++ color category\033[0m',
-            '\033[1m--- color category\033[0m',
-            '\033[32m+ new line\033[0m',
-            '\033[31m- removed line\033[0m',
-            '\033[36m@@ line numbers\033[0m',
-            'no diff line',
-            'signs + in the - middle @@ +++ ---'
+            '\033[1m+++ color category\n\033[0m',
+            '\033[1m--- color category\n\033[0m',
+            '\033[32m+ new line\n\033[0m',
+            '\033[31m- removed line\n\033[0m',
+            '\033[36m@@ line numbers\n\033[0m',
+            'no diff line\n',
+            'signs + in the - middle @@ +++ ---\n'
         ]
         output = decorate_diff_with_color(lines)
-        assert output == '\n'.join(expected_lines)
+        assert output == ''.join(expected_lines)
 
     @pytest.mark.parametrize('name_or_path, expected_name, expected_args', [
         ('DiscardEmptySections', 'DiscardEmptySections', []),

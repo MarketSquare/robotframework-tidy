@@ -52,7 +52,7 @@ def decorate_diff_with_color(contents: List[str]) -> str:
         elif line.startswith("-"):
             line = style(line, fg='red', reset=True)
         contents[i] = line
-    return '\n'.join(contents)
+    return ''.join(contents)
 
 
 def normalize_name(name):
