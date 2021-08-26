@@ -29,7 +29,7 @@ class SplitTooLongLine(ModelTransformer):
         ...    ${arg2}
         ...    ${arg3}
 
-    Supports global formatting params: ``space_count``, ``--startline`` and ``--endline``.
+    Supports global formatting params: ``space_count``, ``separator``, ``--startline`` and ``--endline``.
     """
     def __init__(self, line_length: int = 120, split_on_every_arg: bool = False):
         super().__init__()
@@ -49,7 +49,7 @@ class SplitTooLongLine(ModelTransformer):
             yield separator
 
     def split_keyword_call(self, node):
-        separator = Token(Token.SEPARATOR, self.formatting_config.space_count * ' ')
+        separator = Token(Token.SEPARATOR, self.formatting_config.separator)
         indent = node.tokens[0]
 
         assignment = node.get_tokens(Token.ASSIGN)
