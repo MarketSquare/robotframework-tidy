@@ -271,6 +271,15 @@ def print_transformers_list():
     show_default=True
 )
 @click.option(
+    '--separator',
+    type=click.types.Choice(['space', 'tab']),
+    default='space',
+    help="Token separator to use in outputs.\n"
+         "space:   use --spacecount spaces to separate tokens\n"
+         "tab:     use a single tabulation to separate tokens\n",
+    show_default=True
+)
+@click.option(
     '-sl',
     '--startline',
     default=None,
@@ -348,6 +357,7 @@ def cli(
         lineseparator: str,
         verbose: bool,
         config: Optional[str],
+        separator: Optional[str],
         startline: Optional[int],
         endline: Optional[int],
         list: bool,
@@ -386,6 +396,7 @@ def cli(
         space_count=spacecount,
         line_sep=lineseparator,
         start_line=startline,
+        separator=separator,
         end_line=endline
     )
     tidy = Robotidy(
