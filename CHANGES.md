@@ -4,6 +4,7 @@
 
 ### Features
 - It is now possible to provide source paths in configuration file [#154](https://github.com/MarketSquare/robotframework-tidy/issues/154)
+- Non default transformers can be enabled using ``enabled=True`` parameter [#182](https://github.com/MarketSquare/robotframework-tidy/issues/182)
 
 ## 1.5.1
 

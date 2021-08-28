@@ -211,8 +211,10 @@ class TestCli:
     @pytest.mark.parametrize('flag', ['--list', '-l'])
     def test_list_transformers(self, flag):
         result = run_tidy([flag])
-        assert 'To see detailed docs run --desc <transformer_name> or --desc all. Transformers with (disabled) tag \n' \
-               'are executed only when selected explicitly with --transform. Available transformers:\n'\
+        assert 'To see detailed docs run --desc <transformer_name> or --desc all. Transformers with (disabled) ' \
+               'tag \nare executed only when selected explicitly with --transform or configured with param ' \
+               '`enabled=True`.\n' \
+               'Available transformers:\n'\
                in result.output
         assert 'ReplaceRunKeywordIf\n' in result.output
         assert 'SmartSortKeywords (disabled)\n' in result.output  # this transformer is disabled by default
@@ -321,30 +323,50 @@ class TestCli:
 
     @pytest.mark.parametrize('force_order', [True, False])
     @pytest.mark.parametrize('allow_disabled', [True, False])
-    @pytest.mark.parametrize('transformers, configure, present', [
-        (None, {}, True),
-        (None, {'AlignVariablesSection': ['enabled=True']}, True),
-        (None, {'AlignVariablesSection': ['enabled=false']}, False),
-        ([('NormalizeAssignments', [])], {}, False),
-        ([('NormalizeAssignments', []), ('AlignVariablesSection', [])], {}, True),
-        ([('NormalizeAssignments', []), ('AlignVariablesSection', ['up_to_column=4'])], {}, True),
-        ([('NormalizeAssignments', []), ('AlignVariablesSection', ['up_to_column=4', 'enabled=True'])], {}, True),
-        ([('NormalizeAssignments', []), ('AlignVariablesSection', ['up_to_column=4', 'enabled=False'])], {}, False),
+    @pytest.mark.parametrize('transformers, configure, present, test_for', [
+        # robotidy .
+        (None, {}, True, 'AlignVariablesSection'),
+        # robotidy -c AlignVariablesSection:enabled=True .
+        (None, {'AlignVariablesSection': ['enabled=True']}, True, 'AlignVariablesSection'),
+        # robotidy -c AlignVariablesSection:enabled=false .
+        (None, {'AlignVariablesSection': ['enabled=false']}, False, 'AlignVariablesSection'),
+        # robotidy -c SmartSortKeywords:enabled=True .
+        (None, {'SmartSortKeywords': ['enabled=True']}, True, 'SmartSortKeywords'),  # disabled by default
+        # robotidy -c SmartSortKeywords:enabled=False .
+        (None, {'SmartSortKeywords': ['enabled=False']}, False, 'SmartSortKeywords'),
+        # robotidy --transform SmartSortKeywords:enabled=True .
+        ([('SmartSortKeywords', ['enabled=True'])], {}, True, 'SmartSortKeywords'),
+        # robotidy --transform NormalizeAssignments .
+        ([('NormalizeAssignments', [])], {}, False, 'AlignVariablesSection'),
+        # robotidy --transform NormalizeAssignments --transform AlignVariablesSection .
+        ([('NormalizeAssignments', []), ('AlignVariablesSection', [])], {}, True, 'AlignVariablesSection'),
+        # robotidy --transform NormalizeAssignments --transform AlignVariablesSection:up_to_column=4 .
+        ([('NormalizeAssignments', []), ('AlignVariablesSection', ['up_to_column=4'])], {}, True,
+         'AlignVariablesSection'),
+        # robotidy --transform NormalizeAssignments --transform AlignVariablesSection:up_to_column=4:enabled=True .
+        ([('NormalizeAssignments', []), ('AlignVariablesSection', ['up_to_column=4', 'enabled=True'])], {}, True,
+         'AlignVariablesSection'),
+        # robotidy --transform NormalizeAssignments --transform AlignVariablesSection:up_to_column=4:enabled=False .
+        ([('NormalizeAssignments', []), ('AlignVariablesSection', ['up_to_column=4', 'enabled=False'])], {}, False,
+         'AlignVariablesSection'),
+        # robotidy --transform NormalizeAssignments --transform AlignVariablesSection:up_to_column=4 -c
+        # AlignVariablesSection:enabled=True .
         ([('NormalizeAssignments', []), ('AlignVariablesSection', ['up_to_column=4'])],
-         {'AlignVariablesSection': ['enabled=True']}, True),
+         {'AlignVariablesSection': ['enabled=True']}, True, 'AlignVariablesSection'),
+        # robotidy --transform NormalizeAssignments --transform AlignVariablesSection:up_to_column=4 -c
+        # AlignVariablesSection:enabled=False .
         ([('NormalizeAssignments', []), ('AlignVariablesSection', ['up_to_column=4'])],
-         {'AlignVariablesSection': ['enabled=False']}, False)
+         {'AlignVariablesSection': ['enabled=False']}, False, 'AlignVariablesSection')
     ])
-    def test_disable_transformers(self, transformers, configure, present, force_order, allow_disabled):
+    def test_disable_transformers(self, transformers, configure, present, force_order, allow_disabled, test_for):
         if force_order and not transformers:
             present = False
-        disabled_transformer = 'AlignVariablesSection'
-        transformers = load_transformers(transformers, configure, allow_disabled=allow_disabled,
-                                         force_order=force_order)
+        loaded_transformers = load_transformers(transformers, configure, allow_disabled=allow_disabled,
+                                                force_order=force_order)
         if present:
-            assert any(transformer.__class__.__name__ == disabled_transformer for transformer in transformers)
+            assert any(transformer.__class__.__name__ == test_for for transformer in loaded_transformers)
         else:
-            assert all(transformer.__class__.__name__ != disabled_transformer for transformer in transformers)
+            assert all(transformer.__class__.__name__ != test_for for transformer in loaded_transformers)
 
     @pytest.mark.parametrize('exclude, extend_exclude, allowed', [
         (DEFAULT_EXCLUDES, None, ['nested/test.robot', 'test.resource', 'test.robot']),
