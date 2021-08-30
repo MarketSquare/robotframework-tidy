@@ -33,7 +33,7 @@ TRANSFORMERS lists. This list determine the order the transformers will be run. 
 you're not sure how your transformer will work with others just leave the default order.
 
 If you don't want to run your transformer with default ones (so it could be run only when selected with 
-`--transform` or configured with ``enabled=True`) add following flag to invoke script:
+`--transform` or configured with `enabled=True`) add following flag to invoke script:
 ```
 invoke add-transformer TRANSFORMER-NAME --disabled
 ```
