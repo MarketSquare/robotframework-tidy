@@ -58,7 +58,7 @@ robotidy --help
 
 Example <a name="example"></a>
 -------
-Ugly before transforming with robotidy:
+Ugly code before transforming with robotidy:
 ```robotframework
 *** Settings ***
 Force Tags  tags  tag2
