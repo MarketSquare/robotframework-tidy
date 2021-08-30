@@ -45,7 +45,7 @@ setup(
         'pathspec==0.9.0'
     ],
     extras_requires={
-        'dev': ['pytest', 'pylama', 'pylama_pylint', 'coverage'],
+        'dev': ['pytest', 'pylama', 'pylama_pylint', 'coverage', 'invoke', 'jinja2'],
         'doc': ['sphinx', 'sphinx_rtd_theme']
     },
     entry_points={'console_scripts': ['robotidy=robotidy.cli:cli']},
