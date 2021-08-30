@@ -3,8 +3,8 @@ Contribution guideline
 
 Getting started
 ----------------
-Did you spot bug or you really need some feature implemented? It's always best to start with create issue in github.
-It doesn't matter if you're willing to make change on your own. Creating issue allow us to discuss proposed changes (
+Did you spot bug or you really want to see some feature implemented? It's always best to start with create issue in github.
+It doesn't matter if you're actually willing to make change on your own. Creating issue allow us to discuss proposed changes (
 and cover possible edge cases) and also prevents multiple people working on the same problem.
 
 You can also start discussion in our slack channel: [#tidy](https://robotframework.slack.com/archives/C01FR5992N6).
@@ -28,9 +28,9 @@ classes and tests. To do this run following command in project root:
 invoke add-transformer TRANSFORMER-NAME
 ```
 It will create `TRANSFORMER-NAME.py` file in transformer directory with class stub and it will also create initial structure 
-inside tests/atest/transformers directory. It will also add name of your transformer to `robotidy/transformers/__init__.py file` to 
+inside `tests/atest/transformers` directory. Additionally, it will add name of your transformer to `robotidy/transformers/__init__.py file` to 
 TRANSFORMERS lists. This list determine the order the transformers will be run. There are transformers that affect the others but if 
-you're not sure how your transformer will work with other just leave the default order.
+you're not sure how your transformer will work with others just leave the default order.
 
 If you don't want to run your transformer with default ones (so it could be run only when selected with 
 `--transform` or configured with ``enabled=True`) add following flag to invoke script:
@@ -39,14 +39,14 @@ invoke add-transformer TRANSFORMER-NAME --disabled
 ```
 
 Helper script will also add `docs/source/transformers/TRANSFORMER-NAME.rst` file. You can add full documentation 
-of your transformer example together with more usage examples and possible configurations. Refer to other transformers documentation 
-for used syntax (but your documentation engine use sphinx under the hood with alabaster theme and sphinx_tabs.tabs plugin). 
+of your transformer together with more usage examples and possible configurations. Refer to other transformers documentation 
+for used syntax (our documentation engine use sphinx under the hood with alabaster theme and sphinx_tabs.tabs plugin). Documentation 
+will be rendered on merge with the master branch, but you can generate your local version using `make.bat` script in docs directory.
 
 Robotidy uses Robot Framework parsing api for visiting robot source files (parsed as ast trees). Visit [this](https://robot-framework.readthedocs.io/en/master/autodoc/robot.api.html#module-robot.api.parsing) 
 page to learn more. You can modify visited node (for example change the value of the node or replace some of the child tokens). 
 Transformers inherit from `ModelTransform` parent class that requires you to return node from visitor method - if you return None 
-it will remove node from your file. Documentation will be rendered on merge with the master branch, but you can generate your local version 
-using `make.bat` script in docs directory.
+it will remove node from your file. 
 
 See examples of creating external transformer [here](https://robotidy.readthedocs.io/en/latest/external_transformers.html). The same logic 
 can be used for internal transformers.
