@@ -45,7 +45,7 @@ class TestRenameTestCases:
     def test_invalid_pattern(self):
         result = run_tidy(
             self.TRANSFORMER_NAME,
-            args=f'--transform {self.TRANSFORMER_NAME}:replace_pattern=[\911]'.split(),
+            args=rf'--transform {self.TRANSFORMER_NAME}:replace_pattern=[\911]'.split(),
             source='test.robot',
             exit_code=1
         )
