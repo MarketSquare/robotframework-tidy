@@ -1,0 +1,15 @@
+from robot.api.parsing import ModelTransformer
+
+
+class {{ transformer_name }}(ModelTransformer):
+    """
+    Short description in one line.
+
+    Long description with short example before/after.
+    """
+    {% if disabled -%}
+    ENABLED = False
+{% endif %}
+    def visit_File(self, node):  # noqa
+        return node
+
