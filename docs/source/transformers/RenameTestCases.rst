@@ -21,6 +21,7 @@ to set replacement value. This configuration::
     robotidy --transform RenameTestCases -c RenameTestCases:replace_pattern=[A-Z]{3,}-\d{2,}:replace_to=foo
 
 Replaces all occurrences of given pattern with string 'foo':
+
 .. tabs::
 
     .. code-tab:: robotframework Before
