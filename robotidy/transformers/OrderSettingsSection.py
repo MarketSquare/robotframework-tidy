@@ -28,16 +28,16 @@ class OrderSettingsSection(ModelTransformer):
       - ``imports_order = preserved``
       - ``settings_order = suite_setup,suite_teardown,test_setup,test_teardown,test_timeout,test_template``
 
-    By default order of imports is preserved. You can overwrite this behaviour::
+    By default order of imports is preserved. You can overwrite this behaviour:
 
         robotidy --configure OrderSettingsSections:imports_order=library,resource,variables
 
-    You can also preserve order inside any group by passing ``preserved`` instead of setting names::
+    You can also preserve order inside any group by passing ``preserved`` instead of setting names:
 
         robotidy --configure OrderSettingsSections:settings_order=preserved
 
     Setting names omitted from custom order will be removed from the file. In following example we are missing metadata
-    therefore all metadata will be removed::
+    therefore all metadata will be removed:
 
         robotidy --configure OrderSettingsSection:documentation_order=documentation
 

@@ -10,7 +10,7 @@ from robotidy.decorators import check_start_end_line
 class NormalizeSettingName(ModelTransformer):
     """
     Normalize setting name.
-    Ensure that setting names are title case without leading or trailing whitespace. For example from::
+    Ensure that setting names are title case without leading or trailing whitespace. For example from:
 
         *** Settings ***
         library    library.py
@@ -22,7 +22,7 @@ class NormalizeSettingName(ModelTransformer):
             [arguments]    ${arg}
             [ SETUP]   Setup Keyword
 
-    To::
+    To:
 
         *** Settings ***
         Library    library.py
@@ -35,6 +35,8 @@ class NormalizeSettingName(ModelTransformer):
             [Setup]   Setup Keyword
 
     Supports global formatting params: ``--startline`` and ``--endline``.
+
+    See https://robotidy.readthedocs.io/en/latest/transformers/NormalizeSettingName.html for more examples.
     """
     @check_start_end_line
     def visit_Statement(self, node):  # noqa

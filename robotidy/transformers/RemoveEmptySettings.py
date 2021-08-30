@@ -35,6 +35,8 @@ class RemoveEmptySettings(ModelTransformer):
     You can disable that behavior by changing ``more_explicit`` parameter value to ``False``.
 
     Supports global formatting params: ``--startline`` and ``--endline``.
+
+    See https://robotidy.readthedocs.io/en/latest/transformers/RemoveEmptySettings.html for more examples.
     """
     def __init__(self, work_mode: str = 'overwrite_ok', more_explicit: bool = True):
         if work_mode not in ('overwrite_ok', 'always'):

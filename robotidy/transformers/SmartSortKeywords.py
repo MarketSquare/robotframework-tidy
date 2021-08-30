@@ -10,7 +10,7 @@ class SmartSortKeywords(ModelTransformer):
     treated as spaces.
     Empty lines (or lack of them) between keywords are preserved.
 
-    Following code::
+    Following code:
 
         *** Keywords ***
         _my secrete keyword
@@ -24,7 +24,7 @@ class SmartSortKeywords(ModelTransformer):
         my another keyword
             Kw3
 
-    Will be transformed to::
+    Will be transformed to:
 
         *** Keywords ***
         my_another_cool_keyword
@@ -40,6 +40,8 @@ class SmartSortKeywords(ModelTransformer):
 
     Default behaviour could be changed using following parameters: ``case_insensitive = True``,
     ``ignore_leading_underscore = False`` and ``ignore_other_underscore = True``.
+
+    See https://robotidy.readthedocs.io/en/latest/transformers/SmartSortKeywords.html for more examples.
     """
     ENABLED = False
 

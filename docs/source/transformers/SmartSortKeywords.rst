@@ -9,6 +9,10 @@ SmartSortKeywords is not included in default transformers that's why you need to
 
     robotidy --transform SmartSortKeywords src
 
+Or configure `enable` parameter::
+
+    robotidy --configure SmartSortKeywords:enabled=True
+
 By default sorting is case insensitive, but keywords with leading underscore go to the bottom. Other underscores are
 treated as spaces.
 Empty lines (or lack of them) between keywords are preserved.
