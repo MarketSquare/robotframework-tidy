@@ -10,7 +10,7 @@ from robotidy.decorators import check_start_end_line
 
 
 class RenameTestCases(ModelTransformer):
-    """
+    r"""
     Enforce test case naming.
 
     Capitalize first letter of test case name, remove trailing dot and strip leading/trailing whitespace.
@@ -36,6 +36,8 @@ class RenameTestCases(ModelTransformer):
 
     See https://robotidy.readthedocs.io/en/latest/transformers/RenameTestCases.html for more examples.
     """
+    ENABLED = False
+
     def __init__(self, replace_pattern: Optional[str] = None, replace_to: Optional[str] = None):
         try:
             self.replace_pattern = re.compile(replace_pattern) if replace_pattern is not None else None

@@ -52,5 +52,5 @@ class TestRenameTestCases:
         expected_output = f"Importing 'robotidy.transformers.{self.TRANSFORMER_NAME}' failed: " \
                           "Creating instance failed: BadOptionUsage: Invalid configurable value: " \
                           rf"'[\911]' for replace_pattern in {self.TRANSFORMER_NAME} transformer. " \
-                          "It should be valid regex expression. Regex error: 'bad escape \\9'"
+                          "It should be a valid regex expression. Regex error: 'bad escape \\9'"
         assert expected_output in str(result.exception)
