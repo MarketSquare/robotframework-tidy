@@ -100,8 +100,8 @@ class Robotidy:
     def output_diff(self, path: str, old_model: StatementLinesCollector, new_model: StatementLinesCollector):
         if not self.show_diff:
             return
-        old = old_model.text.splitlines()
-        new = new_model.text.splitlines()
+        old = [l + '\n' for l in old_model.text.splitlines()]
+        new = [l + '\n' for l in new_model.text.splitlines()]
         lines = list(unified_diff(old, new, fromfile=f'{path}\tbefore', tofile=f'{path}\tafter'))
         if not lines:
             return

@@ -21,6 +21,7 @@ class RobotidyAPI(Robotidy):
         configurations = [converter.convert(c, None, None) for c in config.get('configure', ())]
         formatting_config = GlobalFormattingConfig(
             space_count=kwargs.get('spacecount', None) or int(config.get('spacecount', 4)),
+            separator=kwargs.get('separator', None) or config.get('separator', 'space'),
             line_sep=config.get('lineseparator', 'native'),
             start_line=kwargs.get('startline', None) or int(config['startline']) if 'startline' in config else None,
             end_line=kwargs.get('endline', None) or int(config['endline']) if 'endline' in config else None
