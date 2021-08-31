@@ -18,6 +18,8 @@ class DiscardEmptySections(ModelTransformer):
         # this section would be removed if not for ``alow_only_comments`` parameter
 
     Supports global formatting params: ``--startline`` and ``--endline``.
+
+    See https://robotidy.readthedocs.io/en/latest/transformers/DiscardEmptySections.html for more examples.
     """
     def __init__(self, allow_only_comments: bool = False):
         # If True then sections only with comments are not is considered to be empty

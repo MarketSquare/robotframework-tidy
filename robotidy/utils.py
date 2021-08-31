@@ -28,10 +28,17 @@ class StatementLinesCollector(ModelVisitor):
 
 
 class GlobalFormattingConfig:
-    def __init__(self, space_count: int, line_sep: str, start_line: int, end_line: int):
-        self.space_count = space_count
+    def __init__(self, space_count: int, line_sep: str, start_line: int, end_line: int, separator: str):
         self.start_line = start_line
         self.end_line = end_line
+        self.space_count = space_count
+
+        if separator == 'space':
+            self.separator = ' ' * space_count
+        elif separator == 'tab':
+            self.space_count = space_count
+            self.separator = '\t'
+
         if line_sep == 'windows':
             self.line_sep = '\r\n'
         elif line_sep == 'unix':
@@ -52,7 +59,7 @@ def decorate_diff_with_color(contents: List[str]) -> str:
         elif line.startswith("-"):
             line = style(line, fg='red', reset=True)
         contents[i] = line
-    return '\n'.join(contents)
+    return ''.join(contents)
 
 
 def normalize_name(name):
@@ -98,9 +105,30 @@ def split_args_from_name_or_path(name):
     index = _get_arg_separator_index_from_name_or_path(name)
     if index == -1:
         return name, []
-    args = name[index+1:].split(name[index])
+    args = _escaped_split(name[index+1:], name[index])
     name = name[:index]
     return name, args
+
+
+def _escaped_split(string, delim):
+    ret = []
+    current = []
+    itr = iter(string)
+    for ch in itr:
+        if ch == '\\':
+            try:
+                current.append('\\')
+                current.append(next(itr))
+            except StopIteration:
+                pass
+        elif ch == delim:
+            ret.append(''.join(current))
+            current = []
+        else:
+            current.append(ch)
+    if current:
+        ret.append(''.join(current))
+    return ret
 
 
 def _get_arg_separator_index_from_name_or_path(name):

@@ -3,7 +3,7 @@ Contribution guideline
 
 Getting started
 ----------------
-Did you spot bug or you really want to see some feature implemented? It's always best to start with create issue in github.
+Did you spot a bug or you really want to see some feature implemented? It's always best to start with creating issue in GitHub.
 It doesn't matter if you're actually willing to make change on your own. Creating issue allow us to discuss proposed changes (
 and cover possible edge cases) and also prevents multiple people from working on the same problem.
 
@@ -33,7 +33,7 @@ TRANSFORMERS lists. This list determines the order of transformers that will be 
 you're not sure how your transformer will work with others just leave the default order.
 
 If you don't want to run your transformer with default ones (so it could be run only when selected with 
-`--transform` or configured with `enabled=True`) add following flag to invoke script:
+`--transform` or configured with `enabled=True`) add the following flag to invoke script:
 ```
 invoke add-transformer TRANSFORMER-NAME --disabled
 ```

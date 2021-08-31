@@ -13,23 +13,27 @@ class SplitTooLongLine(ModelTransformer):
     """
     Split too long lines.
     If any line in keyword call exceeds given length limit (configurable using ``line_length``, 120 by default) it will be
-    split::
+    split:
 
         Keyword With Longer Name    ${arg1}    ${arg2}    ${arg3}  # let's assume that arg2 is at 120 char
 
-    To::
+    To:
 
         Keyword With Longer Name    ${arg1}
         ...    ${arg2}    ${arg3}
 
-    Using ``split_on_every_arg`` flag (``False`` by default), you can force the formatter to put every argument in a new line::
+    Using ``split_on_every_arg`` flag (``False`` by default), you can force the formatter to put every argument in a
+    new line:
 
         Keyword With Longer Name
         ...    ${arg1}
         ...    ${arg2}
         ...    ${arg3}
 
-    Supports global formatting params: ``space_count``, ``--startline`` and ``--endline``.
+
+    Supports global formatting params: ``space_count``, ``separator``, ``--startline`` and ``--endline``.
+
+    See https://robotidy.readthedocs.io/en/latest/transformers/SplitTooLongLine.html for more examples.
     """
     def __init__(self, line_length: int = 120, split_on_every_arg: bool = False):
         super().__init__()
@@ -49,7 +53,7 @@ class SplitTooLongLine(ModelTransformer):
             yield separator
 
     def split_keyword_call(self, node):
-        separator = Token(Token.SEPARATOR, self.formatting_config.space_count * ' ')
+        separator = Token(Token.SEPARATOR, self.formatting_config.separator)
         indent = node.tokens[0]
 
         assignment = node.get_tokens(Token.ASSIGN)

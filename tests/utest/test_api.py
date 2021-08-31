@@ -44,3 +44,22 @@ class TestAPI:
         model = get_model(source)
         transformed = transform_model(model, config_path, spacecount=8, linestart=10, endline=20)
         assert transformed == expected
+
+    def test_with_tab_separator(self):
+        expected = "*** Comments ***\n" \
+                   "robocop: disable=all\n" \
+                   "\n" \
+                   "*** Test Cases ***\n" \
+                   "Test\n" \
+                   "\t[Documentation]\tdoc\n" \
+                   "\t[Tags]\tsometag\n" \
+                   "\tPass\n" \
+                   "\tKeyword\n" \
+                   "\tOne More\n"
+
+        config_path = '.'
+        source = str(Path(Path(__file__).parent.parent, 'atest', 'transformers', 'DiscardEmptySections', 'source',
+                          'removes_empty_sections.robot'))
+        model = get_model(source)
+        transformed = transform_model(model, config_path, separator='tab', linestart=10, endline=20)
+        assert transformed == expected

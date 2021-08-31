@@ -12,11 +12,11 @@ from robotidy.utils import normalize_name, after_last_dot
 from robotidy.decorators import check_start_end_line
 
 
-def insert_separators(indent, tokens, space_count):
-    yield Token(Token.SEPARATOR, indent + space_count * ' ')
+def insert_separators(indent, tokens, separator):
+    yield Token(Token.SEPARATOR, indent + separator)
     for token in tokens[:-1]:
         yield token
-        yield Token(Token.SEPARATOR, space_count * ' ')
+        yield Token(Token.SEPARATOR, separator)
     yield tokens[-1]
     yield Token(Token.EOL)
 
@@ -25,14 +25,14 @@ class ReplaceRunKeywordIf(ModelTransformer):
     """
     Replace ``Run Keyword If`` keyword calls with IF expressions.
 
-    Following code::
+    Following code:
 
         Run Keyword If  ${condition}
         ...  Keyword  ${arg}
         ...  ELSE IF  ${condition2}  Keyword2
         ...  ELSE  Keyword3
 
-    Will be transformed to::
+    Will be transformed to:
 
         IF    ${condition}
             Keyword    ${arg}
@@ -42,11 +42,11 @@ class ReplaceRunKeywordIf(ModelTransformer):
             Keyword3
         END
 
-    Any return value will be applied to every ELSE/ELSE IF branch::
+    Any return value will be applied to every ELSE/ELSE IF branch:
 
         ${var}  Run Keyword If  ${condition}  Keyword  ELSE  Keyword2
 
-    Output::
+    Output:
 
         IF    ${condition}
             ${var}    Keyword
@@ -54,18 +54,20 @@ class ReplaceRunKeywordIf(ModelTransformer):
             ${var}    Keyword2
         END
 
-    Run Keywords inside Run Keyword If will be split into separate keywords::
+    Run Keywords inside Run Keyword If will be split into separate keywords:
 
        Run Keyword If  ${condition}  Run Keywords  Keyword  ${arg}  AND  Keyword2
 
-    Output::
+    Output:
 
         IF    ${condition}
             Keyword    ${arg}
             Keyword2
         END
 
-    Supports global formatting params: ``--spacecount``, ``--startline`` and ``--endline``.
+    Supports global formatting params: ``--spacecount``, ``--separator``, ``--startline`` and ``--endline``.
+
+    See https://robotidy.readthedocs.io/en/latest/transformers/ReplaceRunKeywordIf.html for more examples.
     """
     @check_start_end_line
     def visit_KeywordCall(self, node):  # noqa
@@ -103,7 +105,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
                 header = ElseIfHeader([
                     separator,
                     Token(Token.ELSE_IF),
-                    Token(Token.SEPARATOR, self.formatting_config.space_count * ' '),
+                    Token(Token.SEPARATOR, self.formatting_config.separator),
                     branch[1],
                     Token(Token.EOL)
                 ])
@@ -114,7 +116,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
                 header = IfHeader([
                     separator,
                     Token(Token.IF),
-                    Token(Token.SEPARATOR, self.formatting_config.space_count * ' '),
+                    Token(Token.SEPARATOR, self.formatting_config.separator),
                     branch[0],
                     Token(Token.EOL)
                 ])
@@ -135,7 +137,7 @@ class ReplaceRunKeywordIf(ModelTransformer):
         separated_tokens = list(insert_separators(
             indent,
             [*assign, Token(Token.KEYWORD, arg_tokens[0].value), *arg_tokens[1:]],
-            self.formatting_config.space_count
+            self.formatting_config.separator
         ))
         return KeywordCall.from_tokens(separated_tokens)
 

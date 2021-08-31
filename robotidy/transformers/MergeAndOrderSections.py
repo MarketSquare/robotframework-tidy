@@ -40,6 +40,8 @@ class MergeAndOrderSections(ModelTransformer):
         *** Settings ***
 
     You can disable this behaviour by setting ``create_comment_section`` to False.
+
+    See https://robotidy.readthedocs.io/en/latest/transformers/MergeAndOrderSections.html for more examples.
     """
     def __init__(self, order: str = '', create_comment_section: bool = True):
         self.sections_order = self.parse_order(order)
