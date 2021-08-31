@@ -5,8 +5,8 @@
 ### Features
 - It is now possible to provide source paths in configuration file [#154](https://github.com/MarketSquare/robotframework-tidy/issues/154)
 - Non default transformers can be enabled using ``enabled=True`` parameter [#182](https://github.com/MarketSquare/robotframework-tidy/issues/182)
-- New non default transformer `RenameTestCases`. It capitalizes first letter of the test case name, remove trailing dot and can replace provided regex pattern with substitute string [#183](https://github.com/MarketSquare/robotframework-tidy/issues/183)
-- Semicolon in parameter value can be now escaped with `\:` [#190](https://github.com/MarketSquare/robotframework-tidy/issues/190)
+- New non default transformer `RenameTestCases`. It capitalizes first letter of the test case name, removes trailing dot and can replace provided regex pattern with substitute string [#183](https://github.com/MarketSquare/robotframework-tidy/issues/183)
+- Semicolon in parameter value can now be escaped with `\:` [#190](https://github.com/MarketSquare/robotframework-tidy/issues/190)
 
 ## 1.5.1
 

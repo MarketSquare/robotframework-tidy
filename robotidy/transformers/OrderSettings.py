@@ -14,7 +14,7 @@ class OrderSettings(ModelTransformer):
     Order settings like [Arguments], [Setup], [Return] inside Keywords and Test Cases.
 
     Keyword settings [Documentation], [Tags], [Timeout], [Arguments] are put before keyword body and
-    settings like [Teardown], [Return] are moved to the end of keyword:
+    settings like [Teardown], [Return] are moved to the end of the keyword:
 
        *** Keywords ***
         Keyword

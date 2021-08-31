@@ -15,7 +15,7 @@ class NormalizeSectionHeaderName(ModelTransformer):
         *** SETTINGS
         *** SettingS ***
 
-    This transformer normalize naming to follow ``*** SectionName ***`` format (with plurar variant):
+    This transformer normalizes naming to follow ``*** SectionName ***`` format (with plural variant):
 
         *** Settings ***
         *** Keywords ***

@@ -43,7 +43,7 @@ class RenameTestCases(ModelTransformer):
             raise click.BadOptionUsage(
                 option_name='transform',
                 message=f"Invalid configurable value: '{replace_pattern}' for replace_pattern in RenameTestCases"
-                        f" transformer. It should be valid regex expression. Regex error: '{err.msg}'")
+                        f" transformer. It should be a valid regex expression. Regex error: '{err.msg}'")
         self.replace_to = '' if replace_to is None else replace_to
 
     @check_start_end_line
