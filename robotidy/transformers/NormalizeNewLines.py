@@ -24,6 +24,8 @@ class NormalizeNewLines(ModelTransformer):
 
     If the suite contains Test Template tests will not be separated by empty lines unless ``separate_templated_tests``
     is set to True.
+
+    See https://robotidy.readthedocs.io/en/latest/transformers/NormalizeNewLines.html for more examples.
     """
     def __init__(self, test_case_lines: int = 1, keyword_lines: Optional[int] = None, section_lines: int = 1,
                  separate_templated_tests: bool = False, consecutive_lines: int = 1):

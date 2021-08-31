@@ -30,7 +30,9 @@ TRANSFORMERS = [
     'NormalizeSettingName',
     'ReplaceRunKeywordIf',
     'SplitTooLongLine',
-    'SmartSortKeywords'
+    'SmartSortKeywords',
+    'RenameTestCases',
+    'RenameTestCases'
 ]
 
 

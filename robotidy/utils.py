@@ -98,9 +98,30 @@ def split_args_from_name_or_path(name):
     index = _get_arg_separator_index_from_name_or_path(name)
     if index == -1:
         return name, []
-    args = name[index+1:].split(name[index])
+    args = _escaped_split(name[index+1:], name[index])
     name = name[:index]
     return name, args
+
+
+def _escaped_split(string, delim):
+    ret = []
+    current = []
+    itr = iter(string)
+    for ch in itr:
+        if ch == '\\':
+            try:
+                current.append('\\')
+                current.append(next(itr))
+            except StopIteration:
+                pass
+        elif ch == delim:
+            ret.append(''.join(current))
+            current = []
+        else:
+            current.append(ch)
+    if current:
+        ret.append(''.join(current))
+    return ret
 
 
 def _get_arg_separator_index_from_name_or_path(name):

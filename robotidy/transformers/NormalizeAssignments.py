@@ -15,7 +15,7 @@ class NormalizeAssignments(ModelTransformer):
     Normalize assignments. By default it detects most common assignment sign
     and apply it to every assignment in given file.
 
-    In this code most common is no equal sign at all. We should remove ``=`` signs from all lines::
+    In this code most common is no equal sign at all. We should remove ``=`` signs from all lines:
 
         *** Variables ***
         ${var} =  ${1}
@@ -32,7 +32,7 @@ class NormalizeAssignments(ModelTransformer):
             ${var}   Keyword2
             ${var}=    Keyword
 
-    To::
+    To:
 
         *** Variables ***
         ${var}  ${1}
@@ -52,6 +52,7 @@ class NormalizeAssignments(ModelTransformer):
     You can configure that behaviour to automatically add desired equal sign with ``equal_sign_type`` parameter
     (possible types are: ``autodetect`` (default), ``remove``, ``equal_sign`` ('='), ``space_and_equal_sign`` (' =').
 
+    See https://robotidy.readthedocs.io/en/latest/transformers/NormalizeAssignments.html for more examples.
     """
     def __init__(self, equal_sign_type: str = 'autodetect'):
         self.remove_equal_sign = re.compile(r'\s?=$')
