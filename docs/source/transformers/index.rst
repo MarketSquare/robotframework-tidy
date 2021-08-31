@@ -20,7 +20,7 @@ To see brief docs for selected transformer run::
 
     robotidy --desc TRANSFORMER_NAME
 
-See :ref:`configuring-transformers` to learn how transformers can be configured.
+See :ref:`configuring-transformers` to learn how transformers can be configured (including disabling and enabling transformers).
 
 .. rubric:: Order of transformers
 

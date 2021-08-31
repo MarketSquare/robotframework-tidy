@@ -18,7 +18,7 @@ class AlignVariablesSection(ModelTransformer):
     """
     Align variables in *** Variables *** section to columns.
 
-    Following code::
+    Following code:
 
         *** Variables ***
         ${VAR}  1
@@ -26,7 +26,7 @@ class AlignVariablesSection(ModelTransformer):
         &{MULTILINE}  a=b
         ...  b=c
 
-    will be transformed to::
+    will be transformed to:
 
         *** Variables ***
         ${VAR}          1
@@ -36,13 +36,15 @@ class AlignVariablesSection(ModelTransformer):
 
     You can configure how many columns should be aligned to longest token in given column. The remaining columns
     will use fixed length separator length ``--space_count``. By default only first two columns are aligned.
-    To align first three columns::
+    To align first three columns:
 
        robotidy --transform AlignVariablesSection:up_to_column=3
 
     To align all columns set ``up_to_column`` to 0.
 
     Supports global formatting params: ``--startline`` and ``--endline``.
+
+    See https://robotidy.readthedocs.io/en/latest/transformers/AlignVariablesSection.html for more examples.
     """
     def __init__(self, up_to_column: int = 2):
         self.up_to_column = up_to_column - 1

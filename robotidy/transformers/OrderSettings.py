@@ -14,7 +14,7 @@ class OrderSettings(ModelTransformer):
     Order settings like [Arguments], [Setup], [Return] inside Keywords and Test Cases.
 
     Keyword settings [Documentation], [Tags], [Timeout], [Arguments] are put before keyword body and
-    settings like [Teardown], [Return] are moved to the end of keyword::
+    settings like [Teardown], [Return] are moved to the end of the keyword:
 
        *** Keywords ***
         Keyword
@@ -26,7 +26,7 @@ class OrderSettings(ModelTransformer):
             [Tags]  sanity
             Pass
 
-    To::
+    To:
 
        *** Keywords ***
         Keyword
@@ -54,6 +54,8 @@ class OrderSettings(ModelTransformer):
     It will order only test cases because all setting names for keywords are missing.
 
     Supports global formatting params: ``--startline`` and ``--endline``.
+
+    See https://robotidy.readthedocs.io/en/latest/transformers/OrderSettings.html for more examples.
     """
     def __init__(self, keyword_before: str = None, keyword_after: str = None, test_before: str = None,
                  test_after: str = None):

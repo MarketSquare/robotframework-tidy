@@ -20,6 +20,8 @@ class NormalizeSeparators(ModelTransformer):
     ``sections = comments,settings,variables,keywords,testcases`` param.
 
     Supports global formatting params: ``--startline`` and ``--endline``.
+
+    See https://robotidy.readthedocs.io/en/latest/transformers/NormalizeSeparators.html for more examples.
     """
     def __init__(self, sections: str = None):
         self.indent = 0

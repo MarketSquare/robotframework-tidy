@@ -58,6 +58,8 @@ class AlignSettingsSection(ModelTransformer):
 
     Supports global formatting params: ``--startline``, ``--endline`` and ``--space_count``
     (for columns with fixed length).
+
+    See https://robotidy.readthedocs.io/en/latest/transformers/AlignSettingsSection.html for more examples.
     """
     TOKENS_WITH_KEYWORDS = {Token.SUITE_SETUP, Token.SUITE_TEARDOWN, Token.TEST_SETUP, Token.TEST_TEARDOWN}
 

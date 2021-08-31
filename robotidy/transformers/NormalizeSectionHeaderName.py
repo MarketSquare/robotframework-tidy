@@ -9,13 +9,13 @@ from robotidy.decorators import check_start_end_line
 class NormalizeSectionHeaderName(ModelTransformer):
     """
     Normalize section headers names.
-    Robot Framework is quite flexible with the section header naming. Following lines are equal::
+    Robot Framework is quite flexible with the section header naming. Following lines are equal:
 
         *setting
         *** SETTINGS
         *** SettingS ***
 
-    This transformer normalize naming to follow ``*** SectionName ***`` format (with plurar variant)::
+    This transformer normalizes naming to follow ``*** SectionName ***`` format (with plural variant):
 
         *** Settings ***
         *** Keywords ***
@@ -24,11 +24,13 @@ class NormalizeSectionHeaderName(ModelTransformer):
         *** Comments ***
 
     Optional data after section header (for example data driven column names) is preserved.
-    It is possible to upper case section header names by passing ``uppercase=True`` parameter::
+    It is possible to upper case section header names by passing ``uppercase=True`` parameter:
 
         *** SETTINGS ***
 
     Supports global formatting params: ``--startline`` and ``--endline``.
+
+    See https://robotidy.readthedocs.io/en/latest/transformers/NormalizeSectionHeaderName.html for more examples.
     """
     def __init__(self, uppercase: bool = False):
         self.uppercase = uppercase
