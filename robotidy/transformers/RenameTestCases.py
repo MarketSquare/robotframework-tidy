@@ -1,10 +1,8 @@
 import re
-import random
-import string
 from typing import Optional
 
-from robot.api.parsing import ModelTransformer, Token
 import click
+from robot.api.parsing import ModelTransformer, Token
 
 from robotidy.decorators import check_start_end_line
 

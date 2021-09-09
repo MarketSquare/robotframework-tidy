@@ -12,7 +12,7 @@ def check_start_end_line(func):
     Do not transform node if it's not within passed start_line and end_line.
     """
     @functools.wraps(func)
-    def wrapper(self, node):
+    def wrapper(self, node, *args):
         if not node:
             return return_node_untouched(node)
         if not node_within_lines(
@@ -22,5 +22,5 @@ def check_start_end_line(func):
                 self.formatting_config.end_line
         ):
             return return_node_untouched(node)
-        return func(self, node)
+        return func(self, node, *args)
     return wrapper
