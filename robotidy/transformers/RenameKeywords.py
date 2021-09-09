@@ -31,7 +31,7 @@ class RenameKeywords(ModelTransformer):
 
     To:
 
-        *** Test Cases ***
+        *** Keywords ***
         New Shining Name
             Keyword Call
 
