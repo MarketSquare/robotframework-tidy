@@ -21,9 +21,9 @@ You can keep underscores if you set remove_underscores to False::
 It is also possible to configure `replace_pattern` parameter to find and replace regex pattern. Use `replace_to`
 to set replacement value. This configuration (underscores are used instead of spaces)::
 
-    robotidy --transform RenameKeywords -c RenameKeywords:replace_pattern=^(?i)rename\s?me$:replace_to=New_Shining_Name .
+    robotidy --transform RenameKeywords -c RenameKeywords:replace_pattern=(?i)^rename\s?me$:replace_to=New_Shining_Name .
 
-replaces all occurrences of name `Rename Me` (case insensitive thanks to `(?i)`) to `New Shining Name`:
+replaces all occurrences of name `Rename Me` (case insensitive thanks to `(?i)` flag) to `New Shining Name`:
 
 .. tabs::
 

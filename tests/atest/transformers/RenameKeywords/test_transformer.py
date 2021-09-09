@@ -20,7 +20,7 @@ class TestRenameKeywords:
             self.TRANSFORMER_NAME,
             source='test.robot',
             expected='rename_pattern_whole.robot',
-            config=r':replace_pattern=^(?i)rename\s?me$:replace_to=New_Shining_Name'
+            config=r':replace_pattern=(?i)^rename\s?me$:replace_to=New_Shining_Name'
         )
 
     def test_keep_underscores(self):
