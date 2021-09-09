@@ -3,7 +3,7 @@
 RenameKeywords
 ================================
 
-Enforce keyword naming. Title Case is applied to keyword name and underscores are replaced by spaces. It have only basic
+Enforce keyword naming. Title Case is applied to keyword name and underscores are replaced by spaces. It has only basic
 support for keywords with embedded variables - use it on your own risk.
 
 RenameKeywords is not included in default transformers, that's why you need to call it with ``--transform`` explicitly::

@@ -4,7 +4,7 @@ RenameTestCases
 ================================
 
 Enforce test case naming. This transformer capitalizes first letter of test case name, removes trailing dot and
-strips leading/trailing whitespace.
+strips leading/trailing whitespaces.
 
 RenameTestCases is not included in default transformers, that's why you need to call it with ``--transform`` explicitly::
 
