@@ -62,7 +62,6 @@ def find_and_read_config(src_paths: Iterable[str]) -> Dict[str, Any]:
 def load_toml_file(path: str) -> Dict[str, Any]:
     try:
         config = toml.load(path)
-        click.echo(f"Loaded configuration from {path}")
         return config
     except (toml.TomlDecodeError, OSError) as e:
         raise click.FileError(
@@ -73,6 +72,8 @@ def load_toml_file(path: str) -> Dict[str, Any]:
 def read_pyproject_config(path: str) -> Dict[str, Any]:
     config = load_toml_file(path)
     config = config.get("tool", {}).get("robotidy", {})
+    if config:
+        click.echo(f"Loaded configuration from {path}")
     return {k.replace('--', '').replace('-', '_'): v for k, v in config.items()}
 
 
