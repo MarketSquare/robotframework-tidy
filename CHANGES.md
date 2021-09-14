@@ -14,6 +14,9 @@
 ### Fixes
 - Robotidy will not print "Loaded configuration from ... " if the configuration is empty [#193](https://github.com/MarketSquare/robotframework-tidy/issues/193)
 
+### Other
+- ReplaceRunKeywordIf now removes ELSE branch if it is unnecessary [#192](https://github.com/MarketSquare/robotframework-tidy/issues/192)
+
 ## 1.5.1
 
 ### Fixes
