@@ -11,6 +11,9 @@
 - Semicolon in parameter value can now be escaped with `\:` [#190](https://github.com/MarketSquare/robotframework-tidy/issues/190)
 - Default separator can be changed from space to tabular with new ``--separator`` option [#184](https://github.com/MarketSquare/robotframework-tidy/issues/184)
 
+### Fixes
+- Robotidy will not print "Loaded configuration from ... " if the configuration is empty [#193](https://github.com/MarketSquare/robotframework-tidy/issues/193)
+
 ## 1.5.1
 
 ### Fixes
