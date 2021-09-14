@@ -32,7 +32,7 @@ TRANSFORMERS = [
     'SplitTooLongLine',
     'SmartSortKeywords',
     'RenameTestCases',
-    'RenameTestCases'
+    'RenameKeywords'
 ]
 
 
