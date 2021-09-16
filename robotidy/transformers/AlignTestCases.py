@@ -61,6 +61,24 @@ class AlignTestCases(ModelTransformer):
             return node
         return self.generic_visit(node)
 
+    def visit_If(self, node):  # noqa
+        self.indent += 1
+        self.generic_visit(node)
+        self.indent -= 1
+        return node
+
+    def visit_Else(self, node):  # noqa
+        self.indent += 1
+        self.generic_visit(node)
+        self.indent -= 1
+        return node
+
+    def visit_ElseIf(self, node):  # noqa
+        self.indent += 1
+        self.generic_visit(node)
+        self.indent -= 1
+        return node
+
     def visit_For(self, node):  # noqa
         self.indent += 1
         self.generic_visit(node)
