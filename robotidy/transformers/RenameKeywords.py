@@ -56,24 +56,20 @@ class RenameKeywords(ModelTransformer):
     @check_start_end_line
     def rename_node(self, node, type_of_name):
         token = node.get_token(type_of_name)
-        if not token:
+        if not token or not token.value:
             return node
-        value = token.value
-        library = ''
-        if not value:
-            return node
-        if isinstance(node, KeywordCall) and '.' in value:
-            library, value = token.value.rsplit('.', maxsplit=1)
-        if self.replace_pattern is not None:
-            value = self.replace_pattern.sub(repl=self.replace_to, string=value)
-        if self.remove_underscores and value != '_':
-            value = value.replace('_', ' ')
-            value = re.sub(r'\s{2,}', ' ', value)  # replace two or more spaces by one
-        value = "".join([a if a.isupper() else b for a, b in zip(value, string.capwords(value.strip()))])
-        if library:
-            token.value = f'{library}.{value}'
-        else:
-            token.value = value
+        values = []
+        for value in token.value.split('.'):
+            if isinstance(node, KeywordCall) and '.' in value:
+                library, value = token.value.rsplit('.', maxsplit=1)
+            if self.replace_pattern is not None:
+                value = self.replace_pattern.sub(repl=self.replace_to, string=value)
+            if self.remove_underscores and value != '_':
+                value = value.replace('_', ' ')
+                value = re.sub(r'\s{2,}', ' ', value)  # replace two or more spaces by one
+            value = "".join([a if a.isupper() else b for a, b in zip(value, string.capwords(value.strip()))])
+            values.append(value)
+        token.value = '.'.join(values)
         return node
 
     def visit_KeywordName(self, node):  # noqa
