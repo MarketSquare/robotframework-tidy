@@ -1,4 +1,5 @@
 import os
+import ast
 from typing import List
 import difflib
 
@@ -247,3 +248,18 @@ class ModelWriter(ModelVisitor):
     def visit_Statement(self, statement):  # noqa
         for token in statement.tokens:
             self.writer.write(token.value)
+
+
+class TestTemplateFinder(ast.NodeVisitor):
+    def __init__(self):
+        self.templated = False
+
+    def visit_TestTemplate(self, node):  # noqa
+        if node.value:
+            self.templated = True
+
+
+def is_suite_templated(node):
+    template_finder = TestTemplateFinder()
+    template_finder.visit(node)
+    return template_finder.templated

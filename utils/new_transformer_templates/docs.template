@@ -2,3 +2,18 @@
 
 {{ transformer_name }}
 ================================
+{% if disabled %}
+{{ transformer_name }} is not included in default transformers, that's why you need to call it with ``--transform`` explicitly::
+
+    robotidy --transform {{ transformer_name }} src
+
+Or configure `enable` parameter::
+
+    robotidy --configure {{ transformer_name }}:enabled=True
+
+{% else %}
+{{ transformer_name }} is included in default transformers but it can be also run separately with::
+
+   robotidy --transform {{ transformer_name }} src
+
+{% endif %}

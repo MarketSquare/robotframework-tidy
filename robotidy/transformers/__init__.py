@@ -25,13 +25,13 @@ TRANSFORMERS = [
     'OrderSettingsSection',
     'AlignSettingsSection',
     'AlignVariablesSection',
+    'AlignTestCases',
     'NormalizeNewLines',
     'NormalizeSectionHeaderName',
     'NormalizeSettingName',
     'ReplaceRunKeywordIf',
     'SplitTooLongLine',
     'SmartSortKeywords',
-    'RenameTestCases',
     'RenameTestCases'
 ]
 
