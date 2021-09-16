@@ -40,3 +40,7 @@ Structures
 
 Double Underscores
     No Operation
+
+All Upper Case
+    Connect To System ABC
+    Create Product DFG

@@ -69,7 +69,7 @@ class RenameKeywords(ModelTransformer):
         if self.remove_underscores and value != '_':
             value = value.replace('_', ' ')
             value = re.sub(r'\s{2,}', ' ', value)  # replace two or more spaces by one
-        value = string.capwords(value.strip())
+        value = "".join([a if a.isupper() else b for a, b in zip(value, string.capwords(value.strip()))])
         if library:
             token.value = f'{library}.{value}'
         else:
