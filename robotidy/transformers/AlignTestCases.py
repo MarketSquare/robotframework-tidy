@@ -55,7 +55,7 @@ class AlignTestCases(ModelTransformer):
         self.test_name_len = 0
         self.name_line = 0
         self.indent = 0
-    
+
     def visit_File(self, node):  # noqa
         if not is_suite_templated(node):
             return node
@@ -111,8 +111,7 @@ class AlignTestCases(ModelTransformer):
                     if self.name_line == statement.lineno:
                         exp_pos -= self.test_name_len
                     self.test_name_len = 0
-                separator = (exp_pos - line_pos) * ' '
-                tokens.append(Token(Token.SEPARATOR, separator))
+                tokens.append(Token(Token.SEPARATOR, (exp_pos - line_pos) * ' '))
                 tokens.append(token)
                 line_pos += len(token.value) + exp_pos - line_pos
             tokens.append(line[-1])
