@@ -38,5 +38,9 @@ Structures
             keyword
     END
 
-Double__Underscores
+Double__underscores
     No Operation
+
+All Upper Case
+    Connect To System ABC
+    Create Product DFG

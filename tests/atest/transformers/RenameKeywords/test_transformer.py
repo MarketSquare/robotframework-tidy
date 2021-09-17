@@ -43,3 +43,6 @@ class TestRenameKeywords:
                           rf"'[\911]' for replace_pattern in {self.TRANSFORMER_NAME} transformer. " \
                           "It should be a valid regex expression. Regex error: 'bad escape \\9'"
         assert expected_output in str(result.exception)
+
+    def test_with_library_name(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, source='with_library_name.robot')
