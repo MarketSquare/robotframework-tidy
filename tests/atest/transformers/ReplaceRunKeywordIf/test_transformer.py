@@ -20,3 +20,6 @@ class TestReplaceRunKeywordIf:
 
     def test_golden_file(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, source='golden.robot')
+
+    def test_remove_useless_set_variable(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, source='set_variable_workaround.robot')

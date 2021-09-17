@@ -91,14 +91,16 @@ class ReplaceRunKeywordIf(ModelTransformer):
         prev_if = None
         for branch in reversed(list(self.split_args_on_delimiters(raw_args, ('ELSE', 'ELSE IF'), assign=assign))):
             if branch[0].value == 'ELSE':
+                if len(branch) < 2:
+                    return node
+                args = branch[1:]
+                if self.check_for_useless_set_variable(args, assign):
+                    continue
                 header = ElseHeader([
                     separator,
                     Token(Token.ELSE),
                     Token(Token.EOL)
                 ])
-                if len(branch) < 2:
-                    return node
-                args = branch[1:]
             elif branch[0].value == 'ELSE IF':
                 if len(branch) < 3:
                     return node
@@ -152,3 +154,16 @@ class ReplaceRunKeywordIf(ModelTransformer):
         if assign and 'ELSE' in delimiters and not any(arg.value == 'ELSE' for arg in args):
             values = [Token(Token.ARGUMENT, '${None}')] * len(assign)
             yield [Token(Token.ELSE), Token(Token.ARGUMENT, 'Set Variable'), *values]
+
+    @staticmethod
+    def check_for_useless_set_variable(tokens, assign):
+        if (
+                not assign
+                or normalize_name(tokens[0].value) != 'setvariable'
+                or len(tokens[1:]) != len(assign)
+        ):
+            return False
+        for var, var_assign in zip(tokens[1:], assign):
+            if normalize_name(var.value) != normalize_name(var_assign.value):
+                return False
+        return True

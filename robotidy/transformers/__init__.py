@@ -32,7 +32,8 @@ TRANSFORMERS = [
     'ReplaceRunKeywordIf',
     'SplitTooLongLine',
     'SmartSortKeywords',
-    'RenameTestCases'
+    'RenameTestCases',
+    'RenameKeywords'
 ]
 
 

@@ -16,6 +16,11 @@ from robotidy.version import __version__
 from .utils import run_tidy
 
 
+@pytest.fixture
+def test_data_dir():
+    return Path(__file__).parent / 'testdata'
+
+
 class TestCli:
     @pytest.mark.parametrize('src', [
         None,
@@ -81,12 +86,12 @@ class TestCli:
     #     result = run_tidy(args, exit_code=1)
     #     assert expected_output == str(result.exception)
 
-    def test_find_project_root_from_src(self):
-        src = Path(Path(__file__).parent, 'testdata', 'nested', 'test.robot')
+    def test_find_project_root_from_src(self, test_data_dir):
+        src = test_data_dir / 'nested' / 'test.robot'
         path = find_project_root((src,))
-        assert path == Path(Path(__file__).parent, 'testdata', 'nested')
+        assert path == test_data_dir / 'nested'
 
-    def test_read_robotidy_config(self):
+    def test_read_robotidy_config(self, test_data_dir):
         """ robotidy.toml follows the same format as pyproject starting from 1.2.0 """
         expected_config = {
             'overwrite': False,
@@ -97,11 +102,11 @@ class TestCli:
                 'ReplaceRunKeywordIf'
             ]
         }
-        config_path = str(Path(Path(__file__).parent, 'testdata', 'config', 'robotidy.toml'))
+        config_path = str(test_data_dir / 'config' / 'robotidy.toml')
         config = read_pyproject_config(config_path)
         assert config == expected_config
 
-    def test_read_pyproject_config(self):
+    def test_read_pyproject_config(self, test_data_dir):
         expected_parsed_config = {
             'overwrite': False,
             'diff': False,
@@ -116,11 +121,11 @@ class TestCli:
                 'OrderSettings: keyword_before = documentation,tags,timeout,arguments'
             ]
         }
-        config_path = str(Path(Path(__file__).parent, 'testdata', 'only_pyproject', 'pyproject.toml'))
+        config_path = str(test_data_dir / 'only_pyproject' / 'pyproject.toml')
         config = read_pyproject_config(config_path)
         assert config == expected_parsed_config
 
-    def test_read_pyproject_config_e2e(self):
+    def test_read_pyproject_config_e2e(self, test_data_dir):
         expected_parsed_config = {
             'overwrite': 'False',
             'diff': 'False',
@@ -135,7 +140,7 @@ class TestCli:
                 'OrderSettings: keyword_before = documentation,tags,timeout,arguments'
             ]
         }
-        config_path = str(Path(Path(__file__).parent, 'testdata', 'only_pyproject'))
+        config_path = str(test_data_dir / 'only_pyproject')
         ctx_mock = MagicMock()
         ctx_mock.params = {'src': (config_path,)}
         ctx_mock.command.params = None
@@ -143,8 +148,8 @@ class TestCli:
         read_config(ctx_mock, param_mock, value=None)
         assert ctx_mock.default_map == expected_parsed_config
 
-    def test_read_invalid_config(self):
-        config_path = str(Path(Path(__file__).parent, 'testdata', 'invalid_pyproject', 'pyproject.toml'))
+    def test_read_invalid_config(self, test_data_dir):
+        config_path = str(test_data_dir / 'invalid_pyproject' / 'pyproject.toml')
         with pytest.raises(FileError) as err:
             read_pyproject_config(config_path)
         assert 'Error reading configuration file: ' in str(err)
@@ -153,8 +158,8 @@ class TestCli:
         ('confgure', 'configure'),
         ('idontexist', None)
     ])
-    def test_read_invalid_option_config(self, option, correct):
-        config_path = str(Path(Path(__file__).parent, 'testdata', 'invalid_options_config', f'pyproject_{option}.toml'))
+    def test_read_invalid_option_config(self, option, correct, test_data_dir):
+        config_path = str(test_data_dir / 'invalid_options_config' / f'pyproject_{option}.toml')
         ctx_mock = MagicMock()
         param_mock = MagicMock()
         with pytest.raises(NoSuchOption) as err:
@@ -162,7 +167,7 @@ class TestCli:
         similar = '' if correct is None else f' Did you mean {correct}'
         assert f'no such option: {option}{similar}'
 
-    def test_read_config_from_param(self):
+    def test_read_config_from_param(self, test_data_dir):
         expected_parsed_config = {
             'overwrite': 'False',
             'diff': 'False',
@@ -172,14 +177,14 @@ class TestCli:
                 'ReplaceRunKeywordIf'
             ]
         }
-        config_path = str(Path(Path(__file__).parent, 'testdata', 'config', 'robotidy.toml'))
+        config_path = str(test_data_dir / 'config' / 'robotidy.toml')
         ctx_mock = MagicMock()
         ctx_mock.command.params = None
         param_mock = Mock()
         read_config(ctx_mock, param_mock, config_path)
         assert ctx_mock.default_map == expected_parsed_config
 
-    def test_read_config_without_param(self):
+    def test_read_config_without_param(self, test_data_dir):
         expected_parsed_config = {
             'overwrite': 'False',
             'diff': 'False',
@@ -189,7 +194,7 @@ class TestCli:
                 'ReplaceRunKeywordIf'
             ]
         }
-        config_path = str(Path(Path(__file__).parent, 'testdata', 'config', 'robotidy.toml'))
+        config_path = str(test_data_dir / 'config' / 'robotidy.toml')
         ctx_mock = MagicMock()
         ctx_mock.params = {'src': (config_path,)}
         ctx_mock.command.params = None
@@ -260,15 +265,15 @@ class TestCli:
         ('golden.robot', 0),
         ('not_golden.robot', 1)
     ])
-    def test_check(self, source, return_status):
-        source = Path(Path(__file__).parent, 'testdata', 'check', source)
+    def test_check(self, source, return_status, test_data_dir):
+        source = test_data_dir / 'check' / source
         run_tidy(
             ['--check', '--overwrite', '--transform', 'NormalizeSectionHeaderName', str(source)],
             exit_code=return_status
         )
 
-    def test_diff(self):
-        source = Path(Path(__file__).parent, 'testdata', 'check', 'not_golden.robot')
+    def test_diff(self, test_data_dir):
+        source = test_data_dir / 'check' / 'not_golden.robot'
         result = run_tidy(['--diff', '--no-overwrite', '--transform', 'NormalizeSectionHeaderName', str(source)])
         assert "*** settings ***" in result.output
         assert "*** Settings ***" in result.output
@@ -300,10 +305,10 @@ class TestCli:
         assert transformers[0].up_to_column + 1 == 4
 
     @pytest.mark.parametrize('line_sep', ['unix', 'windows', 'native', None])
-    def test_line_sep(self, line_sep):
-        source = Path(Path(__file__).parent, 'testdata', 'line_sep', 'test.robot')
-        expected = Path(Path(__file__).parent, 'testdata', 'line_sep', 'expected.robot')
-        actual = Path(Path(__file__).parent, 'actual', 'test.robot')
+    def test_line_sep(self, line_sep, test_data_dir):
+        source = test_data_dir / 'line_sep' / 'test.robot'
+        expected = test_data_dir / 'line_sep' / 'expected.robot'
+        actual = test_data_dir.parent / 'actual' / 'test.robot'
         if line_sep is not None:
             run_tidy(['--lineseparator', line_sep, str(source)], output='test.robot')
         else:
@@ -374,21 +379,21 @@ class TestCli:
         (DEFAULT_EXCLUDES, 'test.resource', ['test.robot', 'nested/test.robot']),
         ('test.resource', 'nested/*', ['test.robot'])
     ])
-    def test_exclude_gitignore(self, exclude, extend_exclude, allowed):
-        source = Path(Path(__file__).parent, 'testdata', 'gitignore')
+    def test_exclude_gitignore(self, exclude, extend_exclude, allowed, test_data_dir):
+        source = test_data_dir / 'gitignore'
         allowed_paths = {Path(source, path) for path in allowed}
         paths = get_paths((str(source),), exclude=validate_regex(exclude),
                           extend_exclude=validate_regex(extend_exclude))
         assert paths == allowed_paths
 
     @pytest.mark.parametrize('source, should_parse', [
-       (None, ['test.robot', 'resources/test.robot']),  # calls: robotidy
-       ('test3.robot', ['test3.robot']),  # calls: robotidy test3.robot
-       ('test.robot', ['test.robot']),
+        (None, ['test.robot', 'resources/test.robot']),  # calls: robotidy
+        ('test3.robot', ['test3.robot']),  # calls: robotidy test3.robot
+        ('test.robot', ['test.robot']),
         ('.', ['test.robot', 'test3.robot', 'resources/test.robot']),
     ])
-    def test_src_in_configuration(self, source, should_parse):
-        source_dir = Path(__file__).parent / 'testdata' / 'pyproject_with_src'
+    def test_src_in_configuration(self, source, should_parse, test_data_dir):
+        source_dir = test_data_dir / 'pyproject_with_src'
         os.chdir(source_dir)
         if source is not None:
             source = source_dir / source
@@ -402,6 +407,13 @@ class TestCli:
         actual = sorted(line for line in result.output.split('\n') if line.strip())
         assert actual == sorted(expected)
 
+    @pytest.mark.parametrize('source', [1, 2])
+    def test_empty_configuration(self, source, test_data_dir):
+        config_dir = test_data_dir / f'empty_pyproject{source}'
+        os.chdir(config_dir)
+        result = run_tidy()
+        assert "Loaded configuration from" not in result.output
+
     def test_loading_from_stdin(self):
         input_file = '*** Settings ***\nLibrary  SomeLib\n\n\n' \
                      '*** Variables ***\n\n\n\n' \
@@ -411,4 +423,3 @@ class TestCli:
         args = '--transform DiscardEmptySections -'.split()
         result = run_tidy(args, std_in=input_file)
         assert result.output == expected_output
-
