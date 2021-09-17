@@ -1,4 +1,4 @@
-from robot.api.parsing import ModelTransformer, Token, End, Comment, EmptyLine, If, For
+from robot.api.parsing import ModelTransformer, Token, End, Comment, EmptyLine
 
 from robotidy.decorators import check_start_end_line
 
