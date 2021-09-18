@@ -25,6 +25,7 @@ TRANSFORMERS = [
     'OrderSettingsSection',
     'AlignSettingsSection',
     'AlignVariablesSection',
+    'AlignTestCases',
     'NormalizeNewLines',
     'NormalizeSectionHeaderName',
     'NormalizeSettingName',

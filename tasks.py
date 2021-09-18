@@ -19,7 +19,7 @@ def add_transformer(ctx, name, disabled=False):
 
     print(f"Creating '{docs.relative_to(root)} file with transformer full documentation")
     with open(template_dir / 'docs.template') as f:
-        docs_template = Template(f.read()).render(transformer_name=name)
+        docs_template = Template(f.read()).render(transformer_name=name, disabled=disabled)
     with open(docs, 'w') as f:
         f.write(docs_template)
 
