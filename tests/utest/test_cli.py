@@ -223,7 +223,7 @@ class TestCli:
                in result.output
         assert 'ReplaceRunKeywordIf\n' in result.output
         assert 'SmartSortKeywords (disabled)\n' in result.output  # this transformer is disabled by default
-        assert 'Available transformers:\n\nAlignSettingsSection\n' in result.output  # assert order
+        assert 'Available transformers:\n\nAddMissingEnd\n' in result.output  # assert order
 
     @pytest.mark.parametrize('flag', ['--desc', '-d'])
     @pytest.mark.parametrize('name, expected_doc', [

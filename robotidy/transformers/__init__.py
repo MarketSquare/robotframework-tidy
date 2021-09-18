@@ -16,6 +16,7 @@ from robotidy.utils import RecommendationFinder
 
 
 TRANSFORMERS = [
+    'AddMissingEnd',
     'NormalizeSeparators',
     'DiscardEmptySections',
     'MergeAndOrderSections',

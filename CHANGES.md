@@ -5,6 +5,7 @@
 ### Transformers
 - New non default transformer `RenameTestCases`. It capitalizes first letter of the test case name, removes trailing dot and can replace provided regex pattern with substitute string [#183](https://github.com/MarketSquare/robotframework-tidy/issues/183)
 - Added `AlignTestCases` transformer for aligning templated test cases in column. Because it's in experimental mode it will be non default for now (see docs for information how to run it) [#185](https://github.com/MarketSquare/robotframework-tidy/issues/185)
+- Missing ENDs in for loop and if statements will be added by new `AddMissingEnd` transformer [#91](https://github.com/MarketSquare/robotframework-tidy/issues/91)
 
 ### Features
 - It is now possible to provide source paths in configuration file [#154](https://github.com/MarketSquare/robotframework-tidy/issues/154)
