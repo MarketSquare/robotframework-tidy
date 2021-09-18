@@ -28,7 +28,7 @@ class AddMissingEnd(ModelTransformer):
         if not node.end:  # fix statement position only if END was missing
             node.body, outside = self.collect_inside_statements(node)
         self.fix_end(node)
-        return node, *outside
+        return (node, *outside)
 
     @check_start_end_line
     def visit_If(self, node):  # noqa
@@ -44,7 +44,7 @@ class AddMissingEnd(ModelTransformer):
             orelse.body, outside_orelse = self.collect_inside_statements(orelse)
             outside += outside_orelse
         self.fix_end(node)
-        return node, *outside
+        return (node, *outside)
 
     def fix_end(self, node):
         """ Fix END (missing END, End -> END, END position should be the same as FOR etc). """
@@ -54,7 +54,8 @@ class AddMissingEnd(ModelTransformer):
             indent = Token(Token.SEPARATOR, self.formatting_config.separator)
         node.end = End([indent, Token(Token.END, 'END'), Token(Token.EOL)])
 
-    def fix_header_name(self, node, header_name):
+    @staticmethod
+    def fix_header_name(node, header_name):
         node.header.data_tokens[0].value = header_name
 
     def collect_inside_statements(self, node):
