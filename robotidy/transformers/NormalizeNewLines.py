@@ -1,11 +1,12 @@
 from typing import Optional
-import ast
 
 from robot.api.parsing import (
     ModelTransformer,
     EmptyLine,
     Token
 )
+
+from robotidy.utils import is_suite_templated
 
 
 class NormalizeNewLines(ModelTransformer):
@@ -40,7 +41,7 @@ class NormalizeNewLines(ModelTransformer):
         self.templated = False
 
     def visit_File(self, node):  # noqa
-        self.templated = not self.separate_templated_tests and self.is_templated(node)
+        self.templated = not self.separate_templated_tests and is_suite_templated(node)
         self.last_section = node.sections[-1] if node.sections else None
         return self.generic_visit(node)
 
@@ -109,18 +110,3 @@ class NormalizeNewLines(ModelTransformer):
             if empty_count <= self.consecutive_lines:
                 nodes.append(child)
         node.body = nodes
-
-    @staticmethod
-    def is_templated(node):
-        template_finder = TestTemplateFinder()
-        template_finder.visit(node)
-        return template_finder.templated
-
-
-class TestTemplateFinder(ast.NodeVisitor):
-    def __init__(self):
-        self.templated = False
-
-    def visit_TestTemplate(self, node):  # noqa
-        if node.value:
-            self.templated = True
