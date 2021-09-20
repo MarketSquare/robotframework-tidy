@@ -5,11 +5,11 @@ NormalizeAssignments
 
 Normalize assignments.
 
-It can change all assignments signs to either most commonly used in given file or configured fixed one.
-Default behaviour is autodetect for assignments from Keyword Calls and removing assignments signs in
+It can change all assignment signs to either the most commonly used in a given file or a configured one.
+Default behaviour is autodetect for assignments from Keyword Calls and removing assignment signs in
 ``*** Variables ***`` section. It can be freely configured.
 
-NormalizeAssignments is included in default transformers but it can be also run separately with::
+NormalizeAssignments is included in the default transformers but it can be also run separately with::
 
     robotidy --transform NormalizeAssignments src
 
