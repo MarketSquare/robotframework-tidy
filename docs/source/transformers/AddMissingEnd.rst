@@ -3,7 +3,7 @@
 AddMissingEnd
 ================================
 
-Add missing END token to For loops and IF statements.
+Add missing END token to FOR loops and IF statements.
 
 AddMissingEnd is included in default transformers but it can be also
 run separately with::
