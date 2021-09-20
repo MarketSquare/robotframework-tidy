@@ -5,8 +5,7 @@ OrderSettings
 
 Order settings like ``[Arguments]``, ``[Setup]``, ``[Return]`` inside Keywords and Test Cases.
 
-OrderSettings is included in default transformers but it can be also
-run separately with::
+OrderSettings is included in the default transformers but it can be also run separately with::
 
     robotidy --transform OrderSettings src
 

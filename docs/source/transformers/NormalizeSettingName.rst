@@ -5,8 +5,7 @@ NormalizeSettingName
 
 Normalize setting name.
 
-NormalizeSettingName is included in default transformers but it can be also
-run separately with::
+NormalizeSettingName is included in the default transformers but it can be also run separately with::
 
     robotidy --transform NormalizeSettingName src
 

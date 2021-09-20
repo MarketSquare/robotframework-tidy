@@ -14,8 +14,8 @@ class NormalizeAssignments(ModelTransformer):
     """
     Normalize assignments.
 
-    It can change all assignments signs to either most commonly used in given file or configured fixed one.
-    Default behaviour is autodetect for assignments from Keyword Calls and removing assignments signs in
+    It can change all assignment signs to either the most commonly used in a given file or a configured fixed one.
+    Default behaviour is autodetect for assignments from Keyword Calls and removing assignment signs in
     *** Variables *** section. It can be freely configured.
 
     In this code most common is no equal sign at all. We should remove `=` signs from all lines:

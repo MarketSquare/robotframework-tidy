@@ -5,8 +5,7 @@ AlignVariablesSection
 
 Align variables in ``*** Variables ***`` section to columns.
 
-AlignVariablesSection is included in default transformers but it can be also
-run separately with::
+AlignVariablesSection is included in the default transformers but it can be also run separately with::
 
    robotidy --transform AlignVariablesSection src
 
