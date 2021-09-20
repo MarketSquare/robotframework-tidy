@@ -12,10 +12,13 @@ from robot.api.parsing import (
 
 class NormalizeAssignments(ModelTransformer):
     """
-    Normalize assignments. By default it detects most common assignment sign
-    and apply it to every assignment in given file.
+    Normalize assignments.
 
-    In this code most common is no equal sign at all. We should remove ``=`` signs from all lines:
+    It can change all assignments signs to either most commonly used in given file or configured fixed one.
+    Default behaviour is autodetect for assignments from Keyword Calls and removing assignments signs in
+    *** Variables *** section. It can be freely configured.
+
+    In this code most common is no equal sign at all. We should remove `=` signs from all lines:
 
         *** Variables ***
         ${var} =  ${1}
@@ -49,18 +52,22 @@ class NormalizeAssignments(ModelTransformer):
             ${var}   Keyword2
             ${var}    Keyword
 
-    You can configure that behaviour to automatically add desired equal sign with ``equal_sign_type`` parameter
-    (possible types are: ``autodetect`` (default), ``remove``, ``equal_sign`` ('='), ``space_and_equal_sign`` (' =').
+    You can configure that behaviour to automatically add desired equal sign with `equal_sign_type`
+    (default `autodetect`) and `equal_sign_type_variables` (default `remove`) parameters.
+    (possible types are: `autodetect`, `remove`, `equal_sign` ('='), `space_and_equal_sign` (' =').
 
     See https://robotidy.readthedocs.io/en/latest/transformers/NormalizeAssignments.html for more examples.
     """
-    def __init__(self, equal_sign_type: str = 'autodetect'):
+    def __init__(self, equal_sign_type: str = 'autodetect', equal_sign_type_variables: str = 'remove'):
         self.remove_equal_sign = re.compile(r'\s?=$')
         self.file_equal_sign_type = None
-        self.equal_sign_type = self.parse_equal_sign_type(equal_sign_type)
+        self.file_equal_sign_type_variables = None
+        self.equal_sign_type = self.parse_equal_sign_type(equal_sign_type, 'equal_sign_type')
+        self.equal_sign_type_variables = self.parse_equal_sign_type(equal_sign_type_variables,
+                                                                    'equal_sign_type_variables')
 
     @staticmethod
-    def parse_equal_sign_type(value):
+    def parse_equal_sign_type(value, name):
         types = {
             'remove': '',
             'equal_sign': '=',
@@ -70,7 +77,7 @@ class NormalizeAssignments(ModelTransformer):
         if value not in types:
             raise click.BadOptionUsage(
                 option_name='transform',
-                message=f"Invalid configurable value: {value} for equal_sign_type for AssignmentNormalizer transformer."
+                message=f"Invalid configurable value: {value} for {name} for AssignmentNormalizer transformer."
                         f" Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign"
             )
         return types[value]
@@ -80,18 +87,22 @@ class NormalizeAssignments(ModelTransformer):
         If no assignment sign was set the file will be scanned to find most common assignment sign.
         This auto detection will happen for every file separately.
         """
-        if self.equal_sign_type is None:
-            equal_sign_type = self.auto_detect_equal_sign(node)
-            if equal_sign_type is None:
+        if self.equal_sign_type is None or self.equal_sign_type_variables is None:
+            common, common_variables = self.auto_detect_equal_sign(node)
+            if self.equal_sign_type is None and common is not None:
+                self.file_equal_sign_type = common
+            if self.equal_sign_type_variables is None and common_variables is not None:
+                self.file_equal_sign_type_variables = common_variables
+            if self.file_equal_sign_type is None and self.file_equal_sign_type_variables is None:
                 return node
-            self.file_equal_sign_type = equal_sign_type
         self.generic_visit(node)
         self.file_equal_sign_type = None
+        self.file_equal_sign_type_variables = None
 
     def visit_KeywordCall(self, node):  # noqa
         if node.assign:  # if keyword returns any value
             assign_tokens = node.get_tokens(Token.ASSIGN)
-            self.normalize_equal_sign(assign_tokens[-1])
+            self.normalize_equal_sign(assign_tokens[-1], self.equal_sign_type, self.file_equal_sign_type)
         return node
 
     def visit_VariableSection(self, node):  # noqa
@@ -99,32 +110,35 @@ class NormalizeAssignments(ModelTransformer):
             if not isinstance(child, Variable):
                 continue
             var_token = child.get_token(Token.VARIABLE)
-            self.normalize_equal_sign(var_token)
+            self.normalize_equal_sign(var_token, self.equal_sign_type_variables, self.file_equal_sign_type_variables)
         return node
 
-    def normalize_equal_sign(self, token):
+    def normalize_equal_sign(self, token, overwrite, local_normalize):
         token.value = re.sub(self.remove_equal_sign, '', token.value)
-        if self.equal_sign_type:
-            token.value += self.equal_sign_type
-        elif self.file_equal_sign_type:
-            token.value += self.file_equal_sign_type
+        if overwrite:
+            token.value += overwrite
+        elif local_normalize:
+            token.value += local_normalize
 
     @staticmethod
     def auto_detect_equal_sign(node):
         auto_detector = AssignmentTypeDetector()
         auto_detector.visit(node)
-        return auto_detector.most_common
+        return auto_detector.most_common, auto_detector.most_common_variables
 
 
 class AssignmentTypeDetector(ast.NodeVisitor):
     def __init__(self):
-        self.sign_counter = Counter()
+        self.sign_counter, self.sign_counter_variables = Counter(), Counter()
         self.most_common = None
+        self.most_common_variables = None
 
     def visit_File(self, node):  # noqa
         self.generic_visit(node)
         if len(self.sign_counter) >= 2:
             self.most_common = self.sign_counter.most_common(1)[0][0]
+        if len(self.sign_counter_variables) >= 2:
+            self.most_common_variables = self.sign_counter_variables.most_common(1)[0][0]
 
     def visit_KeywordCall(self, node):  # noqa
         if node.assign:  # if keyword returns any value
@@ -137,7 +151,7 @@ class AssignmentTypeDetector(ast.NodeVisitor):
                 continue
             var_token = child.get_token(Token.VARIABLE)
             sign = self.get_assignment_sign(var_token.value)
-            self.sign_counter[sign] += 1
+            self.sign_counter_variables[sign] += 1
         return node
 
     @staticmethod

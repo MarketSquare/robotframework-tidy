@@ -3,11 +3,13 @@
 NormalizeAssignments
 ================================
 
-Normalize assignments. By default it detects most common assignment sign
-and apply it to every assignment in given file.
+Normalize assignments.
 
-NormalizeAssignments is included in default transformers but it can be also
-run separately with::
+It can change all assignments signs to either most commonly used in given file or configured fixed one.
+Default behaviour is autodetect for assignments from Keyword Calls and removing assignments signs in
+``*** Variables ***`` section. It can be freely configured.
+
+NormalizeAssignments is included in default transformers but it can be also run separately with::
 
     robotidy --transform NormalizeAssignments src
 
@@ -49,17 +51,18 @@ In this code most common is no equal sign at all. It should remove ``=`` signs f
             ${var}   Keyword2
             ${var}    Keyword
 
-You can configure that behaviour to automatically add desired equal sign with ``equal_sign_type`` parameter
-(possible types are: ``autodetect`` (default), ``remove``, ``equal_sign`` ('='), ``space_and_equal_sign`` (' =')::
+You can configure that behaviour to automatically add desired equal sign with `equal_sign_type`
+(default `autodetect`) and `equal_sign_type_variables` (default `remove`) parameters.
+(possible types are: `autodetect`, `remove`, `equal_sign` ('='), `space_and_equal_sign` (' =')::
 
-    robotidy --configure NormalizeAssignments:equal_sign_type=space_and_equal_sign src
+    robotidy -c NormalizeAssignments:equal_sign_type=space_and_equal_sign -c NormalizeAssignments:equal_sign_type_variables=autodetect src
 
 .. tabs::
 
     .. code-tab:: robotframework Before
 
         *** Variables ***
-        ${var} =  ${1}
+        ${var}=  ${1}
         @{list}  a
         ...  b
         ...  c
@@ -76,12 +79,12 @@ You can configure that behaviour to automatically add desired equal sign with ``
     .. code-tab:: robotframework After
 
         *** Variables ***
-        ${var} =  ${1}
-        @{list} =  a
+        ${var}=  ${1}
+        @{list}=  a
         ...  b
         ...  c
 
-        ${variable} =  10
+        ${variable}=  10
 
 
         *** Keywords ***
