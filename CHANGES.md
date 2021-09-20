@@ -3,21 +3,27 @@
 ## Unreleased
 
 ### Transformers
-- New non default transformer `RenameTestCases`. It capitalizes first letter of the test case name, removes trailing dot and can replace provided regex pattern with substitute string [#183](https://github.com/MarketSquare/robotframework-tidy/issues/183)
-- Added `AlignTestCases` transformer for aligning templated test cases in column. Because it's in experimental mode it will be non default for now (see docs for information how to run it) [#185](https://github.com/MarketSquare/robotframework-tidy/issues/185)
-- Missing ENDs in for loop and if statements will be added by new `AddMissingEnd` transformer [#91](https://github.com/MarketSquare/robotframework-tidy/issues/91)
+- New non default transformer `RenameTestCases`. It capitalizes first letter of the test case name, removes trailing dot and can replace provided regex pattern with substitute string ([#183](https://github.com/MarketSquare/robotframework-tidy/issues/183))
+- Added `AlignTestCases` transformer for aligning templated test cases in column. Because it's in experimental mode it will be non default for now (see docs for information how to run it) ([#185](https://github.com/MarketSquare/robotframework-tidy/issues/185))
+- Missing ENDs in for loop and if statements will be added by new `AddMissingEnd` transformer ([#91](https://github.com/MarketSquare/robotframework-tidy/issues/91))
+- `NormalizeAssignments` now recognizes assignments from ``*** Variables ***`` section separately. It allows you to configure different assignment sign type for keyword calls and for variables section ([#159](https://github.com/MarketSquare/robotframework-tidy/issues/159))
+
+  With this change following command will change all assignments signs to `=` for keyword calls and remove them in ``*** Variables ***`` sections.
+  ```
+  robotidy -c NormalizeAssignments:equal_sign_type=equal_sign -c NormalizeAssignments:equal_sign_type_variables=remove <src>
+  ```
 
 ### Features
-- It is now possible to provide source paths in configuration file [#154](https://github.com/MarketSquare/robotframework-tidy/issues/154)
-- Non default transformers can be enabled using ``enabled=True`` parameter [#182](https://github.com/MarketSquare/robotframework-tidy/issues/182)
-- Semicolon in parameter value can now be escaped with `\:` [#190](https://github.com/MarketSquare/robotframework-tidy/issues/190)
-- Default separator can be changed from space to tabular with new ``--separator`` option [#184](https://github.com/MarketSquare/robotframework-tidy/issues/184)
+- It is now possible to provide source paths in configuration file ([#154](https://github.com/MarketSquare/robotframework-tidy/issues/154))
+- Non default transformers can be enabled using ``enabled=True`` parameter ([#182](https://github.com/MarketSquare/robotframework-tidy/issues/182))
+- Semicolon in parameter value can now be escaped with `\:` ([#190](https://github.com/MarketSquare/robotframework-tidy/issues/190))
+- Default separator can be changed from space to tabular with new ``--separator`` option ([#184](https://github.com/MarketSquare/robotframework-tidy/issues/184))
 
 ### Fixes
-- Robotidy will not print "Loaded configuration from ... " if the configuration is empty [#193](https://github.com/MarketSquare/robotframework-tidy/issues/193)
+- Robotidy will not print "Loaded configuration from ... " if the configuration is empty ([#193](https://github.com/MarketSquare/robotframework-tidy/issues/193))
 
 ### Other
-- ReplaceRunKeywordIf now removes ELSE branch if it is unnecessary [#192](https://github.com/MarketSquare/robotframework-tidy/issues/192)
+- ReplaceRunKeywordIf now removes ELSE branch if it is unnecessary ([#192](https://github.com/MarketSquare/robotframework-tidy/issues/192))
 
 ## 1.5.1
 
