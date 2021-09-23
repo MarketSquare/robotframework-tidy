@@ -34,7 +34,8 @@ TRANSFORMERS = [
     'SplitTooLongLine',
     'SmartSortKeywords',
     'RenameTestCases',
-    'RenameKeywords'
+    'RenameKeywords',
+    'OrderTags'
 ]
 
 
