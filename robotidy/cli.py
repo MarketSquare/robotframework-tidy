@@ -385,7 +385,7 @@ def cli(
             src = ctx.default_map.get('src', None)
         if not src:
             print("No source path provided. Run robotidy --help to see how to use robotidy")
-            ctx.exit(0)
+            ctx.exit(1)
 
     if exclude is None:
         exclude = re.compile(DEFAULT_EXCLUDES)
