@@ -34,3 +34,17 @@ class TestOrderTags:
                              expected='case_sensitive_reverse.robot',
                              config=f':case_sensitive=True:reverse=True'
                              )
+
+    def test_default_tags_false(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME,
+                             source='tests.robot',
+                             expected='default_tags_false.robot',
+                             config=f':case_sensitive=False:reverse=False:default_tags=False'
+                             )
+
+    def test_force_tags_false(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME,
+                             source='tests.robot',
+                             expected='force_tags_false.robot',
+                             config=f':case_sensitive=False:reverse=False:force_tags=False'
+                             )

@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation       OrderTags acceptance tests
-Force Tags      forced_tag_1    forced_tag_aa     forced_tag_2    forced_tag_Ab    forced_tag_Bb    forced_tag_ba
+Force Tags          forced_tag_1    forced_tag_2    forced_tag_aa    forced_tag_Ab    forced_tag_ba    forced_tag_Bb
 Default Tags    default_tag_1    default_tag_aa    default_tag_2    default_tag_Ab    default_tag_Bb    default_tag_ba
 
 *** Test Cases ***
@@ -8,7 +8,7 @@ No tags
     No Operation
 
 Tags Upper Lower
-    [Tags]    ba    Ab    Bb    Ca    Cb    aa
+    [Tags]    aa    Ab    ba    Bb    Ca    Cb
     My Keyword
 
 One Tag
@@ -17,7 +17,7 @@ One Tag
 
 *** Keywords ***
 My Keyword
-    [Tags]    ba    Ab    Bb    Ca    Cb    aa
+    [Tags]    aa    Ab    ba    Bb    Ca    Cb
     No Operation
 
 One Tag Keyword

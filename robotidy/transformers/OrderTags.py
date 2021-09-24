@@ -37,12 +37,24 @@ class OrderTags(ModelTransformer):
     """
     ENABLED = False
 
-    def __init__(self, case_sensitive: bool = False, reverse: bool = False):
+    def __init__(self,
+                 case_sensitive: bool = False,
+                 reverse: bool = False,
+                 default_tags: bool = True,
+                 force_tags: bool = True):
         self.key = self.get_key(case_sensitive)
         self.reverse = reverse
+        self.default_tags = default_tags
+        self.force_tags = force_tags
 
     def visit_Tags(self, node):
         return self.order_tags(node)
+
+    def visit_DefaultTags(self, node):
+        return self.order_tags(node) if self.default_tags else node
+
+    def visit_ForceTags(self, node):
+        return self.order_tags(node) if self.force_tags else node
 
     def order_tags(self, node):
         tags = [tag.value for tag in node.data_tokens[1:]]
