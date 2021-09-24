@@ -403,7 +403,7 @@ class TestCli:
     def test_empty_configuration(self, source, test_data_dir):
         config_dir = test_data_dir / f'empty_pyproject{source}'
         os.chdir(config_dir)
-        result = run_tidy()
+        result = run_tidy(exit_code=1)
         assert "Loaded configuration from" not in result.output
 
     def test_loading_from_stdin(self):
