@@ -37,40 +37,32 @@ class OrderTags(ModelTransformer):
     """
     ENABLED = False
 
-    def __init__(self, case_sensitive=False, reverse=False):
+    def __init__(self, case_sensitive: bool = False, reverse: bool = False):
         self.key = self.get_key(case_sensitive)
         self.reverse = reverse
-        self.separator = '    '
 
-    def visit_TestCase(self, node):
-        return self.order_Tags(node)
+    def visit_Tags(self, node):
+        return self.order_tags(node)
 
-    def visit_Keyword(self, node):
-        return self.order_Tags(node)
-
-    def order_Tags(self, node):
-        for child in node.body:
-            if getattr(child, 'type', 'invalid') in (Token.TAGS):
-                tags = [tag.value for tag in child.data_tokens[1:]]
-                if len(tags) > 1:
-                    tags = sorted(tags, key=self.key, reverse=self.reverse)
-                    tokens = self.get_tokens_to_add(tags)
-                    child.tokens = Tags(
-                        (
-                            *child.tokens[:2],
-                            *tokens,
-                            Token(Token.EOL, '\n'),
-                        ),
-                    )
+    def order_tags(self, node):
+        tags = [tag.value for tag in node.data_tokens[1:]]
+        if len(tags) > 1:
+            tags = sorted(tags, key=self.key, reverse=self.reverse)
+            tokens = self.get_tokens(tags)
+            node.tokens = Tags(
+                (
+                    *node.tokens[:2],
+                    *tokens,
+                    Token(Token.EOL, '\n'),
+                ),
+            )
         return node
 
-    def get_tokens_to_add(self, tags):
-        result = ()
+    def get_tokens(self, tags):
+        result = []
+        separator = Token(Token.SEPARATOR, self.formatting_config.separator)
         for tag in tags:
-            result += (
-                Token(Token.SEPARATOR, self.separator),
-                Token(Token.TAGS, tag),
-            )
+            result.extend([separator, Token(Token.TAGS, tag)])
         return result
 
     def get_key(self, case_sensitive):
