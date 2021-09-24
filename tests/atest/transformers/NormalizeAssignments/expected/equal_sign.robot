@@ -1,10 +1,10 @@
 *** Variables ***
-${var}=  ${1}
-@{list}=  a
+${var}  ${1}
+@{list}  a
 ...  b
 ...  c
 
-${variable}=  10
+${variable}  10
 
 
 *** Keywords ***
