@@ -12,7 +12,9 @@ class TestAlignTestCases:
         'for_loops.robot',
         'with_settings.robot',
         'templated_for_loops.robot',
-        'templated_for_loops_and_without.robot'
+        'templated_for_loops_and_without.robot',
+        'templated_for_loops_header_cols.robot',
+        'empty_line.robot'
     ])
     def test_transformer(self, source):
         run_tidy_and_compare(self.TRANSFORMER_NAME, source=source, expected=source)

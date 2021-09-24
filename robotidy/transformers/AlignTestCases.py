@@ -162,10 +162,11 @@ class ColumnWidthCounter(ModelVisitor):
         self.formatting_config = formatting_config
         self.test_name_lineno = -1
         self.any_one_line_test = False
+        self.header_with_cols = False
 
     def visit_TestCaseSection(self, node):  # noqa
         self.generic_visit(node)
-        if not self.any_one_line_test and self.widths:
+        if not self.header_with_cols and not self.any_one_line_test and self.widths:
             self.widths[0] = 0
         self.widths = [round_to_four(length) for length in self.widths]
 
@@ -175,6 +176,7 @@ class ColumnWidthCounter(ModelVisitor):
             return
         if statement.type == Token.TESTCASE_HEADER:
             if len(statement.data_tokens) > 1:
+                self.header_with_cols = True
                 self._count_widths_from_statement(statement)
         elif statement.type == Token.TESTCASE_NAME:
             if self.widths:
