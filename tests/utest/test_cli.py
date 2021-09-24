@@ -22,14 +22,6 @@ def test_data_dir():
 
 
 class TestCli:
-    @pytest.mark.parametrize('src', [
-        None,
-        ['.']
-    ])
-    def test_nested_src(self, src):
-        """ It should recursively search and find `testdata/test.robot` file """
-        run_tidy(src)
-
     @pytest.mark.parametrize('name, similar', [
         ('NotExisting', ''),
         ('AlignSettings', ' Did you mean:\n    AlignSettingsSection'),
