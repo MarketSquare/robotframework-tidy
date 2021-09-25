@@ -48,41 +48,27 @@ class OrderTags(ModelTransformer):
         self.force_tags = force_tags
 
     def visit_Tags(self, node):  # noqa
-        tags = self.order_tags(node)
-        if len(tags) <= 1:
-            return node
-        comments = node.get_tokens(Token.COMMENT)
-        node = Tags.from_params(tags, separator=self.formatting_config.separator)
-        if comments:
-            node.tokens += tuple(self.join_tokens(comments))
-        return node
+        return self.order_tags(node, Tags, indent=True)
 
     def visit_DefaultTags(self, node):  # noqa
-        if not self.default_tags:
-            return node
-        tags = self.order_tags(node)
-        if len(tags) <= 1:
-            return node
-        comments = node.get_tokens(Token.COMMENT)
-        node = DefaultTags.from_params(tags, separator=self.formatting_config.separator)
-        if comments:
-            node.tokens += tuple(self.join_tokens(comments))
-        return node
+        return self.order_tags(node, DefaultTags) if self.default_tags else node
 
     def visit_ForceTags(self, node):  # noqa
-        if not self.force_tags:
-            return node
-        tags = self.order_tags(node)
-        if len(tags) <= 1:
+        return self.order_tags(node, ForceTags) if self.force_tags else node
+
+    def order_tags(self, node, tag_class, indent=False):
+        ordered_tags = sorted((tag.value for tag in node.data_tokens[1:]), key=self.key, reverse=self.reverse)
+        if len(ordered_tags) <= 1:
             return node
         comments = node.get_tokens(Token.COMMENT)
-        node = ForceTags.from_params(tags, separator=self.formatting_config.separator)
+        if indent:
+            tag_node = tag_class.from_params(ordered_tags, indent=self.formatting_config.separator,
+                                             separator=self.formatting_config.separator)
+        else:
+            tag_node = tag_class.from_params(ordered_tags, separator=self.formatting_config.separator)
         if comments:
-            node.tokens += tuple(self.join_tokens(comments))
-        return node
-
-    def order_tags(self, node):
-        return sorted((tag.value for tag in node.data_tokens[1:]), key=self.key, reverse=self.reverse)
+            tag_node.tokens += tuple(self.join_tokens(comments))
+        return tag_node
 
     def join_tokens(self, tokens):
         joined_tokens = []
