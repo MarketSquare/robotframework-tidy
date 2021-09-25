@@ -4,11 +4,11 @@ ${var} =  ${1}
 ...  b
 ...  c
 
-${variable}  10
+${variable} =  10
 
 
 *** Keywords ***
 Keyword
     ${var} =  Keyword1
     ${var} =   Keyword2
-    ${var}    Keyword
+    ${var} =    Keyword

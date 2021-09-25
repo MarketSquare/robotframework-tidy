@@ -5,8 +5,7 @@ NormalizeSeparators
 
 Normalize separators and indents.
 
-NormalizeSeparators is included in default transformers but it can be also
-run separately with::
+NormalizeSeparators is included in the default transformers but it can be also run separately with::
 
     robotidy --transform NormalizeSeparators src
 

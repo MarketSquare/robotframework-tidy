@@ -5,7 +5,7 @@ from robotidy.decorators import check_start_end_line
 
 class AddMissingEnd(ModelTransformer):
     """
-    Add missing END token to For loops and IF statements.
+    Add missing END token to FOR loops and IF statements.
 
     Following code:
 

@@ -5,8 +5,7 @@ RemoveEmptySettings
 
 Remove empty settings.
 
-RemoveEmptySettings is included in default transformers but it can be also
-run separately with::
+RemoveEmptySettings is included in the default transformers but it can be also run separately with::
 
     robotidy --transform RemoveEmptySettings src
 

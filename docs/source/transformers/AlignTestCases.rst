@@ -5,7 +5,7 @@ AlignTestCases
 
 Align Test Cases to columns.
 
-AlignTestCases is not included in default transformers that's why you need to call it with ``--transform`` explicitly::
+AlignTestCases is not included in the default transformers that's why you need to call it with ``--transform`` explicitly::
 
     robotidy --transform AlignTestCases src
 
