@@ -22,7 +22,7 @@ Multiline tags
     ...    tag4  # comment
     ...    tag4
     ...    tag3
-    ...    TAG3
+    ...    TAG3  # comment2
     No Operation
 
 *** Keywords ***

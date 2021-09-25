@@ -16,7 +16,7 @@ One Tag
     One Tag Keyword
 
 Multiline tags
-    [Tags]    tag4    tag4    tag3    tag1    Tag2    TAG5    TAG3    # comment
+    [Tags]    tag4    tag4    tag3    tag1    Tag2    TAG5    TAG3    # comment    # comment2
     No Operation
 
 *** Keywords ***
