@@ -51,23 +51,32 @@ class OrderTags(ModelTransformer):
         return self.order_tags(node)
 
     def visit_DefaultTags(self, node):
-        return self.order_tags(node) if self.default_tags else node
+        return self.order_tags(node, settings_section=True) if self.default_tags else node
 
     def visit_ForceTags(self, node):
-        return self.order_tags(node) if self.force_tags else node
+        return self.order_tags(node, settings_section=True) if self.force_tags else node
 
-    def order_tags(self, node):
+    def order_tags(self, node, settings_section: bool = False):
         tags = [tag.value for tag in node.data_tokens[1:]]
         if len(tags) > 1:
             tags = sorted(tags, key=self.key, reverse=self.reverse)
             tokens = self.get_tokens(tags)
-            node.tokens = Tags(
-                (
-                    *node.tokens[:2],
-                    *tokens,
-                    Token(Token.EOL, '\n'),
-                ),
-            )
+            if settings_section:
+                node.tokens = Tags(
+                    (
+                        node.tokens[0],
+                        *tokens,
+                        Token(Token.EOL, '\n'),
+                    ),
+                )
+            else:
+                node.tokens = Tags(
+                    (
+                        *node.tokens[:2],
+                        *tokens,
+                        Token(Token.EOL, '\n'),
+                    ),
+                )
         return node
 
     def get_tokens(self, tags):
