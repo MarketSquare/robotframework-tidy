@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation       OrderTags acceptance tests
-Force Tags              ONE_TAG_VARIOUS CASES
-Default Tags            ONE_TAG_VARIOUS CASES
+Force Tags    TAG1    TAG2    TAG3    TAG4    TAG5
+Default Tags    TAG1    TAG2    TAG3    TAG4    TAG5
 
 *** Test Cases ***
 No tags
@@ -22,6 +22,9 @@ Deduplicate and normalize case
 One Tag
     [Tags]    ONE_TAG_VARIOUS CASES
     One Tag Keyword
+
+Multiline tags
+    [Tags]    TAG1    TAG2    TAG3    TAG4    TAG5
 
 *** Keywords ***
 Keyword no tags

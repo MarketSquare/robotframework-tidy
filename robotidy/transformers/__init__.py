@@ -24,6 +24,7 @@ TRANSFORMERS = [
     'NormalizeAssignments',
     'OrderSettings',
     'OrderSettingsSection',
+    'NormalizeTags',
     'AlignSettingsSection',
     'AlignVariablesSection',
     'AlignTestCases',
@@ -34,8 +35,7 @@ TRANSFORMERS = [
     'SplitTooLongLine',
     'SmartSortKeywords',
     'RenameTestCases',
-    'RenameKeywords',
-    'NormalizeTags'
+    'RenameKeywords'
 ]
 
 

@@ -13,7 +13,7 @@ Or configure `enable` parameter::
 
 
 Supported cases: lowercase (default), uppercase, titlecase.
-Run with case parameter::
+You can configure case using `case` parameter::
 
     robotidy --transform NormalizeTags:case=titlecase
 
