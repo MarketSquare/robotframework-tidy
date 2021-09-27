@@ -4,9 +4,12 @@ from .. import run_tidy_and_compare, run_tidy
 class TestNormalizeTags:
     TRANSFORMER_NAME = 'NormalizeTags'
 
+    def test_default(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, source='tests.robot', expected='lowercase.robot')
+
     def test_lowercase(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, source='tests.robot', expected='lowercase.robot',
-                             config=f':case=lowercase')
+                             config=f':case=lowercase:normalize_case=True')
 
     def test_uppercase(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, source='tests.robot', expected='uppercase.robot',
@@ -31,4 +34,4 @@ class TestNormalizeTags:
 
     def test_only_remove_duplicates(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, source='duplicates.robot',
-                             config=f':only_remove_duplicates=True')
+                             config=f':normalize_case=False')

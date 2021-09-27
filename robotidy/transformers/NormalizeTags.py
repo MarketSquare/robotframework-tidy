@@ -10,19 +10,19 @@ class NormalizeTags(ModelTransformer):
 
     Other supported cases: uppercase, titlecase. The default is lowercase.
 
-    You can also run it to remove duplicates but preserve current case using ``only_remove_duplicates`` parameter:
+    You can also run it to remove duplicates but preserve current case by setting ``normalize_case`` parameter to False:
 
-        robotidy --transform NormalizeTags:only_remove_duplicates=True test.robot
+        robotidy --transform NormalizeTags:normalize_case=False test.robot
 
     See https://robotidy.readthedocs.io/en/latest/transformers/NormalizeTags.html for more examples.
     """
     CASE_FUNCTIONS = {'lowercase': str.lower, 'uppercase': str.upper, 'titlecase': str.title}
 
-    def __init__(self, case: str = 'lowercase', only_remove_duplicates: bool = False):
-        self.case = case
-        self.only_remove_duplicates = only_remove_duplicates
+    def __init__(self, case: str = 'lowercase', normalize_case: bool = True):
+        self.case = case.lower()
+        self.normalize_case = normalize_case
         try:
-            self.convert_case = self.CASE_FUNCTIONS[self.case]
+            self.case_function = self.CASE_FUNCTIONS[self.case]
         except KeyError:
             raise click.BadOptionUsage(
                 option_name='transform',
@@ -40,8 +40,8 @@ class NormalizeTags(ModelTransformer):
 
     def normalize_tags(self, node, settings_section: bool = False):
         tags = [tag.value for tag in node.data_tokens[1:]]
-        if self.only_remove_duplicates == False:
-            tags = self.normalize_case(tags)
+        if self.normalize_case:
+            tags = self.convert_case(tags)
         tags = self.remove_duplicates(tags)
         tokens = self.get_tokens(tags)
         if settings_section:
@@ -62,8 +62,8 @@ class NormalizeTags(ModelTransformer):
             )
         return node
 
-    def normalize_case(self, tags):
-        return [self.convert_case(item) for item in tags]
+    def convert_case(self, tags):
+        return [self.case_function(item) for item in tags]
 
     def remove_duplicates(self, tags):
         return list(dict.fromkeys(tags))
