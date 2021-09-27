@@ -1,4 +1,4 @@
-from robot.api.parsing import ModelTransformer, Tags, Token
+from robot.api.parsing import ModelTransformer, Tags, Token, DefaultTags, ForceTags
 import click
 
 class NormalizeTags(ModelTransformer):
@@ -30,37 +30,28 @@ class NormalizeTags(ModelTransformer):
                         f"Supported cases: lowercase, uppercase, titlecase.\n")
 
     def visit_Tags(self, node):
-        return self.normalize_tags(node)
+        return self.normalize_tags(node, Tags, indent=True)
 
     def visit_DefaultTags(self, node):
-        return self.normalize_tags(node, settings_section=True)
+        return self.normalize_tags(node, DefaultTags)
 
     def visit_ForceTags(self, node):
-        return self.normalize_tags(node, settings_section=True)
+        return self.normalize_tags(node, ForceTags)
 
-    def normalize_tags(self, node, settings_section: bool = False):
+    def normalize_tags(self, node, tag_class, indent=False):
         tags = [tag.value for tag in node.data_tokens[1:]]
         if self.normalize_case:
             tags = self.convert_case(tags)
         tags = self.remove_duplicates(tags)
-        tokens = self.get_tokens(tags)
-        if settings_section:
-            node.tokens = Tags(
-                (
-                    node.tokens[0],
-                    *tokens,
-                    Token(Token.EOL, '\n'),
-                ),
-            )
+        comments = node.get_tokens(Token.COMMENT)
+        if indent:
+            tag_node = tag_class.from_params(tags, indent=self.formatting_config.separator,
+                                             separator=self.formatting_config.separator)
         else:
-            node.tokens = Tags(
-                (
-                    *node.tokens[:2],
-                    *tokens,
-                    Token(Token.EOL, '\n'),
-                ),
-            )
-        return node
+            tag_node = tag_class.from_params(tags, separator=self.formatting_config.separator)
+        if comments:
+            tag_node.tokens = tag_node.tokens[:-1] + tuple(self.join_tokens(comments)) + (tag_node.tokens[-1],)
+        return tag_node
 
     def convert_case(self, tags):
         return [self.case_function(item) for item in tags]
@@ -68,10 +59,10 @@ class NormalizeTags(ModelTransformer):
     def remove_duplicates(self, tags):
         return list(dict.fromkeys(tags))
 
-    def get_tokens(self, tags):
-        result = []
-        separator = Token(Token.SEPARATOR, self.formatting_config.separator)
-        for tag in tags:
-            result.extend([separator, Token(Token.TAGS, tag)])
-        return result
+    def join_tokens(self, tokens):
+        joined_tokens = []
+        for token in tokens:
+            joined_tokens.append(Token(Token.SEPARATOR, self.formatting_config.separator))
+            joined_tokens.append(token)
+        return joined_tokens
 

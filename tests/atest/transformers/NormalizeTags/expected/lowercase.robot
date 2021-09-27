@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation       OrderTags acceptance tests
-Force Tags    tag1    tag2    tag3    tag4    tag5
-Default Tags    tag1    tag2    tag3    tag4    tag5
+Force Tags    tag1    tag2    tag3    tag4    tag5    # comment
+Default Tags    tag1    tag2    tag3    tag4    tag5    # comment
 
 *** Test Cases ***
 No tags
@@ -24,7 +24,7 @@ One Tag
     One Tag Keyword
 
 Multiline tags
-    [Tags]    tag1    tag2    tag3    tag4    tag5
+    [Tags]    tag1    tag2    tag3    tag4    tag5    # comment1    # comment2
 
 *** Keywords ***
 Keyword no tags
@@ -35,7 +35,7 @@ Keyword normalize case
     No Operation
 
 Keyword deduplicate
-    [Tags]    tag_a    tag_b    tag_c
+    [Tags]    tag_a    tag_b    tag_c    # comment
     No Operation
 
 Keyword deduplicate and normalize case
