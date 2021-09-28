@@ -1,16 +1,13 @@
 from collections import defaultdict
 
-from robot.api.parsing import (
-    ModelTransformer,
-    Token
-)
+from robot.api.parsing import ModelTransformer, Token
 from robot.parsing.model import Statement
 
 from robotidy.utils import (
     node_outside_selection,
     round_to_four,
     tokens_by_lines,
-    left_align
+    left_align,
 )
 
 
@@ -61,7 +58,13 @@ class AlignSettingsSection(ModelTransformer):
 
     See https://robotidy.readthedocs.io/en/latest/transformers/AlignSettingsSection.html for more examples.
     """
-    TOKENS_WITH_KEYWORDS = {Token.SUITE_SETUP, Token.SUITE_TEARDOWN, Token.TEST_SETUP, Token.TEST_TEARDOWN}
+
+    TOKENS_WITH_KEYWORDS = {
+        Token.SUITE_SETUP,
+        Token.SUITE_TEARDOWN,
+        Token.TEST_SETUP,
+        Token.TEST_TEARDOWN,
+    }
 
     def __init__(self, up_to_column: int = 2, argument_indent: int = 4):
         self.up_to_column = up_to_column - 1
@@ -101,12 +104,17 @@ class AlignSettingsSection(ModelTransformer):
                     if index < up_to:
                         arg_indent = self.argument_indent if keyword_arg else 0
                         if keyword_arg and index != 0:
-                            separator = max((look_up[index] - len(token.value) - arg_indent + 4),
-                                            self.formatting_config.space_count) * ' '
+                            separator = (
+                                max(
+                                    (look_up[index] - len(token.value) - arg_indent + 4),
+                                    self.formatting_config.space_count,
+                                )
+                                * " "
+                            )
                         else:
-                            separator = (look_up[index] - len(token.value) + arg_indent + 4) * ' '
+                            separator = (look_up[index] - len(token.value) + arg_indent + 4) * " "
                     else:
-                        separator = self.formatting_config.space_count * ' '
+                        separator = self.formatting_config.space_count * " "
                     aligned_statement.append(Token(Token.SEPARATOR, separator))
                 last_token = line[-2]
                 # remove leading whitespace before token

@@ -8,14 +8,11 @@ from robot.api.parsing import (
     End,
     IfHeader,
     ElseHeader,
-    ElseIfHeader
+    ElseIfHeader,
 )
 
 from robotidy.decorators import check_start_end_line
-from robotidy.utils import (
-    round_to_four,
-    is_suite_templated
-)
+from robotidy.utils import round_to_four, is_suite_templated
 
 
 class AlignTestCases(ModelTransformer):
@@ -46,6 +43,7 @@ class AlignTestCases(ModelTransformer):
 
     See https://robotidy.readthedocs.io/en/latest/transformers/AlignTestCases.html for more examples.
     """
+
     ENABLED = False
 
     def __init__(self, only_with_headers: bool = False):
@@ -101,7 +99,10 @@ class AlignTestCases(ModelTransformer):
             self.name_line = statement.lineno
         elif statement.type == Token.TESTCASE_HEADER:
             self.align_header(statement)
-        elif not isinstance(statement, (Comment, EmptyLine, ForHeader, IfHeader, ElseHeader, ElseIfHeader, End)):
+        elif not isinstance(
+            statement,
+            (Comment, EmptyLine, ForHeader, IfHeader, ElseHeader, ElseIfHeader, End),
+        ):
             self.align_statement(statement)
         return statement
 
@@ -109,7 +110,7 @@ class AlignTestCases(ModelTransformer):
         tokens = []
         for index, token in enumerate(statement.data_tokens[:-1]):
             tokens.append(token)
-            separator = (self.widths[index] - len(token.value) + 4) * ' '
+            separator = (self.widths[index] - len(token.value) + 4) * " "
             tokens.append(Token(Token.SEPARATOR, separator))
         tokens.append(statement.data_tokens[-1])
         tokens.append(statement.tokens[-1])  # eol
@@ -129,7 +130,7 @@ class AlignTestCases(ModelTransformer):
                     if self.name_line == statement.lineno:
                         exp_pos -= self.test_name_len
                     self.test_name_len = 0
-                tokens.append(Token(Token.SEPARATOR, (exp_pos - line_pos) * ' '))
+                tokens.append(Token(Token.SEPARATOR, (exp_pos - line_pos) * " "))
                 tokens.append(token)
                 line_pos += len(token.value) + exp_pos - line_pos
             tokens.append(line[-1])

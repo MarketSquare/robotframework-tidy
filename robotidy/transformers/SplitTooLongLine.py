@@ -1,7 +1,4 @@
-from robot.api.parsing import (
-    ModelTransformer,
-    Token
-)
+from robot.api.parsing import ModelTransformer, Token
 from robotidy.decorators import check_start_end_line
 
 
@@ -35,6 +32,7 @@ class SplitTooLongLine(ModelTransformer):
 
     See https://robotidy.readthedocs.io/en/latest/transformers/SplitTooLongLine.html for more examples.
     """
+
     def __init__(self, line_length: int = 120, split_on_every_arg: bool = False):
         super().__init__()
         self.line_length = line_length
@@ -71,7 +69,7 @@ class SplitTooLongLine(ModelTransformer):
         # original comment, we need a lookback on the separator tokens.
         last_separator = None
 
-        rest = node.tokens[node.tokens.index(keyword) + 1:]
+        rest = node.tokens[node.tokens.index(keyword) + 1 :]
         for token in rest:
             if token.type == Token.SEPARATOR:
                 last_separator = token
@@ -84,14 +82,14 @@ class SplitTooLongLine(ModelTransformer):
                 #
                 # Notice the third value not starting with a hash - that's what this
                 # condition is about:
-                if not str(token).startswith('#'):
+                if not str(token).startswith("#"):
                     # -2 because -1 is the EOL
                     comments[-2].value += last_separator.value + token.value
                 else:
                     comments += [indent, token, EOL]
             elif token.type == Token.ARGUMENT:
-                if token.value == '':
-                    token.value = '${EMPTY}'
+                if token.value == "":
+                    token.value = "${EMPTY}"
                 if self.cols_remaining(line + [separator, token]) == 0:
                     line.append(EOL)
                     tail += line
@@ -122,4 +120,4 @@ class SplitTooLongLine(ModelTransformer):
         """Return the tokens from after the last EOL in the given list"""
         if EOL not in tokens:
             return tokens
-        return tokens[len(tokens) - tokens[::-1].index(EOL):]
+        return tokens[len(tokens) - tokens[::-1].index(EOL) :]

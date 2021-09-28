@@ -1,10 +1,6 @@
 from typing import Optional
 
-from robot.api.parsing import (
-    ModelTransformer,
-    EmptyLine,
-    Token
-)
+from robot.api.parsing import ModelTransformer, EmptyLine, Token
 
 from robotidy.utils import is_suite_templated
 
@@ -28,8 +24,15 @@ class NormalizeNewLines(ModelTransformer):
 
     See https://robotidy.readthedocs.io/en/latest/transformers/NormalizeNewLines.html for more examples.
     """
-    def __init__(self, test_case_lines: int = 1, keyword_lines: Optional[int] = None, section_lines: int = 1,
-                 separate_templated_tests: bool = False, consecutive_lines: int = 1):
+
+    def __init__(
+        self,
+        test_case_lines: int = 1,
+        keyword_lines: Optional[int] = None,
+        section_lines: int = 1,
+        separate_templated_tests: bool = False,
+        consecutive_lines: int = 1,
+    ):
         self.test_case_lines = test_case_lines
         self.keyword_lines = keyword_lines if keyword_lines is not None else test_case_lines
         self.section_lines = section_lines
@@ -77,7 +80,7 @@ class NormalizeNewLines(ModelTransformer):
         tokens = []
         for line in node.lines:
             if line[-1].type == Token.EOL:
-                line[-1].value = '\n'  # TODO: use global formatting in the future
+                line[-1].value = "\n"  # TODO: use global formatting in the future
             tokens.extend(line)
         node.tokens = tokens
         return node
@@ -89,7 +92,7 @@ class NormalizeNewLines(ModelTransformer):
 
     @staticmethod
     def trim_trailing_empty_lines(node):
-        if not hasattr(node, 'body'):
+        if not hasattr(node, "body"):
             return
         while node.body and isinstance(node.body[-1], EmptyLine):
             node.body.pop()

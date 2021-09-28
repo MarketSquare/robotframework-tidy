@@ -59,15 +59,9 @@ class NormalizeTags(ModelTransformer):
                 separator=self.formatting_config.separator,
             )
         else:
-            tag_node = tag_class.from_params(
-                tags, separator=self.formatting_config.separator
-            )
+            tag_node = tag_class.from_params(tags, separator=self.formatting_config.separator)
         if comments:
-            tag_node.tokens = (
-                tag_node.tokens[:-1]
-                + tuple(self.join_tokens(comments))
-                + (tag_node.tokens[-1],)
-            )
+            tag_node.tokens = tag_node.tokens[:-1] + tuple(self.join_tokens(comments)) + (tag_node.tokens[-1],)
         return tag_node
 
     def convert_case(self, tags):
@@ -80,8 +74,6 @@ class NormalizeTags(ModelTransformer):
     def join_tokens(self, tokens):
         joined_tokens = []
         for token in tokens:
-            joined_tokens.append(
-                Token(Token.SEPARATOR, self.formatting_config.separator)
-            )
+            joined_tokens.append(Token(Token.SEPARATOR, self.formatting_config.separator))
             joined_tokens.append(token)
         return joined_tokens

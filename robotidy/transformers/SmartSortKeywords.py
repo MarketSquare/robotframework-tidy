@@ -43,9 +43,15 @@ class SmartSortKeywords(ModelTransformer):
 
     See https://robotidy.readthedocs.io/en/latest/transformers/SmartSortKeywords.html for more examples.
     """
+
     ENABLED = False
 
-    def __init__(self, case_insensitive=True, ignore_leading_underscore=False, ignore_other_underscore=True):
+    def __init__(
+        self,
+        case_insensitive=True,
+        ignore_leading_underscore=False,
+        ignore_other_underscore=True,
+    ):
         self.ci = case_insensitive
         self.ilu = ignore_leading_underscore
         self.iou = ignore_other_underscore
@@ -85,9 +91,9 @@ class SmartSortKeywords(ModelTransformer):
         if self.ci:
             name = name.casefold().upper()  # to make sure that letters go before underscore
         if self.ilu:
-            name = name.lstrip('_')
+            name = name.lstrip("_")
         if self.iou:
-            index = len(name) - len(name.lstrip('_'))
+            index = len(name) - len(name.lstrip("_"))
             name = name[:index] + name[index:].replace("_", " ")
         return name
 
