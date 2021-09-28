@@ -5,8 +5,7 @@ AlignSettingsSection
 
 Align statements in ``*** Settings ***`` section to columns.
 
-AlignSettingsSection is included in default transformers but it can be also
-run separately with::
+AlignSettingsSection is included in the default transformers but it can be also run separately with::
 
    robotidy --transform AlignSettingsSection src
 

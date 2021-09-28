@@ -5,8 +5,7 @@ NormalizeSectionHeaderName
 
 Normalize section headers names.
 
-NormalizeSectionHeaderName is included in default transformers but it can be also
-run separately with::
+NormalizeSectionHeaderName is included in the default transformers but it can be also run separately with::
 
     robotidy --transform NormalizeSectionHeaderName src
 

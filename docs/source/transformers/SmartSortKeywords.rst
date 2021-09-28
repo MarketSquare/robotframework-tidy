@@ -5,7 +5,7 @@ SmartSortKeywords
 
 Sort keywords in ``*** Keywords ***`` section.
 
-SmartSortKeywords is not included in default transformers that's why you need to call it with ``--transform`` explicitly::
+SmartSortKeywords is not included in the default transformers that's why you need to call it with ``--transform`` explicitly::
 
     robotidy --transform SmartSortKeywords src
 

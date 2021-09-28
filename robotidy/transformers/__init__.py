@@ -25,6 +25,7 @@ TRANSFORMERS = [
     'OrderSettings',
     'OrderSettingsSection',
     'NormalizeTags',
+    'OrderTags',
     'AlignSettingsSection',
     'AlignVariablesSection',
     'AlignTestCases',

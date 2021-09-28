@@ -22,14 +22,6 @@ def test_data_dir():
 
 
 class TestCli:
-    @pytest.mark.parametrize('src', [
-        None,
-        ['.']
-    ])
-    def test_nested_src(self, src):
-        """ It should recursively search and find `testdata/test.robot` file """
-        run_tidy(src)
-
     @pytest.mark.parametrize('name, similar', [
         ('NotExisting', ''),
         ('AlignSettings', ' Did you mean:\n    AlignSettingsSection'),
@@ -411,7 +403,7 @@ class TestCli:
     def test_empty_configuration(self, source, test_data_dir):
         config_dir = test_data_dir / f'empty_pyproject{source}'
         os.chdir(config_dir)
-        result = run_tidy()
+        result = run_tidy(exit_code=1)
         assert "Loaded configuration from" not in result.output
 
     def test_loading_from_stdin(self):
