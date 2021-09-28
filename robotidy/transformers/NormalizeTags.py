@@ -5,11 +5,12 @@ import click
 class NormalizeTags(ModelTransformer):
     """
     Normalize tag names by normalizing case and removing duplicates.
-    example usage:
+
+    Example usage:
 
         robotidy --transform NormalizeTags:case=lowercase test.robot
 
-    Other supported cases: uppercase, titlecase. The default is lowercase.
+    Other supported cases: uppercase, title case. The default is lowercase.
 
     You can also run it to remove duplicates but preserve current case by setting ``normalize_case`` parameter to False:
 
