@@ -94,10 +94,10 @@ class Robotidy:
         if not self.show_diff:
             click.echo(collected_lines.text)
 
-    def save_model(self, old_model, model):
+    def save_model(self, source, model):
         if self.overwrite:
             output = self.output or model.source
-            ModelWriter(output=output, newline=self.get_line_ending(old_model)).write(model)
+            ModelWriter(output=output, newline=self.get_line_ending(source)).write(model)
 
     def get_line_ending(self, path: str):
         if self.formatting_config.line_sep == 'auto':
