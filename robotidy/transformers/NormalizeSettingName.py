@@ -1,7 +1,4 @@
-from robot.api.parsing import (
-    ModelTransformer,
-    Token
-)
+from robot.api.parsing import ModelTransformer, Token
 from robot.utils.normalizing import normalize_whitespace
 
 from robotidy.decorators import check_start_end_line
@@ -38,13 +35,14 @@ class NormalizeSettingName(ModelTransformer):
 
     See https://robotidy.readthedocs.io/en/latest/transformers/NormalizeSettingName.html for more examples.
     """
+
     @check_start_end_line
     def visit_Statement(self, node):  # noqa
         if node.type not in Token.SETTING_TOKENS:
             return node
         name = node.data_tokens[0].value
-        if name.startswith('['):
-            name = f'[{self.normalize_name(name[1:-1])}]'
+        if name.startswith("["):
+            name = f"[{self.normalize_name(name[1:-1])}]"
         else:
             name = self.normalize_name(name)
         node.data_tokens[0].value = name

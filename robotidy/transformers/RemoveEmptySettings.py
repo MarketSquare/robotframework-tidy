@@ -1,10 +1,7 @@
 import ast
 
 import click
-from robot.api.parsing import (
-    ModelTransformer,
-    Token
-)
+from robot.api.parsing import ModelTransformer, Token
 
 from robotidy.decorators import check_start_end_line
 
@@ -38,17 +35,24 @@ class RemoveEmptySettings(ModelTransformer):
 
     See https://robotidy.readthedocs.io/en/latest/transformers/RemoveEmptySettings.html for more examples.
     """
-    def __init__(self, work_mode: str = 'overwrite_ok', more_explicit: bool = True):
-        if work_mode not in ('overwrite_ok', 'always'):
+
+    def __init__(self, work_mode: str = "overwrite_ok", more_explicit: bool = True):
+        if work_mode not in ("overwrite_ok", "always"):
             raise click.BadOptionUsage(
-                option_name='transform',
+                option_name="transform",
                 message=f"Invalid configurable value: {work_mode} for work_mode for RemoveEmptySettings transformer."
-                        f" Possible values:\n    overwrite_ok\n    always"
+                f" Possible values:\n    overwrite_ok\n    always",
             )
         self.work_mode = work_mode
         self.more_explicit = more_explicit
         self.overwritten_settings = set()
-        self.child_types = {Token.SETUP, Token.TEARDOWN, Token.TIMEOUT, Token.TEMPLATE, Token.TAGS}
+        self.child_types = {
+            Token.SETUP,
+            Token.TEARDOWN,
+            Token.TIMEOUT,
+            Token.TEMPLATE,
+            Token.TAGS,
+        }
 
     @check_start_end_line
     def visit_Statement(self, node):  # noqa
@@ -56,23 +60,26 @@ class RemoveEmptySettings(ModelTransformer):
         if node.type not in Token.SETTING_TOKENS or len(node.data_tokens) != 1:
             return node
         # when empty and not overwriting anything - remove
-        if node.type not in self.child_types or self.work_mode == 'always' or \
-                node.type not in self.overwritten_settings:
+        if (
+            node.type not in self.child_types
+            or self.work_mode == "always"
+            or node.type not in self.overwritten_settings
+        ):
             return None
         if self.more_explicit:
-            indent = node.tokens[0].value if node.tokens[0].type == Token.SEPARATOR else ''
+            indent = node.tokens[0].value if node.tokens[0].type == Token.SEPARATOR else ""
             setting_token = node.data_tokens[0]
             node.tokens = [
                 Token(Token.SEPARATOR, indent),
                 setting_token,
                 Token(Token.SEPARATOR, self.formatting_config.separator),
-                Token(Token.ARGUMENT, 'NONE'),
-                Token(Token.EOL, '\n')
+                Token(Token.ARGUMENT, "NONE"),
+                Token(Token.EOL, "\n"),
             ]
         return node
 
     def visit_File(self, node):  # noqa
-        if self.work_mode == 'overwrite_ok':
+        if self.work_mode == "overwrite_ok":
             self.overwritten_settings = self.find_overwritten_settings(node)
         self.generic_visit(node)
         self.overwritten_settings = set()

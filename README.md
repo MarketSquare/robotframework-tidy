@@ -37,7 +37,7 @@ Installation <a name="installation"></a>
 
 You can install Robotidy simply by running:
 ```
-pip install robotframework-tidy
+pip install -U robotframework-tidy
 ```
 
 Usage <a name="usage"></a>
@@ -55,6 +55,9 @@ All command line options can be displayed in help message by executing:
 ```
 robotidy --help
 ```
+
+See [documentation](https://robotidy.readthedocs.io/en/latest/configuration/index.html) for information how to configure 
+robotidy.
 
 Example <a name="example"></a>
 -------

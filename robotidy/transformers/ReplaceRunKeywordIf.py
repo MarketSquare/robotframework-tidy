@@ -6,7 +6,7 @@ from robot.api.parsing import (
     IfHeader,
     ElseHeader,
     ElseIfHeader,
-    KeywordCall
+    KeywordCall,
 )
 from robotidy.utils import normalize_name, after_last_dot
 from robotidy.decorators import check_start_end_line
@@ -69,11 +69,12 @@ class ReplaceRunKeywordIf(ModelTransformer):
 
     See https://robotidy.readthedocs.io/en/latest/transformers/ReplaceRunKeywordIf.html for more examples.
     """
+
     @check_start_end_line
     def visit_KeywordCall(self, node):  # noqa
         if not node.keyword:
             return node
-        if after_last_dot(normalize_name(node.keyword)) == 'runkeywordif':
+        if after_last_dot(normalize_name(node.keyword)) == "runkeywordif":
             return self.create_branched(node)
         return node
 
@@ -83,45 +84,41 @@ class ReplaceRunKeywordIf(ModelTransformer):
         raw_args = node.get_tokens(Token.ARGUMENT)
         if len(raw_args) < 2:
             return node
-        end = End([
-            separator,
-            Token(Token.END),
-            Token(Token.EOL)
-        ])
+        end = End([separator, Token(Token.END), Token(Token.EOL)])
         prev_if = None
-        for branch in reversed(list(self.split_args_on_delimiters(raw_args, ('ELSE', 'ELSE IF'), assign=assign))):
-            if branch[0].value == 'ELSE':
+        for branch in reversed(list(self.split_args_on_delimiters(raw_args, ("ELSE", "ELSE IF"), assign=assign))):
+            if branch[0].value == "ELSE":
                 if len(branch) < 2:
                     return node
                 args = branch[1:]
                 if self.check_for_useless_set_variable(args, assign):
                     continue
-                header = ElseHeader([
-                    separator,
-                    Token(Token.ELSE),
-                    Token(Token.EOL)
-                ])
-            elif branch[0].value == 'ELSE IF':
+                header = ElseHeader([separator, Token(Token.ELSE), Token(Token.EOL)])
+            elif branch[0].value == "ELSE IF":
                 if len(branch) < 3:
                     return node
-                header = ElseIfHeader([
-                    separator,
-                    Token(Token.ELSE_IF),
-                    Token(Token.SEPARATOR, self.formatting_config.separator),
-                    branch[1],
-                    Token(Token.EOL)
-                ])
+                header = ElseIfHeader(
+                    [
+                        separator,
+                        Token(Token.ELSE_IF),
+                        Token(Token.SEPARATOR, self.formatting_config.separator),
+                        branch[1],
+                        Token(Token.EOL),
+                    ]
+                )
                 args = branch[2:]
             else:
                 if len(branch) < 2:
                     return node
-                header = IfHeader([
-                    separator,
-                    Token(Token.IF),
-                    Token(Token.SEPARATOR, self.formatting_config.separator),
-                    branch[0],
-                    Token(Token.EOL)
-                ])
+                header = IfHeader(
+                    [
+                        separator,
+                        Token(Token.IF),
+                        Token(Token.SEPARATOR, self.formatting_config.separator),
+                        branch[0],
+                        Token(Token.EOL),
+                    ]
+                )
                 args = branch[1:]
             keywords = self.create_keywords(args, assign, separator.value)
             if_block = If(header=header, body=keywords, orelse=prev_if)
@@ -130,17 +127,21 @@ class ReplaceRunKeywordIf(ModelTransformer):
         return prev_if
 
     def create_keywords(self, arg_tokens, assign, indent):
-        if normalize_name(arg_tokens[0].value) == 'runkeywords':
-            return [self.args_to_keyword(keyword[1:], assign, indent)
-                    for keyword in self.split_args_on_delimiters(arg_tokens, ('AND',))]
+        if normalize_name(arg_tokens[0].value) == "runkeywords":
+            return [
+                self.args_to_keyword(keyword[1:], assign, indent)
+                for keyword in self.split_args_on_delimiters(arg_tokens, ("AND",))
+            ]
         return self.args_to_keyword(arg_tokens, assign, indent)
 
     def args_to_keyword(self, arg_tokens, assign, indent):
-        separated_tokens = list(insert_separators(
-            indent,
-            [*assign, Token(Token.KEYWORD, arg_tokens[0].value), *arg_tokens[1:]],
-            self.formatting_config.separator
-        ))
+        separated_tokens = list(
+            insert_separators(
+                indent,
+                [*assign, Token(Token.KEYWORD, arg_tokens[0].value), *arg_tokens[1:]],
+                self.formatting_config.separator,
+            )
+        )
         return KeywordCall.from_tokens(separated_tokens)
 
     @staticmethod
@@ -150,18 +151,14 @@ class ReplaceRunKeywordIf(ModelTransformer):
         for split_point in split_points:
             yield args[prev_index:split_point]
             prev_index = split_point
-        yield args[prev_index:len(args)]
-        if assign and 'ELSE' in delimiters and not any(arg.value == 'ELSE' for arg in args):
-            values = [Token(Token.ARGUMENT, '${None}')] * len(assign)
-            yield [Token(Token.ELSE), Token(Token.ARGUMENT, 'Set Variable'), *values]
+        yield args[prev_index : len(args)]
+        if assign and "ELSE" in delimiters and not any(arg.value == "ELSE" for arg in args):
+            values = [Token(Token.ARGUMENT, "${None}")] * len(assign)
+            yield [Token(Token.ELSE), Token(Token.ARGUMENT, "Set Variable"), *values]
 
     @staticmethod
     def check_for_useless_set_variable(tokens, assign):
-        if (
-                not assign
-                or normalize_name(tokens[0].value) != 'setvariable'
-                or len(tokens[1:]) != len(assign)
-        ):
+        if not assign or normalize_name(tokens[0].value) != "setvariable" or len(tokens[1:]) != len(assign):
             return False
         for var, var_assign in zip(tokens[1:], assign):
             if normalize_name(var.value) != normalize_name(var_assign.value):

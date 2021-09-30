@@ -39,7 +39,11 @@ class OrderTags(ModelTransformer):
     ENABLED = False
 
     def __init__(
-        self, case_sensitive: bool = False, reverse: bool = False, default_tags: bool = True, force_tags: bool = True
+        self,
+        case_sensitive: bool = False,
+        reverse: bool = False,
+        default_tags: bool = True,
+        force_tags: bool = True,
     ):
         self.key = self.get_key(case_sensitive)
         self.reverse = reverse
@@ -56,13 +60,19 @@ class OrderTags(ModelTransformer):
         return self.order_tags(node, ForceTags) if self.force_tags else node
 
     def order_tags(self, node, tag_class, indent=False):
-        ordered_tags = sorted((tag.value for tag in node.data_tokens[1:]), key=self.key, reverse=self.reverse)
+        ordered_tags = sorted(
+            (tag.value for tag in node.data_tokens[1:]),
+            key=self.key,
+            reverse=self.reverse,
+        )
         if len(ordered_tags) <= 1:
             return node
         comments = node.get_tokens(Token.COMMENT)
         if indent:
             tag_node = tag_class.from_params(
-                ordered_tags, indent=self.formatting_config.separator, separator=self.formatting_config.separator
+                ordered_tags,
+                indent=self.formatting_config.separator,
+                separator=self.formatting_config.separator,
             )
         else:
             tag_node = tag_class.from_params(ordered_tags, separator=self.formatting_config.separator)

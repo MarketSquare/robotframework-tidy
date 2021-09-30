@@ -13,6 +13,8 @@
   ```
   robotidy -c NormalizeAssignments:equal_sign_type=equal_sign -c NormalizeAssignments:equal_sign_type_variables=remove <src>
   ```
+- New `OrderTags` (non default) transformer. It orders tags in lexicographic order ([#205](https://github.com/MarketSquare/robotframework-tidy/issues/205))
+- New `NormalizeTags` (non default) transformer. It normalizes tag name case and removes duplicates ([#212](https://github.com/MarketSquare/robotframework-tidy/issues/212))
 
 ### Features
 - It is now possible to provide source paths in configuration file ([#154](https://github.com/MarketSquare/robotframework-tidy/issues/154))

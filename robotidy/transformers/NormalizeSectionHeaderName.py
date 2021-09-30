@@ -1,7 +1,4 @@
-from robot.api.parsing import (
-    ModelTransformer,
-    SectionHeader
-)
+from robot.api.parsing import ModelTransformer, SectionHeader
 
 from robotidy.decorators import check_start_end_line
 
@@ -32,6 +29,7 @@ class NormalizeSectionHeaderName(ModelTransformer):
 
     See https://robotidy.readthedocs.io/en/latest/transformers/NormalizeSectionHeaderName.html for more examples.
     """
+
     def __init__(self, uppercase: bool = False):
         self.uppercase = uppercase
 

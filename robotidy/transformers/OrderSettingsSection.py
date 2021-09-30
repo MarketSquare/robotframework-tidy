@@ -1,13 +1,7 @@
 from collections import defaultdict
 
 import click
-from robot.api.parsing import (
-    ModelTransformer,
-    Comment,
-    Token,
-    EmptyLine,
-    LibraryImport
-)
+from robot.api.parsing import ModelTransformer, Comment, Token, EmptyLine, LibraryImport
 from robot.libraries import STDLIBS
 
 
@@ -46,40 +40,38 @@ class OrderSettingsSection(ModelTransformer):
 
     See https://robotidy.readthedocs.io/en/latest/transformers/OrderSettingsSection.html for more examples.
     """
-    def __init__(self, new_lines_between_groups: int = 1, group_order: str = None, documentation_order: str = None,
-                 imports_order: str = 'preserved', settings_order: str = None, tags_order: str = None):
+
+    def __init__(
+        self,
+        new_lines_between_groups: int = 1,
+        group_order: str = None,
+        documentation_order: str = None,
+        imports_order: str = "preserved",
+        settings_order: str = None,
+        tags_order: str = None,
+    ):
         self.last_section = None
         self.disabled_group = set()
         self.new_lines_between_groups = new_lines_between_groups
         self.group_order = self.parse_group_order(group_order)
         self.documentation_order = self.parse_order_in_group(
-            'documentation',
+            "documentation",
             documentation_order,
-            (
-                Token.DOCUMENTATION,
-                Token.METADATA
-            ),
-            {
-                'documentation': Token.DOCUMENTATION,
-                'metadata': Token.METADATA
-            }
+            (Token.DOCUMENTATION, Token.METADATA),
+            {"documentation": Token.DOCUMENTATION, "metadata": Token.METADATA},
         )
         self.imports_order = self.parse_order_in_group(
-            'imports',
+            "imports",
             imports_order,
-            (
-                Token.LIBRARY,
-                Token.RESOURCE,
-                Token.VARIABLES
-            ),
+            (Token.LIBRARY, Token.RESOURCE, Token.VARIABLES),
             {
-                'library': Token.LIBRARY,
-                'resource': Token.RESOURCE,
-                'variables': Token.VARIABLES
-            }
+                "library": Token.LIBRARY,
+                "resource": Token.RESOURCE,
+                "variables": Token.VARIABLES,
+            },
         )
         self.settings_order = self.parse_order_in_group(
-            'settings',
+            "settings",
             settings_order,
             (
                 Token.SUITE_SETUP,
@@ -87,48 +79,37 @@ class OrderSettingsSection(ModelTransformer):
                 Token.TEST_SETUP,
                 Token.TEST_TEARDOWN,
                 Token.TEST_TIMEOUT,
-                Token.TEST_TEMPLATE
+                Token.TEST_TEMPLATE,
             ),
             {
-                'suite_setup': Token.SUITE_SETUP,
-                'suite_teardown': Token.SUITE_TEARDOWN,
-                'test_setup': Token.TEST_SETUP,
-                'test_teardown': Token.TEST_TEARDOWN,
-                'test_timeout': Token.TEST_TIMEOUT,
-                'test_template': Token.TEST_TEMPLATE
-            }
+                "suite_setup": Token.SUITE_SETUP,
+                "suite_teardown": Token.SUITE_TEARDOWN,
+                "test_setup": Token.TEST_SETUP,
+                "test_teardown": Token.TEST_TEARDOWN,
+                "test_timeout": Token.TEST_TIMEOUT,
+                "test_template": Token.TEST_TEMPLATE,
+            },
         )
         self.tags_order = self.parse_order_in_group(
-            'tags',
+            "tags",
             tags_order,
-            (
-                Token.FORCE_TAGS,
-                Token.DEFAULT_TAGS
-            ),
-            {
-                'force_tags': Token.FORCE_TAGS,
-                'default_tags': Token.DEFAULT_TAGS
-            }
+            (Token.FORCE_TAGS, Token.DEFAULT_TAGS),
+            {"force_tags": Token.FORCE_TAGS, "default_tags": Token.DEFAULT_TAGS},
         )
 
     @staticmethod
     def parse_group_order(order):
-        default = (
-            'documentation',
-            'imports',
-            'settings',
-            'tags'
-        )
+        default = ("documentation", "imports", "settings", "tags")
         if order is None:
             return default
         if not order:
             return []
-        parts = order.lower().split(',')
+        parts = order.lower().split(",")
         if any(part not in default for part in parts):
             raise click.BadOptionUsage(
-                option_name='transform',
+                option_name="transform",
                 message=f"Invalid configurable value: '{order}' for group_order for OrderSettingsSection transformer."
-                        f" Custom order should be provided in comma separated list with valid group names:\n{default}"
+                f" Custom order should be provided in comma separated list with valid group names:\n{default}",
             )
         return parts
 
@@ -137,18 +118,19 @@ class OrderSettingsSection(ModelTransformer):
             return default
         if not order:
             return []
-        if order == 'preserved':
+        if order == "preserved":
             self.disabled_group.add(name)
             return default
-        parts = order.lower().split(',')
+        parts = order.lower().split(",")
         try:
             return [mapping[part] for part in parts]
         except KeyError:
             raise click.BadOptionUsage(
-                option_name='transform',
+                option_name="transform",
                 message=f"Invalid configurable value: '{order}' for order for OrderSettingsSection transformer."
-                        f" Custom order should be provided in comma separated list with valid group names:\n"
-                        f"{sorted(mapping.keys())}")
+                f" Custom order should be provided in comma separated list with valid group names:\n"
+                f"{sorted(mapping.keys())}",
+            )
 
     def visit_File(self, node):  # noqa
         self.last_section = node.sections[-1] if node.sections else None
@@ -162,33 +144,33 @@ class OrderSettingsSection(ModelTransformer):
         comments, errors = [], []
         groups = defaultdict(list)
         for child in node.body:
-            child_type = getattr(child, 'type', None)
+            child_type = getattr(child, "type", None)
             if isinstance(child, Comment):
                 comments.append(child)
             elif child_type in self.documentation_order:
-                groups['documentation'].append((comments, child))
+                groups["documentation"].append((comments, child))
                 comments = []
             elif child_type in self.imports_order:
-                groups['imports'].append((comments, child))
+                groups["imports"].append((comments, child))
                 comments = []
             elif child_type in self.settings_order:
-                groups['settings'].append((comments, child))
+                groups["settings"].append((comments, child))
                 comments = []
             elif child_type in self.tags_order:
-                groups['tags'].append((comments, child))
+                groups["tags"].append((comments, child))
                 comments = []
             elif not isinstance(child, EmptyLine):
                 errors.append(child)
 
         group_map = {
-            'documentation': self.documentation_order,
-            'imports': self.imports_order,
-            'settings': self.settings_order,
-            'tags': self.tags_order
+            "documentation": self.documentation_order,
+            "imports": self.imports_order,
+            "settings": self.settings_order,
+            "tags": self.tags_order,
         }
 
         new_body = []
-        empty_line = EmptyLine.from_params(eol='\n')
+        empty_line = EmptyLine.from_params(eol="\n")
         order_of_groups = [group for group in self.group_order if group in groups]
         last_index = len(order_of_groups) - 1
         for index, group in enumerate(order_of_groups):
@@ -198,7 +180,7 @@ class OrderSettingsSection(ModelTransformer):
                     new_body.extend(comment_lines)
                     new_body.append(child)
             else:
-                if group == 'imports':
+                if group == "imports":
                     unordered = self.sort_builtin_libs(unordered)
                 order = group_map[group]
                 for token_type in order:
@@ -221,19 +203,23 @@ class OrderSettingsSection(ModelTransformer):
 
     @staticmethod
     def fix_eol(node):
-        if not getattr(node, 'tokens', None):
+        if not getattr(node, "tokens", None):
             return node
-        if getattr(node.tokens[-1], 'type', None) != Token.EOL:
+        if getattr(node.tokens[-1], "type", None) != Token.EOL:
             return node
-        node.tokens = list(node.tokens[:-1]) + [Token(Token.EOL, '\n')]
+        node.tokens = list(node.tokens[:-1]) + [Token(Token.EOL, "\n")]
         return node
 
     @staticmethod
     def sort_builtin_libs(statements):
         before, after = [], []
         for comments, statement in statements:
-            if isinstance(statement, LibraryImport) and statement.name and statement.name != 'Remote' \
-                    and statement.name in STDLIBS:
+            if (
+                isinstance(statement, LibraryImport)
+                and statement.name
+                and statement.name != "Remote"
+                and statement.name in STDLIBS
+            ):
                 before.append((comments, statement))
             else:
                 after.append((comments, statement))

@@ -3,10 +3,7 @@ import ast
 from typing import List
 import difflib
 
-from robot.api.parsing import (
-    ModelVisitor,
-    Token
-)
+from robot.api.parsing import ModelVisitor, Token
 from robot.parsing.model import Statement
 from robot.utils.robotio import file_writer
 from click import style
@@ -16,8 +13,9 @@ class StatementLinesCollector(ModelVisitor):
     """
     Used to get writeable presentation of Robot Framework model.
     """
+
     def __init__(self, model):
-        self.text = ''
+        self.text = ""
         self.visit(model)
 
     def visit_Statement(self, node):  # noqa
@@ -29,21 +27,28 @@ class StatementLinesCollector(ModelVisitor):
 
 
 class GlobalFormattingConfig:
-    def __init__(self, space_count: int, line_sep: str, start_line: int, end_line: int, separator: str):
+    def __init__(
+        self,
+        space_count: int,
+        line_sep: str,
+        start_line: int,
+        end_line: int,
+        separator: str,
+    ):
         self.start_line = start_line
         self.end_line = end_line
         self.space_count = space_count
 
-        if separator == 'space':
-            self.separator = ' ' * space_count
-        elif separator == 'tab':
+        if separator == "space":
+            self.separator = " " * space_count
+        elif separator == "tab":
             self.space_count = space_count
-            self.separator = '\t'
+            self.separator = "\t"
 
-        if line_sep == 'windows':
-            self.line_sep = '\r\n'
-        elif line_sep == 'unix':
-            self.line_sep = '\n'
+        if line_sep == "windows":
+            self.line_sep = "\r\n"
+        elif line_sep == "unix":
+            self.line_sep = "\n"
         else:
             self.line_sep = os.linesep
 
@@ -54,21 +59,21 @@ def decorate_diff_with_color(contents: List[str]) -> str:
         if line.startswith("+++") or line.startswith("---"):
             line = style(line, bold=True, reset=True)
         elif line.startswith("@@"):
-            line = style(line, fg='cyan', reset=True)
+            line = style(line, fg="cyan", reset=True)
         elif line.startswith("+"):
-            line = style(line, fg='green', reset=True)
+            line = style(line, fg="green", reset=True)
         elif line.startswith("-"):
-            line = style(line, fg='red', reset=True)
+            line = style(line, fg="red", reset=True)
         contents[i] = line
-    return ''.join(contents)
+    return "".join(contents)
 
 
 def normalize_name(name):
-    return name.lower().replace('_', '').replace(' ', '')
+    return name.lower().replace("_", "").replace(" ", "")
 
 
 def after_last_dot(name):
-    return name.split('.')[-1]
+    return name.split(".")[-1]
 
 
 def node_within_lines(node_start, node_end, start_line, end_line):
@@ -89,8 +94,12 @@ def node_outside_selection(node, formatting_config):
     Contrary to ``node_within_lines`` it just checks if node is fully outside selected lines.
     Partial selection is useful for transformers like aligning code.
     """
-    if formatting_config.start_line and formatting_config.start_line > node.end_lineno or \
-            formatting_config.end_line and formatting_config.end_line < node.lineno:
+    if (
+        formatting_config.start_line
+        and formatting_config.start_line > node.end_lineno
+        or formatting_config.end_line
+        and formatting_config.end_line < node.lineno
+    ):
         return True
     return False
 
@@ -106,7 +115,7 @@ def split_args_from_name_or_path(name):
     index = _get_arg_separator_index_from_name_or_path(name)
     if index == -1:
         return name, []
-    args = _escaped_split(name[index+1:], name[index])
+    args = _escaped_split(name[index + 1 :], name[index])
     name = name[:index]
     return name, args
 
@@ -116,28 +125,28 @@ def _escaped_split(string, delim):
     current = []
     itr = iter(string)
     for ch in itr:
-        if ch == '\\':
+        if ch == "\\":
             try:
-                current.append('\\')
+                current.append("\\")
                 current.append(next(itr))
             except StopIteration:
                 pass
         elif ch == delim:
-            ret.append(''.join(current))
+            ret.append("".join(current))
             current = []
         else:
             current.append(ch)
     if current:
-        ret.append(''.join(current))
+        ret.append("".join(current))
     return ret
 
 
 def _get_arg_separator_index_from_name_or_path(name):
-    colon_index = name.find(':')
+    colon_index = name.find(":")
     # Handle absolute Windows paths
-    if colon_index == 1 and name[2:3] in ('/', '\\'):
-        colon_index = name.find(':', colon_index+1)
-    semicolon_index = name.find(';')
+    if colon_index == 1 and name[2:3] in ("/", "\\"):
+        colon_index = name.find(":", colon_index + 1)
+    semicolon_index = name.find(";")
     if colon_index == -1:
         return semicolon_index
     if semicolon_index == -1:
@@ -173,15 +182,15 @@ def tokens_by_lines(node):
 
 
 def left_align(node):
-    """ remove leading separator token """
+    """remove leading separator token"""
     tokens = list(node.tokens)
     if tokens:
-        tokens[0].value = tokens[0].value.lstrip(' \t')
+        tokens[0].value = tokens[0].value.lstrip(" \t")
     return Statement.from_tokens(tokens)
 
 
 def remove_rst_formatting(text):
-    return text.replace('::', ':').replace("``", "'")
+    return text.replace("::", ":").replace("``", "'")
 
 
 class RecommendationFinder:
@@ -190,46 +199,48 @@ class RecommendationFinder:
         norm_cand = self.get_normalized_candidates(candidates)
         matches = self.find(norm_name, norm_cand.keys())
         if not matches:
-            return ''
+            return ""
         matches = self.get_original_candidates(matches, norm_cand)
         if len(matches) == 1 and matches[0] == name:
-            return ''
-        suggestion = ' Did you mean:\n'
-        suggestion += '\n'.join(f'    {match}' for match in matches)
+            return ""
+        suggestion = " Did you mean:\n"
+        suggestion += "\n".join(f"    {match}" for match in matches)
         return suggestion
 
     def find(self, name, candidates, max_matches=2):
-        """ Return a list of close matches to `name` from `candidates`. """
+        """Return a list of close matches to `name` from `candidates`."""
         if not name or not candidates:
             return []
         cutoff = self._calculate_cutoff(name)
-        return difflib.get_close_matches(
-            name, candidates, n=max_matches, cutoff=cutoff
-        )
+        return difflib.get_close_matches(name, candidates, n=max_matches, cutoff=cutoff)
 
     @staticmethod
-    def _calculate_cutoff(string, min_cutoff=.5, max_cutoff=.85,
-                          step=.03):
-        """ The longer the string the bigger required cutoff. """
+    def _calculate_cutoff(string, min_cutoff=0.5, max_cutoff=0.85, step=0.03):
+        """The longer the string the bigger required cutoff."""
         cutoff = min_cutoff + len(string) * step
         return min(cutoff, max_cutoff)
 
     @staticmethod
     def get_original_candidates(candidates, norm_candidates):
-        """ Map found normalized candidates to unique original candidates. """
+        """Map found normalized candidates to unique original candidates."""
         return sorted(list(set(c for cand in candidates for c in norm_candidates[cand])))
 
     @staticmethod
     def get_normalized_candidates(candidates):
         norm_cand = {cand.lower(): [cand] for cand in candidates}
         # most popular typos
-        norm_cand['align'] = ['AlignSettingsSection', 'AlignVariablesSection']
-        norm_cand['normalize'] = ['NormalizeAssignments', 'NormalizeNewLines', 'NormalizeSectionHeaderName',
-                                  'NormalizeSeparators', 'NormalizeSettingName']
-        norm_cand['order'] = ['OrderSettings', 'OrderSettingsSection']
-        norm_cand['alignsettings'] = ['AlignSettingsSection']
-        norm_cand['alignvariables'] = ['AlignVariablesSection']
-        norm_cand['assignmentnormalizer'] = ['NormalizeAssignments']
+        norm_cand["align"] = ["AlignSettingsSection", "AlignVariablesSection"]
+        norm_cand["normalize"] = [
+            "NormalizeAssignments",
+            "NormalizeNewLines",
+            "NormalizeSectionHeaderName",
+            "NormalizeSeparators",
+            "NormalizeSettingName",
+        ]
+        norm_cand["order"] = ["OrderSettings", "OrderSettingsSection"]
+        norm_cand["alignsettings"] = ["AlignSettingsSection"]
+        norm_cand["alignvariables"] = ["AlignVariablesSection"]
+        norm_cand["assignmentnormalizer"] = ["NormalizeAssignments"]
         return norm_cand
 
 

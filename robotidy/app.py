@@ -14,25 +14,26 @@ from robotidy.utils import (
     StatementLinesCollector,
     decorate_diff_with_color,
     GlobalFormattingConfig,
-    ModelWriter
+    ModelWriter,
 )
 
 
 class Robotidy:
-    def __init__(self,
-                 transformers: List[Tuple[str, List]],
-                 transformers_config: List[Tuple[str, List]],
-                 src: Tuple[str, ...],
-                 exclude: Pattern,
-                 extend_exclude: Pattern,
-                 overwrite: bool,
-                 show_diff: bool,
-                 formatting_config: GlobalFormattingConfig,
-                 verbose: bool,
-                 check: bool,
-                 output: Optional[Path],
-                 force_order: bool
-                 ):
+    def __init__(
+        self,
+        transformers: List[Tuple[str, List]],
+        transformers_config: List[Tuple[str, List]],
+        src: Tuple[str, ...],
+        exclude: Pattern,
+        extend_exclude: Pattern,
+        overwrite: bool,
+        show_diff: bool,
+        formatting_config: GlobalFormattingConfig,
+        verbose: bool,
+        check: bool,
+        output: Optional[Path],
+        force_order: bool,
+    ):
         self.sources = get_paths(src, exclude, extend_exclude)
         self.overwrite = overwrite
         self.show_diff = show_diff
@@ -44,20 +45,20 @@ class Robotidy:
         self.transformers = load_transformers(transformers, transformers_config, force_order=force_order)
         for transformer in self.transformers:
             # inject global settings TODO: handle it better
-            setattr(transformer, 'formatting_config', self.formatting_config)
+            setattr(transformer, "formatting_config", self.formatting_config)
 
     def transform_files(self):
         changed_files = 0
         for source in self.sources:
             try:
                 stdin = False
-                if str(source) == '-':
+                if str(source) == "-":
                     stdin = True
                     if self.verbose:
-                        click.echo('Loading file from stdin')
+                        click.echo("Loading file from stdin")
                     source = self.load_from_stdin()
                 elif self.verbose:
-                    click.echo(f'Transforming {source} file')
+                    click.echo(f"Transforming {source} file")
                 model = get_model(source)
                 diff, old_model, new_model = self.transform(model)
                 if diff:
@@ -97,16 +98,21 @@ class Robotidy:
             output = self.output or model.source
             ModelWriter(output=output, newline=self.formatting_config.line_sep).write(model)
 
-    def output_diff(self, path: str, old_model: StatementLinesCollector, new_model: StatementLinesCollector):
+    def output_diff(
+        self,
+        path: str,
+        old_model: StatementLinesCollector,
+        new_model: StatementLinesCollector,
+    ):
         if not self.show_diff:
             return
-        old = [l + '\n' for l in old_model.text.splitlines()]
-        new = [l + '\n' for l in new_model.text.splitlines()]
-        lines = list(unified_diff(old, new, fromfile=f'{path}\tbefore', tofile=f'{path}\tafter'))
+        old = [l + "\n" for l in old_model.text.splitlines()]
+        new = [l + "\n" for l in new_model.text.splitlines()]
+        lines = list(unified_diff(old, new, fromfile=f"{path}\tbefore", tofile=f"{path}\tafter"))
         if not lines:
             return
         colorized_output = decorate_diff_with_color(lines)
-        click.echo(colorized_output.encode('ascii', 'ignore').decode('ascii'), color=True)
+        click.echo(colorized_output.encode("ascii", "ignore").decode("ascii"), color=True)
 
     @staticmethod
     def convert_configure(configure: List[Tuple[str, List]]) -> Dict[str, List]:

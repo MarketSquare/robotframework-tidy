@@ -1,16 +1,13 @@
 from collections import defaultdict
 
-from robot.api.parsing import (
-    ModelTransformer,
-    Token
-)
+from robot.api.parsing import ModelTransformer, Token
 from robot.parsing.model import Statement
 
 from robotidy.utils import (
     node_outside_selection,
     round_to_four,
     tokens_by_lines,
-    left_align
+    left_align,
 )
 
 
@@ -46,6 +43,7 @@ class AlignVariablesSection(ModelTransformer):
 
     See https://robotidy.readthedocs.io/en/latest/transformers/AlignVariablesSection.html for more examples.
     """
+
     def __init__(self, up_to_column: int = 2):
         self.up_to_column = up_to_column - 1
 
@@ -78,8 +76,11 @@ class AlignVariablesSection(ModelTransformer):
                 up_to = self.up_to_column if self.up_to_column != -1 else len(line) - 2
                 for index, token in enumerate(line[:-2]):
                     aligned_statement.append(token)
-                    separator = (look_up[index] - len(token.value) + 4) * ' ' if index < up_to else \
-                        self.formatting_config.space_count * ' '
+                    separator = (
+                        (look_up[index] - len(token.value) + 4) * " "
+                        if index < up_to
+                        else self.formatting_config.space_count * " "
+                    )
                     aligned_statement.append(Token(Token.SEPARATOR, separator))
                 last_token = line[-2]
                 # remove leading whitespace before token

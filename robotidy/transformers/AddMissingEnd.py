@@ -20,6 +20,7 @@ class AddMissingEnd(ModelTransformer):
 
     Supports global formatting params: ``--startline`` and ``--endline``.
     """
+
     @check_start_end_line
     def visit_For(self, node):  # noqa
         self.generic_visit(node)
@@ -47,19 +48,19 @@ class AddMissingEnd(ModelTransformer):
         return (node, *outside)
 
     def fix_end(self, node):
-        """ Fix END (missing END, End -> END, END position should be the same as FOR etc). """
+        """Fix END (missing END, End -> END, END position should be the same as FOR etc)."""
         if node.header.tokens[0].type == Token.SEPARATOR:
             indent = node.header.tokens[0]
         else:
             indent = Token(Token.SEPARATOR, self.formatting_config.separator)
-        node.end = End([indent, Token(Token.END, 'END'), Token(Token.EOL)])
+        node.end = End([indent, Token(Token.END, "END"), Token(Token.EOL)])
 
     @staticmethod
     def fix_header_name(node, header_name):
         node.header.data_tokens[0].value = header_name
 
     def collect_inside_statements(self, node):
-        """ Split statements from node for those that belong to it and outside nodes.
+        """Split statements from node for those that belong to it and outside nodes.
 
         In this example with missing END:
             FOR  ${i}  IN RANGE  10
@@ -81,7 +82,7 @@ class AddMissingEnd(ModelTransformer):
 
     @staticmethod
     def get_column(node):
-        if hasattr(node, 'header'):
+        if hasattr(node, "header"):
             return node.header.data_tokens[0].col_offset
         if isinstance(node, Comment):
             token = node.get_token(Token.COMMENT)

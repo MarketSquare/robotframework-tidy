@@ -41,10 +41,11 @@ class RenameTestCases(ModelTransformer):
             self.replace_pattern = re.compile(replace_pattern) if replace_pattern is not None else None
         except re.error as err:
             raise click.BadOptionUsage(
-                option_name='transform',
+                option_name="transform",
                 message=f"Invalid configurable value: '{replace_pattern}' for replace_pattern in RenameTestCases"
-                        f" transformer. It should be a valid regex expression. Regex error: '{err.msg}'")
-        self.replace_to = '' if replace_to is None else replace_to
+                f" transformer. It should be a valid regex expression. Regex error: '{err.msg}'",
+            )
+        self.replace_to = "" if replace_to is None else replace_to
 
     @check_start_end_line
     def visit_TestCaseName(self, node):  # noqa
@@ -53,7 +54,7 @@ class RenameTestCases(ModelTransformer):
             token.value = token.value[0].upper() + token.value[1:]
             if self.replace_pattern is not None:
                 token.value = self.replace_pattern.sub(repl=self.replace_to, string=token.value)
-            if token.value.endswith('.'):
+            if token.value.endswith("."):
                 token.value = token.value[:-1]
             token.value = token.value.strip()
         return node

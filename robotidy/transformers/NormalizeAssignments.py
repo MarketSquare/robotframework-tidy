@@ -3,11 +3,7 @@ import ast
 from collections import Counter
 
 import click
-from robot.api.parsing import (
-    ModelTransformer,
-    Variable,
-    Token
-)
+from robot.api.parsing import ModelTransformer, Variable, Token
 
 
 class NormalizeAssignments(ModelTransformer):
@@ -58,27 +54,33 @@ class NormalizeAssignments(ModelTransformer):
 
     See https://robotidy.readthedocs.io/en/latest/transformers/NormalizeAssignments.html for more examples.
     """
-    def __init__(self, equal_sign_type: str = 'autodetect', equal_sign_type_variables: str = 'remove'):
-        self.remove_equal_sign = re.compile(r'\s?=$')
+
+    def __init__(
+        self,
+        equal_sign_type: str = "autodetect",
+        equal_sign_type_variables: str = "remove",
+    ):
+        self.remove_equal_sign = re.compile(r"\s?=$")
         self.file_equal_sign_type = None
         self.file_equal_sign_type_variables = None
-        self.equal_sign_type = self.parse_equal_sign_type(equal_sign_type, 'equal_sign_type')
-        self.equal_sign_type_variables = self.parse_equal_sign_type(equal_sign_type_variables,
-                                                                    'equal_sign_type_variables')
+        self.equal_sign_type = self.parse_equal_sign_type(equal_sign_type, "equal_sign_type")
+        self.equal_sign_type_variables = self.parse_equal_sign_type(
+            equal_sign_type_variables, "equal_sign_type_variables"
+        )
 
     @staticmethod
     def parse_equal_sign_type(value, name):
         types = {
-            'remove': '',
-            'equal_sign': '=',
-            'space_and_equal_sign': ' =',
-            'autodetect': None
+            "remove": "",
+            "equal_sign": "=",
+            "space_and_equal_sign": " =",
+            "autodetect": None,
         }
         if value not in types:
             raise click.BadOptionUsage(
-                option_name='transform',
+                option_name="transform",
                 message=f"Invalid configurable value: {value} for {name} for AssignmentNormalizer transformer."
-                        f" Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign"
+                f" Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign",
             )
         return types[value]
 
@@ -110,11 +112,15 @@ class NormalizeAssignments(ModelTransformer):
             if not isinstance(child, Variable):
                 continue
             var_token = child.get_token(Token.VARIABLE)
-            self.normalize_equal_sign(var_token, self.equal_sign_type_variables, self.file_equal_sign_type_variables)
+            self.normalize_equal_sign(
+                var_token,
+                self.equal_sign_type_variables,
+                self.file_equal_sign_type_variables,
+            )
         return node
 
     def normalize_equal_sign(self, token, overwrite, local_normalize):
-        token.value = re.sub(self.remove_equal_sign, '', token.value)
+        token.value = re.sub(self.remove_equal_sign, "", token.value)
         if overwrite:
             token.value += overwrite
         elif local_normalize:
@@ -156,4 +162,4 @@ class AssignmentTypeDetector(ast.NodeVisitor):
 
     @staticmethod
     def get_assignment_sign(token_value):
-        return token_value[token_value.find('}')+1:]
+        return token_value[token_value.find("}") + 1 :]
