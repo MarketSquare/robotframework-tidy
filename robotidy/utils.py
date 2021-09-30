@@ -49,8 +49,8 @@ class GlobalFormattingConfig:
             self.line_sep = "\r\n"
         elif line_sep == "unix":
             self.line_sep = "\n"
-        elif line_sep == 'auto':
-            self.line_sep = 'auto'
+        elif line_sep == "auto":
+            self.line_sep = "auto"
         else:
             self.line_sep = os.linesep
 
