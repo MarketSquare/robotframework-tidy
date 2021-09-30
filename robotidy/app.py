@@ -1,3 +1,4 @@
+import os
 import sys
 from collections import defaultdict
 from difflib import unified_diff
@@ -24,8 +25,8 @@ class Robotidy:
         transformers: List[Tuple[str, List]],
         transformers_config: List[Tuple[str, List]],
         src: Tuple[str, ...],
-        exclude: Pattern,
-        extend_exclude: Pattern,
+        exclude: Optional[Pattern],
+        extend_exclude: Optional[Pattern],
         overwrite: bool,
         show_diff: bool,
         formatting_config: GlobalFormattingConfig,
@@ -68,7 +69,7 @@ class Robotidy:
                     if stdin:
                         self.print_to_stdout(new_model)
                     else:
-                        self.save_model(model)
+                        self.save_model(model.source, model)
             except DataError:
                 click.echo(
                     f"Failed to decode {source}. Default supported encoding by Robot Framework is UTF-8. Skipping file"
@@ -93,10 +94,22 @@ class Robotidy:
         if not self.show_diff:
             click.echo(collected_lines.text)
 
-    def save_model(self, model):
+    def save_model(self, old_model, model):
         if self.overwrite:
             output = self.output or model.source
-            ModelWriter(output=output, newline=self.formatting_config.line_sep).write(model)
+            ModelWriter(output=output, newline=self.get_line_ending(old_model)).write(model)
+
+    def get_line_ending(self, path: str):
+        if self.formatting_config.line_sep == 'auto':
+            with open(path) as f:
+                f.readline()
+                if f.newlines is None:
+                    return os.linesep
+                if isinstance(f.newlines, str):
+                    return f.newlines
+                else:
+                    return f.newlines[0]
+        return self.formatting_config.line_sep
 
     def output_diff(
         self,

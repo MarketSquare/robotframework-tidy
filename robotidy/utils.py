@@ -1,6 +1,6 @@
 import os
 import ast
-from typing import List
+from typing import List, Optional
 import difflib
 
 from robot.api.parsing import ModelVisitor, Token
@@ -31,8 +31,8 @@ class GlobalFormattingConfig:
         self,
         space_count: int,
         line_sep: str,
-        start_line: int,
-        end_line: int,
+        start_line: Optional[int],
+        end_line: Optional[int],
         separator: str,
     ):
         self.start_line = start_line
@@ -49,6 +49,8 @@ class GlobalFormattingConfig:
             self.line_sep = "\r\n"
         elif line_sep == "unix":
             self.line_sep = "\n"
+        elif line_sep == 'auto':
+            self.line_sep = 'auto'
         else:
             self.line_sep = os.linesep
 
