@@ -100,7 +100,7 @@ class Robotidy:
             ModelWriter(output=output, newline=self.get_line_ending(source)).write(model)
 
     def get_line_ending(self, path: str):
-        if self.formatting_config.line_sep == 'auto':
+        if self.formatting_config.line_sep == "auto":
             with open(path) as f:
                 f.readline()
                 if f.newlines is None:
