@@ -21,9 +21,11 @@
 - Non default transformers can be enabled using ``enabled=True`` parameter ([#182](https://github.com/MarketSquare/robotframework-tidy/issues/182))
 - Semicolon in parameter value can now be escaped with `\:` ([#190](https://github.com/MarketSquare/robotframework-tidy/issues/190))
 - Default separator can be changed from space to tabular with new ``--separator`` option ([#184](https://github.com/MarketSquare/robotframework-tidy/issues/184))
+- ``--lineseparator`` option now accepts `auto` value for preserving line endings found in the file ([#209](https://github.com/MarketSquare/robotframework-tidy/issues/209))
 
 ### Fixes
 - Robotidy will not print "Loaded configuration from ... " if the configuration is empty ([#193](https://github.com/MarketSquare/robotframework-tidy/issues/193))
+- no source path provided error now exits with code 1 instead of 0 ([#208](https://github.com/MarketSquare/robotframework-tidy/issues/208))
 
 ### Other
 - ReplaceRunKeywordIf now removes ELSE branch if it is unnecessary ([#192](https://github.com/MarketSquare/robotframework-tidy/issues/192))

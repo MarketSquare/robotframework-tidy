@@ -254,12 +254,13 @@ def print_transformers_list():
 @click.option(
     "-ls",
     "--lineseparator",
-    type=click.types.Choice(["native", "windows", "unix"]),
+    type=click.types.Choice(["native", "windows", "unix", "auto"]),
     default="native",
     help="Line separator to use in outputs.\n"
-    "native:  use operating system's native line separators\n"
-    "windows: use Windows line separators (CRLF)\n"
-    "unix:    use Unix line separators (LF)",
+    "native:  use operating system's native line endings\n"
+    "windows: use Windows line endings (CRLF)\n"
+    "unix:    use Unix line endings (LF)\n"
+    "auto:    maintain existing line endings (uses what's used in the first line)",
     show_default=True,
 )
 @click.option(

@@ -92,7 +92,7 @@ def path_is_excluded(
     return bool(match and match.group(0))
 
 
-def get_paths(src: Tuple[str, ...], exclude: Pattern, extend_exclude: Optional[Pattern]):
+def get_paths(src: Tuple[str, ...], exclude: Optional[Pattern], extend_exclude: Optional[Pattern]):
     root = find_project_root(src)
     gitignore = get_gitignore(root)
     sources = set()
@@ -113,8 +113,8 @@ def get_paths(src: Tuple[str, ...], exclude: Pattern, extend_exclude: Optional[P
 
 def iterate_dir(
     paths: Iterable[Path],
-    exclude: Pattern,
-    extend_exclude: Pattern,
+    exclude: Optional[Pattern],
+    extend_exclude: Optional[Pattern],
     gitignore: Optional[PathSpec],
 ) -> Iterator[Path]:
     for path in paths:
@@ -122,7 +122,7 @@ def iterate_dir(
             continue
         if path_is_excluded(str(path), exclude) or path_is_excluded(str(path), extend_exclude):
             continue
-        if path.is_dir() and not exclude.match(path.name):
+        if path.is_dir() and exclude and not exclude.match(path.name):
             yield from iterate_dir(
                 path.iterdir(),
                 exclude,
