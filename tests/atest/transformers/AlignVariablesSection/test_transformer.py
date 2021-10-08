@@ -44,3 +44,6 @@ class TestAlignVariablesSection:
             expected='align_selected_part.robot',
             config=' --startline 10 --endline 12'
         )
+
+    def test_multiline_with_blank(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, source='multiline_with_blank.robot')
