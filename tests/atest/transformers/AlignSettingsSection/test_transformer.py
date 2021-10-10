@@ -64,3 +64,9 @@ class TestAlignSettingsSection:
             expected=f'multiline_keywords_{indent}indent.robot',
             config=f':up_to_column=3:argument_indent={indent}'
         )
+
+    def test_multiline_with_blank_line(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, source='blank_line_doc.robot')
+
+    def test_doc_multiline_and_whitespace(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, source='blank_line_and_whitespace.robot')

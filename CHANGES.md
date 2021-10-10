@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Fixes
+- Trailing whitespace is no longer added to blank lines in multiline statements when using align transformers ([#219](https://github.com/MarketSquare/robotframework-tidy/issues/219))
+
+## 1.6.0
+
 ### Transformers
 - New non default transformer `RenameTestCases`. It capitalizes first letter of the test case name, removes trailing dot and can replace provided regex pattern with substitute string ([#183](https://github.com/MarketSquare/robotframework-tidy/issues/183))
 - New non default transformer `RenameKeywords`. It applies Title Case to keyword name and replace underscores by spaces and can replace provided regex pattern with substitute string ([#183](https://github.com/MarketSquare/robotframework-tidy/issues/183))

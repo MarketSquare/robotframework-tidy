@@ -276,3 +276,12 @@ def is_suite_templated(node):
     template_finder = TestTemplateFinder()
     template_finder.visit(node)
     return template_finder.templated
+
+
+def is_blank_multiline(statements):
+    return (
+        statements[0].type == Token.CONTINUATION
+        and len(statements) == 3
+        and statements[1].type == "ARGUMENT"
+        and not statements[1].value
+    )

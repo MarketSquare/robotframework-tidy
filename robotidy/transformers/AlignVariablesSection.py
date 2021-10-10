@@ -3,12 +3,7 @@ from collections import defaultdict
 from robot.api.parsing import ModelTransformer, Token
 from robot.parsing.model import Statement
 
-from robotidy.utils import (
-    node_outside_selection,
-    round_to_four,
-    tokens_by_lines,
-    left_align,
-)
+from robotidy.utils import node_outside_selection, round_to_four, tokens_by_lines, left_align, is_blank_multiline
 
 
 class AlignVariablesSection(ModelTransformer):
@@ -73,6 +68,10 @@ class AlignVariablesSection(ModelTransformer):
                 continue
             aligned_statement = []
             for line in st:
+                if is_blank_multiline(line):
+                    line[-1].value = line[-1].value.lstrip(" \t")  # normalize eol from '  \n' to '\n'
+                    aligned_statement.extend(line)
+                    continue
                 up_to = self.up_to_column if self.up_to_column != -1 else len(line) - 2
                 for index, token in enumerate(line[:-2]):
                     aligned_statement.append(token)
