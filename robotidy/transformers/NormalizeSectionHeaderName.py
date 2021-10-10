@@ -1,4 +1,4 @@
-from robot.api.parsing import ModelTransformer, SectionHeader
+from robot.api.parsing import ModelTransformer, SectionHeader, Token
 
 from robotidy.decorators import check_start_end_line
 
@@ -35,10 +35,18 @@ class NormalizeSectionHeaderName(ModelTransformer):
 
     @check_start_end_line
     def visit_SectionHeader(self, node):  # noqa
-        normalized_section = SectionHeader.from_params(type=node.type)
-        normalized_name = normalized_section.data_tokens[0].value
+        if node.name and 'task' in node.name:
+            name = '*** Tasks ***'
+        else:
+            name = {
+                Token.SETTING_HEADER: '*** Settings ***',
+                Token.VARIABLE_HEADER: '*** Variables ***',
+                Token.TESTCASE_HEADER: '*** Test Cases ***',
+                Token.KEYWORD_HEADER: '*** Keywords ***',
+                Token.COMMENT_HEADER: '*** Comments ***'
+            }[node.type]
         if self.uppercase:
-            normalized_name = normalized_name.upper()
+            name = name.upper()
         # we only modify header token value in order to preserver optional data driven testing column names
-        node.data_tokens[0].value = normalized_name
+        node.data_tokens[0].value = name
         return node
