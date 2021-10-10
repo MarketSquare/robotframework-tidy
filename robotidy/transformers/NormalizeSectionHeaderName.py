@@ -35,15 +35,15 @@ class NormalizeSectionHeaderName(ModelTransformer):
 
     @check_start_end_line
     def visit_SectionHeader(self, node):  # noqa
-        if node.name and 'task' in node.name:
-            name = '*** Tasks ***'
+        if node.name and "task" in node.name:
+            name = "*** Tasks ***"
         else:
             name = {
-                Token.SETTING_HEADER: '*** Settings ***',
-                Token.VARIABLE_HEADER: '*** Variables ***',
-                Token.TESTCASE_HEADER: '*** Test Cases ***',
-                Token.KEYWORD_HEADER: '*** Keywords ***',
-                Token.COMMENT_HEADER: '*** Comments ***'
+                Token.SETTING_HEADER: "*** Settings ***",
+                Token.VARIABLE_HEADER: "*** Variables ***",
+                Token.TESTCASE_HEADER: "*** Test Cases ***",
+                Token.KEYWORD_HEADER: "*** Keywords ***",
+                Token.COMMENT_HEADER: "*** Comments ***",
             }[node.type]
         if self.uppercase:
             name = name.upper()
