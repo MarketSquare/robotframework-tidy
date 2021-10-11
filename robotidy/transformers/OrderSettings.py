@@ -86,7 +86,7 @@ class OrderSettings(ModelTransformer):
                 f"{sorted(name_map.keys())}",
             )
 
-    def parse_order(self, keword_before, keyword_after, test_before, test_after):
+    def parse_order(self, keyword_before, keyword_after, test_before, test_after):
         keyword_order_before = (
             Token.DOCUMENTATION,
             Token.TAGS,
@@ -122,7 +122,7 @@ class OrderSettings(ModelTransformer):
             "teardown": Token.TEARDOWN,
         }
         return (
-            self.get_order(keword_before, keyword_order_before, keyword_map),
+            self.get_order(keyword_before, keyword_order_before, keyword_map),
             self.get_order(keyword_after, keyword_order_after, keyword_map),
             self.get_order(test_before, testcase_order_before, test_map),
             self.get_order(test_after, testcase_order_after, test_map),
