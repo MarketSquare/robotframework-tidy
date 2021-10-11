@@ -22,3 +22,6 @@ class TestNormalizeSectionHeaderName:
             expected='selected.robot',
             config=' --startline 5 --endline 6'
         )
+
+    def test_tasks(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, source='task.robot')
