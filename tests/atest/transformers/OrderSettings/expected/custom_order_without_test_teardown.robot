@@ -32,6 +32,15 @@ Test case 4
    # comment2
    Keyword3
 
+Test case 5  # comment1
+   [Documentation]  this is
+   [Teardown]  teardown
+   Keyword1
+   # comment2
+   Keyword2
+   # comment3
+   Keyword3
+
 *** Keywords ***
 Keyword
     [Documentation]  this is
@@ -78,5 +87,9 @@ Return first and comment last
     Keyword
     [Return]  stuff
     # I want to be here
+
+Comment on the same line  # comment
+    [Documentation]  this is
+    ...    doc
 
 # what will happen with me?
