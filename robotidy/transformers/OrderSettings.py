@@ -144,8 +144,11 @@ class OrderSettings(ModelTransformer):
         after_seen = False
         # when after_seen is set to True then all statements go to trailing_after and last non data
         # will be appended after tokens defined in `after` set (like [Return])
+        comment = []
         for child in node.body:
-            if getattr(child, "type", "invalid") in setting_types:
+            if isinstance(child, Comment) and child.lineno == node.lineno:
+                comment.append(child)
+            elif getattr(child, "type", "invalid") in setting_types:
                 after_seen = after_seen or child.type in after
                 settings[child.type] = child
             elif after_seen:
@@ -158,7 +161,7 @@ class OrderSettings(ModelTransformer):
             trailing_non_data.insert(0, trailing_after.pop())
         not_settings += trailing_after
         node.body = (
-            self.add_in_order(before, settings) + not_settings + self.add_in_order(after, settings) + trailing_non_data
+            comment + self.add_in_order(before, settings) + not_settings + self.add_in_order(after, settings) + trailing_non_data
         )
         return node
 
