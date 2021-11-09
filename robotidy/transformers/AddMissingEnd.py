@@ -37,13 +37,13 @@ class AddMissingEnd(ModelTransformer):
         self.fix_header_name(node, node.type)
         if node.type != Token.IF:
             return node
-        node.body, outside = self.collect_inside_statements(node)
-        if node.orelse:
-            orelse = node.orelse
-            while orelse.orelse:
-                orelse = orelse.orelse
-            orelse.body, outside_orelse = self.collect_inside_statements(orelse)
-            outside += outside_orelse
+        outside = []
+        if not node.end:
+            node.body, outside = self.collect_inside_statements(node)
+            orelse = self.get_last_or_else(node)
+            if orelse:
+                orelse.body, outside_orelse = self.collect_inside_statements(orelse)
+                outside += outside_orelse
         self.fix_end(node)
         return (node, *outside)
 

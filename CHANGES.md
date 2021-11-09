@@ -3,6 +3,11 @@
 ## Unreleased
 
 ### Fixes
+- `AddMissingEnd` transformer now properly handles IFs without indented block of code ([#226](https://github.com/MarketSquare/robotframework-tidy/issues/226))
+
+## 1.6.1
+
+### Fixes
 - Trailing whitespace is no longer added to blank lines in multiline statements when using align transformers ([#219](https://github.com/MarketSquare/robotframework-tidy/issues/219))
 - `*** Tasks ***` is no longer converted to `*** Test Cases ***` by NormalizeSectionHeaderName ([#218](https://github.com/MarketSquare/robotframework-tidy/issues/218))
 

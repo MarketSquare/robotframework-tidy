@@ -12,5 +12,5 @@ class TestAddMissingEnd:
             self.TRANSFORMER_NAME,
             source='test.robot',
             expected='test_selected.robot',
-            config=' --startline 161 --endline 183'
+            config=' --startline 166 --endline 188'
         )
