@@ -84,12 +84,16 @@ def get_gitignore(root: Path) -> PathSpec:
     return PathSpec.from_lines("gitwildmatch", lines)
 
 
-def path_is_excluded(
-    normalized_path: str,
-    pattern: Optional[Pattern[str]],
-) -> bool:
-    match = pattern.search(normalized_path) if pattern else None
-    return bool(match and match.group(0))
+def path_is_excluded(path: Path, exclude: Optional[Pattern[str]], extend_exclude: Optional[Pattern[str]]) -> bool:
+    def _path_is_excluded(
+        normalized_path: str,
+        pattern: Optional[Pattern[str]],
+    ) -> bool:
+        match = pattern.search(normalized_path) if pattern else None
+        return bool(match and match.group(0))
+
+    normalized_path = str(path)
+    return _path_is_excluded(normalized_path, exclude) or _path_is_excluded(normalized_path, extend_exclude)
 
 
 def get_paths(src: Tuple[str, ...], exclude: Optional[Pattern], extend_exclude: Optional[Pattern]):
@@ -101,6 +105,8 @@ def get_paths(src: Tuple[str, ...], exclude: Optional[Pattern], extend_exclude: 
             sources.add("-")
             continue
         path = Path(s).resolve()
+        if path_is_excluded(path, exclude, extend_exclude):
+            continue
         if path.is_file():
             sources.add(path)
         elif path.is_dir():
@@ -120,7 +126,7 @@ def iterate_dir(
     for path in paths:
         if gitignore is not None and gitignore.match_file(path):
             continue
-        if path_is_excluded(str(path), exclude) or path_is_excluded(str(path), extend_exclude):
+        if path_is_excluded(path, exclude, extend_exclude):
             continue
         if path.is_dir() and exclude and not exclude.match(path.name):
             yield from iterate_dir(
