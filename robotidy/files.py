@@ -84,16 +84,21 @@ def get_gitignore(root: Path) -> PathSpec:
     return PathSpec.from_lines("gitwildmatch", lines)
 
 
-def path_is_excluded(path: Path, exclude: Optional[Pattern[str]], extend_exclude: Optional[Pattern[str]]) -> bool:
-    def _path_is_excluded(
-        normalized_path: str,
-        pattern: Optional[Pattern[str]],
-    ) -> bool:
-        match = pattern.search(normalized_path) if pattern else None
-        return bool(match and match.group(0))
-
+def should_parse_path(
+    path: Path, exclude: Optional[Pattern[str]], extend_exclude: Optional[Pattern[str]], gitignore: Optional[PathSpec]
+) -> bool:
     normalized_path = str(path)
-    return _path_is_excluded(normalized_path, exclude) or _path_is_excluded(normalized_path, extend_exclude)
+    for pattern in (exclude, extend_exclude):
+        match = pattern.search(normalized_path) if pattern else None
+        if bool(match and match.group(0)):
+            return False
+    if gitignore is not None and gitignore.match_file(path):
+        return False
+    if path.is_file():
+        return path.suffix in INCLUDE_EXT
+    if exclude and exclude.match(path.name):
+        return False
+    return True
 
 
 def get_paths(src: Tuple[str, ...], exclude: Optional[Pattern], extend_exclude: Optional[Pattern]):
@@ -105,9 +110,9 @@ def get_paths(src: Tuple[str, ...], exclude: Optional[Pattern], extend_exclude: 
             sources.add("-")
             continue
         path = Path(s).resolve()
-        if path_is_excluded(path, exclude, extend_exclude):
+        if not should_parse_path(path, exclude, extend_exclude, gitignore):
             continue
-        if path.is_file() and path.suffix in INCLUDE_EXT:
+        if path.is_file():
             sources.add(path)
         elif path.is_dir():
             sources.update(iterate_dir((path,), exclude, extend_exclude, gitignore))
@@ -124,11 +129,9 @@ def iterate_dir(
     gitignore: Optional[PathSpec],
 ) -> Iterator[Path]:
     for path in paths:
-        if gitignore is not None and gitignore.match_file(path):
+        if not should_parse_path(path, exclude, extend_exclude, gitignore):
             continue
-        if path_is_excluded(path, exclude, extend_exclude):
-            continue
-        if path.is_dir() and exclude and not exclude.match(path.name):
+        if path.is_dir():
             yield from iterate_dir(
                 path.iterdir(),
                 exclude,
@@ -136,6 +139,4 @@ def iterate_dir(
                 gitignore + get_gitignore(path) if gitignore is not None else None,
             )
         elif path.is_file():
-            if path.suffix not in INCLUDE_EXT:
-                continue
             yield path
