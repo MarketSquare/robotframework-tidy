@@ -107,7 +107,7 @@ def get_paths(src: Tuple[str, ...], exclude: Optional[Pattern], extend_exclude: 
         path = Path(s).resolve()
         if path_is_excluded(path, exclude, extend_exclude):
             continue
-        if path.is_file():
+        if path.is_file() and path.suffix in INCLUDE_EXT:
             sources.add(path)
         elif path.is_dir():
             sources.update(iterate_dir((path,), exclude, extend_exclude, gitignore))
