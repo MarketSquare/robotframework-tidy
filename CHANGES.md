@@ -2,8 +2,11 @@
 
 ## Unreleased
 
+## 1.6.2
+
 ### Fixes
 - `AddMissingEnd` transformer now properly handles IFs without indented block of code ([#226](https://github.com/MarketSquare/robotframework-tidy/issues/226))
+- Paths passed from command line are now checked against excluded paths (previously it was only checked when iterating over directories) ([#227](https://github.com/MarketSquare/robotframework-tidy/issues/227))
 
 ## 1.6.1
 
