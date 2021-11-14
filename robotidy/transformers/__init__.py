@@ -37,6 +37,7 @@ TRANSFORMERS = [
     "SmartSortKeywords",
     "RenameTestCases",
     "RenameKeywords",
+    "NormalizeReturns",
 ]
 
 

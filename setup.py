@@ -22,9 +22,9 @@ Intended Audience :: Developers
 """.strip().splitlines()
 
 setup(
-    name='robotframework-tidy',
+    name="robotframework-tidy",
     version=__version__,
-    description='Code autoformatter for Robot Framework',
+    description="Code autoformatter for Robot Framework",
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/MarketSquare/robotframework-tidy",
@@ -33,20 +33,14 @@ setup(
     license="Apache License 2.0",
     platforms="any",
     classifiers=CLASSIFIERS,
-    keywords='robotframework',
-    packages=['robotidy'],
+    keywords="robotframework",
+    packages=["robotidy"],
     include_package_data=True,
     python_requires=">=3.7",
-    install_requires=[
-        'robotframework>=4.0',
-        'Click>=7.0',
-        'toml>=0.10.2',
-        'colorama>=0.4.3',
-        'pathspec==0.9.0'
-    ],
+    install_requires=["robotframework>=4.0", "Click>=7.0", "toml>=0.10.2", "colorama>=0.4.3", "pathspec==0.9.0"],
     extras_requires={
-        'dev': ['pytest', 'pylama', 'pylama_pylint', 'coverage', 'invoke', 'jinja2'],
-        'doc': ['sphinx', 'sphinx_rtd_theme']
+        "dev": ["pytest", "pylama", "pylama_pylint", "coverage", "invoke", "jinja2"],
+        "doc": ["sphinx", "sphinx_rtd_theme"],
     },
-    entry_points={'console_scripts': ['robotidy=robotidy.cli:cli']},
+    entry_points={"console_scripts": ["robotidy=robotidy.cli:cli"]},
 )
