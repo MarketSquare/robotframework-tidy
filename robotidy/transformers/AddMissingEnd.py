@@ -40,10 +40,10 @@ class AddMissingEnd(ModelTransformer):
         outside = []
         if not node.end:
             node.body, outside = self.collect_inside_statements(node)
-            orelse = self.get_last_or_else(node)
-            if orelse:
-                orelse.body, outside_orelse = self.collect_inside_statements(orelse)
-                outside += outside_orelse
+            or_else = self.get_last_or_else(node)
+            if or_else:
+                or_else.body, outside_or_else = self.collect_inside_statements(or_else)
+                outside += outside_or_else
         self.fix_end(node)
         return (node, *outside)
 
@@ -95,7 +95,7 @@ class AddMissingEnd(ModelTransformer):
     def get_last_or_else(node):
         if not node.orelse:
             return None
-        orelse = node.orelse
-        while orelse.orelse:
-            orelse = orelse.orelse
-        return orelse
+        or_else = node.orelse
+        while or_else.orelse:
+            or_else = or_else.orelse
+        return or_else
