@@ -161,7 +161,11 @@ class OrderSettings(ModelTransformer):
             trailing_non_data.insert(0, trailing_after.pop())
         not_settings += trailing_after
         node.body = (
-            comment + self.add_in_order(before, settings) + not_settings + self.add_in_order(after, settings) + trailing_non_data
+            comment
+            + self.add_in_order(before, settings)
+            + not_settings
+            + self.add_in_order(after, settings)
+            + trailing_non_data
         )
         return node
 
