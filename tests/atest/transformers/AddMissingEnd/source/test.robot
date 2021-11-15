@@ -111,6 +111,11 @@ Mixed For and If
         IF    ${condition}
             Log    foo${x}
 
+Bad Indent
+    IF    ${i}==1
+    Log    "one"
+    END
+
 *** Keywords ***
 Missing In For
     FOR    ${x}    IN    foo    bar
@@ -231,3 +236,14 @@ Nested For With Identical Indent
     Log    ${x}${y}${z}
     END
     END
+
+Bad Indent
+    IF    ${i}==1
+    Log    "one"
+    END
+
+   IF    ${i}>5
+   Log    ${i}
+   ELSE
+   Log    ${i}+1
+   END
