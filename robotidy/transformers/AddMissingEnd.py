@@ -53,7 +53,7 @@ class AddMissingEnd(ModelTransformer):
             indent = node.header.tokens[0]
         else:
             indent = Token(Token.SEPARATOR, self.formatting_config.separator)
-        node.end = End([indent, Token(Token.END, "END"), Token(Token.EOL)])
+        node.end = End([indent, Token(Token.END, Token.END), Token(Token.EOL)])
 
     @staticmethod
     def fix_header_name(node, header_name):
