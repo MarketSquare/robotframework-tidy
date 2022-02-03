@@ -33,10 +33,14 @@ class SplitTooLongLine(ModelTransformer):
     See https://robotidy.readthedocs.io/en/latest/transformers/SplitTooLongLine.html for more examples.
     """
 
-    def __init__(self, line_length: int = 120, split_on_every_arg: bool = False):
+    def __init__(self, line_length: int = None, split_on_every_arg: bool = False):
         super().__init__()
-        self.line_length = line_length
+        self._line_length = line_length
         self.split_on_every_arg = split_on_every_arg
+
+    @property
+    def line_length(self):
+        return self.formatting_config.line_length if self._line_length is None else self._line_length
 
     @check_start_end_line
     def visit_KeywordCall(self, node):  # noqa
