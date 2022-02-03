@@ -38,6 +38,7 @@ TRANSFORMERS = [
     "RenameTestCases",
     "RenameKeywords",
     "ReplaceReturns",
+    "InlineIf",
 ]
 
 
