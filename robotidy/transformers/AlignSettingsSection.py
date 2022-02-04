@@ -118,11 +118,11 @@ class AlignSettingsSection(ModelTransformer):
             arg_indent = self.argument_indent if keyword_arg else 0
             if keyword_arg and index != 0:
                 return (
-                        max(
-                            (look_up[index] - len(token.value) - arg_indent + 4),
-                            self.formatting_config.space_count,
-                        )
-                        * " "
+                    max(
+                        (look_up[index] - len(token.value) - arg_indent + 4),
+                        self.formatting_config.space_count,
+                    )
+                    * " "
                 )
             else:
                 return (look_up[index] - len(token.value) + arg_indent + 4) * " "
