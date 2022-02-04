@@ -41,3 +41,21 @@ class TestAlignVariablesSection:
 
     def test_multiline_with_blank(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, source="multiline_with_blank.robot")
+
+    def test_fixed_tests(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME, source="tests.robot", expected="tests_fixed.robot", config=":min_width=30"
+        )
+
+    def test_fixed_tests_zero(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME, source="tests.robot", expected="tests_fixed_one.robot", config=":min_width=1"
+        )
+
+    def test_fixed_all_columns(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            source="tests.robot",
+            expected="all_columns_fixed.robot",
+            config=":min_width=20:up_to_column=0",
+        )
