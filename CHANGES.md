@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Transformers
+- Changed behaviour of `DiscardEmptySections` transformer. Now by default section with only comments are not considered empty. 
+  Configure `allow_only_comments` to `False` if you want to remove those sections ([#235](https://github.com/MarketSquare/robotframework-tidy/issues/235))
+
 ## 1.6.2
 
 ### Fixes
