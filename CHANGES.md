@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Transformers
+- Add `min_width` parameter to `AlignTestCases` transformer. It allows to set minimal width of data column ([#242](https://github.com/MarketSquare/robotframework-tidy/issues/242))
+
 ## 1.6.2
 
 ### Fixes
