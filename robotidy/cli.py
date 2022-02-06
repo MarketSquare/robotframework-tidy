@@ -13,6 +13,7 @@ from robotidy.utils import (
     remove_rst_formatting,
     RecommendationFinder,
 )
+from robotidy.decorators import catch_exceptions
 from robotidy.version import __version__
 
 
@@ -73,7 +74,7 @@ class TransformType(click.ParamType):
                 f"Invalid {name} transformer configuration. "
                 f"Parameters should be provided in format name=value, delimited by :"
             )
-            raise ValueError(exc)
+            raise ValueError(exc)  # TODO check when it's raised vs transformers/init
         return name, args
 
 
@@ -321,6 +322,7 @@ def print_transformers_list():
 )
 @click.version_option(version=__version__, prog_name="robotidy")
 @click.pass_context
+@catch_exceptions
 def cli(
     ctx: click.Context,
     transform: List[Tuple[str, List]],
