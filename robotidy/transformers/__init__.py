@@ -61,17 +61,22 @@ def import_transformer(name, args):
 
 
 def resolve_args(transformer, spec, args):
+    if args and not spec.argument_names:
+        raise InvalidParameterError(transformer, " This transformer does not accept arguments but they were provided.")
+    arg_names = [arg.split("=")[0] for arg in args]
+    for arg in arg_names:
+        # it's fine to only check for first non-matching parameter
+        if arg not in spec.argument_names:
+            similar_finder = RecommendationFinder()
+            similar = similar_finder.find_similar(arg, spec.argument_names)
+            if not similar:
+                arg_names = "\n".join(spec.argument_names)
+                similar = f" This transformer accepts following arguments: {arg_names}"
+            raise InvalidParameterError(transformer, similar) from None
     try:
         return spec.resolve(args)
-    except ValueError:
-        arg_names = [arg.split("=")[0] for arg in args]
-        similar = ""
-        for arg in arg_names:
-            # it's fine to only check for first non-matching parameter
-            if arg not in spec.argument_names:
-                similar_finder = RecommendationFinder()
-                similar = similar_finder.find_similar(arg, spec.argument_names)
-        raise InvalidParameterError(transformer, similar) from None
+    except ValueError as err:
+        raise InvalidParameterError(transformer, f" {err}") from None
 
 
 def load_transformer(name, args):

@@ -66,15 +66,7 @@ class TransformType(click.ParamType):
     name = "transform"
 
     def convert(self, value, param, ctx):
-        name = ""
-        try:
-            name, args = split_args_from_name_or_path(value.replace(" ", ""))
-        except ValueError:
-            exc = (
-                f"Invalid {name} transformer configuration. "
-                f"Parameters should be provided in format name=value, delimited by :"
-            )
-            raise ValueError(exc)  # TODO check when it's raised vs transformers/init
+        name, args = split_args_from_name_or_path(value.replace(" ", ""))
         return name, args
 
 

@@ -53,15 +53,23 @@ class TestCli:
         transformers = load_transformers([(transf, []) for transf in custom_order], {}, force_order=True)
         assert all(t1.__class__.__name__ == t2 for t1, t2 in zip(transformers, custom_order))
 
-    # TODO: raise exception if kwarg does not match
-    # def test_not_existing_configurable(self):
-    #     expected_output = "Usage: cli [OPTIONS] [PATH(S)]\n\n" \
-    #                       "Error: Invalid configurable name: 'missing_configurable' for transformer: " \
-    #                       "'DiscardEmptySections'\n"
-    #
-    #     args = '--transform DiscardEmptySections:allow_only_commentss=True -'.split()
-    #     result = run_tidy(args, exit_code=2)
-    #     assert expected_output == result.output
+    def test_not_existing_configurable_similar(self):
+        expected_output = "Error: DiscardEmptySections: Failed to import. " \
+                          "Verify if correct name or configuration was provided. Did you mean:\n" \
+                          "    allow_only_comments\n"
+
+        args = '--transform DiscardEmptySections:allow_only_commentss=True -'.split()
+        result = run_tidy(args, exit_code=1)
+        assert result.output == expected_output
+
+    def test_not_existing_configurable(self):
+        expected_output = "Error: DiscardEmptySections: Failed to import. " \
+                          "Verify if correct name or configuration was provided. " \
+                          "This transformer accepts following arguments: allow_only_comments\n"
+
+        args = '--transform DiscardEmptySections:invalid=True -'.split()
+        result = run_tidy(args, exit_code=1)
+        assert result.output == expected_output
 
     def test_invalid_configurable_usage(self):
         expected_output = (
@@ -79,11 +87,21 @@ class TestCli:
         result = run_tidy(args, exit_code=1)
         assert result.output == expected_output
 
-    # def test_invalid_argument_type_for_transform(self):
-    #     expected_output = "Importing 'robotidy.transformers.DiscardEmptySections' failed:  'DicardEmptySection'"
-    #     args = '--transform DiscardEmptySections:allow_only_comments=true'.split()
-    #     result = run_tidy(args, exit_code=1)
-    #     assert expected_output == str(result.exception)
+    def test_invalid_argument_type_for_transform(self):
+        expected_output = "Error: AlignVariablesSection: Failed to import. " \
+                          "Verify if correct name or configuration was provided. " \
+                          "Argument 'up_to_column' got value '1a' that cannot be converted to integer.\n"
+        args = '--transform AlignVariablesSection:up_to_column=1a -'.split()
+        result = run_tidy(args, exit_code=1)
+        assert result.output == expected_output
+
+    def test_transform_without_args(self):
+        expected_output = "Error: AddMissingEnd: Failed to import. " \
+                          "Verify if correct name or configuration was provided. " \
+                          "This transformer does not accept arguments but they were provided.\n"
+        args = '--transform AddMissingEnd:made_up=value -'.split()
+        result = run_tidy(args, exit_code=1)
+        assert result.output == expected_output
 
     def test_find_project_root_from_src(self, test_data_dir):
         src = test_data_dir / "nested" / "test.robot"
