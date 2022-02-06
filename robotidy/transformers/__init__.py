@@ -64,7 +64,7 @@ def resolve_args(transformer, spec, args):
     try:
         return spec.resolve(args)
     except ValueError:
-        arg_names = [arg.split('=')[0] for arg in args]
+        arg_names = [arg.split("=")[0] for arg in args]
         similar = ""
         for arg in arg_names:
             # it's fine to only check for first non-matching parameter
@@ -94,6 +94,13 @@ def join_configs(args, config):
     return temp_args
 
 
+def get_args(transformer, allowed_mapped, config):
+    try:
+        return join_configs(allowed_mapped.get(transformer, ()), config.get(transformer, ()))
+    except ValueError:
+        raise InvalidParameterFormatError(transformer) from None
+
+
 def load_transformers(allowed_transformers, config, allow_disabled=False, force_order=False):
     """Dynamically load all classes from this file with attribute `name` defined in allowed_transformers"""
     loaded_transformers = []
@@ -101,10 +108,7 @@ def load_transformers(allowed_transformers, config, allow_disabled=False, force_
     if not force_order:
         for name in TRANSFORMERS:
             if not allowed_mapped or name in allowed_mapped:
-                try:
-                    args = join_configs(allowed_mapped.get(name, ()), config.get(name, ()))
-                except ValueError:
-                    raise InvalidParameterFormatError(name) from None
+                args = get_args(name, allowed_mapped, config)
                 imported_class = load_transformer(name, args)
                 if imported_class is None:
                     continue
@@ -113,7 +117,7 @@ def load_transformers(allowed_transformers, config, allow_disabled=False, force_
                     loaded_transformers.append(imported_class)
     for name in allowed_mapped:
         if force_order or name not in TRANSFORMERS:
-            args = join_configs(allowed_mapped.get(name, ()), config.get(name, ()))
+            args = get_args(name, allowed_mapped, config)
             imported_class = load_transformer(name, args)
             if imported_class is not None:
                 loaded_transformers.append(imported_class)

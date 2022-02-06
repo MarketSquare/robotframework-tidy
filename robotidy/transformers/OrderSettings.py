@@ -1,7 +1,7 @@
-import click
 from robot.api.parsing import ModelTransformer, EmptyLine, Comment, Token
 
 from robotidy.decorators import check_start_end_line
+from robotidy.exceptions import InvalidParameterValueError
 
 
 class OrderSettings(ModelTransformer):
@@ -69,8 +69,7 @@ class OrderSettings(ModelTransformer):
         self.keyword_settings = {*self.keyword_before, *self.keyword_after}
         self.test_settings = {*self.test_before, *self.test_after}
 
-    @staticmethod
-    def get_order(order, default, name_map):
+    def get_order(self, order, default, name_map):
         if order is None:
             return default
         if not order:
@@ -79,11 +78,11 @@ class OrderSettings(ModelTransformer):
         try:
             return [name_map[part] for part in parts]
         except KeyError:
-            raise click.BadOptionUsage(
-                option_name="transform",
-                message=f"Invalid configurable value: '{order}' for order for OrderSettings transformer."
-                f" Custom order should be provided in comma separated list with valid setting names:\n"
-                f"{sorted(name_map.keys())}",
+            raise InvalidParameterValueError(
+                self.__class__.__name__,
+                "order",
+                order,
+                f"Custom order should be provided in comma separated list with valid setting names:\n{sorted(name_map.keys())}",
             )
 
     def parse_order(self, keyword_before, keyword_after, test_before, test_after):

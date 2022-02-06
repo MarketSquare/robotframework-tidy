@@ -6,12 +6,16 @@ class InvalidParameterValueError(Exception):
 
 class InvalidParameterError(Exception):
     def __init__(self, transformer, similar):
-        super().__init__(f"{transformer}: Failed to import. Verify if correct name or configuration was provided.{similar}")
+        super().__init__(
+            f"{transformer}: Failed to import. Verify if correct name or configuration was provided.{similar}"
+        )
 
 
 class InvalidParameterFormatError(Exception):
     def __init__(self, transformer):
-        super().__init__(f"{transformer}: Invalid parameter format. Pass parameters using MyTransformer:param_name=value syntax.")
+        super().__init__(
+            f"{transformer}: Invalid parameter format. Pass parameters using MyTransformer:param_name=value syntax."
+        )
 
 
 class ImportTransformerError(ValueError):

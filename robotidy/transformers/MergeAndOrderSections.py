@@ -72,8 +72,13 @@ class MergeAndOrderSections(ModelTransformer):
         for part in parts:
             parsed_order.append(map.get(part, None))
         if any(header not in parsed_order for header in default_order) and len(parsed_order) != len(default_order):
-            raise InvalidParameterValueError(self.__class__.__name__, "order", order, "Custom order should be provided in comma separated list with all section names:\n"
-                                                        "order=comments,settings,variables,testcases,variables")
+            raise InvalidParameterValueError(
+                self.__class__.__name__,
+                "order",
+                order,
+                "Custom order should be provided in comma separated list with all section names:\n"
+                "order=comments,settings,variables,testcases,variables",
+            )
         return parsed_order
 
     def visit_File(self, node):  # noqa
