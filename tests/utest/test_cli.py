@@ -34,7 +34,8 @@ class TestCli:
     )
     def test_not_existing_transformer(self, name, similar):
         expected_output = (
-            f"Error: Importing transformer '{name}' failed. " f"Verify if correct name or configuration was provided.{similar}\n"
+            f"Error: Importing transformer '{name}' failed. "
+            f"Verify if correct name or configuration was provided.{similar}\n"
         )
         args = f"--transform {name} --transform MissingTransformer --transform DiscardEmptySections -".split()
         result = run_tidy(args, exit_code=1)
@@ -54,20 +55,24 @@ class TestCli:
         assert all(t1.__class__.__name__ == t2 for t1, t2 in zip(transformers, custom_order))
 
     def test_not_existing_configurable_similar(self):
-        expected_output = "Error: DiscardEmptySections: Failed to import. " \
-                          "Verify if correct name or configuration was provided. Did you mean:\n" \
-                          "    allow_only_comments\n"
+        expected_output = (
+            "Error: DiscardEmptySections: Failed to import. "
+            "Verify if correct name or configuration was provided. Did you mean:\n"
+            "    allow_only_comments\n"
+        )
 
-        args = '--transform DiscardEmptySections:allow_only_commentss=True -'.split()
+        args = "--transform DiscardEmptySections:allow_only_commentss=True -".split()
         result = run_tidy(args, exit_code=1)
         assert result.output == expected_output
 
     def test_not_existing_configurable(self):
-        expected_output = "Error: DiscardEmptySections: Failed to import. " \
-                          "Verify if correct name or configuration was provided. " \
-                          "This transformer accepts following arguments: allow_only_comments\n"
+        expected_output = (
+            "Error: DiscardEmptySections: Failed to import. "
+            "Verify if correct name or configuration was provided. "
+            "This transformer accepts following arguments: allow_only_comments\n"
+        )
 
-        args = '--transform DiscardEmptySections:invalid=True -'.split()
+        args = "--transform DiscardEmptySections:invalid=True -".split()
         result = run_tidy(args, exit_code=1)
         assert result.output == expected_output
 
@@ -81,25 +86,31 @@ class TestCli:
         assert result.output == expected_output
 
     def test_too_many_arguments_for_transform(self):
-        expected_output = "Error: DiscardEmptySections: Invalid parameter format. " \
-                          "Pass parameters using MyTransformer:param_name=value syntax.\n"
+        expected_output = (
+            "Error: DiscardEmptySections: Invalid parameter format. "
+            "Pass parameters using MyTransformer:param_name=value syntax.\n"
+        )
         args = "--transform DiscardEmptySections:allow_only_comments:False -".split()
         result = run_tidy(args, exit_code=1)
         assert result.output == expected_output
 
     def test_invalid_argument_type_for_transform(self):
-        expected_output = "Error: AlignVariablesSection: Failed to import. " \
-                          "Verify if correct name or configuration was provided. " \
-                          "Argument 'up_to_column' got value '1a' that cannot be converted to integer.\n"
-        args = '--transform AlignVariablesSection:up_to_column=1a -'.split()
+        expected_output = (
+            "Error: AlignVariablesSection: Failed to import. "
+            "Verify if correct name or configuration was provided. "
+            "Argument 'up_to_column' got value '1a' that cannot be converted to integer.\n"
+        )
+        args = "--transform AlignVariablesSection:up_to_column=1a -".split()
         result = run_tidy(args, exit_code=1)
         assert result.output == expected_output
 
     def test_transform_without_args(self):
-        expected_output = "Error: AddMissingEnd: Failed to import. " \
-                          "Verify if correct name or configuration was provided. " \
-                          "This transformer does not accept arguments but they were provided.\n"
-        args = '--transform AddMissingEnd:made_up=value -'.split()
+        expected_output = (
+            "Error: AddMissingEnd: Failed to import. "
+            "Verify if correct name or configuration was provided. "
+            "This transformer does not accept arguments but they were provided.\n"
+        )
+        args = "--transform AddMissingEnd:made_up=value -".split()
         result = run_tidy(args, exit_code=1)
         assert result.output == expected_output
 

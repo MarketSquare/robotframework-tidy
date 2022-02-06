@@ -64,7 +64,9 @@ class TestMergeAndOrderSections:
             source="order.robot",
             exit_code=1,
         )
-        expected_output = f"Error: {self.TRANSFORMER_NAME}: Invalid 'order' parameter value: '{parameter}'. " \
-                          "Custom order should be provided in comma separated list with all section names:\n" \
-                          "order=comments,settings,variables,testcases,variables\n"
+        expected_output = (
+            f"Error: {self.TRANSFORMER_NAME}: Invalid 'order' parameter value: '{parameter}'. "
+            "Custom order should be provided in comma separated list with all section names:\n"
+            "order=comments,settings,variables,testcases,variables\n"
+        )
         assert expected_output == result.output

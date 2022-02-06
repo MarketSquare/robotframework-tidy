@@ -4,7 +4,12 @@ import functools
 import click
 
 from robotidy.utils import node_within_lines
-from robotidy.exceptions import InvalidParameterValueError, InvalidParameterError, InvalidParameterFormatError, ImportTransformerError
+from robotidy.exceptions import (
+    InvalidParameterValueError,
+    InvalidParameterError,
+    InvalidParameterFormatError,
+    ImportTransformerError,
+)
 
 
 def check_start_end_line(func):
@@ -39,7 +44,12 @@ def catch_exceptions(func):
             return functools.partial(catch_exceptions)
         try:
             return func(*args, **kwargs)
-        except (InvalidParameterValueError, InvalidParameterError, InvalidParameterFormatError, ImportTransformerError) as err:
+        except (
+            InvalidParameterValueError,
+            InvalidParameterError,
+            InvalidParameterFormatError,
+            ImportTransformerError,
+        ) as err:
             print(f"Error: {err}")
             sys.exit(1)
         except (click.exceptions.ClickException, click.exceptions.Exit):
@@ -51,4 +61,5 @@ def catch_exceptions(func):
             )
             err.args = (err.args[0] + message,) + err.args[1:]
             raise err
+
     return wrapper
