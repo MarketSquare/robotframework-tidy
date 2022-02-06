@@ -13,6 +13,7 @@ from robot.utils.importer import Importer
 from robot.errors import DataError
 
 from robotidy.utils import RecommendationFinder
+from robotidy.exceptions import InvalidParameterError, InvalidParameterFormatError, ImportTransformerError
 
 
 TRANSFORMERS = [
@@ -40,23 +41,37 @@ TRANSFORMERS = [
 ]
 
 
-class ImportTransformerError(ValueError):
-    pass
+IMPORTER = Importer()
 
 
 def import_transformer(name, args):
+    short_name = name.split(".")[-1]
     try:
-        return Importer().import_class_or_module(name, instantiate_with_args=args)
-    except DataError as err:
-        if "Creating instance failed" in str(err):
-            raise err from None
-        short_name = name.split(".")[-1]
+        imported_class = IMPORTER.import_class_or_module(name)
+        spec = IMPORTER._get_arg_spec(imported_class)
+        positional, named = resolve_args(short_name, spec, args)
+    except DataError:
         similar_finder = RecommendationFinder()
         similar = similar_finder.find_similar(short_name, TRANSFORMERS)
         raise ImportTransformerError(
             f"Importing transformer '{short_name}' failed. "
             f"Verify if correct name or configuration was provided.{similar}"
         ) from None
+    return imported_class(*positional, **dict(named))
+
+
+def resolve_args(transformer, spec, args):
+    try:
+        return spec.resolve(args)
+    except ValueError:
+        arg_names = [arg.split('=')[0] for arg in args]
+        similar = ""
+        for arg in arg_names:
+            # it's fine to only check for first non-matching parameter
+            if arg not in spec.argument_names:
+                similar_finder = RecommendationFinder()
+                similar = similar_finder.find_similar(arg, spec.argument_names)
+        raise InvalidParameterError(transformer, similar) from None
 
 
 def load_transformer(name, args):
@@ -86,7 +101,10 @@ def load_transformers(allowed_transformers, config, allow_disabled=False, force_
     if not force_order:
         for name in TRANSFORMERS:
             if not allowed_mapped or name in allowed_mapped:
-                args = join_configs(allowed_mapped.get(name, ()), config.get(name, ()))
+                try:
+                    args = join_configs(allowed_mapped.get(name, ()), config.get(name, ()))
+                except ValueError:
+                    raise InvalidParameterFormatError(name) from None
                 imported_class = load_transformer(name, args)
                 if imported_class is None:
                     continue

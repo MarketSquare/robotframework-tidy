@@ -1,5 +1,7 @@
 from robot.api.parsing import Token, ModelTransformer, SectionHeader, EmptyLine
 from robot.parsing.model.statements import Statement
+
+from robotidy.exceptions import InvalidParameterValueError
 import click
 
 
@@ -43,8 +45,7 @@ class MergeAndOrderSections(ModelTransformer):
         self.sections_order = self.parse_order(order)
         self.create_comment_section = create_comment_section
 
-    @staticmethod
-    def parse_order(order):
+    def parse_order(self, order):
         default_order = (
             Token.COMMENT_HEADER,
             Token.SETTING_HEADER,
@@ -71,12 +72,8 @@ class MergeAndOrderSections(ModelTransformer):
         for part in parts:
             parsed_order.append(map.get(part, None))
         if any(header not in parsed_order for header in default_order) and len(parsed_order) != len(default_order):
-            raise click.BadOptionUsage(
-                option_name="transform",
-                message=f"Invalid configurable value: '{order}' for order for MergeAndOrderSections transformer."
-                f" Custom order should be provided in comma separated list with all section names:\n"
-                f"order=comments,settings,variables,testcases,variables",
-            )
+            raise InvalidParameterValueError(self.__class__.__name__, "order", order, "Custom order should be provided in comma separated list with all section names:\n"
+                                                        "order=comments,settings,variables,testcases,variables")
         return parsed_order
 
     def visit_File(self, node):  # noqa
