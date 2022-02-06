@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Other
+- Refactored Robotidy acceptance tests 
+
 ## 1.6.2
 
 ### Fixes
