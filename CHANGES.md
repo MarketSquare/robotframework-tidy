@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Other
+- Change exceptions to be more user-friendly. Robotidy will try to recognize common mistakes. For unknown issues there is extra message with link to our bug board ([#250](https://github.com/MarketSquare/robotframework-tidy/issues/250))
+
 ## 1.6.2
 
 ### Fixes
