@@ -33,12 +33,10 @@ class TestNormalizeTags:
             exit_code=1,
         )
         expected_output = (
-            f"Importing 'robotidy.transformers.{self.TRANSFORMER_NAME}' failed: "
-            "Creating instance failed: BadOptionUsage: "
-            f"Invalid configurable value: 'invalid' for case for {self.TRANSFORMER_NAME}"
-            f" transformer. Supported cases: lowercase, uppercase, titlecase."
+            f"Error: {self.TRANSFORMER_NAME}: Invalid 'case' parameter value: 'invalid'. "
+            f"Supported cases: lowercase, uppercase, titlecase.\n"
         )
-        assert expected_output in str(result.exception)
+        assert expected_output == result.output
 
     def test_only_remove_duplicates(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, source="duplicates.robot", config=f":normalize_case=False")

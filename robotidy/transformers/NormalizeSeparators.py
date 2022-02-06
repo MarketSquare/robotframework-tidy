@@ -42,7 +42,8 @@ class NormalizeSeparators(ModelTransformer):
                     self.__class__.__name__,
                     "sections",
                     sections,
-                    f"Sections to be transformed should be provided in comma separated list with valid section names: \n{sorted(default)}",
+                    f"Sections to be transformed should be provided in comma separated "
+                    f"list with valid section names:\n{sorted(default)}",
                 )
             parsed_sections.add(part)
         return parsed_sections

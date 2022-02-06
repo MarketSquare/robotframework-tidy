@@ -78,7 +78,7 @@ class NormalizeAssignments(ModelTransformer):
         if value not in types:
             raise InvalidParameterValueError(
                 self.__class__.__name__,
-                "value",
+                value,
                 name,
                 "Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign",
             )

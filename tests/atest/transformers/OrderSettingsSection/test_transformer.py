@@ -67,13 +67,11 @@ class TestOrderSettingsSection:
             exit_code=1,
         )
         expected_output = (
-            f"Importing 'robotidy.transformers.{self.TRANSFORMER_NAME}' failed: "
-            "Creating instance failed: BadOptionUsage: "
-            f"Invalid configurable value: 'invalid,imports,settings' for group_order for OrderSettingsSection transformer."
-            f" Custom order should be provided in comma separated list with valid group names:\n"
-            f"('documentation', 'imports', 'settings', 'tags')"
+            f"Error: {self.TRANSFORMER_NAME}: Invalid 'group_order' parameter value: 'invalid,imports,settings'. "
+            "Custom order should be provided in comma separated list with valid group names:\n"
+            "('documentation', 'imports', 'settings', 'tags')\n"
         )
-        assert expected_output in str(result.exception)
+        assert expected_output == result.output
 
     def test_custom_order_inside_group(self):
         run_tidy_and_compare(
@@ -91,13 +89,11 @@ class TestOrderSettingsSection:
             exit_code=1,
         )
         expected_output = (
-            f"Importing 'robotidy.transformers.{self.TRANSFORMER_NAME}' failed: "
-            "Creating instance failed: BadOptionUsage: "
-            f"Invalid configurable value: 'invalid,metadata' for order for OrderSettingsSection transformer."
-            f" Custom order should be provided in comma separated list with valid group names:\n"
-            f"['documentation', 'metadata']"
+            f"Error: {self.TRANSFORMER_NAME}: Invalid 'order' parameter value: 'invalid,metadata'. "
+            f"Custom order should be provided in comma separated list with valid group names:\n"
+            f"['documentation', 'metadata']\n"
         )
-        assert expected_output in str(result.exception)
+        assert expected_output == result.output
 
     def test_remote_library_as_external(self):
         run_tidy_and_compare(

@@ -49,10 +49,8 @@ class TestOrderSettings:
             exit_code=1,
         )
         expected_output = (
-            f"Importing 'robotidy.transformers.{self.TRANSFORMER_NAME}' failed: "
-            "Creating instance failed: BadOptionUsage: "
-            f"Invalid configurable value: 'tags,invalid' for order for OrderSettings transformer."
+            f"Error: {self.TRANSFORMER_NAME}: Invalid 'order' parameter value: 'tags,invalid'."
             f" Custom order should be provided in comma separated list with valid setting names:\n"
-            f"['arguments', 'documentation', 'return', 'tags', 'teardown', 'timeout']"
+            f"['arguments', 'documentation', 'return', 'tags', 'teardown', 'timeout']\n"
         )
-        assert expected_output in str(result.exception)
+        assert expected_output == result.output

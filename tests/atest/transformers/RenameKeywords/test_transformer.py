@@ -39,12 +39,10 @@ class TestRenameKeywords:
             exit_code=1,
         )
         expected_output = (
-            f"Importing 'robotidy.transformers.{self.TRANSFORMER_NAME}' failed: "
-            "Creating instance failed: BadOptionUsage: Invalid configurable value: "
-            rf"'[\911]' for replace_pattern in {self.TRANSFORMER_NAME} transformer. "
-            "It should be a valid regex expression. Regex error: 'bad escape \\9'"
+            rf"Error: {self.TRANSFORMER_NAME}: Invalid 'replace_pattern' parameter value: '[\911]'. "
+            "It should be a valid regex expression. Regex error: 'bad escape \\9'\n"
         )
-        assert expected_output in str(result.exception)
+        assert expected_output == result.output
 
     def test_with_library_name(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, source="with_library_name.robot")

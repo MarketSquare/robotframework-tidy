@@ -34,11 +34,11 @@ class TestCli:
     )
     def test_not_existing_transformer(self, name, similar):
         expected_output = (
-            f"Importing transformer '{name}' failed. " f"Verify if correct name or configuration was provided.{similar}"
+            f"Error: Importing transformer '{name}' failed. " f"Verify if correct name or configuration was provided.{similar}\n"
         )
         args = f"--transform {name} --transform MissingTransformer --transform DiscardEmptySections -".split()
         result = run_tidy(args, exit_code=1)
-        assert expected_output in str(result.exception)
+        assert expected_output == result.output
 
     def test_transformer_order(self):
         order_1 = ["NormalizeSeparators", "OrderSettings"]
@@ -65,18 +65,19 @@ class TestCli:
 
     def test_invalid_configurable_usage(self):
         expected_output = (
-            "Importing transformer 'DiscardEmptySections=allow_only_comments=False' failed. "
-            "Verify if correct name or configuration was provided"
+            "Error: Importing transformer 'DiscardEmptySections=allow_only_comments=False' failed. "
+            "Verify if correct name or configuration was provided.\n"
         )
         args = "--transform DiscardEmptySections=allow_only_comments=False -".split()
         result = run_tidy(args, exit_code=1)
-        assert expected_output in str(result.exception)
+        assert result.output == expected_output
 
     def test_too_many_arguments_for_transform(self):
-        expected_output = "not enough values to unpack (expected 2, got 1)"
+        expected_output = "Error: DiscardEmptySections: Invalid parameter format. " \
+                          "Pass parameters using MyTransformer:param_name=value syntax.\n"
         args = "--transform DiscardEmptySections:allow_only_comments:False -".split()
         result = run_tidy(args, exit_code=1)
-        assert str(result.exception) == expected_output
+        assert result.output == expected_output
 
     # def test_invalid_argument_type_for_transform(self):
     #     expected_output = "Importing 'robotidy.transformers.DiscardEmptySections' failed:  'DicardEmptySection'"

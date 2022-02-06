@@ -33,7 +33,7 @@ class NormalizeTags(ModelTransformer):
             self.case_function = self.CASE_FUNCTIONS[self.case]
         except KeyError:
             raise InvalidParameterValueError(
-                self.__class__.__name__, "case", case, "Supported cases: lowercase, uppercase, titlecase.\n"
+                self.__class__.__name__, "case", case, "Supported cases: lowercase, uppercase, titlecase."
             )
 
     def visit_Tags(self, node):  # noqa
