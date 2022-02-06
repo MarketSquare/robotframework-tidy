@@ -3,7 +3,7 @@
 ## Unreleased
 
 ### Other
-- Refactored Robotidy acceptance tests 
+- Refactored Robotidy acceptance tests ([#248](https://github.com/MarketSquare/robotframework-tidy/issues/248))
 
 ## 1.6.2
 
