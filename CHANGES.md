@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Transformers
+- Add `skip_types` parameter to `AlignVariablesSection` which allows to not align variables of particular type ([#225](https://github.com/MarketSquare/robotframework-tidy/issues/225))
+
 ## 1.6.2
 
 ### Fixes

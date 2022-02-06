@@ -41,3 +41,19 @@ class TestAlignVariablesSection:
 
     def test_multiline_with_blank(self):
         run_tidy_and_compare(self.TRANSFORMER_NAME, source="multiline_with_blank.robot")
+
+    def test_align_variables_skip(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME, source="tests.robot", expected="tests_skip.robot", config=":skip_types=dict,list"
+        )
+
+    def test_align_variables_skip_scalar(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            source="align_selected.robot",
+            expected="align_selected_skip.robot",
+            config=":skip_types=scalar",
+        )
+
+    def test_multiline_skip(self):
+        run_tidy_and_compare(self.TRANSFORMER_NAME, source="multiline_skip.robot", config=":skip_types=list,dict")
