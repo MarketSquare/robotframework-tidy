@@ -2,6 +2,29 @@
 
 ## Unreleased
 
+###
+- It is now possible to force overwrite with ``--check`` and ``--overwrite`` flags. Going over possible options:
+
+  Transform the files and return 0 even if there were files transformed.
+  ```commandline
+  robotidy src
+  ```
+  
+  Don't transform the files and return 0 even if there would be files transformed
+  ```commandline
+  robotidy --no-overwrite src
+  ```
+  
+  Don't transform the files and return 1 if there would be files transformed
+  ```commandline
+  robotidy --check src
+  ```
+  
+  Transform the files and return 1 if there are files transformed
+  ```commandline
+  robotidy --check --overwrite src
+  ```
+
 ## 1.6.2
 
 ### Fixes
