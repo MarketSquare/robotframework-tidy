@@ -3,7 +3,8 @@
 ## Unreleased
 
 ###
-- It is now possible to force overwrite with ``--check`` and ``--overwrite`` flags. Going over possible options:
+- It is now possible to force overwrite with ``--check`` and ``--overwrite`` flags ([#239](https://github.com/MarketSquare/robotframework-tidy/issues/239)).
+  Going over possible options:
 
   Transform the files and return 0 even if there were files transformed.
   ```commandline
