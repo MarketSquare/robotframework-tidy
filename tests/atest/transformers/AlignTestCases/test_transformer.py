@@ -29,3 +29,16 @@ class TestAlignTestCases:
             expected="no_header_col_only_headers.robot",
             config=":only_with_headers=True",
         )
+
+    def test_fixed(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME, source="test.robot", expected="test_fixed.robot", config=":min_width=30"
+        )
+
+    def test_for_fixed(self):
+        run_tidy_and_compare(
+            self.TRANSFORMER_NAME,
+            source="templated_for_loops_and_without.robot",
+            expected="templated_for_loops_and_without_fixed.robot",
+            config=":min_width=25",
+        )
