@@ -11,6 +11,9 @@
   Configure `allow_only_comments` to `False` if you want to remove those sections ([#235](https://github.com/MarketSquare/robotframework-tidy/issues/235))
 - Add `skip_types` parameter to `AlignVariablesSection` which allows to not align variables of particular type ([#225](https://github.com/MarketSquare/robotframework-tidy/issues/225))
 
+### Other
+- Refactored Robotidy acceptance tests ([#248](https://github.com/MarketSquare/robotframework-tidy/issues/248))
+
 ## 1.6.2
 
 ### Fixes

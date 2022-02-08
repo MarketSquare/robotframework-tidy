@@ -1,10 +1,12 @@
 from pathlib import Path
 
-from .. import run_tidy, compare_file
+from .. import TransformerAcceptanceTest
 
 
-class TestExternalTransformer:
+class TestExternalTransformer(TransformerAcceptanceTest):
+    TRANSFORMER_NAME = "ExternalTransformer"
+
     def test_external_transformer_works(self):
         transformer_path = Path(Path(__file__).parent, "ExternalTransformer.py")
-        run_tidy("ExternalTransformer", args=f"--transform {transformer_path}:param=2".split(), source="tests.robot")
-        compare_file("ExternalTransformer", "tests.robot")
+        self.run_tidy(args=f"--transform {transformer_path}:param=2".split(), source="tests.robot")
+        self.compare_file("tests.robot")
