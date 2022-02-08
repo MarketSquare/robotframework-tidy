@@ -45,9 +45,7 @@ class TestNormalizeAssignments(TransformerAcceptanceTest):
             exit_code=1,
         )
         expected_output = (
-            f"Importing 'robotidy.transformers.{self.TRANSFORMER_NAME}' failed: "
-            "Creating instance failed: BadOptionUsage: Invalid configurable value: = "
-            f"for {param_name} for AssignmentNormalizer transformer. "
-            "Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign"
+            f"Error: {self.TRANSFORMER_NAME}: Invalid '=' parameter value: '{param_name}'. "
+            "Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign\n"
         )
-        assert expected_output in str(result.exception)
+        assert expected_output == result.output

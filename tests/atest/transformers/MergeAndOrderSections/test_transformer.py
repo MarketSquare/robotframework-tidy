@@ -62,10 +62,8 @@ class TestMergeAndOrderSections(TransformerAcceptanceTest):
             exit_code=1,
         )
         expected_output = (
-            f"Importing 'robotidy.transformers.{self.TRANSFORMER_NAME}' failed: "
-            "Creating instance failed: BadOptionUsage: Invalid configurable value: "
-            f"'{parameter}' for order for {self.TRANSFORMER_NAME} transformer. "
+            f"Error: {self.TRANSFORMER_NAME}: Invalid 'order' parameter value: '{parameter}'. "
             "Custom order should be provided in comma separated list with all section names:\n"
-            "order=comments,settings,variables,testcases,variables"
+            "order=comments,settings,variables,testcases,variables\n"
         )
-        assert expected_output in str(result.exception)
+        assert expected_output == result.output

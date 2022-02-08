@@ -12,6 +12,7 @@
 - Add `skip_types` parameter to `AlignVariablesSection` which allows to not align variables of particular type ([#225](https://github.com/MarketSquare/robotframework-tidy/issues/225))
 
 ### Other
+- Change exceptions to be more user-friendly. Robotidy will try to recognize common mistakes. For unknown issues there is extra message with link to our bug board ([#250](https://github.com/MarketSquare/robotframework-tidy/issues/250))
 - Refactored Robotidy acceptance tests ([#248](https://github.com/MarketSquare/robotframework-tidy/issues/248))
 
 ## 1.6.2

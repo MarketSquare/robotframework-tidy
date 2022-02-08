@@ -30,11 +30,8 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
             exit_code=1,
         )
         expected_output = (
-            f"Importing 'robotidy.transformers.{self.TRANSFORMER_NAME}' failed: "
-            "Creating instance failed: BadOptionUsage: "
-            f"Invalid configurable value: 'settings,invalid' for sections for {self.TRANSFORMER_NAME}"
-            f" transformer. Sections to be transformed should be provided in comma separated list "
-            f"with valid section names:\n"
-            f"['comments', 'keywords', 'settings', 'testcases', 'variables']"
+            f"Error: {self.TRANSFORMER_NAME}: Invalid 'sections' parameter value: 'settings,invalid'. "
+            f"Sections to be transformed should be provided in comma separated list with valid section names:\n"
+            f"['comments', 'keywords', 'settings', 'testcases', 'variables']\n"
         )
-        assert expected_output in str(result.exception)
+        assert expected_output == result.output
