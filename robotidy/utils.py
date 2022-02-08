@@ -1,12 +1,17 @@
 import os
 import ast
-from typing import List, Optional
+from typing import List, Optional, Iterable
 import difflib
 
-from robot.api.parsing import ModelVisitor, Token
+from packaging import version
+from robot.version import VERSION as RF_VERSION
+from robot.api.parsing import ModelVisitor, Token, If, IfHeader, End
 from robot.parsing.model import Statement
 from robot.utils.robotio import file_writer
 from click import style
+
+
+ROBOT_VERSION = version.parse(RF_VERSION)
 
 
 class StatementLinesCollector(ModelVisitor):
@@ -285,3 +290,38 @@ def is_blank_multiline(statements):
         and statements[1].type == "ARGUMENT"
         and not statements[1].value
     )
+
+
+def replace_indent_in_lines(node, indent_len):
+    tokens = []
+    for line in node.lines:
+        if line and line[0].type == Token.SEPARATOR:
+            indent_token = Token(Token.SEPARATOR, len(line[0].value) * " " + indent_len)
+            line[0] = indent_token
+        tokens.extend(line)
+    return tokens
+
+
+def create_statement_from_tokens(statement, tokens: Iterable, indent: Token):
+    return statement([indent, Token(statement.type), *tokens])
+
+
+def wrap_in_if_and_replace_statement(node, statement, default_separator):
+    if len(node.data_tokens) < 2:
+        return node
+    condition = node.data_tokens[1]
+    indent = Token(Token.SEPARATOR, node.tokens[0].value + default_separator)
+    indented_tokens = replace_indent_in_lines(node, default_separator)
+    body = create_statement_from_tokens(statement=statement, tokens=indented_tokens[4:], indent=indent)
+    header = IfHeader(
+        [
+            node.tokens[0],
+            Token(Token.IF),
+            Token(Token.SEPARATOR, default_separator),
+            condition,
+            Token(Token.EOL),
+        ]
+    )
+    end = End.from_params(indent=node.tokens[0].value)
+    if_block = If(header=header, body=[body], orelse=None, end=end)
+    return if_block

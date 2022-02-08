@@ -73,4 +73,28 @@ If you don't want to align test case section that does not contain header names 
 
     robotidy -c AlignSettingsSection:only_with_hedaers:True <src>
 
+Fixed width of column
+-------------------------
+It's possible to set fixed minimal width of column. To configure it use ``min_width`` parameter::
+
+    robotidy --configure AlignTestCases:min_width=30 src
+
+This configuration respects ``up_to_column`` parameter.
+
+   .. code-tab:: robotframework Before
+
+        *** Test Cases ***    baz    qux
+        # some comment
+        test1    hi    hello
+        test2 long test name    asdfasdf    asdsdfgsdfg
+            bar1  bar2
+
+   .. code-tab:: robotframework After
+
+        *** Test Cases ***            baz                           qux
+        # some comment
+        test1                         hi                            hello
+        test2 long test name          asdfasdf                      asdsdfgsdfg
+                                      bar1                          bar2
+
 Supports global formatting params: ``--startline``, ``--endline``.
