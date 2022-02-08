@@ -40,8 +40,9 @@ class AlignVariablesSection(ModelTransformer):
     See https://robotidy.readthedocs.io/en/latest/transformers/AlignVariablesSection.html for more examples.
     """
 
-    def __init__(self, up_to_column: int = 2, skip_types: str = ""):
+    def __init__(self, up_to_column: int = 2, skip_types: str = "", min_width: int = None):
         self.up_to_column = up_to_column - 1
+        self.min_width = min_width
         self.skip_types = self.parse_skip_types(skip_types)
 
     @staticmethod
@@ -101,11 +102,7 @@ class AlignVariablesSection(ModelTransformer):
                 up_to = self.up_to_column if self.up_to_column != -1 else len(line) - 2
                 for index, token in enumerate(line[:-2]):
                     aligned_statement.append(token)
-                    separator = (
-                        (look_up[index] - len(token.value) + 4) * " "
-                        if index < up_to
-                        else self.formatting_config.space_count * " "
-                    )
+                    separator = self.calc_separator(index, up_to, token, look_up)
                     aligned_statement.append(Token(Token.SEPARATOR, separator))
                 last_token = line[-2]
                 # remove leading whitespace before token
@@ -114,6 +111,14 @@ class AlignVariablesSection(ModelTransformer):
                 aligned_statement.append(line[-1])  # eol
             aligned_statements.append(Statement.from_tokens(aligned_statement))
         return aligned_statements
+
+    def calc_separator(self, index, up_to, token, look_up):
+        if index < up_to:
+            if self.min_width:
+                return max(self.min_width - len(token.value), self.formatting_config.space_count) * " "
+            return (look_up[index] - len(token.value) + 4) * " "
+        else:
+            return self.formatting_config.space_count * " "
 
     def create_look_up(self, statements):
         look_up = defaultdict(int)

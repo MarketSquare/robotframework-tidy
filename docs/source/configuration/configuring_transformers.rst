@@ -34,3 +34,15 @@ The basic syntax for supplying parameters is ``TRANSFORMER_NAME:param=value``. Y
     robotidy --configure TRANSFORMER_NAME:param=value:param=value2 src
 
 To see how to configure transformers using configuration files see :ref:`config-file`.
+
+Migrating from robot.tidy
+-------------------------
+If you want to achieve the output closest to the output from old robot.tidy use following configuration::
+
+    [tool.robotidy]
+    configure = [
+        "MergeAndOrderSections: order = settings,variables,testcases,keywords,comments",
+        "OrderSettings: keyword_before = arguments,documentation,tags,timeout",
+        "OrderSettingsSection: new_lines_between_groups = 0",
+        "AlignSettingsSection: min_width = 18"
+    ]

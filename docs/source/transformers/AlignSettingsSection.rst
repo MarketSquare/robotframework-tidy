@@ -143,3 +143,31 @@ AlignSettingsSection does also support global formatting params ``startline`` an
       Metadata  Version  2.0  # this should be not aligned
       Metadata    More Info       For more information about *Robot Framework* see http://robotframework.org
       Metadata    Executed At     {HOST}
+
+Fixed width of column
+-------------------------
+It's possible to set fixed minimal width of column. To configure it use ``min_width`` parameter::
+
+    robotidy --configure AlignSettingsSection:min_width=30 src
+
+This configuration respects ``up_to_column`` parameter but ignores ``argument_indent``.
+
+   .. code-tab:: robotframework Before
+
+        *** Settings ***
+        Library    CustomLibrary   WITH NAME  name
+        Library    ArgsedLibrary   ${1}  ${2}  ${3}
+
+        Documentation     Example using the space separated format.
+        ...  and this documentation is multiline
+        ...  where this line should go I wonder?
+
+   .. code-tab:: robotframework After
+
+        *** Settings ***
+        Library                      CustomLibrary   WITH NAME  name
+        Library                      ArgsedLibrary   ${1}  ${2}  ${3}
+
+        Documentation                Example using the space separated format.
+        ...                          and this documentation is multiline
+        ...                          where this line should go I wonder?
