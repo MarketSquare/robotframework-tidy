@@ -5,14 +5,13 @@ class TestDiscardEmptySections:
     TRANSFORMER_NAME = "DiscardEmptySections"
 
     def test_removes_empty_sections(self):
-        run_tidy_and_compare(self.TRANSFORMER_NAME, source="removes_empty_sections.robot")
+        run_tidy_and_compare(self.TRANSFORMER_NAME, source="removes_empty_sections.robot", config=":allow_only_comments=False")
 
     def test_removes_empty_sections_except_comments(self):
         run_tidy_and_compare(
             self.TRANSFORMER_NAME,
             source="removes_empty_sections.robot",
             expected="removes_empty_sections_except_comments.robot",
-            config=":allow_only_comments=True",
         )
 
     def test_remove_selected_empty_node(self):

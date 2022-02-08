@@ -7,6 +7,8 @@
 - Add `min_width` parameter to `AlignSettingsSection` transformer. It allows to set minimal width of data column ([#242](https://github.com/MarketSquare/robotframework-tidy/issues/242))
 - Add `min_width` parameter to `AlignVariablesSection` transformer. It allows to set minimal width of data column ([#242](https://github.com/MarketSquare/robotframework-tidy/issues/242))
 - Add `min_width` parameter to `AlignTestCases` transformer. It allows to set minimal width of data column ([#242](https://github.com/MarketSquare/robotframework-tidy/issues/242))
+- Changed behaviour of `DiscardEmptySections` transformer. Now by default section with only comments are not considered empty. 
+  Configure `allow_only_comments` to `False` if you want to remove those sections ([#235](https://github.com/MarketSquare/robotframework-tidy/issues/235))
 
 ## 1.6.2
 
