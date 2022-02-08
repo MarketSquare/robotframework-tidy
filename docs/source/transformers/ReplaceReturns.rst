@@ -8,7 +8,7 @@ ReplaceReturns is included in default transformers but it can be also run separa
 
    robotidy --transform ReplaceReturns src
 
-This transformer replace ``[Return]`` statement to ``RETURN``:
+This transformer replace ``[Return]`` statement with ``RETURN``:
 
 .. tabs::
 

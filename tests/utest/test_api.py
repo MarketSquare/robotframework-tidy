@@ -19,7 +19,7 @@ class TestAPI:
             "    One More\n"
             "\n\n"
             "*** Comments ***\n"
-            "robocop: disable=all"
+            "# robocop: disable=all\n"
         )
         config_path = str(Path(Path(__file__).parent, "testdata", "only_pyproject"))
         source = str(
@@ -39,7 +39,7 @@ class TestAPI:
     def test_with_default_parameters(self):
         expected = (
             "*** Comments ***\n"
-            "robocop: disable=all\n"
+            "# robocop: disable=all\n"
             "\n"
             "*** Test Cases ***\n"
             "Test\n"
@@ -47,7 +47,9 @@ class TestAPI:
             "        [Tags]        sometag\n"
             "        Pass\n"
             "        Keyword\n"
-            "        One More\n"
+            "        One More\n\n"
+            "*** Keywords ***\n"
+            "# This section is considered to be empty.\n"
         )
 
         config_path = "."
@@ -68,7 +70,7 @@ class TestAPI:
     def test_with_tab_separator(self):
         expected = (
             "*** Comments ***\n"
-            "robocop: disable=all\n"
+            "# robocop: disable=all\n"
             "\n"
             "*** Test Cases ***\n"
             "Test\n"
@@ -76,7 +78,9 @@ class TestAPI:
             "\t[Tags]\tsometag\n"
             "\tPass\n"
             "\tKeyword\n"
-            "\tOne More\n"
+            "\tOne More\n\n"
+            "*** Keywords ***\n"
+            "# This section is considered to be empty.\n"
         )
 
         config_path = "."

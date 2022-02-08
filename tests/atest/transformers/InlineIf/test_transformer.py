@@ -1,13 +1,11 @@
-from .. import run_tidy_and_compare
+from .. import TransformerAcceptanceTest
 
 
-class TestInlineIf:
+class TestInlineIf(TransformerAcceptanceTest):
     TRANSFORMER_NAME = "InlineIf"
 
     def test_transformer(self):
-        run_tidy_and_compare(self.TRANSFORMER_NAME, source="test.robot")
+        self.compare(source="test.robot")
 
     def test_transformer_skip_else(self):
-        run_tidy_and_compare(
-            self.TRANSFORMER_NAME, source="test.robot", expected="test_skip_else.robot", config=":skip_else=True"
-        )
+        self.compare(source="test.robot", expected="test_skip_else.robot", config=":skip_else=True")

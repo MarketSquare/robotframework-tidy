@@ -1,9 +1,9 @@
 import pytest
 
-from .. import run_tidy_and_compare
+from .. import TransformerAcceptanceTest
 
 
-class TestReplaceReturns:
+class TestReplaceReturns(TransformerAcceptanceTest):
     TRANSFORMER_NAME = "ReplaceReturns"
 
     @pytest.mark.parametrize(
@@ -18,19 +18,17 @@ class TestReplaceReturns:
         ],
     )
     def test_transformer(self, source):
-        run_tidy_and_compare(self.TRANSFORMER_NAME, source=source)
+        self.compare(source=source)
 
     def test_return_selected(self):
-        run_tidy_and_compare(
-            self.TRANSFORMER_NAME,
+        self.compare(
             source="test.robot",
             expected="test_selected.robot",
             config=" --startline 10 --endline 17",
         )
 
     def test_return_from_keyword_if_selected(self):
-        run_tidy_and_compare(
-            self.TRANSFORMER_NAME,
+        self.compare(
             source="return_from_keyword_if.robot",
             expected="return_from_keyword_if_selected.robot",
             config=" --startline 11 --endline 15",
