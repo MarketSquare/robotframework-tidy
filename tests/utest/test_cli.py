@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from unittest.mock import MagicMock, Mock
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 from click import FileError, NoSuchOption
@@ -11,6 +11,7 @@ from robotidy.transformers import load_transformers
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
 from robotidy.transformers.ReplaceRunKeywordIf import ReplaceRunKeywordIf
 from robotidy.transformers.SmartSortKeywords import SmartSortKeywords
+import robotidy.utils
 from robotidy.utils import node_within_lines
 from robotidy.version import __version__
 from .utils import run_tidy
@@ -284,10 +285,22 @@ class TestCli:
     @pytest.mark.parametrize("source, return_status", [("golden.robot", 0), ("not_golden.robot", 1)])
     def test_check(self, source, return_status, test_data_dir):
         source = test_data_dir / "check" / source
-        run_tidy(
-            ["--check", "--overwrite", "--transform", "NormalizeSectionHeaderName", str(source)],
-            exit_code=return_status,
-        )
+        with patch("robotidy.app.ModelWriter") as mock_writer:
+            run_tidy(
+                ["--check", "--transform", "NormalizeSectionHeaderName", str(source)],
+                exit_code=return_status,
+            )
+            mock_writer.assert_not_called()
+
+    @pytest.mark.parametrize("source, return_status", [("golden.robot", 0), ("not_golden.robot", 1)])
+    def test_check_overwrite(self, source, return_status, test_data_dir):
+        source = test_data_dir / "check" / source
+        with patch("robotidy.app.ModelWriter") as mock_writer:
+            run_tidy(
+                ["--check", "--overwrite", "--transform", "NormalizeSectionHeaderName", str(source)],
+                exit_code=return_status,
+            )
+            mock_writer.assert_called()
 
     def test_diff(self, test_data_dir):
         source = test_data_dir / "check" / "not_golden.robot"

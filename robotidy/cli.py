@@ -219,7 +219,7 @@ def print_transformers_list():
 )
 @click.option(
     "--overwrite/--no-overwrite",
-    default=True,
+    default=None,
     help="Write changes back to file",
     show_default=True,
 )
@@ -363,6 +363,10 @@ def cli(
 
     if config and verbose:
         click.echo(f"Loaded {config} configuration file")
+
+    if overwrite is None:
+        # None is default, with check not set -> overwrite, with check set -> overwrite only when overwrite flag is set
+        overwrite = not check
 
     formatting_config = GlobalFormattingConfig(
         space_count=spacecount,
