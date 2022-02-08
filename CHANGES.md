@@ -4,6 +4,7 @@
 
 ### Transformers
 - New `ReplaceReturns` transformer that replaces return statements (such as `[Return]` setting or `Return From Keyword` keyword) with `RETURN` statement ([#231](https://github.com/MarketSquare/robotframework-tidy/issues/231))
+- New `InlineIf` transformer that replaces IF blocks with inline IF ([#230](https://github.com/MarketSquare/robotframework-tidy/issues/230))
 - Add `min_width` parameter to `AlignSettingsSection` transformer. It allows to set minimal width of data column ([#242](https://github.com/MarketSquare/robotframework-tidy/issues/242))
 - Add `min_width` parameter to `AlignVariablesSection` transformer. It allows to set minimal width of data column ([#242](https://github.com/MarketSquare/robotframework-tidy/issues/242))
 - Add `min_width` parameter to `AlignTestCases` transformer. It allows to set minimal width of data column ([#242](https://github.com/MarketSquare/robotframework-tidy/issues/242))
@@ -36,7 +37,6 @@
 ### Other
 - Change exceptions to be more user-friendly. Robotidy will try to recognize common mistakes. For unknown issues there is extra message with link to our bug board ([#250](https://github.com/MarketSquare/robotframework-tidy/issues/250))
 - Refactored Robotidy acceptance tests ([#248](https://github.com/MarketSquare/robotframework-tidy/issues/248))
->>>>>>> 3e0ea9d3512c8553f822793091071027ce0c131e
 
 ## 1.6.2
 

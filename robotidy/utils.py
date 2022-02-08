@@ -39,10 +39,12 @@ class GlobalFormattingConfig:
         start_line: Optional[int],
         end_line: Optional[int],
         separator: str,
+        line_length: int,
     ):
         self.start_line = start_line
         self.end_line = end_line
         self.space_count = space_count
+        self.line_length = line_length
 
         if separator == "space":
             self.separator = " " * space_count

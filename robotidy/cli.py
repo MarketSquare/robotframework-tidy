@@ -283,6 +283,13 @@ def print_transformers_list():
     show_default=True,
 )
 @click.option(
+    "--line-length",
+    default=120,
+    type=int,
+    help="Max allowed characters per line",
+    show_default=True,
+)
+@click.option(
     "--list",
     "-l",
     is_eager=True,
@@ -332,6 +339,7 @@ def cli(
     separator: Optional[str],
     startline: Optional[int],
     endline: Optional[int],
+    line_length: int,
     list: bool,
     desc: Optional[str],
     output: Optional[Path],
@@ -374,6 +382,7 @@ def cli(
         start_line=startline,
         separator=separator,
         end_line=endline,
+        line_length=line_length,
     )
     tidy = Robotidy(
         transformers=transform,
