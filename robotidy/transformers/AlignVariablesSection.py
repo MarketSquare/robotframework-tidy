@@ -1,10 +1,10 @@
 from collections import defaultdict
 
-import click
 from robot.api.parsing import ModelTransformer, Token
 from robot.parsing.model import Statement
 
 from robotidy.utils import node_outside_selection, round_to_four, tokens_by_lines, left_align, is_blank_multiline
+from robotidy.exceptions import InvalidParameterValueError
 
 
 class AlignVariablesSection(ModelTransformer):
@@ -45,19 +45,18 @@ class AlignVariablesSection(ModelTransformer):
         self.min_width = min_width
         self.skip_types = self.parse_skip_types(skip_types)
 
-    @staticmethod
-    def parse_skip_types(skip_types):
+    def parse_skip_types(self, skip_types):
         allow_types = {"dict": "&", "list": "@", "scalar": "$"}
         ret = set()
         if not skip_types:
             return ret
         for skip_type in skip_types.split(","):
             if skip_type not in allow_types:
-                raise click.BadOptionUsage(
-                    option_name="transform",
-                    message=f"Invalid configurable value: '{skip_type}' for skip_type for AlignVariablesSection "
-                    "transformer. Variable types should be provided in comma separated list:\n"
-                    f"skip_type=dict,list,scalar",
+                raise InvalidParameterValueError(
+                    self.__class__.__name__,
+                    "skip_type",
+                    skip_type,
+                    "Variable types should be provided in comma separated list:\nskip_type=dict,list,scalar"
                 )
             ret.add(allow_types[skip_type])
         return ret
