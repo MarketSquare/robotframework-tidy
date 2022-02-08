@@ -56,3 +56,13 @@ class TestAlignSettingsSection(TransformerAcceptanceTest):
 
     def test_doc_multiline_and_whitespace(self):
         self.compare(source="blank_line_and_whitespace.robot")
+
+    def test_fixed_test(self):
+        self.compare(source="test.robot", expected="test_fixed.robot", config=":min_width=35")
+
+    def test_fixed_all_columns(self):
+        self.compare(
+            source="test.robot",
+            expected="all_columns_fixed.robot",
+            config=":min_width=20:up_to_column=0",
+        )

@@ -2,7 +2,7 @@ from .. import TransformerAcceptanceTest
 
 
 class Test{{ transformer_name }}(TransformerAcceptanceTest):
-    TRANSFORMER_NAME = '{{ transformer_name }}'
+    TRANSFORMER_NAME = "{{ transformer_name }}"
 
     def test_transformer(self):
-        self.compare(source='test.robot', expected='test.robot')
+        self.compare(source="test.robot", expected="test.robot")

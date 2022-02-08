@@ -7,7 +7,14 @@ from click.testing import CliRunner
 import pytest
 
 from robotidy.cli import cli
-from robotidy.utils import decorate_diff_with_color
+from robotidy.utils import decorate_diff_with_color, ROBOT_VERSION
+
+
+VERSION_MATRIX = {
+    "ReplaceReturns": 5,
+    "InlineIf": 5,
+    "ReplaceBreakContinue": 5,
+}
 
 
 def display_file_diff(expected, actual):
@@ -29,6 +36,8 @@ class TransformerAcceptanceTest:
     TRANSFORMER_NAME: str = "DUMMY"
 
     def compare(self, source: str, expected: Optional[str] = None, config: str = ""):
+        if not enabled_in_version(self.TRANSFORMER_NAME):
+            return
         if expected is None:
             expected = source
         self.run_tidy(args=f"--transform {self.TRANSFORMER_NAME}{config}".split(), source=source)
@@ -61,3 +70,9 @@ class TransformerAcceptanceTest:
         if not filecmp.cmp(expected, actual):
             display_file_diff(expected, actual)
             pytest.fail(f"File {actual_name} is not same as expected")
+
+
+def enabled_in_version(transformer_name: str) -> bool:
+    if transformer_name in VERSION_MATRIX:
+        return ROBOT_VERSION.major >= VERSION_MATRIX[transformer_name]
+    return True
