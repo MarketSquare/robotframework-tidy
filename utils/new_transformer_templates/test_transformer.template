@@ -2,8 +2,8 @@ from .. import run_tidy_and_compare
 
 
 class Test{{ transformer_name }}:
-    TRANSFORMER_NAME = '{{ transformer_name }}'
+    TRANSFORMER_NAME = "{{ transformer_name }}"
 
     def test_transformer(self):
-        run_tidy_and_compare(self.TRANSFORMER_NAME, source='test.robot', expected='test.robot')
+        run_tidy_and_compare(self.TRANSFORMER_NAME, source="test.robot", expected="test.robot")
 

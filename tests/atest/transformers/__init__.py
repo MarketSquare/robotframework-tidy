@@ -7,7 +7,14 @@ from click.testing import CliRunner
 import pytest
 
 from robotidy.cli import cli
-from robotidy.utils import decorate_diff_with_color
+from robotidy.utils import decorate_diff_with_color, ROBOT_VERSION
+
+
+VERSION_MATRIX = {
+    "ReplaceReturns": 5,
+    "InlineIf": 5,
+    "ReplaceBreakContinue": 5,
+}
 
 
 def run_tidy(transformer_name: str, args: List[str] = None, source: str = None, exit_code: int = 0):
@@ -55,7 +62,15 @@ def display_file_diff(expected, actual):
     print(colorized_output)
 
 
+def enabled_in_version(transformer_name: str) -> bool:
+    if transformer_name in VERSION_MATRIX:
+        return ROBOT_VERSION.major >= VERSION_MATRIX[transformer_name]
+    return True
+
+
 def run_tidy_and_compare(transformer_name: str, source: str, expected: Optional[str] = None, config: str = ""):
+    if not enabled_in_version(transformer_name):
+        return
     if expected is None:
         expected = source
     run_tidy(transformer_name, args=f"--transform {transformer_name}{config}".split(), source=source)

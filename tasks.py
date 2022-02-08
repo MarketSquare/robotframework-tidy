@@ -54,8 +54,7 @@ def _add_transformer_to_internal_list(name):
             if line == "]\n":
                 after_bracket = True
             data[after_bracket].append(line)
-    data[0][-1] = data[0][-1].rstrip() + ",\n"
-    data[0].append(f"    '{name}'\n")
+    data[0].append(f"    '{name}',\n")
     lines = data[0] + data[1]
     with open(path, "w") as f:
         f.writelines(lines)
