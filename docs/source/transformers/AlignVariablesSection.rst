@@ -72,7 +72,7 @@ You can configure it to align three columns::
 
 To align all columns set ``up_to_column`` to 0.
 
-Select lines to transform
+Select lines to align
 -------------------------
 AlignVariablesSection does also support global formatting params ``startline`` and ``endline``::
 
@@ -122,6 +122,44 @@ AlignVariablesSection does also support global formatting params ``startline`` a
         Keyword
             Keyword Call
 
+
+Select variable types to align
+-------------------------------
+It is possible to not align variables of given types. You can choose between following types: `scalar` (`$`), `list` (`@`),
+`dict` (`&`). Invalid variables - such as missing values or not left aligned - will be always aligned no matter the type.
+You can configure types to skip using `skip_types` parameter::
+
+    robotidy --configure AlignVariablesSection:skip_types=dict,list src
+
+`skip_types` accepts comma separated list of types.
+
+Using above configuration code will be aligned in following way:
+
+.. tabs::
+
+    .. code-tab:: robotframework Before
+
+        *** Variables ***
+        ${VARIABLE 1}  10  # comment
+        @{LIST}  a
+        ...    b
+        ...    c
+        ...    d
+        ${LONGER_NAME_THAT_GOES_AND_GOES}    longer value that goes and goes
+        &{SOME_DICT}    key=value  key2=value
+
+    .. code-tab:: robotframework After
+
+        *** Variables ***
+        ${VARIABLE 1}                           10    # comment
+        @{LIST}  a
+        ...    b
+        ...    c
+        ...    d
+        ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
+        &{SOME_DICT}    key=value  key2=value
+
+
 Fixed width of column
 -------------------------
 It's possible to set fixed minimal width of column. To configure it use ``min_width`` parameter::
@@ -155,3 +193,4 @@ This configuration respects ``up_to_column`` parameter:
         &{MULTILINE}        a=b
         ...                 b=c
         ...                 d=1
+
