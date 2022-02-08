@@ -1,21 +1,17 @@
-from .. import run_tidy_and_compare
+from .. import TransformerAcceptanceTest
 
 
-class TestNormalizeSectionHeaderName:
+class TestNormalizeSectionHeaderName(TransformerAcceptanceTest):
     TRANSFORMER_NAME = "NormalizeSectionHeaderName"
 
     def test_normalize_names(self):
-        run_tidy_and_compare(self.TRANSFORMER_NAME, source="tests.robot")
+        self.compare(source="tests.robot")
 
     def test_uppercase_names(self):
-        run_tidy_and_compare(
-            self.TRANSFORMER_NAME, source="tests.robot", expected="uppercase.robot", config=":uppercase=True"
-        )
+        self.compare(source="tests.robot", expected="uppercase.robot", config=":uppercase=True")
 
     def test_normalize_names_selected(self):
-        run_tidy_and_compare(
-            self.TRANSFORMER_NAME, source="tests.robot", expected="selected.robot", config=" --startline 5 --endline 6"
-        )
+        self.compare(source="tests.robot", expected="selected.robot", config=" --startline 5 --endline 6")
 
     def test_tasks(self):
-        run_tidy_and_compare(self.TRANSFORMER_NAME, source="task.robot")
+        self.compare(source="task.robot")

@@ -7,37 +7,14 @@ from click.testing import CliRunner
 import pytest
 
 from robotidy.cli import cli
-from robotidy.utils import decorate_diff_with_color
+from robotidy.utils import decorate_diff_with_color, ROBOT_VERSION
 
 
-def run_tidy(transformer_name: str, args: List[str] = None, source: str = None, exit_code: int = 0):
-    runner = CliRunner()
-    output_path = str(Path(Path(__file__).parent, "actual", source))
-    arguments = ["--output", output_path]
-    if args is not None:
-        arguments += args
-    if source is None:
-        source_path = str(Path(Path(__file__).parent, transformer_name, "source"))
-    else:
-        source_path = str(Path(Path(__file__).parent, transformer_name, "source", source))
-    cmd = arguments + [source_path]
-    result = runner.invoke(cli, cmd)
-    if result.exit_code != exit_code:
-        raise AssertionError(
-            f"robotidy exit code: {result.exit_code} does not match expected: {exit_code}. "
-            f"Exception description: {result.exception}"
-        )
-    return result
-
-
-def compare_file(transformer_name: str, actual_name: str, expected_name: str = None):
-    if expected_name is None:
-        expected_name = actual_name
-    expected = Path(Path(__file__).parent, transformer_name, "expected", expected_name)
-    actual = Path(Path(__file__).parent, "actual", actual_name)
-    if not filecmp.cmp(expected, actual):
-        display_file_diff(expected, actual)
-        pytest.fail(f"File {actual_name} is not same as expected")
+VERSION_MATRIX = {
+    "ReplaceReturns": 5,
+    "InlineIf": 5,
+    "ReplaceBreakContinue": 5,
+}
 
 
 def display_file_diff(expected, actual):
@@ -55,8 +32,47 @@ def display_file_diff(expected, actual):
     print(colorized_output)
 
 
-def run_tidy_and_compare(transformer_name: str, source: str, expected: Optional[str] = None, config: str = ""):
-    if expected is None:
-        expected = source
-    run_tidy(transformer_name, args=f"--transform {transformer_name}{config}".split(), source=source)
-    compare_file(transformer_name, source, expected)
+class TransformerAcceptanceTest:
+    TRANSFORMER_NAME: str = "DUMMY"
+
+    def compare(self, source: str, expected: Optional[str] = None, config: str = ""):
+        if not enabled_in_version(self.TRANSFORMER_NAME):
+            return
+        if expected is None:
+            expected = source
+        self.run_tidy(args=f"--transform {self.TRANSFORMER_NAME}{config}".split(), source=source)
+        self.compare_file(source, expected)
+
+    def run_tidy(self, args: List[str] = None, source: str = None, exit_code: int = 0):
+        runner = CliRunner()
+        output_path = str(Path(Path(__file__).parent, "actual", source))
+        arguments = ["--output", output_path]
+        if args is not None:
+            arguments += args
+        if source is None:
+            source_path = str(Path(Path(__file__).parent, self.TRANSFORMER_NAME, "source"))
+        else:
+            source_path = str(Path(Path(__file__).parent, self.TRANSFORMER_NAME, "source", source))
+        cmd = arguments + [source_path]
+        result = runner.invoke(cli, cmd)
+        if result.exit_code != exit_code:
+            raise AssertionError(
+                f"robotidy exit code: {result.exit_code} does not match expected: {exit_code}. "
+                f"Exception description: {result.exception}"
+            )
+        return result
+
+    def compare_file(self, actual_name: str, expected_name: str = None):
+        if expected_name is None:
+            expected_name = actual_name
+        expected = Path(Path(__file__).parent, self.TRANSFORMER_NAME, "expected", expected_name)
+        actual = Path(Path(__file__).parent, "actual", actual_name)
+        if not filecmp.cmp(expected, actual):
+            display_file_diff(expected, actual)
+            pytest.fail(f"File {actual_name} is not same as expected")
+
+
+def enabled_in_version(transformer_name: str) -> bool:
+    if transformer_name in VERSION_MATRIX:
+        return ROBOT_VERSION.major >= VERSION_MATRIX[transformer_name]
+    return True

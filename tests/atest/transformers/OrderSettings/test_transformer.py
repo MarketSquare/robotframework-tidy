@@ -1,13 +1,13 @@
 import pytest
 
-from .. import run_tidy_and_compare, run_tidy
+from .. import TransformerAcceptanceTest
 
 
-class TestOrderSettings:
+class TestOrderSettings(TransformerAcceptanceTest):
     TRANSFORMER_NAME = "OrderSettings"
 
     def test_order(self):
-        run_tidy_and_compare(self.TRANSFORMER_NAME, source="test.robot")
+        self.compare(source="test.robot")
 
     @pytest.mark.parametrize(
         "keyword_before, keyword_after, test_before, test_after, expected",
@@ -39,11 +39,10 @@ class TestOrderSettings:
             config += f":test_before={test_before}"
         if test_after is not None:
             config += f":test_after={test_after}"
-        run_tidy_and_compare(self.TRANSFORMER_NAME, source="test.robot", expected=expected, config=config)
+        self.compare(source="test.robot", expected=expected, config=config)
 
     def test_custom_order_invalid_param(self):
-        result = run_tidy(
-            self.TRANSFORMER_NAME,
+        result = self.run_tidy(
             args=f"--transform {self.TRANSFORMER_NAME}:keyword_before=documentation:keyword_after=tags,invalid".split(),
             source="test.robot",
             exit_code=1,

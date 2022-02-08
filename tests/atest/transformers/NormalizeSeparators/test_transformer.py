@@ -1,21 +1,19 @@
 import pytest
 
-from .. import run_tidy_and_compare, run_tidy
+from .. import TransformerAcceptanceTest
 
 
-class TestNormalizeSeparators:
+class TestNormalizeSeparators(TransformerAcceptanceTest):
     TRANSFORMER_NAME = "NormalizeSeparators"
 
     def test_normalize_separators(self):
-        run_tidy_and_compare(self.TRANSFORMER_NAME, source="test.robot")
+        self.compare(source="test.robot")
 
     def test_normalize_with_8_spaces(self):
-        run_tidy_and_compare(
-            self.TRANSFORMER_NAME, source="test.robot", expected="test_8spaces.robot", config=" --spacecount 8"
-        )
+        self.compare(source="test.robot", expected="test_8spaces.robot", config=" --spacecount 8")
 
     def test_pipes(self):
-        run_tidy_and_compare(self.TRANSFORMER_NAME, source="pipes.robot")
+        self.compare(source="pipes.robot")
 
     @pytest.mark.parametrize(
         "sections",
@@ -23,13 +21,10 @@ class TestNormalizeSeparators:
     )
     def test_disable_section(self, sections):
         expected = "empty_sections.robot" if not sections else sections.replace(",", "_") + ".robot"
-        run_tidy_and_compare(
-            self.TRANSFORMER_NAME, source="test.robot", expected=expected, config=f":sections={sections}"
-        )
+        self.compare(source="test.robot", expected=expected, config=f":sections={sections}")
 
     def test_configure_invalid_section(self):
-        result = run_tidy(
-            self.TRANSFORMER_NAME,
+        result = self.run_tidy(
             args=f"--transform {self.TRANSFORMER_NAME}:sections=settings,invalid".split(),
             source="test.robot",
             exit_code=1,
