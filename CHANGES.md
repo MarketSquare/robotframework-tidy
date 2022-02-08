@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Transformers
+- New `ReplaceReturns` transformer that replaces return statements (such as `[Return]` setting or `Return From Keyword` keyword) with `RETURN` statement ([#231](https://github.com/MarketSquare/robotframework-tidy/issues/231))
+
 ## 1.6.2
 
 ### Fixes
