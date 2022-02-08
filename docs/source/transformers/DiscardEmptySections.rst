@@ -26,7 +26,7 @@ DiscardEmptySections is included in the default transformers but it can be also 
 
 
         *** Keywords ***
-        # This section is considered to be empty.
+        # This section is not considered empty.
 
 
         *** Variables ***
@@ -45,31 +45,22 @@ DiscardEmptySections is included in the default transformers but it can be also 
             One More
 
 
+        *** Keywords ***
+        # This section is not considered empty.
+
+
         *** Comments ***
         robocop: disable=all
 
-Sections are considered empty if there is no data or there are only comments inside (with the exception
-for ``*** Comments ***`` section).
-You can leave sections with only comments by setting ``allow_only_comments`` parameter to True::
+Sections are considered empty if there are only empty lines inside.
+You can remove sections with only comments by setting ``allow_only_comments`` parameter to False. ``*** Comments ***``
+section with only comments is always considered as non-empty::
 
     robotidy --configure DiscardEmptySection:allow_only_comments=True
 
 .. tabs::
 
-    .. code-tab:: robotframework ``allow_only_comments=False`` (default)
-
-        *** Test Cases ***
-        Test
-            [Documentation]  doc
-            [Tags]  sometag
-            Pass
-            Keyword
-            One More
-
-        *** Comments ***
-        robocop: disable=all
-
-    .. code-tab:: robotframework ``allow_only_comments=True``
+    .. code-tab:: robotframework ``allow_only_comments=True`` (default)
 
         *** Test Cases ***
         Test
@@ -83,6 +74,20 @@ You can leave sections with only comments by setting ``allow_only_comments`` par
         # This section is considered to be empty.
 
         *** Comments ***
-        robocop: disable=all
+        # robocop: disable=all
+
+    .. code-tab:: robotframework ``allow_only_comments=False``
+
+        *** Test Cases ***
+        Test
+            [Documentation]  doc
+            [Tags]  sometag
+            Pass
+            Keyword
+            One More
+
+        *** Comments ***
+        # robocop: disable=all
+
 
 Supports global formatting params: ``--startline`` and ``--endline``.

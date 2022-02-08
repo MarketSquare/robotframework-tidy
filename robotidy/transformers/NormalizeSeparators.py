@@ -1,9 +1,9 @@
 from itertools import takewhile
 
-import click
 from robot.api.parsing import ModelTransformer, Token
 
 from robotidy.decorators import check_start_end_line
+from robotidy.exceptions import InvalidParameterValueError
 
 
 class NormalizeSeparators(ModelTransformer):
@@ -25,8 +25,7 @@ class NormalizeSeparators(ModelTransformer):
         self.indent = 0
         self.sections = self.parse_sections(sections)
 
-    @staticmethod
-    def parse_sections(sections):
+    def parse_sections(self, sections):
         default = {"comments", "settings", "testcases", "keywords", "variables"}
         if sections is None:
             return default
@@ -39,11 +38,12 @@ class NormalizeSeparators(ModelTransformer):
             if part and part[-1] != "s":
                 part += "s"
             if part not in default:
-                raise click.BadOptionUsage(
-                    option_name="transform",
-                    message=f"Invalid configurable value: '{sections}' for sections for NormalizeSeparators transformer."
-                    f" Sections to be transformed should be provided in comma separated list with valid section"
-                    f" names:\n{sorted(default)}",
+                raise InvalidParameterValueError(
+                    self.__class__.__name__,
+                    "sections",
+                    sections,
+                    f"Sections to be transformed should be provided in comma separated "
+                    f"list with valid section names:\n{sorted(default)}",
                 )
             parsed_sections.add(part)
         return parsed_sections

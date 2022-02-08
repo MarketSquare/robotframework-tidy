@@ -46,8 +46,9 @@ class AlignTestCases(ModelTransformer):
 
     ENABLED = False
 
-    def __init__(self, only_with_headers: bool = False):
+    def __init__(self, only_with_headers: bool = False, min_width: int = None):
         self.only_with_headers = only_with_headers
+        self.min_width = min_width
         self.templated = False
         self.widths = None
         self.test_name_len = 0
@@ -108,9 +109,14 @@ class AlignTestCases(ModelTransformer):
 
     def align_header(self, statement):
         tokens = []
+        # *** Test Cases ***            baz                            qux
+        # *** Test Cases ***      baz         qux
         for index, token in enumerate(statement.data_tokens[:-1]):
             tokens.append(token)
-            separator = (self.widths[index] - len(token.value) + 4) * " "
+            if self.min_width:
+                separator = max(self.formatting_config.space_count, self.min_width - len(token.value)) * " "
+            else:
+                separator = (self.widths[index] - len(token.value) + self.formatting_config.space_count) * " "
             tokens.append(Token(Token.SEPARATOR, separator))
         tokens.append(statement.data_tokens[-1])
         tokens.append(statement.tokens[-1])  # eol
@@ -125,7 +131,10 @@ class AlignTestCases(ModelTransformer):
             exp_pos = 0
             widths = self.get_widths(statement)
             for token, width in zip(strip_line, widths):
-                exp_pos += width + 4
+                if self.min_width:
+                    exp_pos += max(width + self.formatting_config.space_count, self.min_width)
+                else:
+                    exp_pos += width + self.formatting_config.space_count
                 if self.test_name_len:
                     if self.name_line == statement.lineno:
                         exp_pos -= self.test_name_len
@@ -142,7 +151,7 @@ class AlignTestCases(ModelTransformer):
             indent -= 1
         if not indent:
             return self.widths
-        return [max(width, indent * 4) for width in self.widths]
+        return [max(width, indent * self.formatting_config.space_count) for width in self.widths]
 
     def visit_SettingSection(self, node):  # noqa
         return node

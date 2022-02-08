@@ -2,7 +2,14 @@
 
 ## Unreleased
 
-###
+### Transformers
+- New `ReplaceReturns` transformer that replaces return statements (such as `[Return]` setting or `Return From Keyword` keyword) with `RETURN` statement ([#231](https://github.com/MarketSquare/robotframework-tidy/issues/231))
+- Add `min_width` parameter to `AlignSettingsSection` transformer. It allows to set minimal width of data column ([#242](https://github.com/MarketSquare/robotframework-tidy/issues/242))
+- Add `min_width` parameter to `AlignVariablesSection` transformer. It allows to set minimal width of data column ([#242](https://github.com/MarketSquare/robotframework-tidy/issues/242))
+- Add `min_width` parameter to `AlignTestCases` transformer. It allows to set minimal width of data column ([#242](https://github.com/MarketSquare/robotframework-tidy/issues/242))
+- Changed behaviour of `DiscardEmptySections` transformer. Now by default section with only comments are not considered empty. 
+  Configure `allow_only_comments` to `False` if you want to remove those sections ([#235](https://github.com/MarketSquare/robotframework-tidy/issues/235))
+- Add `skip_types` parameter to `AlignVariablesSection` which allows to not align variables of particular type ([#225](https://github.com/MarketSquare/robotframework-tidy/issues/225))
 - It is now possible to force overwrite with ``--check`` and ``--overwrite`` flags ([#239](https://github.com/MarketSquare/robotframework-tidy/issues/239)).
   Going over possible options:
 
@@ -25,6 +32,11 @@
   ```commandline
   robotidy --check --overwrite src
   ```
+
+### Other
+- Change exceptions to be more user-friendly. Robotidy will try to recognize common mistakes. For unknown issues there is extra message with link to our bug board ([#250](https://github.com/MarketSquare/robotframework-tidy/issues/250))
+- Refactored Robotidy acceptance tests ([#248](https://github.com/MarketSquare/robotframework-tidy/issues/248))
+>>>>>>> 3e0ea9d3512c8553f822793091071027ce0c131e
 
 ## 1.6.2
 

@@ -1,15 +1,14 @@
-from .. import run_tidy_and_compare
+from .. import TransformerAcceptanceTest
 
 
-class TestAddMissingEnd:
+class TestAddMissingEnd(TransformerAcceptanceTest):
     TRANSFORMER_NAME = "AddMissingEnd"
 
     def test_transformer(self):
-        run_tidy_and_compare(self.TRANSFORMER_NAME, source="test.robot", expected="test.robot")
+        self.compare(source="test.robot", expected="test.robot")
 
     def test_selected(self):
-        run_tidy_and_compare(
-            self.TRANSFORMER_NAME,
+        self.compare(
             source="test.robot",
             expected="test_selected.robot",
             config=" --startline 166 --endline 188",
