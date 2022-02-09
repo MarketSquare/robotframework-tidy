@@ -1,44 +1,36 @@
-from .. import run_tidy_and_compare, run_tidy
+from .. import TransformerAcceptanceTest
 
 
-class TestNormalizeTags:
+class TestNormalizeTags(TransformerAcceptanceTest):
     TRANSFORMER_NAME = "NormalizeTags"
 
     def test_default(self):
-        run_tidy_and_compare(self.TRANSFORMER_NAME, source="tests.robot", expected="lowercase.robot")
+        self.compare(source="tests.robot", expected="lowercase.robot")
 
     def test_lowercase(self):
-        run_tidy_and_compare(
-            self.TRANSFORMER_NAME,
+        self.compare(
             source="tests.robot",
             expected="lowercase.robot",
             config=f":case=lowercase:normalize_case=True",
         )
 
     def test_uppercase(self):
-        run_tidy_and_compare(
-            self.TRANSFORMER_NAME, source="tests.robot", expected="uppercase.robot", config=f":case=uppercase"
-        )
+        self.compare(source="tests.robot", expected="uppercase.robot", config=f":case=uppercase")
 
     def test_titlecase(self):
-        run_tidy_and_compare(
-            self.TRANSFORMER_NAME, source="tests.robot", expected="titlecase.robot", config=f":case=titlecase"
-        )
+        self.compare(source="tests.robot", expected="titlecase.robot", config=f":case=titlecase")
 
     def test_wrong_case(self):
-        result = run_tidy(
-            self.TRANSFORMER_NAME,
+        result = self.run_tidy(
             args=f"--transform {self.TRANSFORMER_NAME}:case=invalid".split(),
             source="tests.robot",
             exit_code=1,
         )
         expected_output = (
-            f"Importing 'robotidy.transformers.{self.TRANSFORMER_NAME}' failed: "
-            "Creating instance failed: BadOptionUsage: "
-            f"Invalid configurable value: 'invalid' for case for {self.TRANSFORMER_NAME}"
-            f" transformer. Supported cases: lowercase, uppercase, titlecase."
+            f"Error: {self.TRANSFORMER_NAME}: Invalid 'case' parameter value: 'invalid'. "
+            f"Supported cases: lowercase, uppercase, titlecase.\n"
         )
-        assert expected_output in str(result.exception)
+        assert expected_output == result.output
 
     def test_only_remove_duplicates(self):
-        run_tidy_and_compare(self.TRANSFORMER_NAME, source="duplicates.robot", config=f":normalize_case=False")
+        self.compare(source="duplicates.robot", config=f":normalize_case=False")

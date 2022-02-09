@@ -1,11 +1,11 @@
 import pytest
 
-from .. import run_tidy_and_compare
+from .. import TransformerAcceptanceTest
 
 
-class TestReplaceBreakContinue:
+class TestReplaceBreakContinue(TransformerAcceptanceTest):
     TRANSFORMER_NAME = "ReplaceBreakContinue"
 
     @pytest.mark.parametrize("source", ["test.robot", "errors.robot"])
     def test_transformer(self, source):
-        run_tidy_and_compare(self.TRANSFORMER_NAME, source=source)
+        self.compare(source=source)

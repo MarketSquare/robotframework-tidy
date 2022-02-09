@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from unittest.mock import MagicMock, Mock
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 from click import FileError, NoSuchOption
@@ -11,6 +11,7 @@ from robotidy.transformers import load_transformers
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
 from robotidy.transformers.ReplaceRunKeywordIf import ReplaceRunKeywordIf
 from robotidy.transformers.SmartSortKeywords import SmartSortKeywords
+import robotidy.utils
 from robotidy.utils import node_within_lines
 from robotidy.version import __version__
 from .utils import run_tidy
@@ -34,11 +35,12 @@ class TestCli:
     )
     def test_not_existing_transformer(self, name, similar):
         expected_output = (
-            f"Importing transformer '{name}' failed. " f"Verify if correct name or configuration was provided.{similar}"
+            f"Error: Importing transformer '{name}' failed. "
+            f"Verify if correct name or configuration was provided.{similar}\n"
         )
         args = f"--transform {name} --transform MissingTransformer --transform DiscardEmptySections -".split()
         result = run_tidy(args, exit_code=1)
-        assert expected_output in str(result.exception)
+        assert expected_output == result.output
 
     def test_transformer_order(self):
         order_1 = ["NormalizeSeparators", "OrderSettings"]
@@ -53,36 +55,65 @@ class TestCli:
         transformers = load_transformers([(transf, []) for transf in custom_order], {}, force_order=True)
         assert all(t1.__class__.__name__ == t2 for t1, t2 in zip(transformers, custom_order))
 
-    # TODO: raise exception if kwarg does not match
-    # def test_not_existing_configurable(self):
-    #     expected_output = "Usage: cli [OPTIONS] [PATH(S)]\n\n" \
-    #                       "Error: Invalid configurable name: 'missing_configurable' for transformer: " \
-    #                       "'DiscardEmptySections'\n"
-    #
-    #     args = '--transform DiscardEmptySections:allow_only_commentss=True -'.split()
-    #     result = run_tidy(args, exit_code=2)
-    #     assert expected_output == result.output
+    def test_not_existing_configurable_similar(self):
+        expected_output = (
+            "Error: DiscardEmptySections: Failed to import. "
+            "Verify if correct name or configuration was provided. Did you mean:\n"
+            "    allow_only_comments\n"
+        )
+
+        args = "--transform DiscardEmptySections:allow_only_commentss=True -".split()
+        result = run_tidy(args, exit_code=1)
+        assert result.output == expected_output
+
+    def test_not_existing_configurable(self):
+        expected_output = (
+            "Error: DiscardEmptySections: Failed to import. "
+            "Verify if correct name or configuration was provided. "
+            "This transformer accepts following arguments: allow_only_comments\n"
+        )
+
+        args = "--transform DiscardEmptySections:invalid=True -".split()
+        result = run_tidy(args, exit_code=1)
+        assert result.output == expected_output
 
     def test_invalid_configurable_usage(self):
         expected_output = (
-            "Importing transformer 'DiscardEmptySections=allow_only_comments=False' failed. "
-            "Verify if correct name or configuration was provided"
+            "Error: Importing transformer 'DiscardEmptySections=allow_only_comments=False' failed. "
+            "Verify if correct name or configuration was provided.\n"
         )
         args = "--transform DiscardEmptySections=allow_only_comments=False -".split()
         result = run_tidy(args, exit_code=1)
-        assert expected_output in str(result.exception)
+        assert result.output == expected_output
 
     def test_too_many_arguments_for_transform(self):
-        expected_output = "not enough values to unpack (expected 2, got 1)"
+        expected_output = (
+            "Error: DiscardEmptySections: Invalid parameter format. "
+            "Pass parameters using MyTransformer:param_name=value syntax.\n"
+        )
         args = "--transform DiscardEmptySections:allow_only_comments:False -".split()
         result = run_tidy(args, exit_code=1)
-        assert str(result.exception) == expected_output
+        assert result.output == expected_output
 
-    # def test_invalid_argument_type_for_transform(self):
-    #     expected_output = "Importing 'robotidy.transformers.DiscardEmptySections' failed:  'DicardEmptySection'"
-    #     args = '--transform DiscardEmptySections:allow_only_comments=true'.split()
-    #     result = run_tidy(args, exit_code=1)
-    #     assert expected_output == str(result.exception)
+    def test_invalid_argument_type_for_transform(self):
+        expected_output = (
+            "Error: AlignVariablesSection: Failed to import. "
+            "Verify if correct name or configuration was provided. "
+            "Argument 'up_to_column' got value '1a' that cannot be converted to integer.\n"
+        )
+        args = "--transform AlignVariablesSection:up_to_column=1a -".split()
+        result = run_tidy(args, exit_code=1)
+        assert result.output == expected_output
+
+    def test_transform_without_args(self):
+        expected_output = (
+            "Error: AddMissingEnd: Failed to import. "
+            "Verify if correct name or configuration was provided. "
+            "This transformer does not accept arguments but they were provided.\n"
+        )
+        args = "--transform AddMissingEnd:made_up=value -".split()
+        result = run_tidy(args, exit_code=1)
+        assert result.output == expected_output
 
     def test_find_project_root_from_src(self, test_data_dir):
         src = test_data_dir / "nested" / "test.robot"
@@ -254,10 +285,22 @@ class TestCli:
     @pytest.mark.parametrize("source, return_status", [("golden.robot", 0), ("not_golden.robot", 1)])
     def test_check(self, source, return_status, test_data_dir):
         source = test_data_dir / "check" / source
-        run_tidy(
-            ["--check", "--overwrite", "--transform", "NormalizeSectionHeaderName", str(source)],
-            exit_code=return_status,
-        )
+        with patch("robotidy.app.ModelWriter") as mock_writer:
+            run_tidy(
+                ["--check", "--transform", "NormalizeSectionHeaderName", str(source)],
+                exit_code=return_status,
+            )
+            mock_writer.assert_not_called()
+
+    @pytest.mark.parametrize("source, return_status", [("golden.robot", 0), ("not_golden.robot", 1)])
+    def test_check_overwrite(self, source, return_status, test_data_dir):
+        source = test_data_dir / "check" / source
+        with patch("robotidy.app.ModelWriter") as mock_writer:
+            run_tidy(
+                ["--check", "--overwrite", "--transform", "NormalizeSectionHeaderName", str(source)],
+                exit_code=return_status,
+            )
+            mock_writer.assert_called()
 
     def test_diff(self, test_data_dir):
         source = test_data_dir / "check" / "not_golden.robot"

@@ -32,25 +32,26 @@ Acceptance tests are located under atest/ directory. There is separate directory
 transformers are defined in ``test_transformer.py`` file under each directory. In the same directory test data is stored.
 Source files should go to ``source`` directory and expected files to ``expected`` directory.
 
-You can add test methods and then run tidy against your source code using::
+If you generated transformer using invoke script (See ``invoke list`` too check possible commands) you should have get
+prepared test stub::
 
-    run_tidy_and_compare(transformer_name: str, source: str, expected: Optional[str] = None, config: str = ''):
+    from .. import TransformerAcceptanceTest
 
-Transformer name and list of sources are mandatory. Here is minimal example::
+    class TestMyTransformer(TransformerAcceptanceTest):
+        TRANSFORMER_NAME = 'MyTransformer'
 
-    run_tidy_and_compare('MyTransformer', 'test.robot')
+        def test_transformer(self):
+            self.compare(source='test.robot', expected='test.robot')
 
-It will execute following:
+All acceptance test classes inherit from TransformerAcceptanceTest class. It provides you `compare` method for comparing
+output after transforming source file with given `TRANSFORMER_NAME` transformer. Above example is equivalent of executing::
 
    robotidy --transform MyTransformer MyTransformer/test.robot
 
-If you did not provide expected filename it will use source name (meaning that for ``test.robot`` found in
-``source`` expected file will be ``test.robot`` stored in ``expected``).
-
 You can use the same source name with different transformer option and different expected files. For example::
 
-    run_tidy_and_compare('MyTransformer', 'test.robot', 'option1.robot', config=':option1=True')
-    run_tidy_and_compare('MyTransformer', 'test.robot', 'option2.robot', config=':option2=True')
+    self.compare('test.robot', 'option1.robot', config=':option1=True')
+    self.compare('test.robot', 'option2.robot', config=':option2=True')
 
 It's equivalent of executing::
 
@@ -60,5 +61,5 @@ It's equivalent of executing::
 But in first case our output will be compared to ``option1.robot`` file and in second case to ``option2.robot``.
 ``config`` parameter is appended in command line right after ``--transformer <transformer_name>``.
 
-For negative test scenarios you can use ``run_tidy`` method (also used by ``run_tidy_and_compare`` under hood) with
+For negative test scenarios you can use ``run_tidy`` method (also used by ``compare`` under hood) with
 optional expected ``exit_code`` argument.
