@@ -8,7 +8,7 @@ Align variables in ``*** Variables ***`` section to columns.
 .. |TRANSFORMERNAME| replace:: AlignVariablesSection
 .. include:: enabled_hint.txt
 
-.. tabs:: 1
+.. tabs::
 
     .. code-tab:: robotframework Before
 
@@ -33,7 +33,7 @@ will use fixed length separator length ``--spacecount``. By default only first t
 
 Example of how AlignVariablesSection transformer behaves with default configuration and multiple columns:
 
-.. tabs:: 2
+.. tabs::
 
     .. code-tab:: robotframework Before
 
@@ -53,7 +53,7 @@ You can configure it to align three columns::
 
     robotidy --configure AlignVariablesSection:up_to_column=3 src
 
-.. tabs:: 3
+.. tabs::
 
     .. code-tab:: robotframework Before
 
@@ -77,7 +77,7 @@ AlignVariablesSection does also support global formatting params ``startline`` a
 
     robotidy --startline 5 --endline 17 --configure AlignVariablesSection:up_to_column=3 src
 
-.. tabs:: 4
+.. tabs::
 
     .. code-tab:: robotframework Before
 
