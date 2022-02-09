@@ -5,9 +5,8 @@ AddMissingEnd
 
 Add missing END token to FOR loops and IF statements.
 
-AddMissingEnd is included in the default transformers but it can be also run separately with::
-
-   robotidy --transform AddMissingEnd src
+.. |TRANSFORMERNAME| replace:: AddMissingEnd
+.. include:: enabled_hint.txt
 
 .. tabs::
 

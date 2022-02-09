@@ -29,7 +29,7 @@ class AlignSettingsSection(ModelTransformer):
         # this should be left aligned
 
     You can configure how many columns should be aligned to longest token in given column. The remaining columns
-    will use fixed length separator length ``--space_count``. By default only first two columns are aligned.
+    will use fixed length separator length ``--spacecount``. By default only first two columns are aligned.
     To align first three columns::
 
        robotidy --transform AlignSettingsSection:up_to_column=3
@@ -48,7 +48,7 @@ class AlignSettingsSection(ModelTransformer):
 
     To disable it configure ``argument_indent`` with ``0``.
 
-    Supports global formatting params: ``--startline``, ``--endline`` and ``--space_count``
+    Supports global formatting params: ``--startline``, ``--endline`` and ``--spacecount``
     (for columns with fixed length).
 
     See https://robotidy.readthedocs.io/en/latest/transformers/AlignSettingsSection.html for more examples.

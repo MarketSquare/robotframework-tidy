@@ -5,9 +5,8 @@ OrderSettings
 
 Order settings like ``[Arguments]``, ``[Setup]``, ``[Return]`` inside Keywords and Test Cases.
 
-OrderSettings is included in the default transformers but it can be also run separately with::
-
-    robotidy --transform OrderSettings src
+.. |TRANSFORMERNAME| replace:: OrderSettings
+.. include:: enabled_hint.txt
 
 Keyword settings ``[Documentation]``, ``[Tags]``, ``[Timeout]``, ``[Arguments]`` are put before keyword body and
 settings like ``[Teardown]``, ``[Return]`` are moved to the end of keyword.
@@ -39,7 +38,7 @@ settings like ``[Teardown]``, ``[Return]`` are moved to the end of keyword.
             [Return]    ${value}
 
 Test case settings ``[Documentation]``, ``[Tags]``, ``[Template]``, ``[Timeout]``, ``[Setup]`` are put before test case body and
-[Teardown] is moved to the end of test case.
+``[Teardown]`` is moved to the end of test case.
 
 Default order can be changed using following parameters:
   - ``keyword_before = documentation,tags,timeout,arguments``

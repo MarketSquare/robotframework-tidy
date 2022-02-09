@@ -4,13 +4,8 @@ OrderTags
 ================================
 Order tags in case-insensitive way in ascending order.
 
-OrderTags is not included in default transformers, that's why you need to call it with ``--transform`` explicitly::
-
-    robotidy --transform OrderTags src
-
-Or configure `enable` parameter::
-
-    robotidy --configure OrderTags:enabled=True
+.. |TRANSFORMERNAME| replace:: OrderTags
+.. include:: disabled_hint.txt
 
 This relates to tags in Test Cases, Keywords, Force Tags and Default Tags.
 
@@ -50,7 +45,7 @@ This relates to tags in Test Cases, Keywords, Force Tags and Default Tags.
             [Tags]    aa    Ab    ba    Bb    Ca    Cb
             No Operation
 
-Using the same example with `reverse=True` param we will get tags in descending order::
+Using the same example with ``reverse=True`` param we will get tags in descending order::
 
     robotidy --transform OrderTags:reverse=True src
 

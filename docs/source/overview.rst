@@ -4,10 +4,6 @@ Robotidy is a tool for autoformatting Robot Framework code.
 
 It is spiritual descendant of Robot Framework's internal robot.tidy package.
 
-Documentation
--------------
-Full documentation available `here <https://robotidy.readthedocs.io>`_.
-
 Requirements
 ------------
 

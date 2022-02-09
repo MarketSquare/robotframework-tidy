@@ -45,4 +45,5 @@ If you want to achieve the output closest to the output from old robot.tidy use 
         "OrderSettings: keyword_before = arguments,documentation,tags,timeout",
         "OrderSettingsSection: new_lines_between_groups = 0",
         "AlignSettingsSection: min_width = 18"
+        "AlignVariablesSection": min_width = 18"
     ]

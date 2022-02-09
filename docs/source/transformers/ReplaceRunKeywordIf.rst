@@ -5,9 +5,8 @@ ReplaceRunKeywordIf
 
 Replace ``Run Keyword If`` keyword calls with IF expressions.
 
-ReplaceRunKeywordIf is included in the default transformers but it can be also run separately with::
-
-    robotidy --transform ReplaceRunKeywordIf src
+.. |TRANSFORMERNAME| replace:: ReplaceRunKeywordIf
+.. include:: enabled_hint.txt
 
 .. tabs::
 

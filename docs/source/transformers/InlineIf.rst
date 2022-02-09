@@ -4,9 +4,8 @@ InlineIf
 ================================
 Replaces IF blocks with inline IF.
 
-InlineIf is included in default transformers but it can be also run separately with::
-
-   robotidy --transform InlineIf src
+.. |TRANSFORMERNAME| replace:: InlineIf
+.. include:: enabled_hint.txt
 
 It will only replace IF block if it can fit in one line shorter than ``--line-length``.
 

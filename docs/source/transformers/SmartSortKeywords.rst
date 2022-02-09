@@ -5,13 +5,8 @@ SmartSortKeywords
 
 Sort keywords in ``*** Keywords ***`` section.
 
-SmartSortKeywords is not included in the default transformers that's why you need to call it with ``--transform`` explicitly::
-
-    robotidy --transform SmartSortKeywords src
-
-Or configure `enable` parameter::
-
-    robotidy --configure SmartSortKeywords:enabled=True
+.. |TRANSFORMERNAME| replace:: SmartSortKeywords
+.. include:: disabled_hint.txt
 
 By default sorting is case insensitive, but keywords with leading underscore go to the bottom. Other underscores are
 treated as spaces.

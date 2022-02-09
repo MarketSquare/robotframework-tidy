@@ -1,0 +1,4 @@
+|TRANSFORMERNAME| is included in the default transformers but it can be also run separately with:
+
+.. parsed-literal::
+   robotidy --transform |TRANSFORMERNAME| src

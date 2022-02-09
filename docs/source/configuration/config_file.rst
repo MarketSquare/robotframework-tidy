@@ -47,7 +47,7 @@ Source paths can be configured via ``src`` parameter. If the path does not exist
         directory
     ]
 
-Transformers with multiple parameters can be configured in one line (each param delimited by `:`) or in multi lines:
+Transformers with multiple parameters can be configured in one line (each param delimited by ``:``) or in multi lines:
 
   .. code-block:: toml
 

@@ -43,8 +43,8 @@ prepared test stub::
         def test_transformer(self):
             self.compare(source='test.robot', expected='test.robot')
 
-All acceptance test classes inherit from TransformerAcceptanceTest class. It provides you `compare` method for comparing
-output after transforming source file with given `TRANSFORMER_NAME` transformer. Above example is equivalent of executing::
+All acceptance test classes inherit from TransformerAcceptanceTest class. It provides you ``compare`` method for comparing
+output after transforming source file with given ``TRANSFORMER_NAME`` transformer. Above example is equivalent of executing::
 
    robotidy --transform MyTransformer MyTransformer/test.robot
 

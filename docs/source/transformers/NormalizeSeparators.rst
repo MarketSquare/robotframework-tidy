@@ -5,9 +5,8 @@ NormalizeSeparators
 
 Normalize separators and indents.
 
-NormalizeSeparators is included in the default transformers but it can be also run separately with::
-
-    robotidy --transform NormalizeSeparators src
+.. |TRANSFORMERNAME| replace:: NormalizeSeparators
+.. include:: enabled_hint.txt
 
 All separators (pipes included) are converted to fixed length of 4 spaces (configurable via global argument
 ``--spacecount``).
