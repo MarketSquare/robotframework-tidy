@@ -74,4 +74,5 @@ Run and return keyword variants such as ``Run Keyword And Return`` and ``Run Key
             Sub Keyword
             RETURN    Keyword    {argument}
 
+
 Supports global formatting params: ``--startline`` and ``--endline``.

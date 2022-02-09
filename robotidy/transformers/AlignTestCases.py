@@ -66,23 +66,7 @@ class AlignTestCases(ModelTransformer):
         self.indent -= 1
         return node
 
-    def visit_Else(self, node):  # noqa
-        self.indent += 1
-        self.generic_visit(node)
-        self.indent -= 1
-        return node
-
-    def visit_ElseIf(self, node):  # noqa
-        self.indent += 1
-        self.generic_visit(node)
-        self.indent -= 1
-        return node
-
-    def visit_For(self, node):  # noqa
-        self.indent += 1
-        self.generic_visit(node)
-        self.indent -= 1
-        return node
+    visit_Else = visit_ElseIf = visit_For = visit_If
 
     @check_start_end_line
     def visit_TestCaseSection(self, node):  # noqa
@@ -156,14 +140,7 @@ class AlignTestCases(ModelTransformer):
     def visit_SettingSection(self, node):  # noqa
         return node
 
-    def visit_VariableSection(self, node):  # noqa
-        return node
-
-    def visit_KeywordSection(self, node):  # noqa
-        return node
-
-    def visit_CommentSection(self, node):  # noqa
-        return node
+    visit_VariableSection = visit_KeywordSection = visit_CommentSection = visit_SettingSection
 
 
 class ColumnWidthCounter(ModelVisitor):
