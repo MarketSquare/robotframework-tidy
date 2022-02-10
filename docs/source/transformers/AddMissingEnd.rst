@@ -12,25 +12,29 @@ Add missing END token to FOR loops and IF statements.
 
     .. code-tab:: robotframework Before
 
-        FOR    ${x}    IN    foo    bar
-            Log    ${x}
-        IF    ${condition}
-            Log    ${x}
+        *** Test Cases ***
+        Test
+            FOR    ${x}    IN    foo    bar
+                Log    ${x}
             IF    ${condition}
-                Log    ${y}
-        Keyword
+                Log    ${x}
+                IF    ${condition}
+                    Log    ${y}
+            Keyword
 
-   .. code-tab:: robotframework After
+    .. code-tab:: robotframework After
 
-        FOR    ${x}    IN    foo    bar
-            Log    ${x}
-        END
-        IF    ${condition}
-            Log    ${x}
-            IF    ${condition}
-                Log    ${y}
+        *** Test Cases ***
+        Test
+            FOR    ${x}    IN    foo    bar
+                Log    ${x}
             END
-        END
-        Keyword
+            IF    ${condition}
+                Log    ${x}
+                IF    ${condition}
+                    Log    ${y}
+                END
+            END
+            Keyword
 
 AddMissingEnd transformer supports global formatting params: ``--startline`` and ``--endline``.
