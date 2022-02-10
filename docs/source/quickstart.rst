@@ -1,3 +1,5 @@
+.. _quickstart:
+
 Quickstart
 ===========
 `Robotidy` is easy to use and you can do it just by running::
