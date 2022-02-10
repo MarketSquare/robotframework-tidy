@@ -23,7 +23,7 @@ Version: {__version__}
 
 Robotidy is a tool for formatting Robot Framework source code.
 See examples at the end of this help message too see how you can use Robotidy.
-For more documentation check README section at https://github.com/MarketSquare/robotframework-tidy
+Full documentation available at https://robotidy.readthedocs.io .
 """
 EPILOG = """
 Examples:
