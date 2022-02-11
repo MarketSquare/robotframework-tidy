@@ -13,3 +13,6 @@ class TestAddMissingEnd(TransformerAcceptanceTest):
             expected="test_selected.robot",
             config=" --startline 166 --endline 188",
         )
+
+    def test_rf5_syntax(self):
+        self.compare(source="test_5.robot", target_version=5)

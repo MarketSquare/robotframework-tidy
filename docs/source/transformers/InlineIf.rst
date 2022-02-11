@@ -33,6 +33,8 @@ Simple IF blocks that will be replaced by inline IF:
             IF    $condition1    Keyword    argument    ELSE IF    $condition2    Keyword    argument2
             IF    $condition2    RETURN
 
+Assignments
+------------
 Assignments are also supported as long all ELSE and ELSE IF branches have matching return variables and there is ELSE
 branch. ELSE branch is required because without it assignment variable would be overwritten with ``None`` without
 your consent:
@@ -77,6 +79,8 @@ your consent:
             ${other_var}    Keyword 2
         END
 
+Line length
+------------
 Inline IF will be only used if resulting IF will be shorter than ``line_length`` parameter (default value is ``120``).
 Multi statements IF blocks are also skipped:
 
@@ -117,5 +121,17 @@ Multi statements IF blocks are also skipped:
                 Keyword
                 Other Keyword
             END
+
+``line_length`` can be set globally (it will also affect other transformers such as :ref:`SplitTooLongLine`) or only in
+``InlineIf``. With following configuration `Robotidy` will transform all IFs to inline IFs if they are under 140 characters
+long::
+
+    robotidy --line-length 140 src.robot
+
+If you want other transformers to use different ``line-length`` value configure it per transformer. In this example
+`Robotidy` will use ``line length = 140`` for all transformers except the ``InlineIf`` which will get ``line length = 80``::
+
+    robotidy --line-length 140 --configure InlineIf:line_length:80 src.robot
+
 
 Supports global formatting params: ``--startline`` and ``--endline``.
