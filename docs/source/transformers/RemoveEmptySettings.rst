@@ -5,9 +5,8 @@ RemoveEmptySettings
 
 Remove empty settings.
 
-RemoveEmptySettings is included in the default transformers but it can be also run separately with::
-
-    robotidy --transform RemoveEmptySettings src
+.. |TRANSFORMERNAME| replace:: RemoveEmptySettings
+.. include:: enabled_hint.txt
 
 .. tabs::
 
@@ -47,9 +46,10 @@ RemoveEmptySettings is included in the default transformers but it can be also r
             Keyword
 
 You can configure which settings are affected by parameter ``work_mode``. Possible values:
-- overwrite_ok (default): does not remove settings that are overwriting suite settings (Test Setup,
-Test Teardown, Test Template, Test Timeout or Default Tags)
-- always : works on every settings
+
+- overwrite_ok (default) - does not remove settings that are overwriting suite settings (Test Setup,
+  Test Teardown, Test Template, Test Timeout or Default Tags)
+- always - works on every settings
 
 Empty settings that are overwriting suite settings will be converted to be more explicit (given that there is
 related suite settings present). You can disable that behavior by changing ``more_explicit``

@@ -5,9 +5,8 @@ MergeAndOrderSections
 
 Merge duplicated sections and order them.
 
-MergeAndOrderSections is included in the default transformers but it can be also run separately with::
-
-    robotidy --transform MergeAndOrderSections src
+.. |TRANSFORMERNAME| replace:: MergeAndOrderSections
+.. include:: enabled_hint.txt
 
 Default order is: Comments > Settings > Variables > Test Cases > Keywords.
 
@@ -95,11 +94,15 @@ Default order is: Comments > Settings > Variables > Test Cases > Keywords.
                 Log  ${i}
             END
 
+Custom order
+-------------
 You can change sorting order by configuring ``order`` parameter with comma separated list of section names (without
 spaces)::
 
     robotidy --configure MergeAndOrderSections:order=settings,keywords,variables,testcases,comments src
 
+Miscellaneous
+--------------
 Because merging and changing the order of sections can shuffle your empty lines it's greatly advised to always
 run ``NormalizeNewLines`` transformer after this one. This is done by default so this advice apply only if you're
 running transformers separately.

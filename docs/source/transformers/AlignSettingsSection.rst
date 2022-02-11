@@ -5,9 +5,8 @@ AlignSettingsSection
 
 Align statements in ``*** Settings ***`` section to columns.
 
-AlignSettingsSection is included in the default transformers but it can be also run separately with::
-
-   robotidy --transform AlignSettingsSection src
+.. |TRANSFORMERNAME| replace:: AlignSettingsSection
+.. include:: enabled_hint.txt
 
 .. tabs::
 
@@ -32,7 +31,7 @@ AlignSettingsSection is included in the default transformers but it can be also 
 Align up to columns
 -------------------
 You can configure how many columns should be aligned to longest token in given column. The remaining columns
-will use fixed length separator length ``--space_count``. By default only first two columns are aligned.
+will use fixed length separator length ``--spacecount``. By default only first two columns are aligned.
 
 Example of how AlignSettingsSection transformer behaves with default configuration and multiple columns:
 
@@ -151,6 +150,8 @@ It's possible to set fixed minimal width of column. To configure it use ``min_wi
     robotidy --configure AlignSettingsSection:min_width=30 src
 
 This configuration respects ``up_to_column`` parameter but ignores ``argument_indent``.
+
+.. tabs::
 
    .. code-tab:: robotframework Before
 

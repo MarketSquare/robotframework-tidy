@@ -28,7 +28,7 @@ class AlignVariablesSection(ModelTransformer):
         ...             b=c
 
     You can configure how many columns should be aligned to longest token in given column. The remaining columns
-    will use fixed length separator length ``--space_count``. By default only first two columns are aligned.
+    will use fixed length separator length ``--spacecount``. By default only first two columns are aligned.
     To align first three columns:
 
        robotidy --transform AlignVariablesSection:up_to_column=3

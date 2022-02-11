@@ -4,10 +4,6 @@ Robotidy is a tool for autoformatting Robot Framework code.
 
 It is spiritual descendant of Robot Framework's internal robot.tidy package.
 
-Documentation
--------------
-Full documentation available `here <https://robotidy.readthedocs.io>`_.
-
 Requirements
 ------------
 
@@ -32,4 +28,5 @@ All command line options can be displayed in help message by executing::
 
     robotidy --help
 
-Navigate to sections in the navigation menu such as :ref:`transformers` or :ref:`configuration` to read more.
+Start with :ref:`quickstart` to see how you can use the tool. You can also navigate to :ref:`transformers`
+or :ref:`configuration` to read more.

@@ -5,9 +5,8 @@ SplitTooLongLine
 
 Split too long lines.
 
-SplitTooLongLine is included in the default transformers but it can be also run separately with::
-
-    robotidy --transform SplitTooLongLine src
+.. |TRANSFORMERNAME| replace:: SplitTooLongLine
+.. include:: enabled_hint.txt
 
 If any line in keyword call exceeds given length limit (configurable using ``line_length``, 120 by default) it will be
 split.
@@ -40,4 +39,4 @@ Using ``split_on_every_arg`` flag (``False`` by default), you can force the form
         ...    ${arg2}
         ...    ${arg3}
 
-Supports global formatting params: ``space_count``, ``--startline`` and ``--endline``.
+Supports global formatting params: ``spacecount``, ``--startline`` and ``--endline``.

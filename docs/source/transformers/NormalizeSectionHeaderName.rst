@@ -5,9 +5,8 @@ NormalizeSectionHeaderName
 
 Normalize section headers names.
 
-NormalizeSectionHeaderName is included in the default transformers but it can be also run separately with::
-
-    robotidy --transform NormalizeSectionHeaderName src
+.. |TRANSFORMERNAME| replace:: NormalizeSectionHeaderName
+.. include:: enabled_hint.txt
 
 Robot Framework is quite flexible with the section header naming. Following lines are equal::
 

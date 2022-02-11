@@ -5,9 +5,8 @@ OrderSettingsSection
 
 Order settings inside ``*** Settings ***`` section.
 
-OrderSettingsSection is included in the default transformers but it can be also run separately with::
-
-    robotidy --transform OrderSettingsSection src
+.. |TRANSFORMERNAME| replace:: OrderSettingsSection
+.. include:: enabled_hint.txt
 
 Settings are grouped in following groups:
 
@@ -18,10 +17,10 @@ Settings are grouped in following groups:
 
 Then ordered by groups (according to ``group_order = documentation,imports,settings,tags`` order). Every
 group is separated by ``new_lines_between_groups = 1`` new lines.
-Settings are grouped inside group. Default order can be modified through following parameters:
+Settings are ordered inside group. Default order can be modified through following parameters:
 
 - ``documentation_order = documentation,metadata``
-- ``imports_order = preserved``
+- ``imports_order = preserved`` (default - see :ref:`Imports order` section to how configure it)
 - ``settings_order = suite_setup,suite_teardown,test_setup,test_teardown,test_timeout,test_template``
 
 .. tabs::
@@ -120,6 +119,8 @@ Using the same example with non default group order we will move tags from end t
         Test Setup  Keyword
         Test Timeout  1min
 
+Settings order
+---------------
 Order of setting inside common group can also be changed::
 
     robotidy --configure OrderSettingsSection:settings_order=suite_teardown,suite_setup,test_setup,test_teardown,test_timeout,test_template src
@@ -138,6 +139,8 @@ Order of setting inside common group can also be changed::
         Suite Setup    Suite Setup Keyword
         Test Timeout    1min
 
+Imports order
+--------------
 By default order of imports is preserved. You can overwrite this behaviour::
 
     robotidy --configure OrderSettingsSections:imports_order=library,resource,variables
@@ -146,11 +149,15 @@ You can also preserve order inside any group by passing ``preserved`` instead of
 
     robotidy --configure OrderSettingsSections:settings_order=preserved
 
+Removing settings
+------------------
 Setting names omitted from custom order will be removed from the file. In following example we are missing metadata
 therefore all metadata will be removed::
 
     robotidy --configure OrderSettingsSection:documentation_order=documentation
 
+Empty lines between group of settings
+--------------------------------------
 Group of settings are separated by ``new_lines_between_groups = 1`` new lines. It can be configured::
 
     robotidy --configure OrderSettingsSection:new_lines_between_groups=2 src

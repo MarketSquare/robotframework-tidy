@@ -1,0 +1,9 @@
+|TRANSFORMERNAME| is not included in default transformers, that's why you need to call it with ``--transform`` explicitly:
+
+.. parsed-literal::
+    robotidy --transform |TRANSFORMERNAME| src
+
+Or configure ``enable`` parameter:
+
+.. parsed-literal::
+    robotidy --configure |TRANSFORMERNAME|:enabled=True

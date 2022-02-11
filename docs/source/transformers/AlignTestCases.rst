@@ -5,13 +5,8 @@ AlignTestCases
 
 Align Test Cases to columns.
 
-AlignTestCases is not included in the default transformers that's why you need to call it with ``--transform`` explicitly::
-
-    robotidy --transform AlignTestCases src
-
-Or configure `enable` parameter::
-
-    robotidy --configure AlignTestCases:enabled=True
+.. |TRANSFORMERNAME| replace:: AlignTestCases
+.. include:: disabled_hint.txt
 
 Currently only templated tests are supported. Examples:
 
@@ -69,7 +64,7 @@ Currently only templated tests are supported. Examples:
 
 Align only test case section with named headers
 ------------------------------------------------
-If you don't want to align test case section that does not contain header names then configure `only_with_headers` parameter::
+If you don't want to align test case section that does not contain header names then configure ``only_with_headers`` parameter::
 
     robotidy -c AlignSettingsSection:only_with_hedaers:True <src>
 
@@ -80,6 +75,8 @@ It's possible to set fixed minimal width of column. To configure it use ``min_wi
     robotidy --configure AlignTestCases:min_width=30 src
 
 This configuration respects ``up_to_column`` parameter.
+
+.. tabs::
 
    .. code-tab:: robotframework Before
 

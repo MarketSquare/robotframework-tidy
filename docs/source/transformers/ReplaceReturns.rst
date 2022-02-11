@@ -4,9 +4,8 @@ ReplaceReturns
 ================================
 Replace return statements (such as [Return] setting or Return From Keyword keyword) with new RETURN statement.
 
-ReplaceReturns is included in default transformers but it can be also run separately with::
-
-   robotidy --transform ReplaceReturns src
+.. |TRANSFORMERNAME| replace:: ReplaceReturns
+.. include:: enabled_hint.txt
 
 This transformer replace ``[Return]`` statement with ``RETURN``:
 

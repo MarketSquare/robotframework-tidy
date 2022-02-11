@@ -5,9 +5,8 @@ NormalizeNewLines
 
 Normalize new lines.
 
-NormalizeNewLines is included in the default transformers but it can be also run separately with::
-
-    robotidy --transform NormalizeNewLines src
+.. |TRANSFORMERNAME| replace:: NormalizeNewLines
+.. include:: enabled_hint.txt
 
 Ensure that there is exactly:
 

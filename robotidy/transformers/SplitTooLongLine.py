@@ -28,7 +28,7 @@ class SplitTooLongLine(ModelTransformer):
         ...    ${arg3}
 
 
-    Supports global formatting params: ``space_count``, ``separator``, ``--startline`` and ``--endline``.
+    Supports global formatting params: ``spacecount``, ``separator``, ``--startline`` and ``--endline``.
 
     See https://robotidy.readthedocs.io/en/latest/transformers/SplitTooLongLine.html for more examples.
     """

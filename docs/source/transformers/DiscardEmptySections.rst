@@ -5,9 +5,8 @@ DiscardEmptySections
 
 Remove empty sections.
 
-DiscardEmptySections is included in the default transformers but it can be also run separately with::
-
-   robotidy --transform DiscardEmptySections src
+.. |TRANSFORMERNAME| replace:: DiscardEmptySections
+.. include:: enabled_hint.txt
 
 .. tabs::
 
@@ -52,6 +51,9 @@ DiscardEmptySections is included in the default transformers but it can be also 
         *** Comments ***
         robocop: disable=all
 
+
+Remove sections only with comments
+-----------------------------------
 Sections are considered empty if there are only empty lines inside.
 You can remove sections with only comments by setting ``allow_only_comments`` parameter to False. ``*** Comments ***``
 section with only comments is always considered as non-empty::

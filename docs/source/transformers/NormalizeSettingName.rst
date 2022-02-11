@@ -5,9 +5,8 @@ NormalizeSettingName
 
 Normalize setting name.
 
-NormalizeSettingName is included in the default transformers but it can be also run separately with::
-
-    robotidy --transform NormalizeSettingName src
+.. |TRANSFORMERNAME| replace:: NormalizeSettingName
+.. include:: enabled_hint.txt
 
 Ensure that setting names are title case without leading or trailing whitespace.
 

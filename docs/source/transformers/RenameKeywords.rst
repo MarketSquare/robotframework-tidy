@@ -6,24 +6,19 @@ RenameKeywords
 Enforce keyword naming. Title Case is applied to keyword name and underscores are replaced by spaces. It has only basic
 support for keywords with embedded variables - use it on your own risk.
 
-RenameKeywords is not included in the default transformers, that's why you need to call it with ``--transform`` explicitly::
-
-    robotidy --transform RenameKeywords src
-
-Or configure `enable` parameter::
-
-    robotidy --configure RenameKeywords:enabled=True
+.. |TRANSFORMERNAME| replace:: RenameKeywords
+.. include:: disabled_hint.txt
 
 You can keep underscores if you set remove_underscores to False::
 
     robotidy --transform RenameKeywords -c RenameKeywords:remove_underscores=False .
 
-It is also possible to configure `replace_pattern` parameter to find and replace regex pattern. Use `replace_to`
+It is also possible to configure ``replace_pattern`` parameter to find and replace regex pattern. Use ``replace_to``
 to set replacement value. This configuration (underscores are used instead of spaces)::
 
     robotidy --transform RenameKeywords -c RenameKeywords:replace_pattern=(?i)^rename\s?me$:replace_to=New_Shining_Name .
 
-replaces all occurrences of name `Rename Me` (case insensitive thanks to `(?i)` flag) to `New Shining Name`:
+replaces all occurrences of name ``Rename Me``` (case insensitive thanks to ``(?i)`` flag) to ``New Shining Name``:
 
 .. tabs::
 

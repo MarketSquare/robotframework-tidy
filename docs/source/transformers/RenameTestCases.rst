@@ -6,15 +6,10 @@ RenameTestCases
 Enforce test case naming. This transformer capitalizes first letter of test case name, removes trailing dot and
 strips leading/trailing whitespaces.
 
-RenameTestCases is not included in the default transformers, that's why you need to call it with ``--transform`` explicitly::
+.. |TRANSFORMERNAME| replace:: RenameTestCases
+.. include:: disabled_hint.txt
 
-    robotidy --transform RenameTestCases src
-
-Or configure `enable` parameter::
-
-    robotidy --configure RenameTestCases:enabled=True
-
-It is also possible to configure `replace_pattern` parameter to find and replace regex pattern. Use `replace_to`
+It is also possible to configure ``replace_pattern`` parameter to find and replace regex pattern. Use ``replace_to``
 to set a replacement value. This configuration::
 
     robotidy --transform RenameTestCases -c RenameTestCases:replace_pattern=[A-Z]{3,}-\d{2,}:replace_to=foo
