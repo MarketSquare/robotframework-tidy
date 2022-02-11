@@ -11,6 +11,8 @@ Simple IF
 Branched IF
     IF    $condition1    Keyword    1    ELSE    Keyword    2
 
+    IF    $condition3    Keyword    ELSE IF    ${ROOT}    Keyword2    ELSE    Keyword3
+
 Multi statements IF
     IF    $condition1
         Keyword
@@ -107,3 +109,17 @@ Invalid IF
     IF    $cond    Keyword
         Keyword
     END
+
+Assignment types
+    ${user} =    IF    ${WINDOWS}    Get Windows User    ELSE    Get Posix User
+
+    ${user} =    IF    ${WINDOWS}    Get Windows User    ELSE    Get Posix User
+
+    ${user}    IF    ${WINDOWS}    Get Windows User    ELSE    Get Posix User
+
+Short IF that didn't replace
+    IF    ${True}    Log Many    @{ARGS WITH ELSE}
+
+    IF    ${True}    No Operation    ELSE    Fail
+
+    IF    "${version}"    Version Should Match    ${version}
