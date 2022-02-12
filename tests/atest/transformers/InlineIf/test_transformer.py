@@ -9,3 +9,9 @@ class TestInlineIf(TransformerAcceptanceTest):
 
     def test_transformer_skip_else(self):
         self.compare(source="test.robot", expected="test_skip_else.robot", config=":skip_else=True")
+
+    def test_invalid_if(self):
+        self.compare(source="invalid_if.robot")
+
+    def test_invalid_inline_if(self):
+        self.compare(source="invalid_inline_if.robot")

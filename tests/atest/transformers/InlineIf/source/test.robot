@@ -19,6 +19,14 @@ Branched IF
         Keyword    2
     END
 
+    IF    $condition3
+        Keyword
+    ELSE IF    ${ROOT}
+        Keyword2
+    ELSE
+        Keyword3
+    END
+
 Multi statements IF
     IF    $condition1
         Keyword
@@ -134,4 +142,38 @@ Invalid IF
 
     IF    $cond    Keyword
         Keyword
+    END
+
+Assignment types
+    IF    ${WINDOWS}
+        ${user} =    Get Windows User
+    ELSE
+        ${user} =    Get Posix User
+    END
+
+    IF    ${WINDOWS}
+        ${user} =    Get Windows User
+    ELSE
+        ${user}    Get Posix User
+    END
+
+    IF    ${WINDOWS}
+        ${user}    Get Windows User
+    ELSE
+        ${user}=    Get Posix User
+    END
+
+Short IF that didn't replace
+    IF    ${True}
+        Log Many    @{ARGS WITH ELSE}
+    END
+
+    IF    ${True}
+        No Operation
+    ELSE
+        Fail
+    END
+
+    IF    "${version}"
+        Version Should Match    ${version}
     END

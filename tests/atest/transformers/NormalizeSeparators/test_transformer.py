@@ -35,3 +35,6 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
             f"['comments', 'keywords', 'settings', 'testcases', 'variables']\n"
         )
         assert expected_output == result.output
+
+    def test_rf5_syntax(self):
+        self.compare(source="rf5_syntax.robot", target_version=5)
