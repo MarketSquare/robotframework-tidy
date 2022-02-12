@@ -51,6 +51,10 @@ class ReplaceBreakContinue(ModelTransformer):
     def __init__(self):
         self.in_loop = False
 
+    def visit_File(self, node):  # noqa
+        self.in_loop = False
+        return self.generic_visit(node)
+
     @staticmethod
     def create_statement_from_tokens(statement, tokens: Iterable, indent: Token):
         return statement([indent, Token(statement.type), *tokens])
