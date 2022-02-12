@@ -9,7 +9,7 @@ CONTINUATION = Token(Token.CONTINUATION)
 class SplitTooLongLine(ModelTransformer):
     """
     Split too long lines.
-    If any line in keyword call exceeds given length limit (configurable using ``line_length``, 120 by default) it will be
+    If any line in keyword call exceeds given length limit (120 by default) it will be
     split:
 
         Keyword With Longer Name    ${arg1}    ${arg2}    ${arg3}  # let's assume that arg2 is at 120 char
@@ -18,6 +18,14 @@ class SplitTooLongLine(ModelTransformer):
 
         Keyword With Longer Name    ${arg1}
         ...    ${arg2}    ${arg3}
+
+    Allowed line length is configurable using global parameter ``--line-length``:
+
+        robotidy --line-length 140 src.robot
+
+    Or using dedicated for this transformer parameter ``line_length``:
+
+        robotidy --configure SplitTooLongLine:line_length:140 src.robot
 
     Using ``split_on_every_arg`` flag (``False`` by default), you can force the formatter to put every argument in a
     new line:
@@ -54,19 +62,39 @@ class SplitTooLongLine(ModelTransformer):
             yield token
             yield separator
 
+    @staticmethod
+    def split_to_multiple_lines(tokens, indent, separator):
+        first = True
+        for token in tokens:
+            yield indent
+            if not first:
+                yield CONTINUATION
+                yield separator
+            yield token
+            yield EOL
+            first = False
+
     def split_keyword_call(self, node):
         separator = Token(Token.SEPARATOR, self.formatting_config.separator)
         indent = node.tokens[0]
 
-        assignment = node.get_tokens(Token.ASSIGN)
         keyword = node.get_token(Token.KEYWORD)
-
-        if assignment:
-            head = [indent, *self.join_on_separator(assignment, separator), keyword]
+        line = [indent, *self.join_on_separator(node.get_tokens(Token.ASSIGN), separator), keyword]
+        if not self.col_fit_in_line(line):
+            head = [
+                *self.split_to_multiple_lines(node.get_tokens(Token.ASSIGN), indent=indent, separator=separator),
+                indent,
+                CONTINUATION,
+                separator,
+                keyword,
+                EOL,
+            ]
+            # FIXME - in case there is no args, it cant be indent, CONT
+            line = [indent, CONTINUATION]
         else:
-            head = [indent, keyword]
+            head = []
 
-        comments, tail, line = [], [], head
+        comments = []
 
         # Comments with separators inside them are split into
         # [COMMENT, SEPARATOR, COMMENT] tokens in the AST, so in order to preserve the
@@ -94,34 +122,25 @@ class SplitTooLongLine(ModelTransformer):
             elif token.type == Token.ARGUMENT:
                 if token.value == "":
                     token.value = "${EMPTY}"
-                if self.cols_remaining(line + [separator, token]) == 0:
+                if self.split_on_every_arg or not self.col_fit_in_line(line + [separator, token]):
                     line.append(EOL)
-                    tail += line
+                    head += line
                     line = [indent, CONTINUATION, separator, token]
                 else:
                     line += [separator, token]
-            else:
-                raise RuntimeError(f"Token with an unrecognized type: {repr(token)}")
 
         # last line
         line.append(EOL)
-        tail += line
+        head += line
 
-        node.tokens = comments + tail
+        node.tokens = comments + head
         return node
 
-    def cols_remaining(self, tokens):
-        if self.split_on_every_arg:
-            return 0
-        return max(self.line_length - self.len_token_text(self.last_line_of(tokens)), 0)
+    def col_fit_in_line(self, tokens):
+        # if self.split_on_every_arg:
+        #     return False
+        return self.len_token_text(tokens) < self.line_length
 
     @staticmethod
     def len_token_text(tokens):
         return sum(len(token.value) for token in tokens)
-
-    @staticmethod
-    def last_line_of(tokens):
-        """Return the tokens from after the last EOL in the given list"""
-        if EOL not in tokens:
-            return tokens
-        return tokens[len(tokens) - tokens[::-1].index(EOL) :]
