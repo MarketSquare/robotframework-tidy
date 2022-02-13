@@ -136,7 +136,11 @@ class InlineIf(ModelTransformer):
 
     @staticmethod
     def if_len(if_st):
-        return sum(len(tok.value) for tok in chain(if_st.body[0].tokens if if_st.body else [], if_st.header.tokens) if tok.value != "\n")
+        return sum(
+            len(tok.value)
+            for tok in chain(if_st.body[0].tokens if if_st.body else [], if_st.header.tokens)
+            if tok.value != "\n"
+        )
 
     def to_inline(self, node, indent):
         tail = node

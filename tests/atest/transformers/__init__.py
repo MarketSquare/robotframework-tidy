@@ -35,7 +35,9 @@ def display_file_diff(expected, actual):
 class TransformerAcceptanceTest:
     TRANSFORMER_NAME: str = "DUMMY"
 
-    def compare(self, source: str, expected: Optional[str] = None, config: str = "", target_version: Optional[int] = None):
+    def compare(
+        self, source: str, expected: Optional[str] = None, config: str = "", target_version: Optional[int] = None
+    ):
         if not enabled_in_version(self.TRANSFORMER_NAME, target_version):
             return
         if expected is None:
