@@ -56,7 +56,7 @@ class AlignVariablesSection(ModelTransformer):
                     self.__class__.__name__,
                     "skip_type",
                     skip_type,
-                    "Variable types should be provided in comma separated list:\nskip_type=dict,list,scalar"
+                    "Variable types should be provided in comma separated list:\nskip_type=dict,list,scalar",
                 )
             ret.add(allow_types[skip_type])
         return ret

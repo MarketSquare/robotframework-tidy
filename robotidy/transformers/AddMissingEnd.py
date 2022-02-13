@@ -1,4 +1,5 @@
 from robot.api.parsing import ModelTransformer, Token, End, Comment, EmptyLine
+
 try:
     from robot.api.parsing import InlineIfHeader
 except ImportError:

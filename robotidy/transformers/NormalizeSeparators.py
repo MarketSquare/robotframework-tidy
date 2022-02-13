@@ -1,6 +1,7 @@
 from itertools import takewhile
 
 from robot.api.parsing import ModelTransformer, Token
+
 try:
     from robot.api.parsing import InlineIfHeader
 except ImportError:
@@ -87,7 +88,7 @@ class NormalizeSeparators(ModelTransformer):
     def visit_TestCase(self, node):  # noqa
         return self.indented_block(node)
 
-    visit_Keyword = visit_While = visit_TestCase # noqa
+    visit_Keyword = visit_While = visit_TestCase  # noqa
 
     def visit_For(self, node):
         node = self.indented_block(node)
