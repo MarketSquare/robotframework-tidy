@@ -2,17 +2,13 @@
 First
     ${var}    Set Variable    1
     FOR    ${variable}  IN  1  2
-        IF    ${var}==2
-            RETURN  Keyword 2    ${var}
-        END
+        Run Keyword And Return If    ${var}==2  Keyword 2    ${var}
         Log    ${variable}
     END
 
 With IF
     ${var}    Set Variable    1
     IF    ${var}>0
-        IF    $var
-            RETURN    Some Keyword    ${var}
-              ...  1
-        END
+        Run Keyword And Return If    $var    Some Keyword    ${var}
+          ...  1
     END

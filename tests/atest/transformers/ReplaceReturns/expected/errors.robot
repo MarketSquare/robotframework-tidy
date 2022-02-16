@@ -1,13 +1,9 @@
 *** Test Cases ***
 Return From Keyword
     Return From Keyword If
-    IF    $condition
-        RETURN
-    END
+    Run Keyword And Return If  $condition
 
 *** Keywords ***
 Return From Keyword
     Return From Keyword If
-    IF    $condition
-        RETURN
-    END
+    Run Keyword And Return If  $condition
