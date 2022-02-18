@@ -2,11 +2,11 @@
 For and Ifs
     FOR    ${var}  IN  1  2
         IF    $var == 2
-            RETURN    Keyword   ${arg}
+            Run Keyword And Return    Keyword   ${arg}
         END
     END
 
 *** Keywords ***
 Testing
-    RETURN    Keyword   ${arg}
+    Run Keyword And Return    Keyword   ${arg}
     ...  ${arg2}
