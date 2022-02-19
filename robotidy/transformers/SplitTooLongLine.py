@@ -16,8 +16,11 @@ class SplitTooLongLine(ModelTransformer):
 
     To:
 
-        Keyword With Longer Name    ${arg1}
-        ...    ${arg2}    ${arg3}
+        # let's assume that arg2 is at 120 char
+        Keyword With Longer Name
+        ...    ${arg1}
+        ...    ${arg2}
+        ...    ${arg3}
 
     Allowed line length is configurable using global parameter ``--line-length``:
 
@@ -27,21 +30,18 @@ class SplitTooLongLine(ModelTransformer):
 
         robotidy --configure SplitTooLongLine:line_length:140 src.robot
 
-    Using ``split_on_every_arg`` flag (``False`` by default), you can force the formatter to put every argument in a
-    new line:
+    Using ``split_on_every_arg`` flag (``True`` by default), you can force the formatter to fill arguments in one line
+    until character limit:
 
-        Keyword With Longer Name
-        ...    ${arg1}
-        ...    ${arg2}
-        ...    ${arg3}
-
+        Keyword With Longer Name    ${arg1}
+        ...    ${arg2}    ${arg3}
 
     Supports global formatting params: ``spacecount``, ``separator``, ``--startline`` and ``--endline``.
 
     See https://robotidy.readthedocs.io/en/latest/transformers/SplitTooLongLine.html for more examples.
     """
 
-    def __init__(self, line_length: int = None, split_on_every_arg: bool = False):
+    def __init__(self, line_length: int = None, split_on_every_arg: bool = True):
         super().__init__()
         self._line_length = line_length
         self.split_on_every_arg = split_on_every_arg
@@ -78,19 +78,19 @@ class SplitTooLongLine(ModelTransformer):
         separator = Token(Token.SEPARATOR, self.formatting_config.separator)
         indent = node.tokens[0]
 
+        split_every_arg = self.split_on_every_arg
         keyword = node.get_token(Token.KEYWORD)
         line = [indent, *self.join_on_separator(node.get_tokens(Token.ASSIGN), separator), keyword]
         if not self.col_fit_in_line(line):
+            split_every_arg
             head = [
                 *self.split_to_multiple_lines(node.get_tokens(Token.ASSIGN), indent=indent, separator=separator),
                 indent,
                 CONTINUATION,
                 separator,
                 keyword,
-                EOL,
             ]
-            # FIXME - in case there is no args, it cant be indent, CONT
-            line = [indent, CONTINUATION]
+            line = []
         else:
             head = []
 
@@ -137,8 +137,6 @@ class SplitTooLongLine(ModelTransformer):
         return node
 
     def col_fit_in_line(self, tokens):
-        # if self.split_on_every_arg:
-        #     return False
         return self.len_token_text(tokens) < self.line_length
 
     @staticmethod
