@@ -71,7 +71,7 @@ class InlineIf(ModelTransformer):
 
     @check_start_end_line
     def visit_If(self, node: If):  # noqa
-        if node.errors or self.is_inline_end(node.end):  # already inline if (or error)
+        if node.errors or self.is_inline_end(node.end) or node.end.errors:  # already inline if (or error)
             return node
         self.generic_visit(node)
         if node.orelse:
@@ -82,10 +82,12 @@ class InlineIf(ModelTransformer):
         return self.to_inline(node, indent.value)
 
     def should_transform(self, node):
+        if node.header.errors:
+            return False
         if (
             len(node.body) > 1
-            or node.body
-            and not isinstance(node.body[0], (KeywordCall, ReturnStatement, Break, Continue))
+            or not node.body
+            or not isinstance(node.body[0], (KeywordCall, ReturnStatement, Break, Continue))
         ):
             return False
         if node.orelse:
@@ -109,7 +111,7 @@ class InlineIf(ModelTransformer):
             if not isinstance(branch.body[0], KeywordCall) or not branch.body[0].assign:
                 assigned.append([])
             else:
-                assigned.append([normalize_name(assign) for assign in branch.body[0].assign])
+                assigned.append([normalize_name(assign).replace("=", "") for assign in branch.body[0].assign])
             if len(assigned) > 1 and assigned[-1] != assigned[-2]:
                 return False
         if any(x for x in assigned):
@@ -134,7 +136,11 @@ class InlineIf(ModelTransformer):
 
     @staticmethod
     def if_len(if_st):
-        return sum(len(tok.value) for tok in chain(if_st.body[0].tokens, if_st.header.tokens) if tok.value != "\n")
+        return sum(
+            len(tok.value)
+            for tok in chain(if_st.body[0].tokens if if_st.body else [], if_st.header.tokens)
+            if tok.value != "\n"
+        )
 
     def to_inline(self, node, indent):
         tail = node
@@ -168,7 +174,12 @@ class InlineIf(ModelTransformer):
         else:
             return node
 
-        if isinstance(node.header, IfHeader):
+        # check for ElseIfHeader first since it's child of IfHeader class
+        if isinstance(node.header, ElseIfHeader):
+            header = ElseIfHeader(
+                [Token(Token.ELSE_IF), Token(Token.SEPARATOR, separator), Token(Token.ARGUMENT, node.header.condition)]
+            )
+        elif isinstance(node.header, IfHeader):
             tokens = [Token(Token.SEPARATOR, indent)]
             if assigned:
                 for assign in assigned:
@@ -181,10 +192,6 @@ class InlineIf(ModelTransformer):
                 ]
             )
             header = InlineIfHeader(tokens)
-        elif isinstance(node.header, ElseIfHeader):
-            header = ElseIfHeader(
-                [Token(Token.ELSE_IF), Token(Token.SEPARATOR, separator), Token(Token.ARGUMENT, node.header.condition)]
-            )
         elif isinstance(node.header, ElseHeader):
             header = ElseHeader([Token(Token.ELSE)])
         else:

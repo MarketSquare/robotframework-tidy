@@ -33,12 +33,30 @@ class TestCli:
             ("AssignmentNormalizer", " Did you mean:\n    NormalizeAssignments"),
         ],
     )
-    def test_not_existing_transformer(self, name, similar):
+    def test_transform_not_existing_transformer(self, name, similar):
         expected_output = (
             f"Error: Importing transformer '{name}' failed. "
             f"Verify if correct name or configuration was provided.{similar}\n"
         )
         args = f"--transform {name} --transform MissingTransformer --transform DiscardEmptySections -".split()
+        result = run_tidy(args, exit_code=1)
+        assert expected_output == result.output
+
+    @pytest.mark.parametrize(
+        "name, similar",
+        [
+            ("NotExisting", ""),
+            ("AlignSettings", " Did you mean:\n    AlignSettingsSection"),
+            ("align", " Did you mean:\n    AlignSettingsSection\n    AlignVariablesSection"),
+            ("splittoolongline", " Did you mean:\n    SplitTooLongLine"),
+            ("AssignmentNormalizer", " Did you mean:\n    NormalizeAssignments"),
+        ],
+    )
+    def test_configure_not_existing_transformer(self, name, similar):
+        expected_output = (
+            f"Error: Configuring transformer '{name}' failed. " f"Verify if correct name was provided.{similar}\n"
+        )
+        args = f"--configure {name}:param=value -".split()
         result = run_tidy(args, exit_code=1)
         assert expected_output == result.output
 

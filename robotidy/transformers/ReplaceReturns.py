@@ -30,11 +30,7 @@ class ReplaceReturns(ModelTransformer):
             [Return]    1
 
         Keyword 2
-            Run Keyword And Return If    ${var}==2  Keyword 2    ${var}
             Return From Keyword    ${arg}
-
-        Keyword 3
-            Run Keyword And Return    Keyword   ${arg}
 
     will be transformed to:
 
@@ -47,13 +43,7 @@ class ReplaceReturns(ModelTransformer):
                 RETURN    1
 
             Keyword 2
-                IF    ${var}==2
-                    RETURN    Keyword 2    ${var}
-                END
                 RETURN    ${arg}
-
-            Keyword 3
-                RETURN    Keyword   ${arg}
 
     Supports global formatting params: ``--startline`` and ``--endline``.
 
@@ -85,11 +75,11 @@ class ReplaceReturns(ModelTransformer):
         if not node.keyword or node.errors:
             return node
         normalized_name = after_last_dot(normalize_name(node.keyword))
-        if normalized_name in ("returnfromkeyword", "runkeywordandreturn"):  # TODO replace by class attr
+        if normalized_name == "returnfromkeyword":
             return create_statement_from_tokens(
                 statement=ReturnStatement, tokens=node.tokens[2:], indent=node.tokens[0]
             )
-        elif normalized_name in ("returnfromkeywordif", "runkeywordandreturnif"):
+        elif normalized_name == "returnfromkeywordif":
             return wrap_in_if_and_replace_statement(node, ReturnStatement, self.formatting_config.separator)
         return node
 

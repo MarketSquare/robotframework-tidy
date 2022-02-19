@@ -109,10 +109,22 @@ def get_args(transformer, allowed_mapped, config):
         raise InvalidParameterFormatError(transformer) from None
 
 
+def validate_config(config, allowed_mapped):
+    for transformer in config:
+        if transformer in allowed_mapped or transformer in TRANSFORMERS:
+            continue
+        similar_finder = RecommendationFinder()
+        similar = similar_finder.find_similar(transformer, TRANSFORMERS + list(allowed_mapped.keys()))
+        raise ImportTransformerError(
+            f"Configuring transformer '{transformer}' failed. " f"Verify if correct name was provided.{similar}"
+        ) from None
+
+
 def load_transformers(allowed_transformers, config, allow_disabled=False, force_order=False):
     """Dynamically load all classes from this file with attribute `name` defined in allowed_transformers"""
     loaded_transformers = []
     allowed_mapped = {name: args for name, args in allowed_transformers} if allowed_transformers else {}
+    validate_config(config, allowed_mapped)
     if not force_order:
         for name in TRANSFORMERS:
             if not allowed_mapped or name in allowed_mapped:

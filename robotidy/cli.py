@@ -312,8 +312,6 @@ def print_transformers_list():
     help="Path to output file where source file will be saved",
 )
 @click.option("-v", "--verbose", is_flag=True, help="More verbose output", show_default=True)
-@click.option("--list-transformers", is_flag=True)  # deprecated
-@click.option("--describe-transformer", default=None)  # deprecated
 @click.option(
     "--force-order",
     is_flag=True,
@@ -343,16 +341,8 @@ def cli(
     list: bool,
     desc: Optional[str],
     output: Optional[Path],
-    list_transformers: bool,
-    describe_transformer: Optional[str],
     force_order: bool,
 ):
-    if list_transformers:
-        print("--list-transformers is deprecated in 1.3.0. Use --list instead")
-        ctx.exit(0)
-    if describe_transformer:
-        print("--describe-transformer is deprecated in 1.3.0. Use --desc NAME instead")
-        ctx.exit(0)
     if list:
         print_transformers_list()
         ctx.exit(0)

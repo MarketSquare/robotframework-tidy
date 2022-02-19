@@ -49,7 +49,6 @@ class AlignTestCases(ModelTransformer):
     def __init__(self, only_with_headers: bool = False, min_width: int = None):
         self.only_with_headers = only_with_headers
         self.min_width = min_width
-        self.templated = False
         self.widths = None
         self.test_name_len = 0
         self.name_line = 0
