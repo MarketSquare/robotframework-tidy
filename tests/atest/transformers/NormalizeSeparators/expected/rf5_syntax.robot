@@ -1,5 +1,6 @@
 *** Keywords ***
 Inline IF
+    [Arguments]    ${arg}
     IF    $cond    Keyword
 
     IF    $cond    Keyword    1    ELSE IF    Keyword2    ${arg}
@@ -37,6 +38,13 @@ TRY EXCEPT
         IF    $cond    Keyword
     EXCEPT    Error message    Another error    ${message}    # Match any of these.
         Error handler
+        TRY
+            Other Stuff
+        EXCEPT
+            Quite Nested
+        ELSE
+            Is It not?
+        END
     END
     Open Connection
 
@@ -45,3 +53,17 @@ TRY EXCEPT
     FINALLY
         Close Connection
     END
+
+Nested IF 1
+    [Documentation]    FAIL Inline IF cannot be nested.
+    IF    True    IF    True    Not run
+
+Nested IF 2
+    [Documentation]    FAIL Inline IF cannot be nested.
+    IF    True    Not run    ELSE    IF    True    Not run
+
+Nested IF 3
+    [Documentation]    FAIL Inline IF cannot be nested.
+    IF    True    IF    True    Not run
+    ...    ELSE IF    True    IF    True    Not run
+    ...    ELSE               IF    True    Not run
