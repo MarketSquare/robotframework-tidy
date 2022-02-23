@@ -177,3 +177,53 @@ Short IF that didn't replace
     IF    "${version}"
         Version Should Match    ${version}
     END
+
+Too long inline IF
+    ${var}    ${var2}    IF    $condition != $condition2    Longer Keyword Name    ${argument}    values    ELSE IF    $condition2    Short Keyword    ${arg}  # comment
+
+    IF    $conditiooooooooon >= $conditiooooooooon    Overly Long Keyword To Replicate Inline If Transformation    ${argument}
+
+    IF    $conditiooooooooon >= $conditiooooooooon    Overly Long Keyword To Replicate Inline If Transformation    ${argument}  # first comment
+    ...  ${argument2}  # second comment       with edge case
+
+    IF    $conditiooooooooon >= $conditiooooooooon    Overly Long Keyword To Replicate    ELSE    Keyword That    ${fit}
+
+    IF    $conditiooooooooon >= $conditiooooooooon    Overly Long Keyword To Replicate    ELSE    Keyword That    ${fits}
+
+    ${variable}=    IF    $conditiooooooooon >= $conditiooooooooon    Overly Long Keyword To Replicate    ELSE    Keyword That    ${fits}
+
+    IF    $cond    Short  # leave comment
+    IF    $cond    Short But Multiline
+    ...    ${arg}
+
+    IF    $cond
+    ...    Keyword
+    ...    ${arg}
+
+    IF    $cond    Short But Multiline
+    ...    ${arg}
+    ...    ELSE    Keyword
+
+    IF
+    ...    $cond
+    ...    Keyword
+    ...    ${arg}
+
+If with multiple comments
+    IF    ${True}    # comment here is ok
+        Log    no operation    # Here is also ok
+    ELSE IF    ${True}    # Again totally fine
+        Log    yeah    # Here is also ok
+    ELSE    # Here is also ok
+        Log    no joo    # Here is also ok
+    END    # Here is also ok
+
+If with empty values
+    IF    $cond    Short But Multiline
+    ...    
+    ...    ELSE    Keyword
+
+    IF    $cond    Short But Multiline
+    ...
+    ...    ELSE    Keyword
+    ...    # and comment

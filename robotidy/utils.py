@@ -327,3 +327,42 @@ def wrap_in_if_and_replace_statement(node, statement, default_separator):
     end = End.from_params(indent=node.tokens[0].value)
     if_block = If(header=header, body=[body], orelse=None, end=end)
     return if_block
+
+
+def get_comments(tokens):
+    prev_sep = ""
+    comments = []
+    for token in tokens:
+        if token.type == Token.COMMENT:
+            if token.value.startswith("#"):
+                comments.append(token)
+            elif comments:
+                comments[-1].value += prev_sep + token.value
+            else:
+                token.value = f"# {token.value}"
+                comments.append(token)
+        elif token.type == Token.SEPARATOR:
+            prev_sep = token.value
+    return comments
+
+
+def flatten_multiline(tokens, separator, remove_comments: bool = False):
+    flattened = []
+    skip_start = False
+    for tok in tokens[:-1]:
+        if tok.type == Token.EOL:
+            skip_start = True
+        elif skip_start:
+            if tok.type == Token.CONTINUATION:
+                skip_start = False
+        else:
+            if tok.type == Token.ARGUMENT and tok.value == "":
+                flattened.append(Token(Token.SEPARATOR, separator))
+                tok.value = "${EMPTY}"
+            if remove_comments and tok.type == Token.COMMENT:
+                if flattened and flattened[-1].type == Token.SEPARATOR:
+                    flattened.pop()
+            else:
+                flattened.append(tok)
+    flattened.append(tokens[-1])
+    return flattened

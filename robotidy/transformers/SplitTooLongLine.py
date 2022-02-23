@@ -1,4 +1,9 @@
 from robot.api.parsing import ModelTransformer, Token
+
+try:
+    from robot.api.parsing import InlineIfHeader
+except ImportError:
+    InlineIfHeader = None
 from robotidy.decorators import check_start_end_line
 
 
@@ -49,6 +54,17 @@ class SplitTooLongLine(ModelTransformer):
     @property
     def line_length(self):
         return self.formatting_config.line_length if self._line_length is None else self._line_length
+
+    def visit_If(self, node):  # noqa
+        if self.is_inline(node):
+            return node
+        if node.orelse:
+            self.generic_visit(node.orelse)
+        return self.generic_visit(node)
+
+    @staticmethod
+    def is_inline(node):
+        return isinstance(node.header, InlineIfHeader)
 
     @check_start_end_line
     def visit_KeywordCall(self, node):  # noqa

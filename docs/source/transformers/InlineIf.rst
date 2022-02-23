@@ -133,5 +133,33 @@ If you want other transformers to use different ``line-length`` value configure 
 
     robotidy --line-length 140 --configure InlineIf:line_length:80 src.robot
 
+Too long inline IF
+------------------
+Too long inline IFs (over ``line_length`` character limit) will be replaced with normal IF block:
+
+.. tabs::
+
+    .. code-tab:: robotframework Before
+
+        *** Keywords ***
+        Keyword
+            ${var}    ${var2}    IF    $condition != $condition2    Longer Keyword Name    ${argument}    values    ELSE IF    $condition2    Short Keyword    ${arg}  # comment
+
+    .. code-tab:: robotframework After
+
+        *** Keywords ***
+        Keyword
+            # comment
+            IF    $condition != $condition2
+                ${var}    ${var2}    Longer Keyword Name    ${argument}    values
+            ELSE IF    $condition2
+                ${var}    ${var2}    Short Keyword    ${arg}
+            ELSE
+                ${var}    ${var2}    Set Variable    ${None}    ${None}    # ELSE branch added to replicate missing ELSE in inline if
+            END
+
+Since in above example ``${var}`` and ``${var2}`` variables were used in assignment `Robotidy` added missing ``ELSE`` branch
+to set variable values to ``None`` if no other condition matches. If there is ``ELSE`` branch or there is no assignments
+in transformed inline IF `Robotidy` will not add it.
 
 Supports global formatting params: ``--startline`` and ``--endline``.

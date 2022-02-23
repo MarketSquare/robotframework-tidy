@@ -150,3 +150,6 @@ If - else if - else clause
         ...    args    here    are    some    more    args    to    split
         ...    with    irregular    spacing
     END
+
+Too long inline IF  # shall be handled by InlineIf transformer
+    ${var}    ${var2}    IF    $condition != $condition2    Longer Keyword Name    ${argument}    values    ELSE IF    $condition2    Short Keyword    ${arg}  # comment
