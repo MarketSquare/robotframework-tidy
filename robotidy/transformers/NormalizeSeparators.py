@@ -104,7 +104,9 @@ class NormalizeSeparators(ModelTransformer):
         return node
 
     def visit_If(self, node):
-        self.is_inline = self.is_inline or InlineIfHeader and isinstance(node.header, InlineIfHeader)
+        if self.is_inline:  # nested inline if is ignored
+            return node
+        self.is_inline = InlineIfHeader and isinstance(node.header, InlineIfHeader)
         self.visit_Statement(node.header)
         indent = 1
         if self.is_inline:
