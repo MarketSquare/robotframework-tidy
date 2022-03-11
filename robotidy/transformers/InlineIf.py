@@ -95,11 +95,9 @@ class InlineIf(ModelTransformer):
 
     @staticmethod
     def if_to_branches(if_block):
-        yield if_block
-        or_else = if_block.orelse
-        while or_else:
-            yield or_else
-            or_else = or_else.orelse
+        while if_block:
+            yield if_block
+            if_block = if_block.orelse
 
     def assignment_identical(self, node):
         else_found = False
@@ -290,12 +288,12 @@ class InlineIf(ModelTransformer):
         assign = [*self.join_on_separator(assign_tokens, Token(Token.SEPARATOR, separator))]
         else_present = False
         branches = []
-        if_block = head = None
-        for branch in self.if_to_branches(node):
-            new_comments, if_block, else_found = self.handle_inline_if_create(branch, indent.value, assign)
+        while node:
+            new_comments, if_block, else_found = self.handle_inline_if_create(node, indent.value, assign)
             else_present = else_present or else_found
             comments += new_comments
             branches.append(if_block)
+            node = node.orelse
         if not else_present and assign_tokens:
             header = ElseHeader.from_params(indent=indent.value)
             keyword = self.create_keyword_for_inline(

@@ -5,6 +5,7 @@ try:
 except ImportError:
     InlineIfHeader = None
 from robotidy.decorators import check_start_end_line
+from robotidy.utils import ROBOT_VERSION
 
 
 EOL = Token(Token.EOL)
@@ -64,7 +65,7 @@ class SplitTooLongLine(ModelTransformer):
 
     @staticmethod
     def is_inline(node):
-        return isinstance(node.header, InlineIfHeader)
+        return ROBOT_VERSION.major > 4 and isinstance(node.header, InlineIfHeader)
 
     @check_start_end_line
     def visit_KeywordCall(self, node):  # noqa
