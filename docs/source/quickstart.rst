@@ -36,14 +36,14 @@ Status code
 ------------
 By default `Robotidy` returns 0 exit code after successful run and 1 if there was an error. You can make `Robotidy` exit 1
 if any file would be transformed by passing ``--check``. By default files will not be transformed (same as running with
-``--no-overwrite``::
+``--no-overwrite``)::
 
     robotidy --check golden.robot
     0
     robotidy --check ugly.robot
     1
 
-If you want `Robotidy` to transform the files while using ``--check`` flag add ``--overwrite`::
+If you want `Robotidy` to transform the files while using ``--check`` flag add ``--overwrite``::
 
     robotidy --check --overwrite file.robot
 

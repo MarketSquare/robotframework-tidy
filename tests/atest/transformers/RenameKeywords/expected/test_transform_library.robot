@@ -17,7 +17,7 @@ I Am Fine
 
 Underscores Are Bad
     Looks Like Python
-    library_with_underscore.Looks Like Python
+    Library With Underscore.Looks Like Python
 
 Keyword With Unicode And Non Latin
     Eäi Saa Peittää

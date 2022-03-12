@@ -3,7 +3,7 @@
 .. parsed-literal::
     robotidy --transform |TRANSFORMERNAME| src
 
-Or configure ``enable`` parameter:
+Or configure ``enabled`` parameter:
 
 .. parsed-literal::
     robotidy --configure |TRANSFORMERNAME|:enabled=True

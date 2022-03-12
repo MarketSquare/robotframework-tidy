@@ -17,11 +17,13 @@ I Am Fine
 
 Underscores Are Bad
     Looks Like Python
+    library_with_underscore.Looks Like Python
 
 Keyword With Unicode And Non Latin
     Eäi Saa Peittää
     日本語
     _
+    __
 
 Ignore ${var} Embedded
     Also Ignore ${variable}['key'] Syntax
