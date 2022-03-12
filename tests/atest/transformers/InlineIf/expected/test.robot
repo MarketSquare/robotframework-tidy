@@ -1,7 +1,13 @@
 *** Test Cases ***
 Inline IF
     IF    $condition1    Keyword    argument
-    IF    $condition1    Keyword    ELSE IF    $condition2    Keyword2    ELSE    Keyword3
+    IF    $condition1
+        Keyword
+    ELSE IF    $condition2
+        Keyword2
+    ELSE
+        Keyword3
+    END
     ${var}    IF    $condition1    Keyword    argument
 
 Simple IF
@@ -11,7 +17,13 @@ Simple IF
 Branched IF
     IF    $condition1    Keyword    1    ELSE    Keyword    2
 
-    IF    $condition3    Keyword    ELSE IF    ${ROOT}    Keyword2    ELSE    Keyword3
+    IF    $condition3
+        Keyword
+    ELSE IF    ${ROOT}
+        Keyword2
+    ELSE
+        Keyword3
+    END
 
 Multi statements IF
     IF    $condition1
@@ -144,7 +156,11 @@ Too long inline IF
         Overly Long Keyword To Replicate Inline If Transformation    ${argument}    ${argument2}
     END
 
-    IF    $conditiooooooooon >= $conditiooooooooon    Overly Long Keyword To Replicate    ELSE    Keyword That    ${fit}
+    IF    $conditiooooooooon >= $conditiooooooooon
+        Overly Long Keyword To Replicate
+    ELSE
+        Keyword That    ${fit}
+    END
 
     IF    $conditiooooooooon >= $conditiooooooooon
         Overly Long Keyword To Replicate
@@ -175,10 +191,14 @@ If with multiple comments
     # Here is also ok
     # Here is also ok
     # Here is also ok
-    IF    ${True}    Log    no operation    ELSE IF    ${True}    Log    yeah    ELSE    Log    no joo
+    IF    ${True}    Log    K1    ELSE IF    ${True}    K2    ELSE    K3
 
 If with empty values
     IF    $cond    Short But Multiline    ${EMPTY}    ELSE    Keyword
 
     # and comment
-    IF    $cond    Short But Multiline    ${EMPTY}    ELSE    Keyword    ${EMPTY}
+    IF    $cond
+        Short But Multiline    ${EMPTY}
+    ELSE
+        Keyword    ${EMPTY}
+    END

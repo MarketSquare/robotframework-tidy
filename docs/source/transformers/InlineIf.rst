@@ -7,7 +7,7 @@ Replaces IF blocks with inline IF.
 .. |TRANSFORMERNAME| replace:: InlineIf
 .. include:: enabled_hint.txt
 
-It will only replace IF block if it can fit in one line shorter than ``--line-length``.
+It will only replace IF block if it can fit in one line shorter than ``line_length`` parameter (default: ``80`` characters).
 
 Simple IF blocks that will be replaced by inline IF:
 
@@ -81,7 +81,7 @@ your consent:
 
 Line length
 ------------
-Inline IF will be only used if resulting IF will be shorter than ``line_length`` parameter (default value is ``120``).
+Inline IF will be only used if resulting IF will be shorter than ``line_length`` parameter (default value is ``80``).
 Multi statements IF blocks are also skipped:
 
 .. tabs::
@@ -122,16 +122,13 @@ Multi statements IF blocks are also skipped:
                 Other Keyword
             END
 
-``line_length`` can be set globally (it will also affect other transformers such as :ref:`SplitTooLongLine`) or only in
-``InlineIf``. With following configuration `Robotidy` will transform all IFs to inline IFs if they are under 140 characters
-long::
+``line_length`` parameter is configurable. Note that ``line_length`` is different than global ``--line-length`` (used
+in other transformers such as SplitTooLongLine)::
 
-    robotidy --line-length 140 src.robot
+    robotidy --line-length 80 --configure InlineIf:line_length:140 src.robot
 
-If you want other transformers to use different ``line-length`` value configure it per transformer. In this example
-`Robotidy` will use ``line length = 140`` for all transformers except the ``InlineIf`` which will get ``line length = 80``::
-
-    robotidy --line-length 140 --configure InlineIf:line_length:80 src.robot
+With above configuration ``InlineIf`` will be configured to use ``line_length`` of 140 characters limit and
+global ``--line-length`` is set to 80 (and is not used by ``InlineIf``).
 
 Too long inline IF
 ------------------

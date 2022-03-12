@@ -15,7 +15,7 @@ class InlineIf(ModelTransformer):
     """
     Replaces IF blocks with inline IF.
 
-    It will only replace IF block if it can fit in one line shorter than ``line_length`` parameter and return
+    It will only replace IF block if it can fit in one line shorter than `line_length` (default 80) parameter and return
     variables matches for all ELSE and ELSE IF branches.
 
     Following code::
@@ -46,23 +46,19 @@ class InlineIf(ModelTransformer):
                 Keyword 2
             END
 
-    Too long inline IFs (over ``line_length`` character limit) will be replaced with normal IF block.
-    You can decide to not replace IF blocks containing ELSE or ELSE IF branches by setting ``skip_else`` to True.
+    Too long inline IFs (over `line_length` character limit) will be replaced with normal IF block.
+    You can decide to not replace IF blocks containing ELSE or ELSE IF branches by setting `skip_else` to True.
 
-    Supports global formatting params: ``--startline`` and ``--endline``.
+    Supports global formatting params: `--startline` and `--endline`.
 
     See https://robotidy.readthedocs.io/en/latest/transformers/InlineIf.html for more examples.
     """
 
     ENABLED = ROBOT_VERSION.major >= 5
 
-    def __init__(self, line_length: int = None, skip_else: bool = False):
-        self._line_length = line_length
+    def __init__(self, line_length: int = 80, skip_else: bool = False):
+        self.line_length = line_length
         self.skip_else = skip_else
-
-    @property
-    def line_length(self):
-        return self.formatting_config.line_length if self._line_length is None else self._line_length
 
     @check_start_end_line
     def visit_If(self, node: If):  # noqa
