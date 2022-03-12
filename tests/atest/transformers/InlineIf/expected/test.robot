@@ -1,7 +1,13 @@
 *** Test Cases ***
 Inline IF
     IF    $condition1    Keyword    argument
-    IF    $condition1    Keyword    ELSE IF    $condition2    Keyword2    ELSE    Keyword3
+    IF    $condition1
+        Keyword
+    ELSE IF    $condition2
+        Keyword2
+    ELSE
+        Keyword3
+    END
     ${var}    IF    $condition1    Keyword    argument
 
 Simple IF
@@ -11,7 +17,13 @@ Simple IF
 Branched IF
     IF    $condition1    Keyword    1    ELSE    Keyword    2
 
-    IF    $condition3    Keyword    ELSE IF    ${ROOT}    Keyword2    ELSE    Keyword3
+    IF    $condition3
+        Keyword
+    ELSE IF    ${ROOT}
+        Keyword2
+    ELSE
+        Keyword3
+    END
 
 Multi statements IF
     IF    $condition1
@@ -123,3 +135,70 @@ Short IF that didn't replace
     IF    ${True}    No Operation    ELSE    Fail
 
     IF    "${version}"    Version Should Match    ${version}
+
+Too long inline IF
+    # comment
+    IF    $condition != $condition2
+        ${var}    ${var2}    Longer Keyword Name    ${argument}    values
+    ELSE IF    $condition2
+        ${var}    ${var2}    Short Keyword    ${arg}
+    ELSE
+        ${var}    ${var2}    Set Variable    ${None}    ${None}
+    END
+
+    IF    $conditiooooooooon >= $conditiooooooooon
+        Overly Long Keyword To Replicate Inline If Transformation    ${argument}
+    END
+
+    # first comment
+    # second comment       with edge case
+    IF    $conditiooooooooon >= $conditiooooooooon
+        Overly Long Keyword To Replicate Inline If Transformation    ${argument}    ${argument2}
+    END
+
+    IF    $conditiooooooooon >= $conditiooooooooon
+        Overly Long Keyword To Replicate
+    ELSE
+        Keyword That    ${fit}
+    END
+
+    IF    $conditiooooooooon >= $conditiooooooooon
+        Overly Long Keyword To Replicate
+    ELSE
+        Keyword That    ${fits}
+    END
+
+    IF    $conditiooooooooon >= $conditiooooooooon
+        ${variable}=    Overly Long Keyword To Replicate
+    ELSE
+        ${variable}=    Keyword That    ${fits}
+    END
+
+    IF    $cond    Short  # leave comment
+    IF    $cond    Short But Multiline    ${arg}
+
+    IF    $cond    Keyword    ${arg}
+
+    IF    $cond    Short But Multiline    ${arg}    ELSE    Keyword
+
+    IF    $cond    Keyword    ${arg}
+
+If with multiple comments
+    # comment here is ok
+    # Here is also ok
+    # Here is also ok
+    # Again totally fine
+    # Here is also ok
+    # Here is also ok
+    # Here is also ok
+    IF    ${True}    Log    K1    ELSE IF    ${True}    K2    ELSE    K3
+
+If with empty values
+    IF    $cond    Short But Multiline    ${EMPTY}    ELSE    Keyword
+
+    # and comment
+    IF    $cond
+        Short But Multiline    ${EMPTY}
+    ELSE
+        Keyword    ${EMPTY}
+    END

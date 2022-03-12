@@ -1,13 +1,13 @@
 from itertools import chain
 
-from robot.api.parsing import ModelTransformer, If, IfHeader, ElseHeader, ElseIfHeader, Token, KeywordCall
+from robot.api.parsing import ModelTransformer, If, IfHeader, ElseHeader, ElseIfHeader, Token, KeywordCall, Comment, End
 
 try:
     from robot.api.parsing import ReturnStatement, Break, Continue, InlineIfHeader
 except ImportError:
     ReturnStatement, Break, Continue, InlineIfHeader = None, None, None, None
 
-from robotidy.utils import ROBOT_VERSION, normalize_name
+from robotidy.utils import ROBOT_VERSION, normalize_name, get_comments, flatten_multiline
 from robotidy.decorators import check_start_end_line
 
 
@@ -15,7 +15,7 @@ class InlineIf(ModelTransformer):
     """
     Replaces IF blocks with inline IF.
 
-    It will only replace IF block if it can fit in one line shorter than ``line_length`` parameter and return
+    It will only replace IF block if it can fit in one line shorter than `line_length` (default 80) parameter and return
     variables matches for all ELSE and ELSE IF branches.
 
     Following code::
@@ -46,36 +46,31 @@ class InlineIf(ModelTransformer):
                 Keyword 2
             END
 
-    You can decide to not replace IF blocks containing ELSE or ELSE IF branches by setting ``skip_else`` to True.
+    Too long inline IFs (over `line_length` character limit) will be replaced with normal IF block.
+    You can decide to not replace IF blocks containing ELSE or ELSE IF branches by setting `skip_else` to True.
 
-    Supports global formatting params: ``--startline`` and ``--endline``.
+    Supports global formatting params: `--startline` and `--endline`.
 
     See https://robotidy.readthedocs.io/en/latest/transformers/InlineIf.html for more examples.
     """
 
     ENABLED = ROBOT_VERSION.major >= 5
 
-    def __init__(self, line_length: int = None, skip_else: bool = False):
-        self._line_length = line_length
+    def __init__(self, line_length: int = 80, skip_else: bool = False):
+        self.line_length = line_length
         self.skip_else = skip_else
-
-    @property
-    def line_length(self):
-        return self.formatting_config.line_length if self._line_length is None else self._line_length
-
-    def visit_TestCase(self, node):  # noqa
-        self.generic_visit(node)
-        return node
-
-    visit_Keyword = visit_TestCase
 
     @check_start_end_line
     def visit_If(self, node: If):  # noqa
-        if node.errors or self.is_inline_end(node.end) or node.end.errors:  # already inline if (or error)
+        if node.errors or getattr(node.end, "errors", None):
             return node
+        if self.is_inline(node):
+            return self.handle_inline(node)
         self.generic_visit(node)
         if node.orelse:
             self.generic_visit(node.orelse)
+        if self.no_end(node):
+            return node
         indent = node.header.tokens[0]
         if not (self.should_transform(node) and self.assignment_identical(node)):
             return node
@@ -96,11 +91,9 @@ class InlineIf(ModelTransformer):
 
     @staticmethod
     def if_to_branches(if_block):
-        yield if_block
-        or_else = if_block.orelse
-        while or_else:
-            yield or_else
-            or_else = or_else.orelse
+        while if_block:
+            yield if_block
+            if_block = if_block.orelse
 
     def assignment_identical(self, node):
         else_found = False
@@ -119,20 +112,20 @@ class InlineIf(ModelTransformer):
         return True
 
     def is_shorter_than_limit(self, inline_if):
-        line_len = self.if_len(inline_if)
-        or_else = inline_if.orelse
-        while or_else:
-            line_len += self.if_len(or_else)
-            or_else = or_else.orelse
+        line_len = sum(self.if_len(branch) for branch in self.if_to_branches(inline_if))
         return line_len <= self.line_length
 
     @staticmethod
-    def is_inline_end(end):
-        if not end:
+    def no_end(node):
+        if not node.end:
             return True
-        if not len(end.tokens) == 1:
+        if not len(node.end.tokens) == 1:
             return False
-        return not end.tokens[0].value
+        return not node.end.tokens[0].value
+
+    @staticmethod
+    def is_inline(node):
+        return isinstance(node.header, InlineIfHeader)
 
     @staticmethod
     def if_len(if_st):
@@ -144,15 +137,17 @@ class InlineIf(ModelTransformer):
 
     def to_inline(self, node, indent):
         tail = node
-        if_block = if_block_tail = self.inline_if_from_branch(node, indent)
+        comments = self.collect_comments_from_if(indent, node)
+        if_block = head = self.inline_if_from_branch(node, indent)
         while tail.orelse:
             if self.skip_else:
                 return node
-            if_block_tail.orelse = self.inline_if_from_branch(tail.orelse, self.formatting_config.separator)
             tail = tail.orelse
-            if_block_tail = if_block_tail.orelse
+            comments += self.collect_comments_from_if(indent, tail)
+            head.orelse = self.inline_if_from_branch(tail, self.formatting_config.separator)
+            head = head.orelse
         if self.is_shorter_than_limit(if_block):
-            return if_block
+            return (*comments, if_block)
         return node
 
     def inline_if_from_branch(self, node, indent):
@@ -217,3 +212,115 @@ class InlineIf(ModelTransformer):
     @staticmethod
     def to_inline_break_continue_tokens(token, separator, last_token):
         return [Token(Token.SEPARATOR, separator), Token(token), last_token]
+
+    @staticmethod
+    def join_on_separator(tokens, separator):
+        for token in tokens:
+            yield token
+            yield separator
+
+    @staticmethod
+    def collect_comments_from_if(indent, node):
+        comments = get_comments(node.header.tokens)
+        for statement in node.body:
+            comments += get_comments(statement.tokens)
+        if node.end:
+            comments += get_comments(node.end)
+        return [Comment.from_params(comment=comment.value, indent=indent) for comment in comments]
+
+    def create_keyword_for_inline(self, kw_tokens, indent, assign):
+        keyword_tokens = []
+        for token in kw_tokens:
+            keyword_tokens.append(Token(Token.SEPARATOR, self.formatting_config.separator))
+            keyword_tokens.append(token)
+        return KeywordCall.from_tokens(
+            [
+                Token(Token.SEPARATOR, indent + self.formatting_config.separator),
+                *assign,
+                *keyword_tokens[1:],
+                Token(Token.EOL),
+            ]
+        )
+
+    def flatten_if_block(self, node):
+        node.header.tokens = flatten_multiline(
+            node.header.tokens, self.formatting_config.separator, remove_comments=True
+        )
+        for index, statement in enumerate(node.body):
+            node.body[index].tokens = flatten_multiline(
+                statement.tokens, self.formatting_config.separator, remove_comments=True
+            )
+        return node
+
+    def is_if_multiline(self, node):
+        for branch in self.if_to_branches(node):
+            if branch.header.get_token(Token.CONTINUATION):
+                return True
+            if any(statement.get_token(Token.CONTINUATION) for statement in branch.body):
+                return True
+        return False
+
+    def flatten_inline_if(self, node):
+        indent = node.header.tokens[0].value
+        comments = self.collect_comments_from_if(indent, node)
+        node = self.flatten_if_block(node)
+        head = node
+        while head.orelse:
+            head = head.orelse
+            comments += self.collect_comments_from_if(indent, head)
+            head = self.flatten_if_block(head)
+        return comments, node
+
+    def handle_inline(self, node):
+        if self.is_if_multiline(node):
+            comments, node = self.flatten_inline_if(node)
+        else:
+            comments = []
+        if self.is_shorter_than_limit(node):  # TODO ignore comments?
+            return (*comments, node)
+        indent = node.header.tokens[0]
+        separator = self.formatting_config.separator
+        assign_tokens = node.header.get_tokens(Token.ASSIGN)
+        assign = [*self.join_on_separator(assign_tokens, Token(Token.SEPARATOR, separator))]
+        else_present = False
+        branches = []
+        while node:
+            new_comments, if_block, else_found = self.handle_inline_if_create(node, indent.value, assign)
+            else_present = else_present or else_found
+            comments += new_comments
+            branches.append(if_block)
+            node = node.orelse
+        if not else_present and assign_tokens:
+            header = ElseHeader.from_params(indent=indent.value)
+            keyword = self.create_keyword_for_inline(
+                [
+                    Token(Token.KEYWORD, "Set Variable"),
+                    *[Token(Token.ARGUMENT, "${None}") for _ in range(len(assign_tokens))],
+                ],
+                indent.value,
+                assign,
+            )
+            branches.append(If(header=header, body=[keyword]))
+        if_block = head = branches[0]
+        for branch in branches[1:]:
+            head.orelse = branch
+            head = head.orelse
+        if_block.end = End([indent, Token(Token.END), Token(Token.EOL)])
+        return (*comments, if_block)
+
+    def handle_inline_if_create(self, node, indent, assign):
+        comments = self.collect_comments_from_if(indent, node)
+        body = [self.create_keyword_for_inline(node.body[0].data_tokens, indent, assign)]
+        else_found = False
+        if isinstance(node.header, InlineIfHeader):
+            header = IfHeader.from_params(
+                condition=node.condition, indent=indent, separator=self.formatting_config.separator
+            )
+        elif isinstance(node.header, ElseIfHeader):
+            header = ElseIfHeader.from_params(
+                condition=node.condition, indent=indent, separator=self.formatting_config.separator
+            )
+        else:
+            header = ElseHeader.from_params(indent=indent)
+            else_found = True
+        return comments, If(header=header, body=body), else_found
