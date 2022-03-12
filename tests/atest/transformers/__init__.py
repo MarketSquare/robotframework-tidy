@@ -38,8 +38,8 @@ class TransformerAcceptanceTest:
     def compare(
         self, source: str, expected: Optional[str] = None, config: str = "", target_version: Optional[int] = None
     ):
-        if not enabled_in_version(self.TRANSFORMER_NAME, target_version):
-            return
+        if not self.enabled_in_version(target_version):
+            pytest.skip(f"Test enabled only for RF {target_version}.0")
         if expected is None:
             expected = source
         self.run_tidy(args=f"--transform {self.TRANSFORMER_NAME}{config}".split(), source=source)
@@ -73,10 +73,9 @@ class TransformerAcceptanceTest:
             display_file_diff(expected, actual)
             pytest.fail(f"File {actual_name} is not same as expected")
 
-
-def enabled_in_version(transformer_name: str, target_version: Optional[int]) -> bool:
-    if target_version and ROBOT_VERSION.major != target_version:
-        return False
-    if transformer_name in VERSION_MATRIX:
-        return ROBOT_VERSION.major >= VERSION_MATRIX[transformer_name]
-    return True
+    def enabled_in_version(self, target_version: Optional[int]) -> bool:
+        if target_version and ROBOT_VERSION.major != target_version:
+            return False
+        if self.TRANSFORMER_NAME in VERSION_MATRIX:
+            return ROBOT_VERSION.major >= VERSION_MATRIX[self.TRANSFORMER_NAME]
+        return True
