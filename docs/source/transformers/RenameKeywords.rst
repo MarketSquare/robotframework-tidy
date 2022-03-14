@@ -15,7 +15,7 @@ You can keep underscores if you set remove_underscores to False::
 
 Library name
 ------------
-By default library name in keyword name is ignored. Anything before last dot in name is considered as library name.
+By default library name in keyword name is ignored. Anything before the last dot in the name is considered as a library name.
 Use `ignore_library = True` parameter to control if the library name part (Library.Keyword) of keyword call
 should be renamed.
 
