@@ -13,6 +13,34 @@ You can keep underscores if you set remove_underscores to False::
 
     robotidy --transform RenameKeywords -c RenameKeywords:remove_underscores=False .
 
+Library name
+------------
+By default library name in keyword name is ignored. Anything before the last dot in the name is considered as a library name.
+Use `ignore_library = True` parameter to control if the library name part (Library.Keyword) of keyword call
+should be renamed.
+
+.. tabs::
+
+    .. code-tab:: robotframework Before
+
+        *** Keywords ***
+        Keyword
+            library_name.keyword
+
+    .. code-tab:: robotframework After (default)
+
+        *** Keywords ***
+        Keyword
+            library_name.Keyword
+
+    .. code-tab:: robotframework After (``ignore_library=False``)
+
+        *** Keywords ***
+        Keyword
+            Library Name.Keyword
+
+Replace pattern
+---------------
 It is also possible to configure ``replace_pattern`` parameter to find and replace regex pattern. Use ``replace_to``
 to set replacement value. This configuration (underscores are used instead of spaces)::
 

@@ -7,6 +7,9 @@ class TestRenameKeywords(TransformerAcceptanceTest):
     def test_transformer(self):
         self.compare(source="test.robot", expected="test.robot")
 
+    def test_transform_library(self):
+        self.compare(source="test.robot", expected="test_transform_library.robot", config=":ignore_library=False")
+
     def test_renaming_pattern(self):
         self.compare(
             source="test.robot",
@@ -40,5 +43,12 @@ class TestRenameKeywords(TransformerAcceptanceTest):
         )
         assert expected_output == result.output
 
-    def test_with_library_name(self):
+    def test_with_library_name_ignore(self):
         self.compare(source="with_library_name.robot")
+
+    def test_with_library_name_transform(self):
+        self.compare(
+            source="with_library_name.robot",
+            expected="with_library_name_transform.robot",
+            config=":ignore_library=False",
+        )
