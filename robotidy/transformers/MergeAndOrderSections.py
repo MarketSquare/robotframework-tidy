@@ -4,9 +4,9 @@ from robot.parsing.model.statements import Statement
 from robotidy.exceptions import InvalidParameterValueError
 
 try:
-    from robot.api.parsing import InlineIfHeader, While, Try
+    from robot.api.parsing import InlineIfHeader
 except ImportError:
-    InlineIfHeader, While, Try = None, None, None
+    InlineIfHeader = None
 import click
 
 
