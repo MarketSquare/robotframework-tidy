@@ -37,10 +37,27 @@ setup(
     packages=["robotidy"],
     include_package_data=True,
     python_requires=">=3.7",
-    install_requires=["robotframework>=4.0", "Click>=7.0", "toml>=0.10.2", "colorama>=0.4.3", "pathspec==0.9.0"],
+    install_requires=[
+        "click>=7.0",
+        "colorama>=0.4.3",
+        "packaging>=21.0",
+        "pathspec>=0.9.0,<0.10.0",
+        "robotframework>=4.0",
+        "toml>=0.10.2",
+    ],
     extras_requires={
-        "dev": ["pytest", "pylama", "pylama_pylint", "coverage", "invoke", "jinja2"],
-        "doc": ["sphinx", "sphinx_rtd_theme"],
+        "dev": [
+            "coverage",
+            "invoke",
+            "jinja2",
+            "pylama_pylint",
+            "pylama",
+            "pytest",
+        ],
+        "doc": [
+            "sphinx_rtd_theme",
+            "sphinx",
+        ],
     },
     entry_points={"console_scripts": ["robotidy=robotidy.cli:cli"]},
 )
