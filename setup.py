@@ -41,7 +41,7 @@ setup(
         "click>=7.0",
         "colorama>=0.4.3",
         "packaging>=21.0",
-        "pathspec==0.9.0",
+        "pathspec>=0.9.0,<0.10.0",
         "robotframework>=4.0",
         "toml>=0.10.2",
     ],
