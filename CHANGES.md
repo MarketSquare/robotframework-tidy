@@ -40,6 +40,8 @@
   ```commandline
   robotidy --check --overwrite src
   ```
+
+### Fixes
 - Unmodified files are now not saved to the disk ([#237](https://github.com/MarketSquare/robotframework-tidy/issues/237))
 
 ## 1.6.2
