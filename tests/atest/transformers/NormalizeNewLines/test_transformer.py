@@ -53,4 +53,5 @@ class TestNormalizeNewLines(TransformerAcceptanceTest):
         self.compare(
             source=f"inline_if_{trailing_lines}_lines.robot",
             expected="inline_if.robot",
+            target_version=5
         )
