@@ -57,7 +57,7 @@ class TestSmartSortKeywords(TransformerAcceptanceTest):
         )
 
     def test_empty_section(self):
-        self.compare(source="empty_before_fist_keyword.robot")
+        self.compare(source="empty_before_fist_keyword.robot", not_modified=True)
 
     def test_multiple_sections(self):
         self.compare(source="multiple_sections.robot")

@@ -25,13 +25,13 @@ class TestMergeAndOrderSections(TransformerAcceptanceTest):
         self.compare(source="empty_section.robot")
 
     def test_parsing_error(self):
-        self.compare(source="parsing_error.robot")
+        self.compare(source="parsing_error.robot", not_modified=True)
 
     def test_too_few_calls_in_keyword(self):
         self.compare(source="too_few_calls_in_keyword.robot")
 
     def test_default_order(self):
-        self.compare(source="order.robot")
+        self.compare(source="order.robot", not_modified=True)
 
     def test_custom_order(self):
         self.compare(

@@ -9,16 +9,24 @@ class TestReplaceReturns(TransformerAcceptanceTest):
     @pytest.mark.parametrize(
         "source",
         [
-            "errors.robot",
             "return_from_keyword.robot",
             "return_from_keyword_if.robot",
-            "run_keyword_and_return.robot",
-            "run_keyword_and_return_if.robot",
             "test.robot",
         ],
     )
     def test_transformer(self, source):
         self.compare(source=source)
+
+    @pytest.mark.parametrize(
+        "source",
+        [
+            "errors.robot",
+            "run_keyword_and_return.robot",
+            "run_keyword_and_return_if.robot",
+        ],
+    )
+    def test_should_not_modify(self, source):
+        self.compare(source=source, not_modified=True)
 
     def test_return_selected(self):
         self.compare(
