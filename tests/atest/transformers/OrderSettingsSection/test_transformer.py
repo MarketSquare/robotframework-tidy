@@ -13,7 +13,7 @@ class TestOrderSettingsSection(TransformerAcceptanceTest):
         self.compare(source="missing_group.robot")
 
     def test_just_comment(self):
-        self.compare(source="just_comment.robot")
+        self.compare(source="just_comment.robot", not_modified=True)
 
     def test_last_section(self):
         self.compare(source="last_section.robot")

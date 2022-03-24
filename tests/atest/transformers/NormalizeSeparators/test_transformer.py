@@ -20,8 +20,12 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
         ["", "comments,settings,variables", "comment,keywords", "comments,settings,variable,keywords,testcases"],
     )
     def test_disable_section(self, sections):
-        expected = "empty_sections.robot" if not sections else sections.replace(",", "_") + ".robot"
-        self.compare(source="test.robot", expected=expected, config=f":sections={sections}")
+        if sections:
+            self.compare(
+                source="test.robot", expected=sections.replace(",", "_") + ".robot", config=f":sections={sections}"
+            )
+        else:
+            self.compare(source="test.robot", not_modified=True, config=f":sections={sections}")
 
     def test_configure_invalid_section(self):
         result = self.run_tidy(

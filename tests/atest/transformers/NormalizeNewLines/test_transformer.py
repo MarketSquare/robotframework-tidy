@@ -33,12 +33,11 @@ class TestNormalizeNewLines(TransformerAcceptanceTest):
             config=":separate_templated_tests=True",
         )
 
-    @pytest.mark.parametrize("lines_at_the_end", [0, 1])
-    def test_test_case_last(self, lines_at_the_end):
-        self.compare(
-            source=f"test_case_last_{lines_at_the_end}_lines.robot",
-            expected="test_case_last.robot",
-        )
+    def test_test_case_last_0(self):
+        self.compare(source=f"test_case_last_0_lines.robot", expected="test_case_last.robot")
+
+    def test_test_case_last_1(self):
+        self.compare(source=f"test_case_last_1_lines.robot", not_modified=True)
 
     @pytest.mark.parametrize("empty_lines", [0, 1, 2])
     def test_consecutive_empty_lines(self, empty_lines):

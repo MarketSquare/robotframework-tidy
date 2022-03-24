@@ -36,19 +36,33 @@ class TransformerAcceptanceTest:
     TRANSFORMER_NAME: str = "DUMMY"
 
     def compare(
-        self, source: str, expected: Optional[str] = None, config: str = "", target_version: Optional[int] = None
+        self,
+        source: str,
+        not_modified: bool = False,
+        expected: Optional[str] = None,
+        config: str = "",
+        target_version: Optional[int] = None,
     ):
+        """
+        Compare actual (source) and expected files. If expected filename is not provided it's assumed to be the same
+        as source.
+
+        Use not_modified flag if the content of the file shouldn't be modified by transformer.
+        """
         if not self.enabled_in_version(target_version):
             pytest.skip(f"Test enabled only for RF {target_version}.0")
         if expected is None:
             expected = source
         self.run_tidy(args=f"--transform {self.TRANSFORMER_NAME}{config}".split(), source=source)
-        self.compare_file(source, expected)
+        if not not_modified:
+            self.compare_file(source, expected)
 
-    def run_tidy(self, args: List[str] = None, source: str = None, exit_code: int = 0):
+    def run_tidy(self, args: List[str] = None, source: str = None, exit_code: int = 0, not_modified: bool = False):
         runner = CliRunner()
         output_path = str(Path(Path(__file__).parent, "actual", source))
         arguments = ["--output", output_path]
+        if not_modified:
+            arguments.append("--check")
         if args is not None:
             arguments += args
         if source is None:

@@ -18,7 +18,7 @@ class TestReplaceRunKeywordIf(TransformerAcceptanceTest):
         self.compare(source="invalid_data.robot")
 
     def test_golden_file(self):
-        self.compare(source="golden.robot")
+        self.compare(source="golden.robot", not_modified=True)
 
     def test_remove_useless_set_variable(self):
         self.compare(source="set_variable_workaround.robot")

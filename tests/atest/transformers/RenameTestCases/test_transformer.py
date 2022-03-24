@@ -8,7 +8,7 @@ class TestRenameTestCases(TransformerAcceptanceTest):
         self.compare(source="test.robot", expected="test.robot")
 
     def test_test_without_name(self):
-        self.compare(source="empty_test_name.robot", expected="empty_test_name.robot")
+        self.compare(source="empty_test_name.robot", not_modified=True)
 
     def test_replace_pattern_to_empty(self):
         self.compare(

@@ -318,7 +318,10 @@ class TestCli:
                 ["--check", "--overwrite", "--transform", "NormalizeSectionHeaderName", str(source)],
                 exit_code=return_status,
             )
-            mock_writer.assert_called()
+            if return_status:
+                mock_writer.assert_called()
+            else:
+                mock_writer.assert_not_called()
 
     def test_diff(self, test_data_dir):
         source = test_data_dir / "check" / "not_golden.robot"

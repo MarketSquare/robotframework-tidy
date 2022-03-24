@@ -11,21 +11,23 @@ class TestAlignTestCases(TransformerAcceptanceTest):
         [
             "test.robot",
             "no_header_col.robot",
-            "for_loops.robot",
             "with_settings.robot",
             "templated_for_loops.robot",
             "templated_for_loops_and_without.robot",
             "templated_for_loops_header_cols.robot",
-            "empty_line.robot",
         ],
     )
     def test_transformer(self, source):
         self.compare(source=source, expected=source)
 
+    @pytest.mark.parametrize("source", ["for_loops.robot", "empty_line.robot"])
+    def test_should_not_modify(self, source):
+        self.compare(source=source, not_modified=True)
+
     def test_only_with_headers(self):
         self.compare(
             source="no_header_col.robot",
-            expected="no_header_col_only_headers.robot",
+            not_modified=True,
             config=":only_with_headers=True",
         )
 
