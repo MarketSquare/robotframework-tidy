@@ -40,14 +40,14 @@ class TestAPI:
         expected = (
             "*** Comments ***\n"
             "# robocop: disable=all\n"
-            "\n"
+            "\n\n"
             "*** Test Cases ***\n"
             "Test\n"
             "        [Documentation]        doc\n"
             "        [Tags]        sometag\n"
             "        Pass\n"
             "        Keyword\n"
-            "        One More\n\n"
+            "        One More\n\n\n"
             "*** Keywords ***\n"
             "# This section is considered to be empty.\n"
         )
@@ -71,14 +71,14 @@ class TestAPI:
         expected = (
             "*** Comments ***\n"
             "# robocop: disable=all\n"
-            "\n"
+            "\n\n"
             "*** Test Cases ***\n"
             "Test\n"
             "\t[Documentation]\tdoc\n"
             "\t[Tags]\tsometag\n"
             "\tPass\n"
             "\tKeyword\n"
-            "\tOne More\n\n"
+            "\tOne More\n\n\n"
             "*** Keywords ***\n"
             "# This section is considered to be empty.\n"
         )

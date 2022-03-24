@@ -6,6 +6,7 @@ Default Tags    tag
 
 Documentation    doc
 
+
 *** Test Cases ***
 Test Capitalized
     Pass Execution
@@ -22,6 +23,7 @@ Test with first letter capitalized
 
 #  no test case name
     Log To Console  hello
+
 
 *** Keywords ***
 Keyword

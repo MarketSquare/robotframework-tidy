@@ -1,6 +1,36 @@
 # Change Log
 
-## Unreleased
+## 2.1
+
+### Transformers
+- Updated `NormalizeNewLines` to separate sections by two empty lines (instead of one). It's effort of normalizing 
+  Robocop output (which suggest to use 2 empty lines) and Robotidy (which previously transformed with 1 empty line) ([#536](https://github.com/MarketSquare/robotframework-robocop/issues/536)).
+
+  Previously:
+  ```
+  *** Settings ***
+  Force Tags    tag
+  
+  *** Test Cases ***
+  Test
+      No Operation
+  ```
+  
+  Now:
+  ```
+  *** Settings ***
+  Force Tags    tag
+  
+  
+  *** Test Cases ***
+  Test
+      No Operation
+  ```
+
+### Other
+- Add missing packaging dependency ([#275](https://github.com/MarketSquare/robotframework-tidy/issues/275))
+
+## 2.0.0
 
 ### Transformers
 - New `ReplaceReturns` transformer that replaces return statements (such as `[Return]` setting or `Return From Keyword` keyword) with `RETURN` statement ([#231](https://github.com/MarketSquare/robotframework-tidy/issues/231))
