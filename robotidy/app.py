@@ -67,7 +67,7 @@ class Robotidy:
                 self.output_diff(model.source, old_model, new_model)
                 if stdin:
                     self.print_to_stdout(new_model)
-                else:
+                elif diff:
                     self.save_model(model.source, model)
             except DataError:
                 click.echo(
