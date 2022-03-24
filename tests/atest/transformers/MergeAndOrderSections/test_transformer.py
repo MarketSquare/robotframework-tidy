@@ -67,3 +67,6 @@ class TestMergeAndOrderSections(TransformerAcceptanceTest):
             "order=comments,settings,variables,testcases,variables\n"
         )
         assert expected_output == result.output
+
+    def test_inline_if(self):
+        self.compare("inline_if.robot")
