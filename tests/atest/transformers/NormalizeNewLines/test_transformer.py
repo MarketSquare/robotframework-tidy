@@ -47,3 +47,10 @@ class TestNormalizeNewLines(TransformerAcceptanceTest):
             expected=f"consecutive_empty_lines_{empty_lines}line.robot",
             config=f":consecutive_lines={empty_lines}",
         )
+
+    @pytest.mark.parametrize("trailing_lines", [0, 1, 2])
+    def test_inline_if(self, trailing_lines):
+        self.compare(
+            source=f"inline_if_{trailing_lines}_lines.robot",
+            expected="inline_if.robot",
+        )
