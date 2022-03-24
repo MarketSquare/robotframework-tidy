@@ -7,7 +7,6 @@ try:
     from robot.api.parsing import InlineIfHeader
 except ImportError:
     InlineIfHeader = None
-import click
 
 
 class MergeAndOrderSections(ModelTransformer):
@@ -131,6 +130,7 @@ class MergeAndOrderSections(ModelTransformer):
         if not node.body:
             node.header.tokens = self.normalize_eol(node.header.tokens)
             return node
+
         # Settings, Variables or Comments
         if not hasattr(node.body[-1], "body"):
             node.body[-1].tokens = self.normalize_eol(node.body[-1].tokens)
