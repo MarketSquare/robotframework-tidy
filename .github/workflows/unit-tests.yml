@@ -45,7 +45,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r tests/packages/${{ matrix.rf-version }}/requirements.txt
-        pip install pytest pylama pylama_pylint coverage click pathspec>=0.8.0
+        pip install -e .[dev]
 #    - name: Code quality with pylama
     - name: Run unit tests with coverage
       run:
