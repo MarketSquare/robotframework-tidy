@@ -46,6 +46,8 @@ class NormalizeTags(ModelTransformer):
         return self.normalize_tags(node, ForceTags)
 
     def normalize_tags(self, node, tag_class, indent=False):
+        if self.disablers.is_node_disabled(node, full_match=False):
+            return node
         tags = [tag.value for tag in node.data_tokens[1:]]
         if self.normalize_case:
             tags = self.convert_case(tags)

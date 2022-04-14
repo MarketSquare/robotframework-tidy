@@ -50,3 +50,6 @@ class TestNormalizeNewLines(TransformerAcceptanceTest):
     @pytest.mark.parametrize("trailing_lines", [0, 1, 2])
     def test_inline_if(self, trailing_lines):
         self.compare(source=f"inline_if_{trailing_lines}_lines.robot", expected="inline_if.robot", target_version=5)
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", not_modified=True)

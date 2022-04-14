@@ -13,3 +13,6 @@ class TestNormalizeSettingName(TransformerAcceptanceTest):
             expected="selected.robot",
             config=" --startline 12 --endline 15",
         )
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", not_modified=True)

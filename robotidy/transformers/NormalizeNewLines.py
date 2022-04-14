@@ -49,6 +49,8 @@ class NormalizeNewLines(ModelTransformer):
         return self.generic_visit(node)
 
     def visit_Section(self, node):  # noqa
+        if node.header and self.disablers.is_line_disabled(node.header.lineno):
+            return node
         self.trim_empty_lines(node)
         empty_line = EmptyLine.from_params()
         if node is self.last_section:

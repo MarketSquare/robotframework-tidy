@@ -41,3 +41,6 @@ class TestReplaceReturns(TransformerAcceptanceTest):
             expected="return_from_keyword_if_selected.robot",
             config=" --startline 11 --endline 15",
         )
+
+    def test_disablers(self):
+        self.compare(source="replace_returns_disablers.robot", not_modified=True)

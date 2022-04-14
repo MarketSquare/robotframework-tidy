@@ -57,7 +57,7 @@ class SmartSortKeywords(ModelTransformer):
         self.iou = ignore_other_underscore
 
     def visit_KeywordSection(self, node):  # noqa
-        if not node.body:
+        if not node.body or self.disablers.is_line_disabled(node.header.lineno):
             return node
         before, after = self.leave_only_keywords(node)
         empty_lines = self.pop_empty_lines(node)

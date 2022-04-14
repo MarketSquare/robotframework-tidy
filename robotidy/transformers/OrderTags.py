@@ -1,5 +1,7 @@
 from robot.api.parsing import ModelTransformer, Tags, Token, DefaultTags, ForceTags
 
+from robotidy.disablers import skip_if_disabled
+
 
 class OrderTags(ModelTransformer):
     """
@@ -60,6 +62,8 @@ class OrderTags(ModelTransformer):
         return self.order_tags(node, ForceTags) if self.force_tags else node
 
     def order_tags(self, node, tag_class, indent=False):
+        if self.disablers.is_node_disabled(node):
+            return node
         ordered_tags = sorted(
             (tag.value for tag in node.data_tokens[1:]),
             key=self.key,

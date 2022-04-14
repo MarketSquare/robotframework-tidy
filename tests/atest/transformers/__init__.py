@@ -53,7 +53,9 @@ class TransformerAcceptanceTest:
             pytest.skip(f"Test enabled only for RF {target_version}.0")
         if expected is None:
             expected = source
-        self.run_tidy(args=f"--transform {self.TRANSFORMER_NAME}{config}".split(), source=source)
+        self.run_tidy(
+            args=f"--transform {self.TRANSFORMER_NAME}{config}".split(), source=source, not_modified=not_modified
+        )
         if not not_modified:
             self.compare_file(source, expected)
 
@@ -62,7 +64,7 @@ class TransformerAcceptanceTest:
         output_path = str(Path(Path(__file__).parent, "actual", source))
         arguments = ["--output", output_path]
         if not_modified:
-            arguments.append("--check")
+            arguments.extend(["--check", "--overwrite"])
         if args is not None:
             arguments += args
         if source is None:

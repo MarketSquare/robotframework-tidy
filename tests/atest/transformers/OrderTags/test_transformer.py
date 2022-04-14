@@ -48,3 +48,6 @@ class TestOrderTags(TransformerAcceptanceTest):
             expected="force_tags_false.robot",
             config=f":case_sensitive=False:reverse=False:force_tags=False",
         )
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", not_modified=True)

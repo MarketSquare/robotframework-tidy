@@ -4,7 +4,7 @@ try:
     from robot.api.parsing import InlineIfHeader
 except ImportError:
     InlineIfHeader = None
-from robotidy.decorators import check_start_end_line
+from robotidy.disablers import skip_if_disabled
 from robotidy.utils import ROBOT_VERSION
 
 
@@ -67,9 +67,10 @@ class SplitTooLongLine(ModelTransformer):
     def is_inline(node):
         return ROBOT_VERSION.major > 4 and isinstance(node.header, InlineIfHeader)
 
-    @check_start_end_line
     def visit_KeywordCall(self, node):  # noqa
         if all(line[-1].end_col_offset < self.line_length for line in node.lines):
+            return node
+        if self.disablers.is_node_disabled(node, full_match=False):
             return node
         return self.split_keyword_call(node)
 

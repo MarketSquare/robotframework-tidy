@@ -8,7 +8,7 @@ except ImportError:
     Continue, Break = None, None
 
 from robotidy.utils import normalize_name, after_last_dot, wrap_in_if_and_replace_statement, ROBOT_VERSION
-from robotidy.decorators import check_start_end_line
+from robotidy.disablers import skip_if_disabled
 
 
 class ReplaceBreakContinue(ModelTransformer):
@@ -59,7 +59,7 @@ class ReplaceBreakContinue(ModelTransformer):
     def create_statement_from_tokens(statement, tokens: Iterable, indent: Token):
         return statement([indent, Token(statement.type), *tokens])
 
-    @check_start_end_line
+    @skip_if_disabled
     def visit_KeywordCall(self, node):  # noqa
         if not self.in_loop or not node.keyword or node.errors:
             return node

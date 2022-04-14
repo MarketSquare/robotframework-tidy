@@ -3,7 +3,7 @@ from collections import defaultdict
 from robot.api.parsing import ModelTransformer, Token
 from robot.parsing.model import Statement
 
-from robotidy.utils import node_outside_selection, round_to_four, tokens_by_lines, left_align, is_blank_multiline
+from robotidy.utils import round_to_four, tokens_by_lines, left_align, is_blank_multiline
 from robotidy.exceptions import InvalidParameterValueError
 
 
@@ -67,11 +67,11 @@ class AlignVariablesSection(ModelTransformer):
         return node.name[0] not in self.skip_types
 
     def visit_VariableSection(self, node):  # noqa
-        if node_outside_selection(node, self.formatting_config):
+        if self.disablers.is_node_disabled(node):
             return node
         statements = []
         for child in node.body:
-            if node_outside_selection(child, self.formatting_config):
+            if self.disablers.is_node_disabled(child):
                 statements.append(child)
             elif child.type in (Token.EOL, Token.COMMENT):
                 statements.append(left_align(child))

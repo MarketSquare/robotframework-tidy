@@ -140,6 +140,8 @@ class OrderSettingsSection(ModelTransformer):
     def visit_SettingSection(self, node):  # noqa
         if not node.body:
             return
+        if self.disablers.is_line_disabled(node.header.lineno):
+            return node
         if node is self.last_section and not isinstance(node.body[-1], EmptyLine):
             node.body[-1] = self.fix_eol(node.body[-1])
         comments, errors = [], []

@@ -4,7 +4,7 @@ import string
 
 from robot.api.parsing import ModelTransformer, Token, KeywordCall
 
-from robotidy.decorators import check_start_end_line
+from robotidy.disablers import skip_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 
 
@@ -65,7 +65,7 @@ class RenameKeywords(ModelTransformer):
             )
         self.replace_to = "" if replace_to is None else replace_to
 
-    @check_start_end_line
+    @skip_if_disabled
     def rename_node(self, node, type_of_name):
         token = node.get_token(type_of_name)
         if not token or not token.value:

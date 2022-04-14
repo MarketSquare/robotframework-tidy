@@ -40,3 +40,6 @@ class TestAlignTestCases(TransformerAcceptanceTest):
             expected="templated_for_loops_and_without_fixed.robot",
             config=":min_width=25",
         )
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", not_modified=True)

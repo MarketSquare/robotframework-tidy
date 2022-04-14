@@ -19,3 +19,6 @@ class TestDiscardEmptySections(TransformerAcceptanceTest):
             expected="removes_selected_empty_section.robot",
             config=" --startline 17 --endline 18",
         )
+
+    def test_disablers(self):
+        self.compare(source="removes_empty_sections_disablers.robot")

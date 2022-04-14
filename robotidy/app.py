@@ -11,6 +11,7 @@ from robot.errors import DataError
 
 from robotidy.files import get_paths
 from robotidy.transformers import load_transformers
+from robotidy.disablers import RegisterDisablers
 from robotidy.utils import (
     StatementLinesCollector,
     decorate_diff_with_color,
@@ -50,6 +51,7 @@ class Robotidy:
 
     def transform_files(self):
         changed_files = 0
+        disabler_finder = RegisterDisablers(self.formatting_config.start_line, self.formatting_config.end_line)
         for source in self.sources:
             try:
                 stdin = False
@@ -61,7 +63,10 @@ class Robotidy:
                 elif self.verbose:
                     click.echo(f"Transforming {source} file")
                 model = get_model(source)
-                diff, old_model, new_model = self.transform(model)
+                disabler_finder.visit(model)
+                if disabler_finder.file_disabled:
+                    continue
+                diff, old_model, new_model = self.transform(model, disabler_finder.disablers)
                 if diff:
                     changed_files += 1
                 self.output_diff(model.source, old_model, new_model)
@@ -78,9 +83,10 @@ class Robotidy:
             return 0
         return 1
 
-    def transform(self, model):
+    def transform(self, model, disablers):
         old_model = StatementLinesCollector(model)
         for transformer in self.transformers:
+            setattr(transformer, "disablers", disablers)  # set dynamically to allow using external transformers
             transformer.visit(model)
         new_model = StatementLinesCollector(model)
         return new_model != old_model, old_model, new_model

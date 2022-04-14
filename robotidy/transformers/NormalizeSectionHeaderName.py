@@ -1,7 +1,5 @@
 from robot.api.parsing import ModelTransformer, SectionHeader, Token
 
-from robotidy.decorators import check_start_end_line
-
 
 class NormalizeSectionHeaderName(ModelTransformer):
     """
@@ -33,8 +31,9 @@ class NormalizeSectionHeaderName(ModelTransformer):
     def __init__(self, uppercase: bool = False):
         self.uppercase = uppercase
 
-    @check_start_end_line
     def visit_SectionHeader(self, node):  # noqa
+        if self.disablers.is_line_disabled(node.lineno):
+            return node
         if node.name and "task" in node.name:
             name = "*** Tasks ***"
         else:

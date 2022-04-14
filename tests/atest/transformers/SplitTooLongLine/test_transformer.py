@@ -49,3 +49,6 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
             source="multiple_assignments.robot",
             expected="multiple_assignments_on_every_arg_120.robot",
         )
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", config=":line_length=80", not_modified=True)

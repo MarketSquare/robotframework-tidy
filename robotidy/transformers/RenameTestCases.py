@@ -3,7 +3,7 @@ from typing import Optional
 
 from robot.api.parsing import ModelTransformer, Token
 
-from robotidy.decorators import check_start_end_line
+from robotidy.disablers import skip_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 
 
@@ -48,7 +48,7 @@ class RenameTestCases(ModelTransformer):
             )
         self.replace_to = "" if replace_to is None else replace_to
 
-    @check_start_end_line
+    @skip_if_disabled
     def visit_TestCaseName(self, node):  # noqa
         token = node.get_token(Token.TESTCASE_NAME)
         if token.value:

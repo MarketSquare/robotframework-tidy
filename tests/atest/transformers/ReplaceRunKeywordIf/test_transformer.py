@@ -22,3 +22,6 @@ class TestReplaceRunKeywordIf(TransformerAcceptanceTest):
 
     def test_remove_useless_set_variable(self):
         self.compare(source="set_variable_workaround.robot")
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", not_modified=True)

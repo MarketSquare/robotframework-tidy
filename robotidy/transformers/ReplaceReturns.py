@@ -14,7 +14,7 @@ from robotidy.utils import (
     wrap_in_if_and_replace_statement,
     create_statement_from_tokens,
 )
-from robotidy.decorators import check_start_end_line
+from robotidy.disablers import skip_if_disabled
 
 
 class ReplaceReturns(ModelTransformer):
@@ -70,7 +70,7 @@ class ReplaceReturns(ModelTransformer):
             node.body.extend(skip_lines)
         return node
 
-    @check_start_end_line
+    @skip_if_disabled
     def visit_KeywordCall(self, node):  # noqa
         if not node.keyword or node.errors:
             return node
@@ -83,11 +83,11 @@ class ReplaceReturns(ModelTransformer):
             return wrap_in_if_and_replace_statement(node, ReturnStatement, self.formatting_config.separator)
         return node
 
-    @check_start_end_line
+    @skip_if_disabled
     def visit_Return(self, node):  # noqa
         self.return_statement = node
 
-    @check_start_end_line
+    @skip_if_disabled
     def visit_Error(self, node):  # noqa
         """Remove duplicate [Return]"""
         for error in node.errors:
