@@ -27,3 +27,41 @@ Robotidy reads and ignores paths from ``.gitignore`` and ``--exclude``. You can 
 ``--extend-exclude`` with pattern::
 
     robotidy --extend-exclude skip_me.robot|some_dir/* .
+
+.. rubric:: Disablers
+
+It's possible to skip formatting using ``# robotidy: off`` comment. It supports both inline and block disabling.
+
+To skip one statement::
+
+    Keyword Call That Should Not Be Formatted  ${arg}  # robotidy: off
+
+
+To skip multiple lines use ``# robotidy: off`` at beginning of line. You can enable formatting again with
+``robotidy: on``. If ``# robotidy: off`` is used inside block (Keyword, Test, IF, FOR, WHOLE etc.) only content of the block will be skipped::
+
+    *** Test Cases ***
+    Test that will be formatted
+        Step
+
+    # robotidy: off
+    Test that will not be formatted
+        Step
+
+    # robotidy: on
+
+    Mixed blocks test
+        Formatted
+        IF   $condition
+            Formatted
+            # robotidy: off
+            Not formatted
+        END
+        Formatted
+
+In some transformers such as ``NormalizeNewLines`` or ``OrderSettingsSections`` you can disable robotidy by adding
+``robotidy: off`` in section header::
+
+    *** Settings ***  # robotidy: off
+    Force Tags    tag
+    Library    Collections
