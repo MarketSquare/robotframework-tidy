@@ -11,7 +11,7 @@ from robot.api.parsing import (
     ElseIfHeader,
 )
 
-from robotidy.disablers import skip_if_disabled
+from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.utils import round_to_four, is_suite_templated
 
 
@@ -67,7 +67,7 @@ class AlignTestCases(ModelTransformer):
 
     visit_Else = visit_ElseIf = visit_For = visit_If
 
-    @skip_if_disabled
+    @skip_section_if_disabled
     def visit_TestCaseSection(self, node):  # noqa
         if len(node.header.data_tokens) == 1 and self.only_with_headers:
             return node

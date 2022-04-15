@@ -5,6 +5,7 @@ from robot.parsing.model import Statement
 
 from robotidy.utils import round_to_four, tokens_by_lines, left_align, is_blank_multiline
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.disablers import skip_section_if_disabled
 
 
 class AlignVariablesSection(ModelTransformer):
@@ -66,9 +67,8 @@ class AlignVariablesSection(ModelTransformer):
             return True
         return node.name[0] not in self.skip_types
 
+    @skip_section_if_disabled
     def visit_VariableSection(self, node):  # noqa
-        if self.disablers.is_node_disabled(node):
-            return node
         statements = []
         for child in node.body:
             if self.disablers.is_node_disabled(child):

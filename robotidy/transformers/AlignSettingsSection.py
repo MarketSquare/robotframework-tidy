@@ -4,6 +4,7 @@ from robot.api.parsing import ModelTransformer, Token
 from robot.parsing.model import Statement
 
 from robotidy.utils import round_to_four, tokens_by_lines, left_align, is_blank_multiline
+from robotidy.disablers import skip_section_if_disabled
 
 
 class AlignSettingsSection(ModelTransformer):
@@ -66,9 +67,8 @@ class AlignSettingsSection(ModelTransformer):
         self.argument_indent = argument_indent
         self.min_width = min_width
 
+    @skip_section_if_disabled
     def visit_SettingSection(self, node):  # noqa
-        if self.disablers.is_node_disabled(node):
-            return node
         statements = []
         for child in node.body:
             if self.disablers.is_node_disabled(child):

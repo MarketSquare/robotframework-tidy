@@ -1,6 +1,6 @@
 from robot.api.parsing import ModelTransformer, EmptyLine, Comment, Token
 
-from robotidy.disablers import skip_if_disabled
+from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 
 
@@ -126,6 +126,10 @@ class OrderSettings(ModelTransformer):
             self.get_order(test_before, testcase_order_before, test_map),
             self.get_order(test_after, testcase_order_after, test_map),
         )
+
+    @skip_section_if_disabled
+    def visit_Section(self, node):  # noqa
+        return self.generic_visit(node)
 
     @skip_if_disabled
     def visit_Keyword(self, node):  # noqa

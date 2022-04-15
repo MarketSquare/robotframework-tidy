@@ -8,6 +8,7 @@ except ImportError:
     ReturnStatement, Break, Continue, InlineIfHeader = None, None, None, None
 
 from robotidy.utils import ROBOT_VERSION, normalize_name, get_comments, flatten_multiline
+from robotidy.disablers import skip_section_if_disabled
 
 
 class InlineIf(ModelTransformer):
@@ -58,6 +59,10 @@ class InlineIf(ModelTransformer):
     def __init__(self, line_length: int = 80, skip_else: bool = False):
         self.line_length = line_length
         self.skip_else = skip_else
+
+    @skip_section_if_disabled
+    def visit_Section(self, node):  # noqa
+        self.generic_visit(node)
 
     def visit_If(self, node: If):  # noqa
         if node.errors or getattr(node.end, "errors", None):

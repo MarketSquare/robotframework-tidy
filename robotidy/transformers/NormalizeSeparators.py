@@ -7,7 +7,7 @@ try:
 except ImportError:
     InlineIfHeader = None
 
-from robotidy.disablers import skip_if_disabled
+from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 
 
@@ -58,10 +58,9 @@ class NormalizeSeparators(ModelTransformer):
         self.indent = 0
         return self.generic_visit(node)
 
+    @skip_section_if_disabled
     def should_visit(self, name, node):
         if name in self.sections:
-            if node.header and self.disablers.is_line_disabled(node.header.lineno):
-                return node
             return self.generic_visit(node)
         return node
 

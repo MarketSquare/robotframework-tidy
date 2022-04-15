@@ -1,4 +1,5 @@
-from robot.api.parsing import ModelTransformer, SectionHeader, Token
+from robot.api.parsing import ModelTransformer, Token
+from robotidy.disablers import skip_section_if_disabled
 
 
 class NormalizeSectionHeaderName(ModelTransformer):

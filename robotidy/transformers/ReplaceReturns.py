@@ -14,7 +14,7 @@ from robotidy.utils import (
     wrap_in_if_and_replace_statement,
     create_statement_from_tokens,
 )
-from robotidy.disablers import skip_if_disabled
+from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 
 
 class ReplaceReturns(ModelTransformer):
@@ -54,6 +54,10 @@ class ReplaceReturns(ModelTransformer):
 
     def __init__(self):
         self.return_statement = None
+
+    @skip_section_if_disabled
+    def visit_Section(self, node):  # noqa
+        return self.generic_visit(node)
 
     def visit_Keyword(self, node):  # noqa
         self.return_statement = None

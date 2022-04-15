@@ -8,7 +8,7 @@ except ImportError:
     Continue, Break = None, None
 
 from robotidy.utils import normalize_name, after_last_dot, wrap_in_if_and_replace_statement, ROBOT_VERSION
-from robotidy.disablers import skip_if_disabled
+from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 
 
 class ReplaceBreakContinue(ModelTransformer):
@@ -53,6 +53,10 @@ class ReplaceBreakContinue(ModelTransformer):
 
     def visit_File(self, node):  # noqa
         self.in_loop = False
+        return self.generic_visit(node)
+
+    @skip_section_if_disabled
+    def visit_Section(self, node):  # noqa
         return self.generic_visit(node)
 
     @staticmethod

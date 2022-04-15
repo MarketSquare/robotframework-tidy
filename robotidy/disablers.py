@@ -21,6 +21,23 @@ def skip_if_disabled(func):
     return wrapper
 
 
+def skip_section_if_disabled(func):
+    """
+    Does the same checks as ``skip_if_disabled`` and additionally checks if the section header does not contain disabler
+    """
+    @functools.wraps(func)
+    def wrapper(self, node, *args):
+        if not node:
+            return node
+        if self.disablers.is_node_disabled(node):
+            return node
+        if node.header and self.disablers.is_line_disabled(node.header.lineno):
+            return node
+        return func(self, node, *args)
+
+    return wrapper
+
+
 def is_line_start(node):
     for token in node.tokens:
         if token.type == Token.SEPARATOR:

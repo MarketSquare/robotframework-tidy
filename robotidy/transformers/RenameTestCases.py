@@ -3,7 +3,7 @@ from typing import Optional
 
 from robot.api.parsing import ModelTransformer, Token
 
-from robotidy.disablers import skip_if_disabled
+from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 
 
@@ -47,6 +47,10 @@ class RenameTestCases(ModelTransformer):
                 f"It should be a valid regex expression. Regex error: '{err.msg}'",
             )
         self.replace_to = "" if replace_to is None else replace_to
+
+    @skip_section_if_disabled
+    def visit_TestCaseSection(self, node):  # noqa
+        return self.generic_visit(node)
 
     @skip_if_disabled
     def visit_TestCaseName(self, node):  # noqa

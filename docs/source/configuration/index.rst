@@ -59,9 +59,13 @@ To skip multiple lines use ``# robotidy: off`` at beginning of line. You can ena
         END
         Formatted
 
-In some transformers such as ``NormalizeNewLines`` or ``OrderSettingsSections`` you can disable robotidy by adding
-``robotidy: off`` in section header::
+Transformers can be also disabled by adding ``robotidy: off`` in section header::
 
     *** Settings ***  # robotidy: off
+    # it will not be formatted
     Force Tags    tag
     Library    Collections
+
+    *** Variables ***
+    # it will be formatted
+    ${VAR}    4

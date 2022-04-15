@@ -1,6 +1,7 @@
 from robot.api.parsing import ModelTransformer, Tags, Token, DefaultTags, ForceTags
 
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.disablers import skip_section_if_disabled
 
 
 class NormalizeTags(ModelTransformer):
@@ -35,6 +36,10 @@ class NormalizeTags(ModelTransformer):
             raise InvalidParameterValueError(
                 self.__class__.__name__, "case", case, "Supported cases: lowercase, uppercase, titlecase."
             )
+
+    @skip_section_if_disabled
+    def visit_Section(self, node):  # noqa
+        return self.generic_visit(node)
 
     def visit_Tags(self, node):  # noqa
         return self.normalize_tags(node, Tags, indent=True)

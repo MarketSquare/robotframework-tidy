@@ -4,6 +4,7 @@ from robot.api.parsing import ModelTransformer, Comment, Token, EmptyLine, Libra
 from robot.libraries import STDLIBS
 
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.disablers import skip_section_if_disabled
 
 
 class OrderSettingsSection(ModelTransformer):
@@ -137,11 +138,10 @@ class OrderSettingsSection(ModelTransformer):
         self.last_section = node.sections[-1] if node.sections else None
         return self.generic_visit(node)
 
+    @skip_section_if_disabled
     def visit_SettingSection(self, node):  # noqa
         if not node.body:
             return
-        if self.disablers.is_line_disabled(node.header.lineno):
-            return node
         if node is self.last_section and not isinstance(node.body[-1], EmptyLine):
             node.body[-1] = self.fix_eol(node.body[-1])
         comments, errors = [], []

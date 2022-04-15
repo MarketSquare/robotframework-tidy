@@ -3,6 +3,7 @@ import ast
 from robot.api.parsing import ModelTransformer, Token
 
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.disablers import skip_section_if_disabled
 
 
 # TODO: preserve comments?
@@ -50,6 +51,10 @@ class RemoveEmptySettings(ModelTransformer):
             Token.TEMPLATE,
             Token.TAGS,
         }
+
+    @skip_section_if_disabled
+    def visit_Section(self, node):  # noqa
+        return self.generic_visit(node)
 
     def visit_Statement(self, node):  # noqa
         # when not setting type or setting type but not empty

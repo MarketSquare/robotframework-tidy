@@ -4,7 +4,7 @@ from collections import Counter
 
 from robot.api.parsing import ModelTransformer, Variable, Token
 from robotidy.exceptions import InvalidParameterValueError
-from robotidy.disablers import skip_if_disabled
+from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 
 
 class NormalizeAssignments(ModelTransformer):
@@ -101,6 +101,10 @@ class NormalizeAssignments(ModelTransformer):
         self.generic_visit(node)
         self.file_equal_sign_type = None
         self.file_equal_sign_type_variables = None
+
+    @skip_section_if_disabled
+    def visit_Section(self, node):  # noqa
+        return self.generic_visit(node)
 
     @skip_if_disabled
     def visit_KeywordCall(self, node):  # noqa

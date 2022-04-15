@@ -4,7 +4,7 @@ try:
     from robot.api.parsing import InlineIfHeader
 except ImportError:
     InlineIfHeader = None
-from robotidy.disablers import skip_if_disabled
+from robotidy.disablers import skip_section_if_disabled
 from robotidy.utils import ROBOT_VERSION
 
 
@@ -55,6 +55,10 @@ class SplitTooLongLine(ModelTransformer):
     @property
     def line_length(self):
         return self.formatting_config.line_length if self._line_length is None else self._line_length
+
+    @skip_section_if_disabled
+    def visit_Section(self, node):  # noqa
+        return self.generic_visit(node)
 
     def visit_If(self, node):  # noqa
         if self.is_inline(node):

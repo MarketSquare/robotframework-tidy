@@ -9,7 +9,7 @@ from robot.api.parsing import (
     KeywordCall,
 )
 from robotidy.utils import normalize_name, after_last_dot
-from robotidy.disablers import skip_if_disabled
+from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 
 
 def insert_separators(indent, tokens, separator):
@@ -69,6 +69,10 @@ class ReplaceRunKeywordIf(ModelTransformer):
 
     See https://robotidy.readthedocs.io/en/latest/transformers/ReplaceRunKeywordIf.html for more examples.
     """
+
+    @skip_section_if_disabled
+    def visit_Section(self, node):  # noqa
+        return self.generic_visit(node)
 
     @skip_if_disabled
     def visit_KeywordCall(self, node):  # noqa
