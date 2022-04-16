@@ -32,9 +32,11 @@ class NormalizeSectionHeaderName(ModelTransformer):
     def __init__(self, uppercase: bool = False):
         self.uppercase = uppercase
 
+    @skip_section_if_disabled
+    def visit_Section(self, node):  # noqa
+        return self.generic_visit(node)
+
     def visit_SectionHeader(self, node):  # noqa
-        if self.disablers.is_line_disabled(node.lineno):
-            return node
         if node.name and "task" in node.name:
             name = "*** Tasks ***"
         else:

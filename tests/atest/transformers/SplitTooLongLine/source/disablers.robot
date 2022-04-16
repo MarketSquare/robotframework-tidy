@@ -82,4 +82,5 @@ Multiple Assignments
     ${first_assignment}    ${second_assignment}    Some Lengthy Keyword So That This Line Is Too Long          ${arg1}      ${arg2}  # robotidy: off
     ${multiline_first}
     ...    ${multiline_second}=    Some Lengthy Keyword So That This Line Is Too Long  # robotidy: off
+    # robotidy: off
     ${first_assignment}    ${second_assignment}    ${third_assignment}    Some Lengthy Keyword So That This Line Is Too Long And Bit Over    ${arg1}    ${arg2}

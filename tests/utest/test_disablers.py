@@ -5,13 +5,14 @@ import pytest
 from robot.api import get_model
 
 from robotidy.disablers import DisabledLines, RegisterDisablers
+from robotidy.utils import ROBOT_VERSION
 
 
 @pytest.mark.parametrize(
     "check_start, check_end, start_line, end_line, lines, full_match, expected",
     [
         # only start/end line and no full_match
-        (15, 30, 15, None, [], False, False),
+        (15, 30, 15, None, [], False, True),
         (15, 30, 15, 30, [], False, False),
         (14, 30, 15, 30, [], False, True),
         (15, 31, 15, 30, [], False, True),
@@ -37,7 +38,8 @@ from robotidy.disablers import DisabledLines, RegisterDisablers
     ],
 )
 def test_is_node_disabled(check_start, check_end, start_line, end_line, lines, full_match, expected):
-    disablers = DisabledLines(start_line, end_line)
+    disablers = DisabledLines(start_line, end_line, 99)
+    disablers.parse_global_disablers()
     for start, end in lines:
         disablers.add_disabler(start, end)
     node = Mock()
@@ -47,15 +49,17 @@ def test_is_node_disabled(check_start, check_end, start_line, end_line, lines, f
 
 
 @pytest.mark.parametrize(
-    "test_file, expected_lines, file_disabled",
+    "test_file, expected_lines, file_disabled, rf_version",
     [
-        ("file_disabled.robot", [(14, 15)], True),
-        ("test.robot", [(13, 14), (25, 37), (30, 33), (40, 41), (46, 48), (57, 58), (67, 67)], False),
-        ("open_disabler_in_section.robot", [(5, 8), (13, 15), (20, 23)], False),
-        ("empty.robot", [], False),
+        ("file_disabled.robot", [(14, 15)], True, 4),
+        ("test.robot", [(13, 14), (25, 37), (30, 33), (40, 41), (46, 48), (57, 58), (67, 67)], False, 5),
+        ("open_disabler_in_section.robot", [(5, 8), (13, 15), (20, 23)], False, 4),
+        ("empty.robot", [], False, 4),
     ],
 )
-def test_register_disablers(test_file, expected_lines, file_disabled):
+def test_register_disablers(test_file, expected_lines, file_disabled, rf_version):
+    if ROBOT_VERSION.major < rf_version:
+        pytest.skip(f"Test enabled only for RF {rf_version}.*")
     test_file_path = Path(__file__).parent / "testdata" / "disablers" / test_file
     model = get_model(test_file_path)
     register_disablers = RegisterDisablers(None, None)

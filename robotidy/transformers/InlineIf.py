@@ -62,7 +62,7 @@ class InlineIf(ModelTransformer):
 
     @skip_section_if_disabled
     def visit_Section(self, node):  # noqa
-        self.generic_visit(node)
+        return self.generic_visit(node)
 
     def visit_If(self, node: If):  # noqa
         if node.errors or getattr(node.end, "errors", None):

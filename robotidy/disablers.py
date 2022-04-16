@@ -12,8 +12,6 @@ def skip_if_disabled(func):
 
     @functools.wraps(func)
     def wrapper(self, node, *args):
-        if not node:
-            return node
         if self.disablers.is_node_disabled(node):
             return node
         return func(self, node, *args)
@@ -25,13 +23,12 @@ def skip_section_if_disabled(func):
     """
     Does the same checks as ``skip_if_disabled`` and additionally checks if the section header does not contain disabler
     """
+
     @functools.wraps(func)
     def wrapper(self, node, *args):
-        if not node:
-            return node
         if self.disablers.is_node_disabled(node):
             return node
-        if node.header and self.disablers.is_line_disabled(node.header.lineno):
+        if self.disablers.is_header_disabled(node.lineno):
             return node
         return func(self, node, *args)
 
@@ -47,52 +44,42 @@ def is_line_start(node):
 
 
 class DisabledLines:
-    def __init__(self, start_line, end_line):
+    def __init__(self, start_line, end_line, file_end):
         self.start_line = start_line
         self.end_line = end_line
+        self.file_end = file_end
         self.lines = []
+        self.disabled_headers = set()
 
     def add_disabler(self, start_line, end_line):
         self.lines.append((start_line, end_line))
 
+    def add_disabled_header(self, lineno):
+        self.disabled_headers.add(lineno)
+
+    def parse_global_disablers(self):
+        if not self.start_line:
+            return
+        end_line = self.end_line if self.end_line else self.start_line
+        if self.start_line > 1:
+            self.add_disabler(1, self.start_line - 1)
+        if end_line < self.file_end:
+            self.add_disabler(end_line + 1, self.file_end)
+
     def sort_disablers(self):
         self.lines = sorted(self.lines, key=lambda x: x[0])
 
-    def node_within_global_lines(self, node):
-        if self.start_line:
-            if node.lineno < self.start_line:
-                return False
-            if self.end_line:
-                if node.end_lineno > self.end_line:
-                    return False
-            else:
-                if self.start_line != node.lineno:
-                    return False
-        return True
-
-    def is_line_disabled(self, line):
-        if self.start_line and self.start_line > line or self.end_line and self.end_line < line:
-            return True
-        for start_line, end_line in self.lines:
-            if start_line <= line <= end_line:
-                return True
-        return False
+    def is_header_disabled(self, line):
+        return line in self.disabled_headers
 
     def is_node_disabled(self, node, full_match=True):
-        # with full_match node is skipped only if it's fully outside start/end lines
-        # it's useful when we allow to transform only part of the node (ie align part of the section)
-        if full_match:
-            if self.start_line and self.start_line > node.end_lineno or self.end_line and self.end_line < node.lineno:
-                return True
-        elif not self.node_within_global_lines(node):
-            return True
         if full_match:
             for start_line, end_line in self.lines:
+                # lines are sorted on start_line, so we can return on first match
                 if end_line >= node.end_lineno:
                     return start_line <= node.lineno
         else:
             for start_line, end_line in self.lines:
-                # end_line and start_lines theoretically only increase over loop
                 if node.lineno <= end_line and node.end_lineno >= start_line:
                     return True
         return False
@@ -102,7 +89,7 @@ class RegisterDisablers(ModelVisitor):
     def __init__(self, start_line, end_line):
         self.start_line = start_line
         self.end_line = end_line
-        self.disablers = DisabledLines(self.start_line, self.end_line)
+        self.disablers = DisabledLines(self.start_line, self.end_line, None)
         self.stack = []
         self.file_disabled = False
 
@@ -121,11 +108,20 @@ class RegisterDisablers(ModelVisitor):
             self.disablers.add_disabler(disabler, end_line)
 
     def visit_File(self, node):  # noqa
-        self.disablers = DisabledLines(self.start_line, self.end_line)
+        self.disablers = DisabledLines(self.start_line, self.end_line, node.end_lineno)
+        self.disablers.parse_global_disablers()
         self.stack = []
         self.file_disabled = False
         self.generic_visit(node)
         self.disablers.sort_disablers()
+
+    def visit_SectionHeader(self, node):  # noqa
+        for comment in node.get_tokens(Token.COMMENT):
+            disabler = self.get_disabler(comment)
+            if disabler and disabler.group("disabler") == "off":
+                self.disablers.add_disabled_header(node.lineno)
+                break
+        return self.generic_visit(node)
 
     def visit_TestCase(self, node):  # noqa
         self.stack.append(0)

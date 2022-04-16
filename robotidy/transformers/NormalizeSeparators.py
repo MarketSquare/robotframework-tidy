@@ -58,24 +58,28 @@ class NormalizeSeparators(ModelTransformer):
         self.indent = 0
         return self.generic_visit(node)
 
-    @skip_section_if_disabled
     def should_visit(self, name, node):
         if name in self.sections:
             return self.generic_visit(node)
         return node
 
+    @skip_section_if_disabled
     def visit_CommentSection(self, node):  # noqa
         return self.should_visit("comments", node)
 
+    @skip_section_if_disabled
     def visit_SettingSection(self, node):  # noqa
         return self.should_visit("settings", node)
 
+    @skip_section_if_disabled
     def visit_VariableSection(self, node):  # noqa
         return self.should_visit("variables", node)
 
+    @skip_section_if_disabled
     def visit_KeywordSection(self, node):  # noqa
         return self.should_visit("keywords", node)
 
+    @skip_section_if_disabled
     def visit_TestCaseSection(self, node):  # noqa
         return self.should_visit("testcases", node)
 

@@ -88,6 +88,8 @@ class TransformerAcceptanceTest:
         if not filecmp.cmp(expected, actual):
             display_file_diff(expected, actual)
             pytest.fail(f"File {actual_name} is not same as expected")
+        else:
+            actual.unlink(missing_ok=True)
 
     def enabled_in_version(self, target_version: Optional[int]) -> bool:
         if target_version and ROBOT_VERSION.major != target_version:

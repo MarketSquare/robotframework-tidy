@@ -51,4 +51,4 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
         )
 
     def test_disablers(self):
-        self.compare(source="disablers.robot", config=":line_length=80", not_modified=True)
+        self.compare(source="disablers.robot", config=":line_length=80", not_modified=True, target_version=5)

@@ -21,4 +21,4 @@ class TestDiscardEmptySections(TransformerAcceptanceTest):
         )
 
     def test_disablers(self):
-        self.compare(source="removes_empty_sections_disablers.robot")
+        self.compare(source="removes_empty_sections_disablers.robot", not_modified=True)
