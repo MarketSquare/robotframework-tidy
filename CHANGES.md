@@ -1,5 +1,78 @@
 # Change Log
 
+## Unreleased
+
+### Disable formatting from source code
+
+Previously the only option to disable formatting in part of the file was to use cumbersome 
+``--startline`` and ``--endline`` markers. This release bring new feature - comment disablers. 
+You can disable formatting in Robot Framework statement or in span of lines using ``# robocop: off`` marker.
+
+To skip formatting for one statement:
+
+```robotframework
+Keyword That Is Longer Than Allowed Line Length  ${arg}  # robotidy: off
+```
+
+To skip multiple lines:
+
+```robotframework
+*** Test Cases ***
+Test that will be formatted
+    Step
+
+# robotidy: off
+Test that will not be formatted
+    Step
+
+# robotidy: on
+Another test that will be formatted
+    Step
+```
+
+``# robotidy: on`` marker is used to enabled formatting again - but is not necessary. ``# robotidy: off`` will disable 
+formatting to the end of the current block:
+
+```robotframework
+Keyword That Is Formatted
+IF    $condition
+    Formatted
+ELSE
+    Formatted
+    # robotidy: off
+    Not Formatted
+    WHILE    $condition
+        Not Formatted
+    END
+END
+Formatted
+```
+
+It's possible to disable formatting in whole file by putting ``# robotidy: off`` in first line:
+
+```robotframework
+# robotidy: off
+*** Settings ***
+Library    Collections
+```
+
+You can also disable formatting in whole section if you put ``# robotidy: off`` in section header:
+
+```robotframework
+*** Test Cases ***
+Formatted
+    Step
+
+*** Keywords ***  # robotidy: off
+Not Formatted
+    Step
+```
+
+## 2.1.1
+
+### Fixes
+- ``*** Tasks ***`` will no longer be renamed to ``*** Test Cases ***`` by NormalizeSectionHeaderName ([#279](https://github.com/MarketSquare/robotframework-robocop/issues/279)).
+
 ## 2.1
 
 ### Transformers

@@ -30,15 +30,17 @@ Robotidy reads and ignores paths from ``.gitignore`` and ``--exclude``. You can 
 
 .. rubric:: Disablers
 
-It's possible to skip formatting using ``# robotidy: off`` comment. It supports both inline and block disabling.
+You can disable formatting in Robot Framework statement or in span of lines using ``# robocop: off`` marker.
 
-To skip one statement::
+To skip formatting for one statement:
 
-    Keyword Call That Should Not Be Formatted  ${arg}  # robotidy: off
+.. code-block:: robotframework
 
+    Keyword That Is Longer Than Allowed Line Length  ${arg}  # robotidy: off
 
-To skip multiple lines use ``# robotidy: off`` at beginning of line. You can enable formatting again with
-``robotidy: on``. If ``# robotidy: off`` is used inside block (Keyword, Test, IF, FOR, WHOLE etc.) only content of the block will be skipped::
+To skip multiple lines:
+
+.. code-block:: robotframework
 
     *** Test Cases ***
     Test that will be formatted
@@ -49,23 +51,46 @@ To skip multiple lines use ``# robotidy: off`` at beginning of line. You can ena
         Step
 
     # robotidy: on
+    Another test that will be formatted
+        Step
 
-    Mixed blocks test
-        Formatted
-        IF   $condition
+
+``# robotidy: on`` marker is used to enabled formatting again - but is not necessary. ``# robotidy: off`` will disable
+formatting to the end of the current block:
+
+.. code-block:: robotframework
+
+    *** Keywords ***
+    Keyword
+        Keyword That Is Formatted
+        IF    $condition
+            Formatted
+        ELSE
             Formatted
             # robotidy: off
-            Not formatted
+            Not Formatted
+            WHILE    $condition
+                Not Formatted
+            END
         END
         Formatted
 
-Transformers can be also disabled by adding ``robotidy: off`` in the section header::
+It's possible to disable formatting in whole file by putting ``# robotidy: off`` in first line:
 
-    *** Settings ***  # robotidy: off
-    # it will not be formatted
-    Force Tags    tag
+.. code-block:: robotframework
+
+    # robotidy: off
+    *** Settings ***
     Library    Collections
 
-    *** Variables ***
-    # it will be formatted
-    ${VAR}    4
+You can also disable formatting in whole section if you put ``# robotidy: off`` in section header:
+
+.. code-block:: robotframework
+
+    *** Test Cases ***
+    Formatted
+        Step
+
+    *** Keywords ***  # robotidy: off
+    Not Formatted
+        Step
