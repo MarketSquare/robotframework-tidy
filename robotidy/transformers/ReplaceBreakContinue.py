@@ -3,12 +3,12 @@ from typing import Iterable
 from robot.api.parsing import ModelTransformer, Token
 
 try:
-    from robot.api.parsing import Continue, Break
+    from robot.api.parsing import Break, Continue
 except ImportError:
     Continue, Break = None, None
 
-from robotidy.utils import normalize_name, after_last_dot, wrap_in_if_and_replace_statement, ROBOT_VERSION
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
+from robotidy.utils import ROBOT_VERSION, after_last_dot, normalize_name, wrap_in_if_and_replace_statement
 
 
 class ReplaceBreakContinue(ModelTransformer):

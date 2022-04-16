@@ -1,13 +1,13 @@
-import sys
 import functools
+import sys
 
 import click
 
 from robotidy.exceptions import (
-    InvalidParameterValueError,
+    ImportTransformerError,
     InvalidParameterError,
     InvalidParameterFormatError,
-    ImportTransformerError,
+    InvalidParameterValueError,
 )
 
 

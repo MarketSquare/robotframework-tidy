@@ -1,10 +1,11 @@
-import re
 import ast
+import re
 from collections import Counter
 
-from robot.api.parsing import ModelTransformer, Variable, Token
-from robotidy.exceptions import InvalidParameterValueError
+from robot.api.parsing import ModelTransformer, Token, Variable
+
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
+from robotidy.exceptions import InvalidParameterValueError
 
 
 class NormalizeAssignments(ModelTransformer):

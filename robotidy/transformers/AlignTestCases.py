@@ -1,18 +1,18 @@
 from robot.api.parsing import (
-    ModelTransformer,
-    Token,
-    EmptyLine,
     Comment,
-    ModelVisitor,
-    ForHeader,
-    End,
-    IfHeader,
     ElseHeader,
     ElseIfHeader,
+    EmptyLine,
+    End,
+    ForHeader,
+    IfHeader,
+    ModelTransformer,
+    ModelVisitor,
+    Token,
 )
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
-from robotidy.utils import round_to_four, is_suite_templated
+from robotidy.utils import is_suite_templated, round_to_four
 
 
 class AlignTestCases(ModelTransformer):

@@ -1,7 +1,7 @@
-import re
 import functools
+import re
 
-from robot.api.parsing import ModelVisitor, Comment, Token
+from robot.api.parsing import Comment, ModelVisitor, Token
 
 
 def skip_if_disabled(func):

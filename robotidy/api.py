@@ -4,10 +4,10 @@ Methods for transforming Robot Framework ast model programmatically.
 from typing import Optional
 
 from robotidy.app import Robotidy
-from robotidy.cli import find_and_read_config, TransformType, validate_regex
+from robotidy.cli import TransformType, find_and_read_config, validate_regex
+from robotidy.disablers import RegisterDisablers
 from robotidy.files import DEFAULT_EXCLUDES
 from robotidy.utils import GlobalFormattingConfig
-from robotidy.disablers import RegisterDisablers
 
 
 class RobotidyAPI(Robotidy):

@@ -1,10 +1,10 @@
 from collections import defaultdict
 
-from robot.api.parsing import ModelTransformer, Comment, Token, EmptyLine, LibraryImport
+from robot.api.parsing import Comment, EmptyLine, LibraryImport, ModelTransformer, Token
 from robot.libraries import STDLIBS
 
-from robotidy.exceptions import InvalidParameterValueError
 from robotidy.disablers import skip_section_if_disabled
+from robotidy.exceptions import InvalidParameterValueError
 
 
 class OrderSettingsSection(ModelTransformer):

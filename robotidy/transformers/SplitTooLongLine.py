@@ -7,7 +7,6 @@ except ImportError:
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.utils import ROBOT_VERSION
 
-
 EOL = Token(Token.EOL)
 CONTINUATION = Token(Token.CONTINUATION)
 

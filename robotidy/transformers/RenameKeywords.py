@@ -1,8 +1,8 @@
 import re
-from typing import Optional
 import string
+from typing import Optional
 
-from robot.api.parsing import ModelTransformer, Token, KeywordCall
+from robot.api.parsing import KeywordCall, ModelTransformer, Token
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError

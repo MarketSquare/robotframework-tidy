@@ -1,14 +1,14 @@
 from itertools import chain
 
-from robot.api.parsing import ModelTransformer, If, IfHeader, ElseHeader, ElseIfHeader, Token, KeywordCall, Comment, End
+from robot.api.parsing import Comment, ElseHeader, ElseIfHeader, End, If, IfHeader, KeywordCall, ModelTransformer, Token
 
 try:
-    from robot.api.parsing import ReturnStatement, Break, Continue, InlineIfHeader
+    from robot.api.parsing import Break, Continue, InlineIfHeader, ReturnStatement
 except ImportError:
     ReturnStatement, Break, Continue, InlineIfHeader = None, None, None, None
 
-from robotidy.utils import ROBOT_VERSION, normalize_name, get_comments, flatten_multiline
 from robotidy.disablers import skip_section_if_disabled
+from robotidy.utils import ROBOT_VERSION, flatten_multiline, get_comments, normalize_name
 
 
 class InlineIf(ModelTransformer):

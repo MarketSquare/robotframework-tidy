@@ -1,9 +1,9 @@
 from typing import Optional
 
-from robot.api.parsing import ModelTransformer, EmptyLine, Token
+from robot.api.parsing import EmptyLine, ModelTransformer, Token
 
-from robotidy.utils import is_suite_templated
 from robotidy.disablers import skip_section_if_disabled
+from robotidy.utils import is_suite_templated
 
 
 class NormalizeNewLines(ModelTransformer):

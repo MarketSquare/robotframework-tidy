@@ -2,8 +2,8 @@ import ast
 
 from robot.api.parsing import ModelTransformer, Token
 
-from robotidy.exceptions import InvalidParameterValueError
 from robotidy.disablers import skip_section_if_disabled
+from robotidy.exceptions import InvalidParameterValueError
 
 
 # TODO: preserve comments?

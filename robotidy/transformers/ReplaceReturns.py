@@ -1,20 +1,20 @@
 from typing import Iterable
 
-from robot.api.parsing import ModelTransformer, Token, EmptyLine, Comment
+from robot.api.parsing import Comment, EmptyLine, ModelTransformer, Token
 
 try:
     from robot.api.parsing import ReturnStatement
 except ImportError:
     ReturnStatement = None
 
-from robotidy.utils import (
-    normalize_name,
-    after_last_dot,
-    ROBOT_VERSION,
-    wrap_in_if_and_replace_statement,
-    create_statement_from_tokens,
-)
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
+from robotidy.utils import (
+    ROBOT_VERSION,
+    after_last_dot,
+    create_statement_from_tokens,
+    normalize_name,
+    wrap_in_if_and_replace_statement,
+)
 
 
 class ReplaceReturns(ModelTransformer):

@@ -3,8 +3,8 @@ from collections import defaultdict
 from robot.api.parsing import ModelTransformer, Token
 from robot.parsing.model import Statement
 
-from robotidy.utils import round_to_four, tokens_by_lines, left_align, is_blank_multiline
 from robotidy.disablers import skip_section_if_disabled
+from robotidy.utils import is_blank_multiline, left_align, round_to_four, tokens_by_lines
 
 
 class AlignSettingsSection(ModelTransformer):

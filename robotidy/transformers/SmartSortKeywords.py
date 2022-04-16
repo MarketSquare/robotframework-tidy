@@ -1,4 +1,4 @@
-from robot.api.parsing import ModelTransformer, EmptyLine
+from robot.api.parsing import EmptyLine, ModelTransformer
 from robot.parsing.model.blocks import Keyword
 
 from robotidy.disablers import skip_section_if_disabled

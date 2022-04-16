@@ -6,12 +6,13 @@ import pytest
 from click import FileError, NoSuchOption
 
 from robotidy.cli import read_config, validate_regex
-from robotidy.files import find_project_root, read_pyproject_config, get_paths, DEFAULT_EXCLUDES
+from robotidy.files import DEFAULT_EXCLUDES, find_project_root, get_paths, read_pyproject_config
 from robotidy.transformers import load_transformers
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
 from robotidy.transformers.ReplaceRunKeywordIf import ReplaceRunKeywordIf
 from robotidy.transformers.SmartSortKeywords import SmartSortKeywords
 from robotidy.version import __version__
+
 from .utils import run_tidy
 
 

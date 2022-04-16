@@ -3,12 +3,11 @@ from difflib import unified_diff
 from pathlib import Path
 from typing import List, Optional
 
-from click.testing import CliRunner
 import pytest
+from click.testing import CliRunner
 
 from robotidy.cli import cli
-from robotidy.utils import decorate_diff_with_color, ROBOT_VERSION
-
+from robotidy.utils import ROBOT_VERSION, decorate_diff_with_color
 
 VERSION_MATRIX = {
     "ReplaceReturns": 5,

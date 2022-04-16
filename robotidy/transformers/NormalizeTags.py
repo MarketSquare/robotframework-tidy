@@ -1,7 +1,7 @@
-from robot.api.parsing import ModelTransformer, Tags, Token, DefaultTags, ForceTags
+from robot.api.parsing import DefaultTags, ForceTags, ModelTransformer, Tags, Token
 
-from robotidy.exceptions import InvalidParameterValueError
 from robotidy.disablers import skip_section_if_disabled
+from robotidy.exceptions import InvalidParameterValueError
 
 
 class NormalizeTags(ModelTransformer):

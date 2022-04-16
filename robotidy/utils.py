@@ -1,15 +1,14 @@
-import os
 import ast
-from typing import List, Optional, Iterable
 import difflib
+import os
+from typing import Iterable, List, Optional
 
+from click import style
 from packaging import version
-from robot.version import VERSION as RF_VERSION
-from robot.api.parsing import ModelVisitor, Token, If, IfHeader, End
+from robot.api.parsing import End, If, IfHeader, ModelVisitor, Token
 from robot.parsing.model import Statement
 from robot.utils.robotio import file_writer
-from click import style
-
+from robot.version import VERSION as RF_VERSION
 
 ROBOT_VERSION = version.parse(RF_VERSION)
 

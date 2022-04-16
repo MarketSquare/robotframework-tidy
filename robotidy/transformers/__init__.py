@@ -9,12 +9,12 @@ If you don't want to run your transformer by default and only when calling robot
 then add ``ENABLED = False`` class attribute inside.
 """
 from itertools import chain
-from robot.utils.importer import Importer
+
 from robot.errors import DataError
+from robot.utils.importer import Importer
 
+from robotidy.exceptions import ImportTransformerError, InvalidParameterError, InvalidParameterFormatError
 from robotidy.utils import RecommendationFinder
-from robotidy.exceptions import InvalidParameterError, InvalidParameterFormatError, ImportTransformerError
-
 
 TRANSFORMERS = [
     "AddMissingEnd",

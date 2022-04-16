@@ -3,21 +3,16 @@ import sys
 from collections import defaultdict
 from difflib import unified_diff
 from pathlib import Path
-from typing import List, Tuple, Dict, Optional, Pattern
+from typing import Dict, List, Optional, Pattern, Tuple
 
 import click
 from robot.api import get_model
 from robot.errors import DataError
 
+from robotidy.disablers import RegisterDisablers
 from robotidy.files import get_paths
 from robotidy.transformers import load_transformers
-from robotidy.disablers import RegisterDisablers
-from robotidy.utils import (
-    StatementLinesCollector,
-    decorate_diff_with_color,
-    GlobalFormattingConfig,
-    ModelWriter,
-)
+from robotidy.utils import GlobalFormattingConfig, ModelWriter, StatementLinesCollector, decorate_diff_with_color
 
 
 class Robotidy:
