@@ -38,7 +38,7 @@ class NormalizeSectionHeaderName(ModelTransformer):
         return self.generic_visit(node)
 
     def visit_SectionHeader(self, node):  # noqa
-        if node.name and "task" in node.name:
+        if node.name and "task" in node.name.lower():
             name = "*** Tasks ***"
         else:
             name = {
