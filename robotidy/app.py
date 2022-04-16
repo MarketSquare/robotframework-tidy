@@ -34,6 +34,7 @@ class Robotidy:
         check: bool,
         output: Optional[Path],
         force_order: bool,
+        color: bool,
     ):
         self.sources = get_paths(src, exclude, extend_exclude)
         self.overwrite = overwrite
@@ -42,6 +43,7 @@ class Robotidy:
         self.verbose = verbose
         self.formatting_config = formatting_config
         self.output = output
+        self.color = color
         transformers_config = self.convert_configure(transformers_config)
         self.transformers = load_transformers(transformers, transformers_config, force_order=force_order)
         for transformer in self.transformers:
@@ -123,8 +125,11 @@ class Robotidy:
         lines = list(unified_diff(old, new, fromfile=f"{path}\tbefore", tofile=f"{path}\tafter"))
         if not lines:
             return
-        colorized_output = decorate_diff_with_color(lines)
-        click.echo(colorized_output.encode("ascii", "ignore").decode("ascii"), color=True)
+        if self.color:
+            output = decorate_diff_with_color(lines)
+        else:
+            output = "".join(lines)
+        click.echo(output.encode("ascii", "ignore").decode("ascii"), color=self.color)
 
     @staticmethod
     def convert_configure(configure: List[Tuple[str, List]]) -> Dict[str, List]:

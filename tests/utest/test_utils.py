@@ -25,6 +25,7 @@ def app():
         check=False,
         output=None,
         force_order=False,
+        color=True,
     )
 
 

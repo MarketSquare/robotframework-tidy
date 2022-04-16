@@ -323,6 +323,23 @@ class TestCli:
             else:
                 mock_writer.assert_not_called()
 
+    @pytest.mark.parametrize("color_flag", ["--color", "--no-color", None])
+    @pytest.mark.parametrize("color_env", [True, False])
+    def test_disable_coloring(self, color_flag, color_env, test_data_dir):
+        should_be_colored = not ((color_flag is not None and color_flag == "--no-color") or color_env)
+        mocked_env = {"NO_COLOR": ""} if color_env else {}
+        source = test_data_dir / "check" / "not_golden.robot"
+        command = ["--diff", "--no-overwrite"]
+        if color_flag:
+            command.append(color_flag)
+        command.extend(["--transform", "NormalizeSectionHeaderName", str(source)])
+        with patch.dict("os.environ", mocked_env), patch("robotidy.app.decorate_diff_with_color") as mock_color:
+            run_tidy(command)
+            if should_be_colored:
+                mock_color.assert_called()
+            else:
+                mock_color.assert_not_called()
+
     def test_diff(self, test_data_dir):
         source = test_data_dir / "check" / "not_golden.robot"
         result = run_tidy(["--diff", "--no-overwrite", "--transform", "NormalizeSectionHeaderName", str(source)])

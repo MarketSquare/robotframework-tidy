@@ -41,6 +41,7 @@ class RobotidyAPI(Robotidy):
             check=False,
             output=output,
             force_order=False,
+            color=False,
         )
 
 

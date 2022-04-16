@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Tuple, Dict, List, Iterable, Optional, Any, Pattern
 
@@ -230,6 +231,12 @@ def print_transformers_list():
     show_default=True,
 )
 @click.option(
+    "--color/--no-color",
+    default=True,
+    help="Enable ANSI coloring the output",
+    show_default=True,
+)
+@click.option(
     "--check",
     is_flag=True,
     help="Don't overwrite files and just return status. Return code 0 means nothing would change. "
@@ -329,6 +336,7 @@ def cli(
     extend_exclude: Optional[Pattern],
     overwrite: bool,
     diff: bool,
+    color: bool,
     check: bool,
     spacecount: int,
     lineseparator: str,
@@ -366,6 +374,9 @@ def cli(
         # None is default, with check not set -> overwrite, with check set -> overwrite only when overwrite flag is set
         overwrite = not check
 
+    if color:
+        color = "NO_COLOR" not in os.environ
+
     formatting_config = GlobalFormattingConfig(
         space_count=spacecount,
         line_sep=lineseparator,
@@ -387,6 +398,7 @@ def cli(
         check=check,
         output=output,
         force_order=force_order,
+        color=color,
     )
     status = tidy.transform_files()
     ctx.exit(status)
