@@ -15,15 +15,19 @@ split:
 
     .. code-tab:: robotframework Before
 
-        Keyword With Longer Name    ${arg1}    ${arg2}    ${arg3}  # let's assume that arg2 is at 120 char
+        *** Keywords ***
+        Keyword
+            Keyword With Longer Name    ${arg1}    ${arg2}    ${arg3}  # let's assume that arg2 is at 120 char
 
     .. code-tab:: robotframework After
 
-        # let's assume that arg2 is at 120 char
-        Keyword With Longer Name
-        ...    ${arg1}
-        ...    ${arg2}
-        ...    ${arg3}
+        *** Keywords ***
+        Keyword
+            # let's assume that arg2 is at 120 char
+            Keyword With Longer Name
+            ...    ${arg1}
+            ...    ${arg2}
+            ...    ${arg3}
 
 Allowed line length
 --------------------
@@ -47,13 +51,17 @@ until character limit::
 
     .. code-tab:: robotframework Before
 
-        Keyword With Longer Name    ${arg1}    ${arg2}    ${arg3}  # let's assume that arg2 is at 120 char
+        *** Keywords ***
+        Keyword
+            Keyword With Longer Name    ${arg1}    ${arg2}    ${arg3}  # let's assume that arg2 is at 120 char
 
     .. code-tab:: robotframework After
 
-        # let's assume that arg2 is at 120 char
-        Keyword With Longer Name    ${arg1}
-        ...    ${arg2}    ${arg3}
+        *** Keywords ***
+        Keyword
+            # let's assume that arg2 is at 120 char
+            Keyword With Longer Name    ${arg1}
+            ...    ${arg2}    ${arg3}
 
 Assignments
 ------------
@@ -63,21 +71,25 @@ Assignments will be split to multi lines if they don't fit together with Keyword
 
     .. code-tab:: robotframework Before
 
-        ${first_assignment}    ${second_assignment}    Some Lengthy Keyword So That This Line Is Too Long    ${arg1}    ${arg2}
+        *** Keywords ***
+        Keyword
+            ${first_assignment}    ${second_assignment}    Some Lengthy Keyword So That This Line Is Too Long    ${arg1}    ${arg2}
 
-        ${first_assignment}    ${second_assignment}    ${third_assignment}    Some Lengthy Keyword So That This Line Is Too Long And Bit Over    ${arg1}    ${arg2}
+            ${first_assignment}    ${second_assignment}    ${third_assignment}    Some Lengthy Keyword So That This Line Is Too Long And Bit Over    ${arg1}    ${arg2}
 
     .. code-tab:: robotframework After
 
-        ${first_assignment}    ${second_assignment}    Some Lengthy Keyword So That This Line Is Too Long
-        ...    ${arg1}
-        ...    ${arg2}
+        *** Keywords ***
+        Keyword
+            ${first_assignment}    ${second_assignment}    Some Lengthy Keyword So That This Line Is Too Long
+            ...    ${arg1}
+            ...    ${arg2}
 
-        ${first_assignment}
-        ...    ${second_assignment}
-        ...    ${third_assignment}
-        ...    Some Lengthy Keyword So That This Line Is Too Long And Bit Over
-        ...    ${arg1}
-        ...    ${arg2}
+            ${first_assignment}
+            ...    ${second_assignment}
+            ...    ${third_assignment}
+            ...    Some Lengthy Keyword So That This Line Is Too Long And Bit Over
+            ...    ${arg1}
+            ...    ${arg2}
 
 Supports global formatting params: ``spacecount``, ``--startline`` and ``--endline``.
