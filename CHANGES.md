@@ -1,5 +1,10 @@
 # Change Log
 
+## Unreleased
+
+### Other
+- You can now disable coloring the output with ``--no-color`` cli option or by setting ``$NO_COLOR`` environment variable ([#268](https://github.com/MarketSquare/robotframework-tidy/issues/268))
+
 ## 2.1
 
 ### Transformers
