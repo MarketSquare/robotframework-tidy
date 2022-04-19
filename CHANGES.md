@@ -5,10 +5,10 @@
 ### Disable formatting from source code
 
 Previously the only option to disable formatting in part of the file was to use cumbersome 
-``--startline`` and ``--endline`` markers. This release bring new feature - comment disablers. 
+``--startline`` and ``--endline`` markers. This release brings new feature - comment disablers. 
 You can disable formatting in Robot Framework statement or in span of lines using ``# robocop: off`` marker.
 
-To skip formatting for one statement:
+To skip the formatting for one statement:
 
 ```robotframework
 Keyword That Is Longer Than Allowed Line Length  ${arg}  # robotidy: off
@@ -30,8 +30,8 @@ Another test that will be formatted
     Step
 ```
 
-``# robotidy: on`` marker is used to enabled formatting again - but is not necessary. ``# robotidy: off`` will disable 
-formatting to the end of the current block:
+``# robotidy: on`` marker is used to enable the formatting again - but is not required. ``# robotidy: off`` will disable 
+the formatting to the end of the current block:
 
 ```robotframework
 Keyword That Is Formatted
@@ -48,7 +48,7 @@ END
 Formatted
 ```
 
-It's possible to disable formatting in whole file by putting ``# robotidy: off`` in first line:
+It's possible to disable the formatting in whole file by putting ``# robotidy: off`` on first line:
 
 ```robotframework
 # robotidy: off
@@ -56,7 +56,7 @@ It's possible to disable formatting in whole file by putting ``# robotidy: off``
 Library    Collections
 ```
 
-You can also disable formatting in whole section if you put ``# robotidy: off`` in section header:
+You can also disable the formatting in whole section if you put ``# robotidy: off`` in section header:
 
 ```robotframework
 *** Test Cases ***
