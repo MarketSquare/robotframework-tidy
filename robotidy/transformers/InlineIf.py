@@ -54,7 +54,7 @@ class InlineIf(ModelTransformer):
     See https://robotidy.readthedocs.io/en/latest/transformers/InlineIf.html for more examples.
     """
 
-    ENABLED = ROBOT_VERSION.major >= 5
+    MIN_VERSION = 5
 
     def __init__(self, line_length: int = 80, skip_else: bool = False):
         self.line_length = line_length

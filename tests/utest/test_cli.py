@@ -484,3 +484,58 @@ class TestCli:
         args = "--transform DiscardEmptySections -".split()
         result = run_tidy(args, std_in=input_file)
         assert result.output == expected_output
+
+    @pytest.mark.parametrize(
+        "version, transform, config, expected_transformers, warn_with",
+        [
+            (4, [], {}, ["all_default"], []),
+            (5, [], {}, ["all_default"], []),
+            (
+                4,
+                [("AlignVariablesSection", ["up_to_column=3"])],
+                {"AlignVariablesSection": ["up_to_column=4"]},
+                ["AlignVariablesSection"],
+                [],
+            ),
+            (
+                5,
+                [("AlignVariablesSection", ["up_to_column=3"])],
+                {"AlignVariablesSection": ["up_to_column=4"]},
+                ["AlignVariablesSection"],
+                [],
+            ),
+            (4, [("InlineIf", [])], {}, [], ["InlineIf"]),
+            (5, [("InlineIf", [])], {}, ["InlineIf"], []),
+            (4, [("InlineIf", []), ("AlignTestCases", [])], {}, ["AlignTestCases"], ["InlineIf"]),
+            (5, [("InlineIf", []), ("AlignTestCases", [])], {}, ["AlignTestCases", "InlineIf"], []),
+            (4, [], {"ReplaceReturns": ["enabled=True"]}, ["all_default"], ["ReplaceReturns"]),
+            (5, [], {"ReplaceReturns": ["enabled=True"]}, ["all_default"], []),
+            (4, [("ReplaceReturns", [])], {"InlineIf": ["enabled=True"]}, ["all_default"], ["ReplaceReturns"]),
+            (5, [("ReplaceReturns", [])], {"InlineIf": ["enabled=True"]}, ["all_default"], []),
+        ],
+    )
+    def test_overwriting_disabled_in_version(
+        self, version, transform, config, expected_transformers, warn_with, capsys
+    ):
+        expected_transformers = sorted(expected_transformers)
+        mocked_version = Mock()
+        mocked_version.major = version
+        with patch("robotidy.transformers.ROBOT_VERSION", mocked_version):
+            transformers = load_transformers(transform, config)
+        transformers_names = sorted([transformer.__class__.__name__ for transformer in transformers])
+        if expected_transformers == ["all_default"]:
+            only_5_found = any(
+                name in {"InlineIf", "ReplaceBreakContinue", "ReplaceReturns"} for name in transformers_names
+            )
+            assert not (version == 4 and only_5_found)
+        else:
+            assert transformers_names == expected_transformers
+        if warn_with:
+            expected_output = [
+                f"{name} transformer requires Robot Framework 5.* version but you have {mocked_version} installed. "
+                f"Upgrade installed Robot Framework if you want to use this transformer.\n"
+                for name in warn_with
+            ]
+            expected_output = "".join(expected_output)
+            output = capsys.readouterr()
+            assert output.out == expected_output

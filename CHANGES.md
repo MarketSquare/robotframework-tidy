@@ -68,6 +68,10 @@ Not Formatted
     Step
 ```
 
+### Fixes
+- It's no longer possible to forcefully enable transformer not supported in installed Robot Framework version ([#281](https://github.com/MarketSquare/robotframework-tidy/issues/281), [#283](https://github.com/MarketSquare/robotframework-tidy/issues/283))
+
+
 ## 2.1.1
 
 ### Fixes

@@ -46,7 +46,7 @@ class ReplaceBreakContinue(ModelTransformer):
     See https://robotidy.readthedocs.io/en/latest/transformers/ReplaceBreakContinue.html for more examples.
     """
 
-    ENABLED = ROBOT_VERSION.major >= 5
+    MIN_VERSION = 5
 
     def __init__(self):
         self.in_loop = False
