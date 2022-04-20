@@ -6,8 +6,8 @@ from robot.api.parsing import Comment, ModelVisitor, Token
 
 def skip_if_disabled(func):
     """
-    Do not transform node if it's not within passed start_line and end_line or
-    it does match any # robotidy: off disabler
+    Do not transform node if it's not within passed ``start_line`` and ``end_line`` or
+    it does match any ``# robotidy: off`` disabler
     """
 
     @functools.wraps(func)
