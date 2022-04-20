@@ -6,7 +6,7 @@ from typing import Optional
 from robotidy.app import Robotidy
 from robotidy.cli import find_and_read_config, TransformType, validate_regex
 from robotidy.files import DEFAULT_EXCLUDES
-from robotidy.utils import GlobalFormattingConfig
+from robotidy.utils import GlobalFormattingConfig, ROBOT_VERSION
 
 
 class RobotidyAPI(Robotidy):
@@ -41,6 +41,7 @@ class RobotidyAPI(Robotidy):
             check=False,
             output=output,
             force_order=False,
+            target_version=ROBOT_VERSION.major,
         )
 
 

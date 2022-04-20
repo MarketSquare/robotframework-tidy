@@ -7,12 +7,10 @@ from click import FileError, NoSuchOption
 
 from robotidy.cli import read_config, validate_regex
 from robotidy.files import find_project_root, read_pyproject_config, get_paths, DEFAULT_EXCLUDES
-from robotidy.transformers import load_transformers
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
 from robotidy.transformers.ReplaceRunKeywordIf import ReplaceRunKeywordIf
 from robotidy.transformers.SmartSortKeywords import SmartSortKeywords
-import robotidy.utils
-from robotidy.utils import node_within_lines
+from robotidy.utils import ROBOT_VERSION
 from robotidy.version import __version__
 from .utils import run_tidy
 
@@ -59,19 +57,6 @@ class TestCli:
         args = f"--configure {name}:param=value -".split()
         result = run_tidy(args, exit_code=1)
         assert expected_output == result.output
-
-    def test_transformer_order(self):
-        order_1 = ["NormalizeSeparators", "OrderSettings"]
-        order_2 = ["OrderSettings", "NormalizeSeparators"]
-        transformers_1 = load_transformers([(transf, []) for transf in order_1], {})
-        transformers_2 = load_transformers([(transf, []) for transf in order_2], {})
-        assert all(t1.__class__.__name__ == t2.__class__.__name__ for t1, t2 in zip(transformers_1, transformers_2))
-
-    def test_transformer_force_order(self):
-        # default_order = ['NormalizeSeparators', 'OrderSettings']
-        custom_order = ["OrderSettings", "NormalizeSeparators"]
-        transformers = load_transformers([(transf, []) for transf in custom_order], {}, force_order=True)
-        assert all(t1.__class__.__name__ == t2 for t1, t2 in zip(transformers, custom_order))
 
     def test_not_existing_configurable_similar(self):
         expected_output = (
@@ -231,23 +216,15 @@ class TestCli:
         read_config(ctx_mock, param_mock, value=None)
         assert ctx_mock.default_map == expected_parsed_config
 
-    @pytest.mark.parametrize(
-        "node_start, node_end, start_line, end_line, expected",
-        [
-            (15, 30, 15, None, True),
-            (15, 30, 15, 30, True),
-            (14, 30, 15, 30, False),
-            (15, 31, 15, 30, False),
-            (15, 30, None, 30, True),
-            (15, 30, None, None, True),
-        ],
-    )
-    def test_skip_node_start_end_line_setting(self, node_start, node_end, start_line, end_line, expected):
-        assert node_within_lines(node_start, node_end, start_line, end_line) == expected
-
     @pytest.mark.parametrize("flag", ["--list", "-l"])
-    def test_list_transformers(self, flag):
-        result = run_tidy([flag])
+    @pytest.mark.parametrize("target_version", ["4", "5", None])
+    def test_list_transformers(self, flag, target_version):
+        if target_version and target_version == "5" and ROBOT_VERSION.major < 5:
+            pytest.skip("Skip RF 5.0 only tests in previous RF versions")
+        cmd = [flag]
+        if target_version:
+            cmd.extend(["--target-version", f"rf{target_version}"])
+        result = run_tidy(cmd)
         assert (
             "To see detailed docs run --desc <transformer_name> or --desc all. Transformers with (disabled) "
             "tag \nare executed only when selected explicitly with --transform or configured with param "
@@ -257,6 +234,10 @@ class TestCli:
         assert "ReplaceRunKeywordIf\n" in result.output
         assert "SmartSortKeywords (disabled)\n" in result.output  # this transformer is disabled by default
         assert "Available transformers:\n\nAddMissingEnd\n" in result.output  # assert order
+        if (not target_version and ROBOT_VERSION.major == 5) or target_version and target_version == "5":
+            assert "ReplaceReturns\n" in result.output
+        elif target_version and target_version == "4":
+            assert "ReplaceReturns (disabled)\n" in result.output
 
     @pytest.mark.parametrize("flag", ["--desc", "-d"])
     @pytest.mark.parametrize(
@@ -329,28 +310,6 @@ class TestCli:
         assert "*** settings ***" in result.output
         assert "*** Settings ***" in result.output
 
-    def test_disabled_transformer(self):
-        transformers = load_transformers(None, {})
-        assert all(transformer.__class__.__name__ != "SmartSortKeywords" for transformer in transformers)
-
-    def test_enable_disable_transformer(self):
-        transformers = load_transformers([("SmartSortKeywords", [])], {})
-        assert transformers[0].__class__.__name__ == "SmartSortKeywords"
-
-    def test_configure_transformer(self):
-        transformers = load_transformers(None, {"AlignVariablesSection": ["up_to_column=4"]})
-        transformers_not_configured = load_transformers(None, {})
-        assert len(transformers) == len(transformers_not_configured)
-        for transformer in transformers:
-            if transformer.__class__.__name__ == "AlignVariablesSection":
-                assert transformer.up_to_column + 1 == 4
-
-    def test_configure_transformer_overwrite(self):
-        transformers = load_transformers(
-            [("AlignVariablesSection", ["up_to_column=3"])], {"AlignVariablesSection": ["up_to_column=4"]}
-        )
-        assert transformers[0].up_to_column + 1 == 4
-
     @pytest.mark.parametrize("line_sep", ["unix", "windows", "native", None])
     def test_line_sep(self, line_sep, test_data_dir):
         source = test_data_dir / "line_sep" / "test.robot"
@@ -367,77 +326,6 @@ class TestCli:
         with open(str(actual), newline="") as f:
             actual_str = f.read()
         assert actual_str == expected_str, "Line endings does not match"
-
-    @pytest.mark.parametrize("force_order", [True, False])
-    @pytest.mark.parametrize("allow_disabled", [True, False])
-    @pytest.mark.parametrize(
-        "transformers, configure, present, test_for",
-        [
-            # robotidy .
-            (None, {}, True, "AlignVariablesSection"),
-            # robotidy -c AlignVariablesSection:enabled=True .
-            (None, {"AlignVariablesSection": ["enabled=True"]}, True, "AlignVariablesSection"),
-            # robotidy -c AlignVariablesSection:enabled=false .
-            (None, {"AlignVariablesSection": ["enabled=false"]}, False, "AlignVariablesSection"),
-            # robotidy -c SmartSortKeywords:enabled=True .
-            (None, {"SmartSortKeywords": ["enabled=True"]}, True, "SmartSortKeywords"),  # disabled by default
-            # robotidy -c SmartSortKeywords:enabled=False .
-            (None, {"SmartSortKeywords": ["enabled=False"]}, False, "SmartSortKeywords"),
-            # robotidy --transform SmartSortKeywords:enabled=True .
-            ([("SmartSortKeywords", ["enabled=True"])], {}, True, "SmartSortKeywords"),
-            # robotidy --transform NormalizeAssignments .
-            ([("NormalizeAssignments", [])], {}, False, "AlignVariablesSection"),
-            # robotidy --transform NormalizeAssignments --transform AlignVariablesSection .
-            ([("NormalizeAssignments", []), ("AlignVariablesSection", [])], {}, True, "AlignVariablesSection"),
-            # robotidy --transform NormalizeAssignments --transform AlignVariablesSection:up_to_column=4 .
-            (
-                [("NormalizeAssignments", []), ("AlignVariablesSection", ["up_to_column=4"])],
-                {},
-                True,
-                "AlignVariablesSection",
-            ),
-            # robotidy --transform NormalizeAssignments --transform AlignVariablesSection:up_to_column=4:enabled=True .
-            (
-                [("NormalizeAssignments", []), ("AlignVariablesSection", ["up_to_column=4", "enabled=True"])],
-                {},
-                True,
-                "AlignVariablesSection",
-            ),
-            # robotidy --transform NormalizeAssignments --transform AlignVariablesSection:up_to_column=4:enabled=False .
-            (
-                [("NormalizeAssignments", []), ("AlignVariablesSection", ["up_to_column=4", "enabled=False"])],
-                {},
-                False,
-                "AlignVariablesSection",
-            ),
-            # robotidy --transform NormalizeAssignments --transform AlignVariablesSection:up_to_column=4 -c
-            # AlignVariablesSection:enabled=True .
-            (
-                [("NormalizeAssignments", []), ("AlignVariablesSection", ["up_to_column=4"])],
-                {"AlignVariablesSection": ["enabled=True"]},
-                True,
-                "AlignVariablesSection",
-            ),
-            # robotidy --transform NormalizeAssignments --transform AlignVariablesSection:up_to_column=4 -c
-            # AlignVariablesSection:enabled=False .
-            (
-                [("NormalizeAssignments", []), ("AlignVariablesSection", ["up_to_column=4"])],
-                {"AlignVariablesSection": ["enabled=False"]},
-                False,
-                "AlignVariablesSection",
-            ),
-        ],
-    )
-    def test_disable_transformers(self, transformers, configure, present, force_order, allow_disabled, test_for):
-        if force_order and not transformers:
-            present = False
-        loaded_transformers = load_transformers(
-            transformers, configure, allow_disabled=allow_disabled, force_order=force_order
-        )
-        if present:
-            assert any(transformer.__class__.__name__ == test_for for transformer in loaded_transformers)
-        else:
-            assert all(transformer.__class__.__name__ != test_for for transformer in loaded_transformers)
 
     @pytest.mark.parametrize(
         "exclude, extend_exclude, allowed",
@@ -500,57 +388,22 @@ class TestCli:
         result = run_tidy(args, std_in=input_file)
         assert result.output == expected_output
 
-    @pytest.mark.parametrize(
-        "version, transform, config, expected_transformers, warn_with",
-        [
-            (4, [], {}, ["all_default"], []),
-            (5, [], {}, ["all_default"], []),
-            (
-                4,
-                [("AlignVariablesSection", ["up_to_column=3"])],
-                {"AlignVariablesSection": ["up_to_column=4"]},
-                ["AlignVariablesSection"],
-                [],
-            ),
-            (
-                5,
-                [("AlignVariablesSection", ["up_to_column=3"])],
-                {"AlignVariablesSection": ["up_to_column=4"]},
-                ["AlignVariablesSection"],
-                [],
-            ),
-            (4, [("InlineIf", [])], {}, [], ["InlineIf"]),
-            (5, [("InlineIf", [])], {}, ["InlineIf"], []),
-            (4, [("InlineIf", []), ("AlignTestCases", [])], {}, ["AlignTestCases"], ["InlineIf"]),
-            (5, [("InlineIf", []), ("AlignTestCases", [])], {}, ["AlignTestCases", "InlineIf"], []),
-            (4, [], {"ReplaceReturns": ["enabled=True"]}, ["all_default"], ["ReplaceReturns"]),
-            (5, [], {"ReplaceReturns": ["enabled=True"]}, ["all_default"], []),
-            (4, [("ReplaceReturns", [])], {"InlineIf": ["enabled=True"]}, ["all_default"], ["ReplaceReturns"]),
-            (5, [("ReplaceReturns", [])], {"InlineIf": ["enabled=True"]}, ["all_default"], []),
-        ],
-    )
-    def test_overwriting_disabled_in_version(
-        self, version, transform, config, expected_transformers, warn_with, capsys
-    ):
-        expected_transformers = sorted(expected_transformers)
-        mocked_version = Mock()
-        mocked_version.major = version
-        with patch("robotidy.transformers.ROBOT_VERSION", mocked_version):
-            transformers = load_transformers(transform, config)
-        transformers_names = sorted([transformer.__class__.__name__ for transformer in transformers])
-        if expected_transformers == ["all_default"]:
-            only_5_found = any(
-                name in {"InlineIf", "ReplaceBreakContinue", "ReplaceReturns"} for name in transformers_names
-            )
-            assert not (version == 4 and only_5_found)
-        else:
-            assert transformers_names == expected_transformers
-        if warn_with:
-            expected_output = [
-                f"{name} transformer requires Robot Framework 5.* version but you have {mocked_version} installed. "
-                f"Upgrade installed Robot Framework if you want to use this transformer.\n"
-                for name in warn_with
-            ]
-            expected_output = "".join(expected_output)
-            output = capsys.readouterr()
-            assert output.out == expected_output
+    @pytest.mark.parametrize("target_version", ["rf", "RF5", "5", "rf3"])
+    @patch("robotidy.cli.ROBOT_VERSION")
+    def test_invalid_target_version(self, mocked_version, target_version):
+        mocked_version.major = 5
+        result = run_tidy(f"--target-version {target_version} .".split(), exit_code=2)
+        assert (
+            f"Error: Invalid value for '--target-version' / '-t': '{target_version}' is not one of 'rf4', 'rf5'"
+            in result.output
+        )
+
+    @patch("robotidy.cli.ROBOT_VERSION")
+    def test_too_recent_target_version(self, mocked_version):
+        target_version = 5
+        mocked_version.major = 4
+        result = run_tidy(f"--target-version rf{target_version} .".split(), exit_code=2)
+        assert (
+            f"Error: Invalid value for '--target-version' / '-t': Target Robot Framework version ({target_version}) "
+            f"should not be higher than installed version ({mocked_version})." in result.output
+        )

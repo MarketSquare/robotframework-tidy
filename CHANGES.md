@@ -3,7 +3,14 @@
 ## Unreleased
 
 ### Fixes
-- It's no longer possible to forcifully enable transformer not supported in installed Robot Framework version ([#281](https://github.com/MarketSquare/robotframework-tidy/issues/281), [#283](https://github.com/MarketSquare/robotframework-tidy/issues/283))
+- It's no longer possible to forcefully enable transformer not supported in installed Robot Framework version ([#281](https://github.com/MarketSquare/robotframework-tidy/issues/281), [#283](https://github.com/MarketSquare/robotframework-tidy/issues/283))
+
+### Other
+- You can now set target version of Robot Framework when formatting the files:
+  ```
+  robotidy --target-version rf4 .
+  ```
+  All transformers that require version above set target version will be disabled ([#253](https://github.com/MarketSquare/robotframework-robocop/issues/253))
 
 ## 2.1
 

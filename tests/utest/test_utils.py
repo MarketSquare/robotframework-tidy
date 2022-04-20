@@ -4,7 +4,13 @@ from pathlib import Path
 import pytest
 
 from robotidy.app import Robotidy
-from robotidy.utils import decorate_diff_with_color, split_args_from_name_or_path, GlobalFormattingConfig
+from robotidy.utils import (
+    decorate_diff_with_color,
+    split_args_from_name_or_path,
+    GlobalFormattingConfig,
+    ROBOT_VERSION,
+    node_within_lines,
+)
 
 
 @pytest.fixture
@@ -25,6 +31,7 @@ def app():
         check=False,
         output=None,
         force_order=False,
+        target_version=ROBOT_VERSION.major,
     )
 
 
@@ -98,3 +105,17 @@ class TestUtils:
             space_count=4, line_sep=line_sep, start_line=None, separator="space", end_line=None, line_length=120
         )
         assert app.get_line_ending(source) == expected
+
+    @pytest.mark.parametrize(
+        "node_start, node_end, start_line, end_line, expected",
+        [
+            (15, 30, 15, None, True),
+            (15, 30, 15, 30, True),
+            (14, 30, 15, 30, False),
+            (15, 31, 15, 30, False),
+            (15, 30, None, 30, True),
+            (15, 30, None, None, True),
+        ],
+    )
+    def test_skip_node_start_end_line_setting(self, node_start, node_end, start_line, end_line, expected):
+        assert node_within_lines(node_start, node_end, start_line, end_line) == expected

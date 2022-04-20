@@ -1,5 +1,6 @@
 import os
 import ast
+from enum import Enum
 from typing import List, Optional, Iterable
 import difflib
 
@@ -12,6 +13,11 @@ from click import style
 
 
 ROBOT_VERSION = version.parse(RF_VERSION)
+
+
+class TargetVersion(Enum):
+    RF4 = 4
+    RF5 = 5
 
 
 class StatementLinesCollector(ModelVisitor):

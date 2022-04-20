@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Tuple, Dict, List, Iterable, Optional, Any, Pattern
+from typing import Tuple, Dict, List, Iterable, Union, Optional, Any, Pattern
 
 import click
 import re
@@ -12,6 +12,8 @@ from robotidy.utils import (
     split_args_from_name_or_path,
     remove_rst_formatting,
     RecommendationFinder,
+    ROBOT_VERSION,
+    TargetVersion,
 )
 from robotidy.decorators import catch_exceptions
 from robotidy.version import __version__
@@ -117,6 +119,21 @@ def validate_regex_callback(
     return validate_regex(value)
 
 
+def validate_target_version(
+    ctx: click.Context,
+    param: Union[click.Option, click.Parameter],
+    value: Optional[str],
+) -> Optional[int]:
+    if value is None:
+        return ROBOT_VERSION.major
+    version = TargetVersion[value.upper()].value
+    if version > ROBOT_VERSION.major:
+        raise click.BadParameter(
+            f"Target Robot Framework version ({version}) should not be higher than installed version ({ROBOT_VERSION})."
+        )
+    return version
+
+
 def validate_regex(value: Optional[str]) -> Optional[Pattern]:
     try:
         return re.compile(value) if value is not None else None
@@ -124,8 +141,8 @@ def validate_regex(value: Optional[str]) -> Optional[Pattern]:
         raise click.BadParameter("Not a valid regular expression")
 
 
-def print_description(name: str):
-    transformers = load_transformers(None, {}, allow_disabled=True)
+def print_description(name: str, target_version: int):
+    transformers = load_transformers(None, {}, allow_disabled=True, target_version=target_version)
     transformer_by_names = {transformer.__class__.__name__: transformer for transformer in transformers}
     if name == "all":
         for tr_name, transformer in transformer_by_names.items():
@@ -142,8 +159,8 @@ def print_description(name: str):
     return 0
 
 
-def print_transformers_list():
-    transformers = load_transformers(None, {}, allow_disabled=True)
+def print_transformers_list(target_version: int):
+    transformers = load_transformers(None, {}, allow_disabled=True, target_version=target_version)
     click.echo(
         "To see detailed docs run --desc <transformer_name> or --desc all. "
         "Transformers with (disabled) tag \nare executed only when selected explicitly with --transform or "
@@ -317,6 +334,13 @@ def print_transformers_list():
     is_flag=True,
     help="Transform files using transformers in order provided in cli",
 )
+@click.option(
+    "--target-version",
+    "-t",
+    type=click.Choice([v.name.lower() for v in TargetVersion]),
+    callback=validate_target_version,
+    help="Only enable transformers supported in set target version. [default: installed Robot Framework version]",
+)
 @click.version_option(version=__version__, prog_name="robotidy")
 @click.pass_context
 @catch_exceptions
@@ -342,12 +366,13 @@ def cli(
     desc: Optional[str],
     output: Optional[Path],
     force_order: bool,
+    target_version: int,
 ):
     if list:
-        print_transformers_list()
+        print_transformers_list(target_version)
         ctx.exit(0)
     if desc is not None:
-        return_code = print_description(desc)
+        return_code = print_description(desc, target_version)
         ctx.exit(return_code)
     if not src:
         if ctx.default_map is not None:
@@ -387,6 +412,7 @@ def cli(
         check=check,
         output=output,
         force_order=force_order,
+        target_version=target_version,
     )
     status = tidy.transform_files()
     ctx.exit(status)
