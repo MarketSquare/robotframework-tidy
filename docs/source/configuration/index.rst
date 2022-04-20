@@ -32,7 +32,7 @@ Robotidy reads and ignores paths from ``.gitignore`` and ``--exclude``. You can 
 
 You can disable formatting in Robot Framework statement or in span of lines using ``# robocop: off`` marker.
 
-To skip formatting for one statement:
+To skip the formatting for one statement:
 
 .. code-block:: robotframework
 
@@ -55,8 +55,8 @@ To skip multiple lines:
         Step
 
 
-``# robotidy: on`` marker is used to enabled formatting again - but is not necessary. ``# robotidy: off`` will disable
-formatting to the end of the current block:
+``# robotidy: on`` marker is used to enable the formatting again - but is not required. ``# robotidy: off`` will disable
+the formatting to the end of the current block:
 
 .. code-block:: robotframework
 
@@ -75,7 +75,7 @@ formatting to the end of the current block:
         END
         Formatted
 
-It's possible to disable formatting in whole file by putting ``# robotidy: off`` in first line:
+It's possible to disable the formatting in whole file by putting ``# robotidy: off`` on first line:
 
 .. code-block:: robotframework
 
@@ -83,7 +83,7 @@ It's possible to disable formatting in whole file by putting ``# robotidy: off``
     *** Settings ***
     Library    Collections
 
-You can also disable formatting in whole section if you put ``# robotidy: off`` in section header:
+You can also disable the formatting in whole section if you put ``# robotidy: off`` in section header:
 
 .. code-block:: robotframework
 
