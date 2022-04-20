@@ -9,10 +9,12 @@ If you don't want to run your transformer by default and only when calling robot
 then add ``ENABLED = False`` class attribute inside.
 """
 from itertools import chain
+
+import click
 from robot.utils.importer import Importer
 from robot.errors import DataError
 
-from robotidy.utils import RecommendationFinder
+from robotidy.utils import RecommendationFinder, ROBOT_VERSION
 from robotidy.exceptions import InvalidParameterError, InvalidParameterFormatError, ImportTransformerError
 
 
@@ -120,6 +122,21 @@ def validate_config(config, allowed_mapped):
         ) from None
 
 
+def can_run_in_robot_version(transformer, overwritten):
+    if not hasattr(transformer, "MIN_VERSION"):
+        return True
+    if ROBOT_VERSION.major >= transformer.MIN_VERSION:
+        return True
+    if overwritten:
+        # --transform TransformerDisabledInVersion or --configure TransformerDisabledInVersion:enabled=True
+        click.echo(
+            f"{transformer.__class__.__name__} transformer requires Robot Framework {transformer.MIN_VERSION}.* "
+            f"version but you have {ROBOT_VERSION} installed. "
+            f"Upgrade installed Robot Framework if you want to use this transformer."
+        )
+    return False
+
+
 def load_transformers(allowed_transformers, config, allow_disabled=False, force_order=False):
     """Dynamically load all classes from this file with attribute `name` defined in allowed_transformers"""
     loaded_transformers = []
@@ -134,11 +151,14 @@ def load_transformers(allowed_transformers, config, allow_disabled=False, force_
                     continue
                 enabled = getattr(imported_class, "ENABLED", True) or args.get("enabled", False)
                 if allowed_mapped or allow_disabled or enabled:
-                    loaded_transformers.append(imported_class)
+                    overwritten = name in allowed_mapped or args.get("enabled", False)
+                    if can_run_in_robot_version(imported_class, overwritten=overwritten):
+                        loaded_transformers.append(imported_class)
     for name in allowed_mapped:
         if force_order or name not in TRANSFORMERS:
             args = get_args(name, allowed_mapped, config)
             imported_class = load_transformer(name, args)
             if imported_class is not None:
-                loaded_transformers.append(imported_class)
+                if can_run_in_robot_version(imported_class, overwritten=True):
+                    loaded_transformers.append(imported_class)
     return loaded_transformers

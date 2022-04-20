@@ -15,6 +15,6 @@ class TestNormalizeSectionHeaderName(TransformerAcceptanceTest):
 
     def test_tasks(self):
         self.compare(source="task.robot")
-        
+
     def test_tasks2(self):
         self.compare(source="task2.robot")
