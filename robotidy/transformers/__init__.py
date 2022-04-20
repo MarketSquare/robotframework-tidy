@@ -15,7 +15,7 @@ from robot.errors import DataError
 from robot.utils.importer import Importer
 
 from robotidy.exceptions import ImportTransformerError, InvalidParameterError, InvalidParameterFormatError
-from robotidy.utils import RecommendationFinder, ROBOT_VERSION
+from robotidy.utils import ROBOT_VERSION, RecommendationFinder
 
 TRANSFORMERS = [
     "AddMissingEnd",
