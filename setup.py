@@ -1,7 +1,8 @@
 import pathlib
-from setuptools import setup
-from robotidy.version import __version__
 
+from setuptools import setup
+
+from robotidy.version import __version__
 
 HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()

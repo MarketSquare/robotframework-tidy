@@ -2,8 +2,80 @@
 
 ## Unreleased
 
+### Disable formatting from source code
+
+Previously the only option to disable formatting in part of the file was to use cumbersome 
+``--startline`` and ``--endline`` markers. This release brings new feature - comment disablers. 
+You can disable formatting in Robot Framework statement or in span of lines using ``# robocop: off`` marker.
+
+To skip the formatting for one statement:
+
+```robotframework
+Keyword That Is Longer Than Allowed Line Length  ${arg}  # robotidy: off
+```
+
+To skip multiple lines:
+
+```robotframework
+*** Test Cases ***
+Test that will be formatted
+    Step
+
+# robotidy: off
+Test that will not be formatted
+    Step
+
+# robotidy: on
+Another test that will be formatted
+    Step
+```
+
+``# robotidy: on`` marker is used to enable the formatting again - but is not required. ``# robotidy: off`` will disable 
+the formatting to the end of the current block:
+
+```robotframework
+Keyword That Is Formatted
+IF    $condition
+    Formatted
+ELSE
+    Formatted
+    # robotidy: off
+    Not Formatted
+    WHILE    $condition
+        Not Formatted
+    END
+END
+Formatted
+```
+
+It's possible to disable the formatting in whole file by putting ``# robotidy: off`` on first line:
+
+```robotframework
+# robotidy: off
+*** Settings ***
+Library    Collections
+```
+
+You can also disable the formatting in whole section if you put ``# robotidy: off`` in section header:
+
+```robotframework
+*** Test Cases ***
+Formatted
+    Step
+
+*** Keywords ***  # robotidy: off
+Not Formatted
+    Step
+```
+
 ### Fixes
-- It's no longer possible to forcifully enable transformer not supported in installed Robot Framework version ([#281](https://github.com/MarketSquare/robotframework-tidy/issues/281), [#283](https://github.com/MarketSquare/robotframework-tidy/issues/283))
+- It's no longer possible to forcefully enable transformer not supported in installed Robot Framework version ([#281](https://github.com/MarketSquare/robotframework-tidy/issues/281), [#283](https://github.com/MarketSquare/robotframework-tidy/issues/283))
+
+
+## 2.1.1
+
+### Fixes
+- ``*** Tasks ***`` will no longer be renamed to ``*** Test Cases ***`` by NormalizeSectionHeaderName ([#279](https://github.com/MarketSquare/robotframework-robocop/issues/279)).
 
 ### Other
 - You can now disable coloring the output with ``--no-color`` cli option or by setting ``$NO_COLOR`` environment variable ([#268](https://github.com/MarketSquare/robotframework-tidy/issues/268))

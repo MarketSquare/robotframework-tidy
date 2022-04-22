@@ -3,12 +3,11 @@ from difflib import unified_diff
 from pathlib import Path
 from typing import List, Optional
 
-from click.testing import CliRunner
 import pytest
+from click.testing import CliRunner
 
 from robotidy.cli import cli
-from robotidy.utils import decorate_diff_with_color, ROBOT_VERSION
-
+from robotidy.utils import ROBOT_VERSION, decorate_diff_with_color
 
 VERSION_MATRIX = {
     "ReplaceReturns": 5,
@@ -53,7 +52,9 @@ class TransformerAcceptanceTest:
             pytest.skip(f"Test enabled only for RF {target_version}.0")
         if expected is None:
             expected = source
-        self.run_tidy(args=f"--transform {self.TRANSFORMER_NAME}{config}".split(), source=source)
+        self.run_tidy(
+            args=f"--transform {self.TRANSFORMER_NAME}{config}".split(), source=source, not_modified=not_modified
+        )
         if not not_modified:
             self.compare_file(source, expected)
 
@@ -62,7 +63,7 @@ class TransformerAcceptanceTest:
         output_path = str(Path(Path(__file__).parent, "actual", source))
         arguments = ["--output", output_path]
         if not_modified:
-            arguments.append("--check")
+            arguments.extend(["--check", "--overwrite"])
         if args is not None:
             arguments += args
         if source is None:
@@ -86,6 +87,8 @@ class TransformerAcceptanceTest:
         if not filecmp.cmp(expected, actual):
             display_file_diff(expected, actual)
             pytest.fail(f"File {actual_name} is not same as expected")
+        else:
+            actual.unlink()
 
     def enabled_in_version(self, target_version: Optional[int]) -> bool:
         if target_version and ROBOT_VERSION.major != target_version:

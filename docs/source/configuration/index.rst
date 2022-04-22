@@ -27,3 +27,70 @@ Robotidy reads and ignores paths from ``.gitignore`` and ``--exclude``. You can 
 ``--extend-exclude`` with pattern::
 
     robotidy --extend-exclude skip_me.robot|some_dir/* .
+
+.. rubric:: Disablers
+
+You can disable formatting in Robot Framework statement or in span of lines using ``# robocop: off`` marker.
+
+To skip the formatting for one statement:
+
+.. code-block:: robotframework
+
+    Keyword That Is Longer Than Allowed Line Length  ${arg}  # robotidy: off
+
+To skip multiple lines:
+
+.. code-block:: robotframework
+
+    *** Test Cases ***
+    Test that will be formatted
+        Step
+
+    # robotidy: off
+    Test that will not be formatted
+        Step
+
+    # robotidy: on
+    Another test that will be formatted
+        Step
+
+
+``# robotidy: on`` marker is used to enable the formatting again - but is not required. ``# robotidy: off`` will disable
+the formatting to the end of the current block:
+
+.. code-block:: robotframework
+
+    *** Keywords ***
+    Keyword
+        Keyword That Is Formatted
+        IF    $condition
+            Formatted
+        ELSE
+            Formatted
+            # robotidy: off
+            Not Formatted
+            WHILE    $condition
+                Not Formatted
+            END
+        END
+        Formatted
+
+It's possible to disable the formatting in whole file by putting ``# robotidy: off`` on first line:
+
+.. code-block:: robotframework
+
+    # robotidy: off
+    *** Settings ***
+    Library    Collections
+
+You can also disable the formatting in whole section if you put ``# robotidy: off`` in section header:
+
+.. code-block:: robotframework
+
+    *** Test Cases ***
+    Formatted
+        Step
+
+    *** Keywords ***  # robotidy: off
+    Not Formatted
+        Step

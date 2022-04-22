@@ -53,3 +53,6 @@ class TestOrderSettings(TransformerAcceptanceTest):
             f"['arguments', 'documentation', 'return', 'tags', 'teardown', 'timeout']\n"
         )
         assert expected_output == result.output
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", not_modified=True)

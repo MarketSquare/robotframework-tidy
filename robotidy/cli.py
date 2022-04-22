@@ -1,22 +1,21 @@
 import os
+import re
 from pathlib import Path
-from typing import Tuple, Dict, List, Iterable, Optional, Any, Pattern
+from typing import Any, Dict, Iterable, List, Optional, Pattern, Tuple
 
 import click
-import re
 
 from robotidy.app import Robotidy
+from robotidy.decorators import catch_exceptions
+from robotidy.files import DEFAULT_EXCLUDES, find_and_read_config, read_pyproject_config
 from robotidy.transformers import load_transformers
-from robotidy.files import read_pyproject_config, find_and_read_config, DEFAULT_EXCLUDES
 from robotidy.utils import (
     GlobalFormattingConfig,
-    split_args_from_name_or_path,
-    remove_rst_formatting,
     RecommendationFinder,
+    remove_rst_formatting,
+    split_args_from_name_or_path,
 )
-from robotidy.decorators import catch_exceptions
 from robotidy.version import __version__
-
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 HELP_MSG = f"""

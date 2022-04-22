@@ -11,12 +11,11 @@ then add ``ENABLED = False`` class attribute inside.
 from itertools import chain
 
 import click
-from robot.utils.importer import Importer
 from robot.errors import DataError
+from robot.utils.importer import Importer
 
-from robotidy.utils import RecommendationFinder, ROBOT_VERSION
-from robotidy.exceptions import InvalidParameterError, InvalidParameterFormatError, ImportTransformerError
-
+from robotidy.exceptions import ImportTransformerError, InvalidParameterError, InvalidParameterFormatError
+from robotidy.utils import ROBOT_VERSION, RecommendationFinder
 
 TRANSFORMERS = [
     "AddMissingEnd",

@@ -52,3 +52,6 @@ class TestRenameKeywords(TransformerAcceptanceTest):
             expected="with_library_name_transform.robot",
             config=":ignore_library=False",
         )
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", not_modified=True)

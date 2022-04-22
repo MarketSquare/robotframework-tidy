@@ -12,20 +12,24 @@ Replace ``Run Keyword If`` keyword calls with IF expressions.
 
     .. code-tab:: robotframework Before
 
-        Run Keyword If  ${condition}
-        ...  Keyword  ${arg}
-        ...  ELSE IF  ${condition2}  Keyword2
-        ...  ELSE  Keyword3
+        *** Keywords ***
+        Keyword
+            Run Keyword If  ${condition}
+            ...  Keyword  ${arg}
+            ...  ELSE IF  ${condition2}  Keyword2
+            ...  ELSE  Keyword3
 
     .. code-tab:: robotframework After
 
-        IF    ${condition}
-            Keyword    ${arg}
-        ELSE IF    ${condition2}
-            Keyword2
-        ELSE
-            Keyword3
-        END
+        *** Keywords ***
+        Keyword
+            IF    ${condition}
+                Keyword    ${arg}
+            ELSE IF    ${condition2}
+                Keyword2
+            ELSE
+                Keyword3
+            END
 
 Any return value will be applied to every ELSE/ELSE IF branch.
 
@@ -33,15 +37,19 @@ Any return value will be applied to every ELSE/ELSE IF branch.
 
     .. code-tab:: robotframework Before
 
-        ${var}  Run Keyword If  ${condition}  Keyword  ELSE  Keyword2
+        *** Keywords ***
+        Keyword
+            ${var}  Run Keyword If  ${condition}  Keyword  ELSE  Keyword2
 
     .. code-tab:: robotframework After
 
-        IF    ${condition}
-            ${var}    Keyword
-        ELSE
-            ${var}    Keyword2
-        END
+        *** Keywords ***
+        Keyword
+            IF    ${condition}
+                ${var}    Keyword
+            ELSE
+                ${var}    Keyword2
+            END
 
 Run Keywords inside Run Keyword If will be split into separate keywords.
 
@@ -49,14 +57,18 @@ Run Keywords inside Run Keyword If will be split into separate keywords.
 
     .. code-tab:: robotframework Before
 
-        Run Keyword If  ${condition}  Run Keywords  Keyword  ${arg}  AND  Keyword2
+        *** Keywords ***
+        Keyword
+            Run Keyword If  ${condition}  Run Keywords  Keyword  ${arg}  AND  Keyword2
 
     .. code-tab:: robotframework After
 
-        IF    ${condition}
-            Keyword    ${arg}
-            Keyword2
-        END
+        *** Keywords ***
+        Keyword
+            IF    ${condition}
+                Keyword    ${arg}
+                Keyword2
+            END
 
 Run Keyword If that assigns values but does not provide default branch will receive ELSE branch with Set Variable:
 
@@ -64,14 +76,18 @@ Run Keyword If that assigns values but does not provide default branch will rece
 
     .. code-tab:: robotframework Before
 
-        ${var}  Run Keyword If  ${condition}  Keyword
+        *** Keywords ***
+        Keyword
+            ${var}  Run Keyword If  ${condition}  Keyword
 
     .. code-tab:: robotframework After
 
-        IF    ${condition}
-            ${var}    Keyword
-        ELSE
-            ${var}    Set Variable    ${None}
-        END
+        *** Keywords ***
+        Keyword
+            IF    ${condition}
+                ${var}    Keyword
+            ELSE
+                ${var}    Set Variable    ${None}
+            END
 
 Supports global formatting params: ``--spacecount``, ``--startline`` and ``--endline``.

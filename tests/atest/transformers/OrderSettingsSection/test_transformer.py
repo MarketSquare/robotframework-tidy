@@ -88,3 +88,6 @@ class TestOrderSettingsSection(TransformerAcceptanceTest):
 
     def test_remote_library_as_external(self):
         self.compare(source="remote_library.robot", config=":imports_order=library,resource,variables")
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", not_modified=True)

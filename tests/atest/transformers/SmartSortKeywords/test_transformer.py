@@ -61,3 +61,6 @@ class TestSmartSortKeywords(TransformerAcceptanceTest):
 
     def test_multiple_sections(self):
         self.compare(source="multiple_sections.robot")
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", not_modified=True)

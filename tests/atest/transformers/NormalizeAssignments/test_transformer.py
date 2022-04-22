@@ -49,3 +49,6 @@ class TestNormalizeAssignments(TransformerAcceptanceTest):
             "Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign\n"
         )
         assert expected_output == result.output
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", not_modified=True)

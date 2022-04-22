@@ -9,3 +9,6 @@ class TestReplaceBreakContinue(TransformerAcceptanceTest):
 
     def test_with_errors(self):
         self.compare(source="errors.robot", not_modified=True)
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", not_modified=True)

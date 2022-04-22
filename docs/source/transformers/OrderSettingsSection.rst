@@ -129,12 +129,14 @@ Order of setting inside common group can also be changed::
 
     .. code-tab:: robotframework Default order
 
+        *** Settings ***
         Suite Setup    Suite Setup Keyword
         Suite Teardown    Suite Teardown Keyword
         Test Timeout    1min
 
     .. code-tab:: robotframework Configured order
 
+        *** Settings ***
         Suite Teardown    Suite Teardown Keyword
         Suite Setup    Suite Setup Keyword
         Test Timeout    1min
@@ -166,6 +168,7 @@ Group of settings are separated by ``new_lines_between_groups = 1`` new lines. I
 
     .. code-tab:: robotframework Before
 
+        *** Settings ***
         Library  Collections
         Default Tags    tag
         Documentation  doc  # this is comment
@@ -174,6 +177,7 @@ Group of settings are separated by ``new_lines_between_groups = 1`` new lines. I
 
     .. code-tab:: robotframework Default separator
 
+        *** Settings ***
         Documentation  doc  # this is comment
         ...  another line
         Metadata  value  param
@@ -184,6 +188,7 @@ Group of settings are separated by ``new_lines_between_groups = 1`` new lines. I
 
     .. code-tab:: robotframework 0
 
+        *** Settings ***
         Documentation  doc  # this is comment
         ...  another line
         Metadata  value  param
@@ -192,6 +197,7 @@ Group of settings are separated by ``new_lines_between_groups = 1`` new lines. I
 
     .. code-tab:: robotframework 2
 
+        *** Settings ***
         Documentation  doc  # this is comment
         ...  another line
         Metadata  value  param
@@ -209,6 +215,7 @@ Parsing errors (such as Resources instead of Resource, duplicated settings) are 
 
     .. code-tab:: robotframework Before
 
+        *** Settings ***
         Test Templating  Template  # parsing error
         Library  Stuff
         Resource    robot.resource
@@ -216,6 +223,7 @@ Parsing errors (such as Resources instead of Resource, duplicated settings) are 
 
     .. code-tab:: robotframework After
 
+        *** Settings ***
         Library  Dialogs  # built in library
         Library  Stuff
         Resource    robot.resource

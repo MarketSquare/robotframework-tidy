@@ -22,7 +22,7 @@ Ensure that setting names are title case without leading or trailing whitespace.
         *** Keywords ***
         Keyword
             [arguments]    ${arg}
-            [ SETUP]   Setup Keyword
+            [SETUP]   Setup Keyword
 
     .. code-tab:: robotframework After
 

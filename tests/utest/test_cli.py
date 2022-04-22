@@ -6,18 +6,17 @@ import pytest
 from click import FileError, NoSuchOption
 
 from robotidy.cli import read_config, validate_regex
-from robotidy.files import find_project_root, read_pyproject_config, get_paths, DEFAULT_EXCLUDES
+from robotidy.files import DEFAULT_EXCLUDES, find_project_root, get_paths, read_pyproject_config
 from robotidy.transformers import load_transformers
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
 from robotidy.transformers.ReplaceRunKeywordIf import ReplaceRunKeywordIf
 from robotidy.transformers.SmartSortKeywords import SmartSortKeywords
-import robotidy.utils
-from robotidy.utils import node_within_lines
 from robotidy.version import __version__
+
 from .utils import run_tidy
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def test_data_dir():
     return Path(__file__).parent / "testdata"
 
@@ -230,20 +229,6 @@ class TestCli:
         param_mock = Mock()
         read_config(ctx_mock, param_mock, value=None)
         assert ctx_mock.default_map == expected_parsed_config
-
-    @pytest.mark.parametrize(
-        "node_start, node_end, start_line, end_line, expected",
-        [
-            (15, 30, 15, None, True),
-            (15, 30, 15, 30, True),
-            (14, 30, 15, 30, False),
-            (15, 31, 15, 30, False),
-            (15, 30, None, 30, True),
-            (15, 30, None, None, True),
-        ],
-    )
-    def test_skip_node_start_end_line_setting(self, node_start, node_end, start_line, end_line, expected):
-        assert node_within_lines(node_start, node_end, start_line, end_line) == expected
 
     @pytest.mark.parametrize("flag", ["--list", "-l"])
     def test_list_transformers(self, flag):
