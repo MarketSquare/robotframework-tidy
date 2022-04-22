@@ -71,14 +71,13 @@ Not Formatted
 ### Fixes
 - It's no longer possible to forcefully enable transformer not supported in installed Robot Framework version ([#281](https://github.com/MarketSquare/robotframework-tidy/issues/281), [#283](https://github.com/MarketSquare/robotframework-tidy/issues/283))
 
+### Other
+- You can now disable coloring the output with ``--no-color`` cli option or by setting ``$NO_COLOR`` environment variable ([#268](https://github.com/MarketSquare/robotframework-tidy/issues/268))
 
 ## 2.1.1
 
 ### Fixes
 - ``*** Tasks ***`` will no longer be renamed to ``*** Test Cases ***`` by NormalizeSectionHeaderName ([#279](https://github.com/MarketSquare/robotframework-robocop/issues/279)).
-
-### Other
-- You can now disable coloring the output with ``--no-color`` cli option or by setting ``$NO_COLOR`` environment variable ([#268](https://github.com/MarketSquare/robotframework-tidy/issues/268))
 
 ## 2.1
 
