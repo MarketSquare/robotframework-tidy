@@ -45,3 +45,6 @@ class TestRenameTestCases(TransformerAcceptanceTest):
             "It should be a valid regex expression. Regex error: 'bad escape \\9'\n"
         )
         assert expected_output == result.output
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", not_modified=True)

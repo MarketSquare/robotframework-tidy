@@ -4,7 +4,8 @@ Methods for transforming Robot Framework ast model programmatically.
 from typing import Optional
 
 from robotidy.app import Robotidy
-from robotidy.cli import find_and_read_config, TransformType, validate_regex
+from robotidy.cli import TransformType, find_and_read_config, validate_regex
+from robotidy.disablers import RegisterDisablers
 from robotidy.files import DEFAULT_EXCLUDES
 from robotidy.utils import GlobalFormattingConfig
 
@@ -55,7 +56,13 @@ def transform_model(model, root_dir: str, output: Optional[str] = None, **kwargs
     :return: The transformed model converted to string or None if no transformation took place.
     """
     transformer = RobotidyAPI(root_dir, output, **kwargs)
-    diff, _, new_model = transformer.transform(model)
+    disabler_finder = RegisterDisablers(
+        transformer.formatting_config.start_line, transformer.formatting_config.end_line
+    )
+    disabler_finder.visit(model)
+    if disabler_finder.file_disabled:
+        return None
+    diff, _, new_model = transformer.transform(model, disabler_finder.disablers)
     if not diff:
         return None
     return new_model.text

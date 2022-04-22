@@ -17,3 +17,6 @@ class TestRemoveEmptySettings(TransformerAcceptanceTest):
             expected=f"{source}_{work_mode}_{more_explicit}.robot",
             config=f"{work_mode_config}{more_explicit_config}",
         )
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", not_modified=True)

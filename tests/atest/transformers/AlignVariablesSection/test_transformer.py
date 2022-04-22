@@ -61,3 +61,6 @@ class TestAlignVariablesSection(TransformerAcceptanceTest):
             expected="all_columns_fixed.robot",
             config=":min_width=20:up_to_column=0",
         )
+
+    def test_disablers(self):
+        self.compare(source="tests_disablers.robot")

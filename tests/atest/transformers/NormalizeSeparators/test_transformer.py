@@ -42,3 +42,6 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
 
     def test_rf5_syntax(self):
         self.compare(source="rf5_syntax.robot", target_version=5)
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", not_modified=True)
