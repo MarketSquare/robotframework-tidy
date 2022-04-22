@@ -1,23 +1,24 @@
+import os
+import re
 from pathlib import Path
-from typing import Tuple, Dict, List, Iterable, Union, Optional, Any, Pattern
+
+from typing import Any, Dict, Iterable, List, Optional, Pattern, Tuple
 
 import click
-import re
 
 from robotidy.app import Robotidy
+from robotidy.decorators import catch_exceptions
+from robotidy.files import DEFAULT_EXCLUDES, find_and_read_config, read_pyproject_config
 from robotidy.transformers import load_transformers
-from robotidy.files import read_pyproject_config, find_and_read_config, DEFAULT_EXCLUDES
 from robotidy.utils import (
     GlobalFormattingConfig,
-    split_args_from_name_or_path,
-    remove_rst_formatting,
     RecommendationFinder,
     ROBOT_VERSION,
     TargetVersion,
+    remove_rst_formatting,
+    split_args_from_name_or_path,
 )
-from robotidy.decorators import catch_exceptions
 from robotidy.version import __version__
-
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 HELP_MSG = f"""
@@ -247,6 +248,12 @@ def print_transformers_list(target_version: int):
     show_default=True,
 )
 @click.option(
+    "--color/--no-color",
+    default=True,
+    help="Enable ANSI coloring the output",
+    show_default=True,
+)
+@click.option(
     "--check",
     is_flag=True,
     help="Don't overwrite files and just return status. Return code 0 means nothing would change. "
@@ -353,6 +360,7 @@ def cli(
     extend_exclude: Optional[Pattern],
     overwrite: bool,
     diff: bool,
+    color: bool,
     check: bool,
     spacecount: int,
     lineseparator: str,
@@ -391,6 +399,9 @@ def cli(
         # None is default, with check not set -> overwrite, with check set -> overwrite only when overwrite flag is set
         overwrite = not check
 
+    if color:
+        color = "NO_COLOR" not in os.environ
+
     formatting_config = GlobalFormattingConfig(
         space_count=spacecount,
         line_sep=lineseparator,
@@ -413,6 +424,7 @@ def cli(
         output=output,
         force_order=force_order,
         target_version=target_version,
+        color=color,
     )
     status = tidy.transform_files()
     ctx.exit(status)

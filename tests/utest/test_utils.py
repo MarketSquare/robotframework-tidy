@@ -32,6 +32,7 @@ def app():
         output=None,
         force_order=False,
         target_version=ROBOT_VERSION.major,
+        color=True,
     )
 
 

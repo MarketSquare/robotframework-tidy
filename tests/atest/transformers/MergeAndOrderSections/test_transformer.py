@@ -70,3 +70,6 @@ class TestMergeAndOrderSections(TransformerAcceptanceTest):
 
     def test_inline_if(self):
         self.compare(source="inline_if.robot", not_modified=True)
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot")

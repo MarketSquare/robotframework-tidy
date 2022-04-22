@@ -6,16 +6,18 @@ import pytest
 from click import FileError, NoSuchOption
 
 from robotidy.cli import read_config, validate_regex
-from robotidy.files import find_project_root, read_pyproject_config, get_paths, DEFAULT_EXCLUDES
+from robotidy.files import DEFAULT_EXCLUDES, find_project_root, get_paths, read_pyproject_config
+from robotidy.utils import ROBOT_VERSION
+from robotidy.transformers import load_transformers
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
 from robotidy.transformers.ReplaceRunKeywordIf import ReplaceRunKeywordIf
 from robotidy.transformers.SmartSortKeywords import SmartSortKeywords
-from robotidy.utils import ROBOT_VERSION
 from robotidy.version import __version__
+
 from .utils import run_tidy
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def test_data_dir():
     return Path(__file__).parent / "testdata"
 
@@ -303,6 +305,23 @@ class TestCli:
                 mock_writer.assert_called()
             else:
                 mock_writer.assert_not_called()
+
+    @pytest.mark.parametrize("color_flag", ["--color", "--no-color", None])
+    @pytest.mark.parametrize("color_env", [True, False])
+    def test_disable_coloring(self, color_flag, color_env, test_data_dir):
+        should_be_colored = not ((color_flag is not None and color_flag == "--no-color") or color_env)
+        mocked_env = {"NO_COLOR": ""} if color_env else {}
+        source = test_data_dir / "check" / "not_golden.robot"
+        command = ["--diff", "--no-overwrite"]
+        if color_flag:
+            command.append(color_flag)
+        command.extend(["--transform", "NormalizeSectionHeaderName", str(source)])
+        with patch.dict("os.environ", mocked_env), patch("robotidy.app.decorate_diff_with_color") as mock_color:
+            run_tidy(command)
+            if should_be_colored:
+                mock_color.assert_called()
+            else:
+                mock_color.assert_not_called()
 
     def test_diff(self, test_data_dir):
         source = test_data_dir / "check" / "not_golden.robot"

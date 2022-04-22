@@ -15,3 +15,6 @@ class TestInlineIf(TransformerAcceptanceTest):
 
     def test_invalid_inline_if(self):
         self.compare(source="invalid_inline_if.robot", not_modified=True, config=":line_length=120")
+
+    def test_disablers(self):
+        self.compare(source="test_disablers.robot")

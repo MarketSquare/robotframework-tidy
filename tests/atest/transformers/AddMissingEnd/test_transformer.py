@@ -16,3 +16,6 @@ class TestAddMissingEnd(TransformerAcceptanceTest):
 
     def test_rf5_syntax(self):
         self.compare(source="test_5.robot", target_version=5)
+
+    def test_disablers(self):
+        self.compare(source="test_5_disablers.robot", target_version=5, not_modified=True)

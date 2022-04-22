@@ -1,8 +1,9 @@
 from collections import defaultdict
 
-from robot.api.parsing import ModelTransformer, Comment, Token, EmptyLine, LibraryImport
+from robot.api.parsing import Comment, EmptyLine, LibraryImport, ModelTransformer, Token
 from robot.libraries import STDLIBS
 
+from robotidy.disablers import skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 
 
@@ -137,6 +138,7 @@ class OrderSettingsSection(ModelTransformer):
         self.last_section = node.sections[-1] if node.sections else None
         return self.generic_visit(node)
 
+    @skip_section_if_disabled
     def visit_SettingSection(self, node):  # noqa
         if not node.body:
             return

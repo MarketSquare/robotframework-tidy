@@ -34,3 +34,6 @@ class TestNormalizeTags(TransformerAcceptanceTest):
 
     def test_only_remove_duplicates(self):
         self.compare(source="duplicates.robot", config=f":normalize_case=False")
+
+    def test_disablers(self):
+        self.compare(source="disablers.robot", not_modified=True)
