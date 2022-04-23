@@ -53,3 +53,6 @@ class TestNormalizeNewLines(TransformerAcceptanceTest):
 
     def test_disablers(self):
         self.compare(source="disablers.robot", not_modified=True)
+
+    def test_blocks(self):
+        self.compare(source="blocks.robot", target_version=5)

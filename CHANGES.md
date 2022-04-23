@@ -68,6 +68,9 @@ Not Formatted
     Step
 ```
 
+### Transformers
+- NormalizeNewLines now removes leading, trailing and consecutive empty lines in IF, FOR, WHILE, TRY EXCEPT blocks ([#288](https://github.com/MarketSquare/robotframework-tidy/issues/288))
+
 ### Fixes
 - It's no longer possible to forcefully enable transformer not supported in installed Robot Framework version ([#281](https://github.com/MarketSquare/robotframework-tidy/issues/281), [#283](https://github.com/MarketSquare/robotframework-tidy/issues/283))
 
