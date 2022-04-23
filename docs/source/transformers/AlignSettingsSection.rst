@@ -30,7 +30,7 @@ Align statements in ``*** Settings ***`` section to columns.
 
 Align up to columns
 -------------------
-You can configure how many columns should be aligned to longest token in given column. The remaining columns
+You can configure how many columns should be aligned to the longest token in given column. The remaining columns
 will use fixed length separator length ``--spacecount``. By default only first two columns are aligned.
 
 Example of how AlignSettingsSection transformer behaves with default configuration and multiple columns:
@@ -120,29 +120,6 @@ to 0.
         ...                 password=${PASSWORD}
         Suite Teardown      Close Session
 
-Select lines to transform
--------------------------
-AlignSettingsSection does also support global formatting params ``startline`` and ``endline``::
-
-    robotidy --startline 2 --endline 3 --configure AlignSettingsSection:up_to_column=3 src
-
-
-.. tabs::
-
-   .. code-tab:: robotframework Before
-
-      *** Settings ***
-      Metadata  Version  2.0  # this should be not aligned
-      Metadata      More Info  For more information about *Robot Framework* see http://robotframework.org
-      Metadata     Executed At  {HOST}
-
-   .. code-tab:: robotframework After
-
-      *** Settings ***
-      Metadata  Version  2.0  # this should be not aligned
-      Metadata    More Info       For more information about *Robot Framework* see http://robotframework.org
-      Metadata    Executed At     {HOST}
-
 Fixed width of column
 -------------------------
 It's possible to set fixed minimal width of column. To configure it use ``min_width`` parameter::
@@ -172,3 +149,26 @@ This configuration respects ``up_to_column`` parameter but ignores ``argument_in
         Documentation                Example using the space separated format.
         ...                          and this documentation is multiline
         ...                          where this line should go I wonder?
+
+Select lines to transform
+-------------------------
+AlignSettingsSection does also support global formatting params ``startline`` and ``endline``::
+
+    robotidy --startline 2 --endline 3 --configure AlignSettingsSection:up_to_column=3 src
+
+
+.. tabs::
+
+   .. code-tab:: robotframework Before
+
+      *** Settings ***
+      Metadata  Version  2.0  # this should be not aligned
+      Metadata      More Info  For more information about *Robot Framework* see http://robotframework.org
+      Metadata     Executed At  {HOST}
+
+   .. code-tab:: robotframework After
+
+      *** Settings ***
+      Metadata  Version  2.0  # this should be not aligned
+      Metadata    More Info       For more information about *Robot Framework* see http://robotframework.org
+      Metadata    Executed At     {HOST}

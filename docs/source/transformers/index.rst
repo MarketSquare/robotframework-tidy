@@ -12,11 +12,11 @@ Transformers
 
 .. rubric:: List of transformers
 
-To see list of all transformers currently implemented in robotidy run::
+To see list of all transformers currently implemented in `robotidy` run::
 
     robotidy --list
 
-To see brief docs for selected transformer run::
+To see description of the transformer run::
 
     robotidy --desc TRANSFORMER_NAME
 

@@ -2,11 +2,13 @@
 
 ReplaceBreakContinue
 ================================
-Replace Continue For Loop and Exit For Loop keyword variants with CONTINUE and BREAK statements.
+Replace ``Continue For Loop`` and ``Exit For Loop`` keyword variants with ``CONTINUE`` and ``BREAK`` statements.
 
-ReplaceBreakContinue is included in default transformers but it can be also run separately with::
+.. note::
+    Required Robot Framework version: >=5.0
 
-   robotidy --transform ReplaceBreakContinue src
+.. |TRANSFORMERNAME| replace:: ReplaceBreakContinue
+.. include:: enabled_hint.txt
 
 It will replace ``Continue For Loop`` and ``Exit For Loop`` keywords with ``CONTINUE`` and ``BREAK`` respectively:
 

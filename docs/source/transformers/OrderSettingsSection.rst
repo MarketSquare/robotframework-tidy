@@ -75,7 +75,7 @@ Settings are ordered inside group. Default order can be modified through followi
         ...  tag
         Default Tags  1
 
-Using the same example with non default group order we will move tags from end to beginning of section::
+Using the same example with non default group order we will move tags from end to beginning of the section::
 
     robotidy --configure OrderSettingsSection:group_order=tags,documentation,imports,settings src
 
@@ -121,7 +121,7 @@ Using the same example with non default group order we will move tags from end t
 
 Settings order
 ---------------
-Order of setting inside common group can also be changed::
+Order of settings inside common group can also be changed::
 
     robotidy --configure OrderSettingsSection:settings_order=suite_teardown,suite_setup,test_setup,test_teardown,test_timeout,test_template src
 
@@ -141,15 +141,49 @@ Order of setting inside common group can also be changed::
         Suite Setup    Suite Setup Keyword
         Test Timeout    1min
 
+Preserve order
+--------------
+If you want to preserve order of the settings inside the group you can use ``preserved`` value::
+
+    robotidy --configure OrderSettingsSection:settings_order=preserved
+    robotidy --configure OrderSettingsSection:documentation_order=preserved
+
+Imports are preserved by default.
+
 Imports order
 --------------
-By default order of imports is preserved. You can overwrite this behaviour::
+By default order of the imports is preserved. You can overwrite this behaviour::
 
-    robotidy --configure OrderSettingsSections:imports_order=library,resource,variables
+    robotidy --configure OrderSettingsSection:imports_order=library,resource,variables
 
-You can also preserve order inside any group by passing ``preserved`` instead of setting names::
+With preceding configuration `robotidy` will put library imports first, then resources and variables last.
+Builtin library imports are moved to the top and sorted alphabetically.
 
-    robotidy --configure OrderSettingsSections:settings_order=preserved
+Example:
+
+.. tabs::
+
+    .. code-tab:: robotframework Before
+
+        *** Settings ***
+        Suite Teardown  Keyword2
+
+        Variables   variables.py
+        Library  Stuff
+        Library  Collections
+        Resource    robot.resource
+        Library   ABC
+
+    .. code-tab:: robotframework After
+
+        *** Settings ***
+        Library  Collections
+        Library  Stuff
+        Library   ABC
+        Resource    robot.resource
+        Variables   variables.py
+
+        Suite Teardown  Keyword2
 
 Removing settings
 ------------------

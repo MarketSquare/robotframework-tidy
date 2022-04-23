@@ -107,6 +107,8 @@ Most transformers support running `Robotidy` only on selected lines. Use ``--sta
 
     robotidy --startline 5 --endline 10 file.robot
 
+If you want to disable formatting in particular files see disablers section in :ref:`configuration`.
+
 Transform code from standard input
 -----------------------------------
 Use ``-`` to load code from input::

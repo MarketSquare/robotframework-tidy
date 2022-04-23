@@ -106,7 +106,7 @@ Parameters ``section_lines``, ``test_case_lines`` and ``keyword_lines`` can be c
         Keyword
             Log  stuff
 
-    .. code-tab:: robotframework Before
+    .. code-tab:: robotframework After
 
         *** Settings ***
         Library  Collections
@@ -141,7 +141,7 @@ Consecutive empty lines inside settings, variables, keywords and test cases are 
 
             Pass Execution
 
-    .. code-tab:: robotframework Before
+    .. code-tab:: robotframework After
 
         *** Settings ***
         Resource    resource.robot
@@ -178,7 +178,7 @@ If set to 0 all empty lines will be removed::
 
             Pass Execution
 
-    .. code-tab:: robotframework Before
+    .. code-tab:: robotframework After
 
         *** Settings ***
         Resource    resource.robot

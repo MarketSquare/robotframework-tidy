@@ -83,7 +83,7 @@ It's possible to disable the formatting in whole file by putting ``# robotidy: o
     *** Settings ***
     Library    Collections
 
-You can also disable the formatting in whole section if you put ``# robotidy: off`` in section header:
+You can also disable the formatting in the whole section if you put ``# robotidy: off`` in the section header:
 
 .. code-block:: robotframework
 
