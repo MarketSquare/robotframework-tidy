@@ -2,7 +2,7 @@ import os
 import re
 from pathlib import Path
 
-from typing import Any, Dict, Iterable, List, Optional, Pattern, Tuple
+from typing import Any, Dict, List, Optional, Pattern, Tuple, Union
 
 import click
 
@@ -344,7 +344,7 @@ def print_transformers_list(target_version: int):
 @click.option(
     "--target-version",
     "-t",
-    type=click.Choice([v.name.lower() for v in TargetVersion]),
+    type=click.Choice([v.name.lower() for v in TargetVersion], case_sensitive=False),
     callback=validate_target_version,
     help="Only enable transformers supported in set target version. [default: installed Robot Framework version]",
 )

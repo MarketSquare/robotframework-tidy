@@ -31,7 +31,7 @@ Robotidy reads and ignores paths from ``.gitignore`` and ``--exclude``. You can 
 .. rubric:: Target Version
 
 Robotidy can automatically disable transformers that are not supported in target version of Robot Framework.
-Typical usage is when your environment have Robot Framework >5.0 installed but your source code supports only previous
+Typical usage is when your environment has Robot Framework >5.0 installed but your source code supports only previous
 Robot Framework version::
 
     robotidy --target-version -rf4 .

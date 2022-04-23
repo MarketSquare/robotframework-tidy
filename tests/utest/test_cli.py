@@ -407,13 +407,13 @@ class TestCli:
         result = run_tidy(args, std_in=input_file)
         assert result.output == expected_output
 
-    @pytest.mark.parametrize("target_version", ["rf", "RF5", "5", "rf3"])
+    @pytest.mark.parametrize("target_version", ["rf", "abc", "5", "rf3"])
     @patch("robotidy.cli.ROBOT_VERSION")
     def test_invalid_target_version(self, mocked_version, target_version):
         mocked_version.major = 5
         result = run_tidy(f"--target-version {target_version} .".split(), exit_code=2)
         assert (
-            f"Error: Invalid value for '--target-version' / '-t': '{target_version}' is not one of 'rf4', 'rf5'"
+            f"Error: Invalid value for '--target-version' / '-t':"
             in result.output
         )
 
