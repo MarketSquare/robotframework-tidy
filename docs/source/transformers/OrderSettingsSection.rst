@@ -20,7 +20,7 @@ group is separated by ``new_lines_between_groups = 1`` new lines.
 Settings are ordered inside group. Default order can be modified through following parameters:
 
 - ``documentation_order = documentation,metadata``
-- ``imports_order = preserved`` (default - see :ref:`Imports order` section to how configure it)
+- ``imports_order = preserved`` (default - see :ref:`imports-order` section to how configure it)
 - ``settings_order = suite_setup,suite_teardown,test_setup,test_teardown,test_timeout,test_template``
 
 .. tabs::
@@ -149,6 +149,8 @@ If you want to preserve order of the settings inside the group you can use ``pre
     robotidy --configure OrderSettingsSection:documentation_order=preserved
 
 Imports are preserved by default.
+
+ .. _imports-order:
 
 Imports order
 --------------
