@@ -28,6 +28,16 @@ Robotidy reads and ignores paths from ``.gitignore`` and ``--exclude``. You can 
 
     robotidy --extend-exclude skip_me.robot|some_dir/* .
 
+.. rubric:: Target Version
+
+Robotidy can automatically disable transformers that are not supported in target version of Robot Framework.
+Typical usage is when your environment has Robot Framework >5.0 installed but your source code supports only previous
+Robot Framework version::
+
+    robotidy --target-version -rf4 .
+
+It will disable all transformers that require Robot Framework greater than <target-version> to run (even if you have Robot Framework greater than <target-version> installed).
+
 .. rubric:: Disablers
 
 You can disable formatting in Robot Framework statement or in span of lines using ``# robocop: off`` marker.

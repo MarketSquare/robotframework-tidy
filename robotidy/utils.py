@@ -1,4 +1,5 @@
 import ast
+from enum import Enum
 import difflib
 import os
 from typing import Iterable, List, Optional
@@ -11,6 +12,11 @@ from robot.utils.robotio import file_writer
 from robot.version import VERSION as RF_VERSION
 
 ROBOT_VERSION = version.parse(RF_VERSION)
+
+
+class TargetVersion(Enum):
+    RF4 = 4
+    RF5 = 5
 
 
 class StatementLinesCollector(ModelVisitor):

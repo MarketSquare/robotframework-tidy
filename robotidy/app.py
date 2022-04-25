@@ -30,6 +30,7 @@ class Robotidy:
         check: bool,
         output: Optional[Path],
         force_order: bool,
+        target_version: int,
         color: bool,
     ):
         self.sources = get_paths(src, exclude, extend_exclude)
@@ -41,7 +42,9 @@ class Robotidy:
         self.output = output
         self.color = color
         transformers_config = self.convert_configure(transformers_config)
-        self.transformers = load_transformers(transformers, transformers_config, force_order=force_order)
+        self.transformers = load_transformers(
+            transformers, transformers_config, force_order=force_order, target_version=target_version
+        )
         for transformer in self.transformers:
             # inject global settings TODO: handle it better
             setattr(transformer, "formatting_config", self.formatting_config)

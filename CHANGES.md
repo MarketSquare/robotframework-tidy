@@ -73,7 +73,12 @@ Not Formatted
 
 ### Other
 - You can now disable coloring the output with ``--no-color`` cli option or by setting ``$NO_COLOR`` environment variable ([#268](https://github.com/MarketSquare/robotframework-tidy/issues/268))
-
+- Added an option to set target version of Robot Framework when formatting the files:
+  ```
+  robotidy --target-version rf4 .
+  ```
+  It will disable all transformers that require Robot Framework greater than <target-version> to run (even if you have Robot Framework greater than <target-version> installed). ([#253](https://github.com/MarketSquare/robotframework-robocop/issues/253))
+  
 ## 2.1.1
 
 ### Fixes
