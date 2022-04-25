@@ -78,6 +78,12 @@ class NormalizeNewLines(ModelTransformer):
             node.body.extend([EmptyLine.from_params()] * self.keyword_lines)
         return self.generic_visit(node)
 
+    def visit_If(self, node):  # noqa
+        self.trim_empty_lines(node)
+        return self.generic_visit(node)
+
+    visit_For = visit_While = visit_Try = visit_If
+
     def visit_Statement(self, node):  # noqa
         tokens = []
         for line in node.lines:
