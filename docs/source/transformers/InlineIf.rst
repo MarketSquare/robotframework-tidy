@@ -4,6 +4,9 @@ InlineIf
 ================================
 Replaces IF blocks with inline IF.
 
+.. note::
+    Required Robot Framework version: >=5.0
+
 .. |TRANSFORMERNAME| replace:: InlineIf
 .. include:: enabled_hint.txt
 

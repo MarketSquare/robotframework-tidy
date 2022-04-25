@@ -15,10 +15,3 @@ Robotidy documentation
    transformers/index.rst
    configuration/index.rst
    external_transformers.rst
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

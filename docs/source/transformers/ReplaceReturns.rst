@@ -2,7 +2,10 @@
 
 ReplaceReturns
 ================================
-Replace return statements (such as [Return] setting or Return From Keyword keyword) with new RETURN statement.
+Replace return statements (such as ``[Return]`` setting or ``Return From Keyword`` keyword) with new ``RETURN`` statement.
+
+.. note::
+    Required Robot Framework version: >=5.0
 
 .. |TRANSFORMERNAME| replace:: ReplaceReturns
 .. include:: enabled_hint.txt

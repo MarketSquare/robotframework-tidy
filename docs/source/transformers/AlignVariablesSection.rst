@@ -71,57 +71,6 @@ You can configure it to align three columns::
 
 To align all columns set ``up_to_column`` to 0.
 
-Select lines to align
--------------------------
-AlignVariablesSection does also support global formatting params ``startline`` and ``endline``::
-
-    robotidy --startline 5 --endline 17 --configure AlignVariablesSection:up_to_column=3 src
-
-.. tabs::
-
-    .. code-tab:: robotframework Before
-
-        *** Settings ***
-        Documentation    This is doc
-
-
-        *** Variables ***
-        # some comment
-
-        ${VARIABLE 1}  10  # comment
-        @{LIST}  a  b  c  d
-        ${LONGER_NAME_THAT_GOES_AND_GOES}    longer value that goes and goes
-
-                   &{MULTILINE}  a=b
-        ...  b=c
-        ...         d=1
-
-        *** Keywords ***
-        Keyword
-            Keyword Call
-
-    .. code-tab:: robotframework After
-
-        *** Settings ***
-        Documentation    This is doc
-
-
-        *** Variables ***
-        # some comment
-
-        ${VARIABLE 1}  10  # comment
-        @{LIST}  a  b  c  d
-        ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
-
-        &{MULTILINE}                            a=b
-        ...                                     b=c
-        ...                                     d=1
-
-        *** Keywords ***
-        Keyword
-            Keyword Call
-
-
 Select variable types to align
 -------------------------------
 It is possible to not align variables of given types. You can choose between following types: ``scalar`` (``$``), ``list`` (``@``),
@@ -195,3 +144,52 @@ This configuration respects ``up_to_column`` parameter:
         ...                 b=c
         ...                 d=1
 
+Select lines to align
+-------------------------
+AlignVariablesSection does also support global formatting params ``startline`` and ``endline``::
+
+    robotidy --startline 5 --endline 17 --configure AlignVariablesSection:up_to_column=3 src
+
+.. tabs::
+
+    .. code-tab:: robotframework Before
+
+        *** Settings ***
+        Documentation    This is doc
+
+
+        *** Variables ***
+        # some comment
+
+        ${VARIABLE 1}  10  # comment
+        @{LIST}  a  b  c  d
+        ${LONGER_NAME_THAT_GOES_AND_GOES}    longer value that goes and goes
+
+                   &{MULTILINE}  a=b
+        ...  b=c
+        ...         d=1
+
+        *** Keywords ***
+        Keyword
+            Keyword Call
+
+    .. code-tab:: robotframework After
+
+        *** Settings ***
+        Documentation    This is doc
+
+
+        *** Variables ***
+        # some comment
+
+        ${VARIABLE 1}  10  # comment
+        @{LIST}  a  b  c  d
+        ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
+
+        &{MULTILINE}                            a=b
+        ...                                     b=c
+        ...                                     d=1
+
+        *** Keywords ***
+        Keyword
+            Keyword Call

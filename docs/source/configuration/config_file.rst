@@ -4,13 +4,13 @@ Configuration file
 ==================
 
 Robotidy supports configuration files in TOML format. Any setting loaded from configuration file will be overwritten
-if the same setting is supplied from command line.
+if the same setting is supplied from the command line.
 
 You can load configuration from the file using ``--config`` option::
 
     robotidy --config path/to/config.toml src
 
-Robotidy will also look by default for ``pyproject.toml`` file starting from directory of source(s)
+Robotidy will also look by default for ``pyproject.toml`` file starting from directory of the source(s)
 passed on the command line and going up to parent directories. It stops when it finds the file or it finds root of the
 project (determined by existence of ``.git`` directory) or root of the file system.
 
@@ -39,7 +39,7 @@ See example:
 
 Source paths can be configured via ``src`` parameter. If the path does not exist it will be silently ignored:
 
-  .. code-block::toml
+  .. code-block:: toml
 
     [tool.robotidy]
     src = [
@@ -47,7 +47,7 @@ Source paths can be configured via ``src`` parameter. If the path does not exist
         directory
     ]
 
-Transformers with multiple parameters can be configured in one line (each param delimited by ``:``) or in multi lines:
+Transformers with multiple parameters can be configured in one line (each param delimited by ``:``) or in separate lines:
 
   .. code-block:: toml
 
