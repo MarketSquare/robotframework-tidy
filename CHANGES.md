@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## 2.2
 
 ### Disable formatting from source code
 
