@@ -44,7 +44,7 @@ setup(
         "packaging>=21.0",
         "pathspec>=0.9.0,<0.10.0",
         "robotframework>=4.0",
-        "toml>=0.10.2",
+        "tomli>=2.0.0",
     ],
     extras_requires={
         "dev": [
