@@ -40,6 +40,7 @@ class GlobalFormattingConfig:
     def __init__(
         self,
         space_count: int,
+        indent: int,
         line_sep: str,
         start_line: Optional[int],
         end_line: Optional[int],
@@ -53,9 +54,10 @@ class GlobalFormattingConfig:
 
         if separator == "space":
             self.separator = " " * space_count
+            self.indent = " " * indent
         elif separator == "tab":
-            self.space_count = space_count
             self.separator = "\t"
+            self.indent = "\t"
 
         if line_sep == "windows":
             self.line_sep = "\r\n"

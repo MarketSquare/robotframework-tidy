@@ -145,8 +145,10 @@ class NormalizeSeparators(ModelTransformer):
                     if prev_sep:
                         continue
                     prev_sep = True
-                    count = self.indent if index == 0 else 1
-                    token.value = self.formatting_config.separator * count
+                    if index == 0:
+                        token.value = self.formatting_config.indent * self.indent
+                    else:
+                        token.value = self.formatting_config.separator
                 else:
                     prev_sep = False
                 if has_pipes and index == len(line) - 2:

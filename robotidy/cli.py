@@ -269,6 +269,12 @@ def print_transformers_list(target_version: int):
     show_default=True,
 )
 @click.option(
+    "--indent",
+    type=click.types.INT,
+    default=None,
+    help="The number of spaces as indent [default: --spacecount value]", # TODO,
+)
+@click.option(
     "-ls",
     "--lineseparator",
     type=click.types.Choice(["native", "windows", "unix", "auto"]),
@@ -363,6 +369,7 @@ def cli(
     color: bool,
     check: bool,
     spacecount: int,
+    indent: Optional[int],
     lineseparator: str,
     verbose: bool,
     config: Optional[str],
@@ -399,11 +406,15 @@ def cli(
         # None is default, with check not set -> overwrite, with check set -> overwrite only when overwrite flag is set
         overwrite = not check
 
+    if indent is None:
+        indent = spacecount
+
     if color:
         color = "NO_COLOR" not in os.environ
 
     formatting_config = GlobalFormattingConfig(
         space_count=spacecount,
+        indent=indent,
         line_sep=lineseparator,
         start_line=startline,
         separator=separator,
