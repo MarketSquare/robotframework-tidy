@@ -9,7 +9,7 @@ from robotidy.exceptions import InvalidParameterValueError
 
 class OrderSettingsSection(ModelTransformer):
     """
-    Order settings inside *** Settings *** section.
+    Order settings inside ``*** Settings ***`` section.
 
     Settings are grouped in following groups:
       - documentation (Documentation, Metadata),
@@ -30,11 +30,11 @@ class OrderSettingsSection(ModelTransformer):
     Setting names omitted from custom order will be removed from the file. In following example we are missing metadata
     therefore all metadata will be removed:
 
-        robotidy --configure OrderSettingsSection:documentation_order=documentation
+    ```
+    robotidy --configure OrderSettingsSection:documentation_order=documentation
+    ```
 
     Parsing errors (such as Resources instead of Resource, duplicated settings) are moved to the end of section.
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/OrderSettingsSection.html for more examples.
     """
 
     def __init__(

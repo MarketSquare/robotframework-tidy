@@ -45,6 +45,7 @@ setup(
         "pathspec>=0.9.0,<0.10.0",
         "robotframework>=4.0",
         "tomli>=2.0.0",
+        "rich_click",
     ],
     extras_requires={
         "dev": [

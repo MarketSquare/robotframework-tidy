@@ -19,13 +19,20 @@ class ReplaceRunKeywordIf(ModelTransformer):
 
     Following code:
 
+    ```robotframework
+    *** Keywords ***
+    Keyword
         Run Keyword If  ${condition}
         ...  Keyword  ${arg}
         ...  ELSE IF  ${condition2}  Keyword2
         ...  ELSE  Keyword3
+    ```
 
     Will be transformed to:
 
+    ```robotframework
+    *** Keywords ***
+    Keyword
         IF    ${condition}
             Keyword    ${arg}
         ELSE IF    ${condition2}
@@ -33,33 +40,48 @@ class ReplaceRunKeywordIf(ModelTransformer):
         ELSE
             Keyword3
         END
+    ```
 
-    Any return value will be applied to every ELSE/ELSE IF branch:
+    Any return value will be applied to every ``ELSE``/``ELSE IF`` branch:
 
+    ```robotframework
+    *** Keywords ***
+    Keyword
         ${var}  Run Keyword If  ${condition}  Keyword  ELSE  Keyword2
+    ```
 
     Output:
 
+    ```robotframework
+    *** Keywords ***
+    Keyword
         IF    ${condition}
             ${var}    Keyword
         ELSE
             ${var}    Keyword2
         END
+    ```
 
     Run Keywords inside Run Keyword If will be split into separate keywords:
 
-       Run Keyword If  ${condition}  Run Keywords  Keyword  ${arg}  AND  Keyword2
+    ```robotframework
+    *** Keywords ***
+    Keyword
+        Run Keyword If  ${condition}  Run Keywords  Keyword  ${arg}  AND  Keyword2
+    ```
 
     Output:
 
+    ```robotframework
+    *** Keywords ***
+    Keyword
         IF    ${condition}
             Keyword    ${arg}
             Keyword2
         END
+    ```
 
     Supports global formatting params: ``--spacecount``, ``--separator``, ``--startline`` and ``--endline``.
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/ReplaceRunKeywordIf.html for more examples.
     """
 
     @skip_section_if_disabled

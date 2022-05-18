@@ -5,7 +5,7 @@ from difflib import unified_diff
 from pathlib import Path
 from typing import Dict, List, Optional, Pattern, Tuple
 
-import click
+import rich_click as click
 from robot.api import get_model
 from robot.errors import DataError
 

@@ -14,14 +14,22 @@ class AddMissingEnd(ModelTransformer):
 
     Following code:
 
+    ```robotframework
+    *** Keywords ***
+    Keyword
         FOR    ${x}    IN    foo    bar
             Log    ${x}
+    ```
 
     will be transformed to:
 
+    ```robotframework
+    *** Keywords ***
+    Keyword
         FOR    ${x}    IN    foo    bar
             Log    ${x}
         END
+    ```
 
     Supports global formatting params: ``--startline`` and ``--endline``.
     """

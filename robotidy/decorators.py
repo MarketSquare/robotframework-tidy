@@ -1,7 +1,7 @@
 import functools
 import sys
 
-import click
+import rich_click as click
 
 from robotidy.exceptions import (
     ImportTransformerError,

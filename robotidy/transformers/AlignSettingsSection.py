@@ -11,48 +11,54 @@ class AlignSettingsSection(ModelTransformer):
     """
     Align statements in ``*** Settings ***`` section to columns.
 
-    Following code::
+    Following code:
 
-        *** Settings ***
-        Library      SeleniumLibrary
-        Library   Mylibrary.py
-        Variables  variables.py
-        Test Timeout  1 min
-            # this should be left aligned
-
-    will be transformed to::
-
-        *** Settings ***
-        Library         SeleniumLibrary
-        Library         Mylibrary.py
-        Variables       variables.py
-        Test Timeout    1 min
+    ```robotframework
+    *** Settings ***
+    Library      SeleniumLibrary
+    Library   Mylibrary.py
+    Variables  variables.py
+    Test Timeout  1 min
         # this should be left aligned
+    ```
+
+    will be transformed to:
+
+    ```robotframework
+    *** Settings ***
+    Library         SeleniumLibrary
+    Library         Mylibrary.py
+    Variables       variables.py
+    Test Timeout    1 min
+    # this should be left aligned
+    ```
 
     You can configure how many columns should be aligned to longest token in given column. The remaining columns
     will use fixed length separator length ``--spacecount``. By default only first two columns are aligned.
-    To align first three columns::
+    To align first three columns:
 
-       robotidy --transform AlignSettingsSection:up_to_column=3
+    ```
+    robotidy --transform AlignSettingsSection:up_to_column=3
+    ```
 
     To align all columns set ``up_to_column`` to 0.
 
     Arguments inside keywords in Suite Setup, Suite Teardown, Test Setup and Test Teardown are indented by additional
-    ``argument_indent`` (default ``4``) spaces::
+    ``argument_indent`` (default ``4``) spaces:
 
-        *** Settings ***
-        Suite Setup         Start Session
-        ...                     host=${IPADDRESS}
-        ...                     user=${USERNAME}
-        ...                     password=${PASSWORD}
-        Suite Teardown      Close Session
+    ```robotframework
+    *** Settings ***
+    Suite Setup         Start Session
+    ...                     host=${IPADDRESS}
+    ...                     user=${USERNAME}
+    ...                     password=${PASSWORD}
+    Suite Teardown      Close Session
+    ```
 
     To disable it configure ``argument_indent`` with ``0``.
 
     Supports global formatting params: ``--startline``, ``--endline`` and ``--spacecount``
     (for columns with fixed length).
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/AlignSettingsSection.html for more examples.
     """
 
     TOKENS_WITH_KEYWORDS = {
