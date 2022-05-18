@@ -18,43 +18,45 @@ class NormalizeAssignments(ModelTransformer):
 
     In this code most common is no equal sign at all. We should remove `=` signs from all lines:
 
-        *** Variables ***
-        ${var} =  ${1}
-        @{list}  a
-        ...  b
-        ...  c
+    ```robotframework
+    *** Variables ***
+    ${var} =  ${1}
+    @{list}  a
+    ...  b
+    ...  c
 
-        ${variable}=  10
+    ${variable}=  10
 
 
-        *** Keywords ***
-        Keyword
-            ${var}  Keyword1
-            ${var}   Keyword2
-            ${var}=    Keyword
+    *** Keywords ***
+    Keyword
+        ${var}  Keyword1
+        ${var}   Keyword2
+        ${var}=    Keyword
+    ```
 
     To:
 
-        *** Variables ***
-        ${var}  ${1}
-        @{list}  a
-        ...  b
-        ...  c
+    ```robotframework
+    *** Variables ***
+    ${var}  ${1}
+    @{list}  a
+    ...  b
+    ...  c
 
-        ${variable}  10
+    ${variable}  10
 
 
-        *** Keywords ***
-        Keyword
-            ${var}  Keyword1
-            ${var}   Keyword2
-            ${var}    Keyword
+    *** Keywords ***
+    Keyword
+        ${var}  Keyword1
+        ${var}   Keyword2
+        ${var}    Keyword
+    ```
 
     You can configure that behaviour to automatically add desired equal sign with `equal_sign_type`
     (default `autodetect`) and `equal_sign_type_variables` (default `remove`) parameters.
     (possible types are: `autodetect`, `remove`, `equal_sign` ('='), `space_and_equal_sign` (' =').
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/NormalizeAssignments.html for more examples.
     """
 
     def __init__(

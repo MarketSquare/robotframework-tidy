@@ -16,23 +16,27 @@ class RenameTestCases(ModelTransformer):
     It is also possible to configure `replace_pattern` parameter to find and replace regex pattern. Use `replace_to`
     to set replacement value. This configuration:
 
-        robotidy --transform RenameTestCases -c RenameTestCases:replace_pattern=[A-Z]{3,}-\d{2,}:replace_to=foo
+    ```
+    robotidy --transform RenameTestCases -c RenameTestCases:replace_pattern=[A-Z]{3,}-\d{2,}:replace_to=foo
+    ```
 
     will transform following code:
 
-        *** Test Cases ***
-        test ABC-123
-            No Operation
+    ```robotframework
+    *** Test Cases ***
+    test ABC-123
+        No Operation
+    ```
 
     To:
 
-        *** Test Cases ***
-        Test foo
-            No Operation
+    ```robotframework
+    *** Test Cases ***
+    Test foo
+        No Operation
+    ```
 
     Supports global formatting params: ``--startline`` and ``--endline``.
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/RenameTestCases.html for more examples.
     """
     ENABLED = False
 

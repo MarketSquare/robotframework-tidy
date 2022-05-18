@@ -6,7 +6,7 @@ from robotidy.disablers import skip_section_if_disabled
 
 class SmartSortKeywords(ModelTransformer):
     """
-    Sort keywords in *** Keywords *** section.
+    Sort keywords in ``*** Keywords ***`` section.
 
     By default sorting is case insensitive, but keywords with leading underscore go to the bottom. Other underscores are
     treated as spaces.
@@ -14,36 +14,38 @@ class SmartSortKeywords(ModelTransformer):
 
     Following code:
 
-        *** Keywords ***
-        _my secrete keyword
-            Kw2
+    ```robotframework
+    *** Keywords ***
+    _my secrete keyword
+        Kw2
 
-        My Keyword
-            Kw1
+    My Keyword
+        Kw1
 
 
-        my_another_cool_keyword
-        my another keyword
-            Kw3
+    my_another_cool_keyword
+    my another keyword
+        Kw3
+    ```
 
     Will be transformed to:
 
-        *** Keywords ***
-        my_another_cool_keyword
+    ```robotframework
+    *** Keywords ***
+    my_another_cool_keyword
 
-        my another keyword
-            Kw3
+    my another keyword
+        Kw3
 
 
-        My Keyword
-            Kw1
-        _my secrete keyword
-            Kw2
+    My Keyword
+        Kw1
+    _my secrete keyword
+        Kw2
+    ```
 
     Default behaviour could be changed using following parameters: ``case_insensitive = True``,
     ``ignore_leading_underscore = False`` and ``ignore_other_underscore = True``.
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/SmartSortKeywords.html for more examples.
     """
 
     ENABLED = False

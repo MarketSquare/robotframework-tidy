@@ -7,18 +7,18 @@ from robotidy.exceptions import InvalidParameterValueError
 class NormalizeTags(ModelTransformer):
     """
     Normalize tag names by normalizing case and removing duplicates.
-
     Example usage:
 
-        robotidy --transform NormalizeTags:case=lowercase test.robot
+    ```
+    robotidy --transform NormalizeTags:case=lowercase test.robot
+    ```
 
     Other supported cases: uppercase, title case. The default is lowercase.
-
     You can also run it to remove duplicates but preserve current case by setting ``normalize_case`` parameter to False:
 
-        robotidy --transform NormalizeTags:normalize_case=False test.robot
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/NormalizeTags.html for more examples.
+    ```
+    robotidy --transform NormalizeTags:normalize_case=False test.robot
+    ```
     """
 
     CASE_FUNCTIONS = {

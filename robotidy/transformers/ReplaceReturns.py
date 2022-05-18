@@ -23,31 +23,33 @@ class ReplaceReturns(ModelTransformer):
 
     Following code:
 
-        *** Keywords ***
-        Keyword
-            Return From Keyword If    $condition    2
-            Sub Keyword
-            [Return]    1
+    ```robotframework
+    *** Keywords ***
+    Keyword
+        Return From Keyword If    $condition    2
+        Sub Keyword
+        [Return]    1
 
-        Keyword 2
-            Return From Keyword    ${arg}
+    Keyword 2
+        Return From Keyword    ${arg}
+    ```
 
     will be transformed to:
 
-            *** Keywords ***
-            Keyword
-                IF    $condition
-                    RETURN    2
-                END
-                Sub Keyword
-                RETURN    1
+    ```robotframework
+    *** Keywords ***
+    Keyword
+        IF    $condition
+            RETURN    2
+        END
+        Sub Keyword
+        RETURN    1
 
-            Keyword 2
-                RETURN    ${arg}
+    Keyword 2
+        RETURN    ${arg}
+    ```
 
     Supports global formatting params: ``--startline`` and ``--endline``.
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/ReplaceReturns.html for more examples.
     """
 
     MIN_VERSION = 5

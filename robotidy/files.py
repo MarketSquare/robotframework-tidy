@@ -2,7 +2,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, Iterable, Iterator, List, Optional, Pattern, Tuple
 
-import click
+import rich_click as click
 import tomli
 from pathspec import PathSpec
 
