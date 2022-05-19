@@ -17,33 +17,35 @@ class ReplaceBreakContinue(ModelTransformer):
 
     Following code:
 
-        *** Keywords ***
-        Keyword
-            FOR    ${var}    IN  1  2
-                Continue For Loop
-                Continue For Loop If    $condition
-                Exit For Loop
-                Exit For Loop If    $condition
-            END
+    ```robotframework
+    *** Keywords ***
+    Keyword
+        FOR    ${var}    IN  1  2
+            Continue For Loop
+            Continue For Loop If    $condition
+            Exit For Loop
+            Exit For Loop If    $condition
+        END
+    ```
 
     will be transformed to:
 
-        *** Keywords ***
-        Keyword
-            FOR    ${var}    IN  1  2
+    ```robotframework
+    *** Keywords ***
+    Keyword
+        FOR    ${var}    IN  1  2
+            CONTINUE
+            IF    $condition
                 CONTINUE
-                IF    $condition
-                    CONTINUE
-                END
-                BREAK
-                IF    $condition
-                    BREAK
-                END
             END
+            BREAK
+            IF    $condition
+                BREAK
+            END
+        END
+    ```
 
     Supports global formatting params: ``--startline`` and ``--endline``.
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/ReplaceBreakContinue.html for more examples.
     """
 
     MIN_VERSION = 5

@@ -18,40 +18,42 @@ class InlineIf(ModelTransformer):
     It will only replace IF block if it can fit in one line shorter than `line_length` (default 80) parameter and return
     variables matches for all ELSE and ELSE IF branches.
 
-    Following code::
+    Following code:
 
-        *** Test Cases ***
-        Test
-            IF    $condition1
-                Keyword    argument
-            END
-            IF    $condition2
-                ${var}  Keyword
-            ELSE
-                ${var}  Keyword 2
-            END
-            IF    $condition1
-                Keyword    argument
-                Keyword 2
-            END
+    ```robotframework
+    *** Test Cases ***
+    Test
+        IF    $condition1
+            Keyword    argument
+        END
+        IF    $condition2
+            ${var}  Keyword
+        ELSE
+            ${var}  Keyword 2
+        END
+        IF    $condition1
+            Keyword    argument
+            Keyword 2
+        END
+    ```
 
     will be transformed to:
 
-        *** Test Cases ***
-        Test
-            IF    $condition1    Keyword    argument
-            ${var}    IF    $condition2    Keyword    ELSE    Keyword 2
-            IF    $condition1
-                Keyword    argument
-                Keyword 2
-            END
+    ```robotframework
+    *** Test Cases ***
+    Test
+        IF    $condition1    Keyword    argument
+        ${var}    IF    $condition2    Keyword    ELSE    Keyword 2
+        IF    $condition1
+            Keyword    argument
+            Keyword 2
+        END
+    ```
 
     Too long inline IFs (over `line_length` character limit) will be replaced with normal IF block.
     You can decide to not replace IF blocks containing ELSE or ELSE IF branches by setting `skip_else` to True.
 
     Supports global formatting params: `--startline` and `--endline`.
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/InlineIf.html for more examples.
     """
 
     MIN_VERSION = 5

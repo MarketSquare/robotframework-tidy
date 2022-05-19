@@ -17,33 +17,47 @@ class SplitTooLongLine(ModelTransformer):
     If any line in keyword call exceeds given length limit (120 by default) it will be
     split:
 
+    ```robotframework
+    *** Keywords ***
+    Keyword
         Keyword With Longer Name    ${arg1}    ${arg2}    ${arg3}  # let's assume that arg2 is at 120 char
+    ```
 
     To:
 
+    ```robotframework
+    *** Keywords ***
+    Keyword
         # let's assume that arg2 is at 120 char
         Keyword With Longer Name
         ...    ${arg1}
         ...    ${arg2}
         ...    ${arg3}
+    ```
 
     Allowed line length is configurable using global parameter ``--line-length``:
 
-        robotidy --line-length 140 src.robot
+    ```
+    robotidy --line-length 140 src.robot
+    ```
 
     Or using dedicated for this transformer parameter ``line_length``:
 
-        robotidy --configure SplitTooLongLine:line_length:140 src.robot
+    ```
+    robotidy --configure SplitTooLongLine:line_length:140 src.robot
+    ```
 
     Using ``split_on_every_arg`` flag (``True`` by default), you can force the formatter to fill arguments in one line
     until character limit:
 
+    ```robotframework
+    *** Test Cases ***
+    Test
         Keyword With Longer Name    ${arg1}
         ...    ${arg2}    ${arg3}
+    ```
 
     Supports global formatting params: ``spacecount``, ``separator``, ``--startline`` and ``--endline``.
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/SplitTooLongLine.html for more examples.
     """
 
     def __init__(self, line_length: int = None, split_on_every_arg: bool = True):

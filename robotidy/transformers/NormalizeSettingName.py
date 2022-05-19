@@ -9,31 +9,33 @@ class NormalizeSettingName(ModelTransformer):
     Normalize setting name.
     Ensure that setting names are title case without leading or trailing whitespace. For example from:
 
-        *** Settings ***
-        library    library.py
-        test template    Template
-        FORCE taGS    tag1
+    ```robotframework
+    *** Settings ***
+    library    library.py
+    test template    Template
+    FORCE taGS    tag1
 
-        *** Keywords ***
-        Keyword
-            [arguments]    ${arg}
-            [ SETUP]   Setup Keyword
+    *** Keywords ***
+    Keyword
+        [arguments]    ${arg}
+        [ DOCUMENTATION]   Setup Keyword
+    ```
 
     To:
 
-        *** Settings ***
-        Library    library.py
-        Test Template    Template
-        Force Tags    tag1
+    ```robotframework
+    *** Settings ***
+    Library    library.py
+    Test Template    Template
+    Force Tags    tag1
 
-        *** Keywords ***
-        Keyword
-            [Arguments]    ${arg}
-            [Setup]   Setup Keyword
+    *** Keywords ***
+    Keyword
+        [Arguments]    ${arg}
+        [Documentation]   Setup Keyword
+    ```
 
     Supports global formatting params: ``--startline`` and ``--endline``.
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/NormalizeSettingName.html for more examples.
     """
 
     @skip_section_if_disabled
