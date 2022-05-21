@@ -177,10 +177,6 @@ def left_align(node):
     return Statement.from_tokens(tokens)
 
 
-def remove_rst_formatting(text):
-    return text.replace("::", ":").replace("``", "'")
-
-
 class RecommendationFinder:
     def find_similar(self, name, candidates):
         norm_name = name.lower()

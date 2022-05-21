@@ -227,26 +227,20 @@ class TestCli:
         if target_version:
             cmd.extend(["--target-version", f"rf{target_version}"])
         result = run_tidy(cmd)
-        assert (
-            "To see detailed docs run --desc <transformer_name> or --desc all. Transformers with (disabled) "
-            "tag \nare executed only when selected explicitly with --transform or configured with param "
-            "`enabled=True`.\n"
-            "Available transformers:\n" in result.output
-        )
-        assert "ReplaceRunKeywordIf\n" in result.output
-        assert "SmartSortKeywords (disabled)\n" in result.output  # this transformer is disabled by default
-        assert "Available transformers:\n\nAddMissingEnd\n" in result.output  # assert order
+        assert "Non-default transformers needs to be selected explicitly" in result.output
+        assert "ReplaceRunKeywordIf        │ Yes" in result.output
+        assert "SmartSortKeywords" in result.output  # this transformer is disabled by default
         if (not target_version and ROBOT_VERSION.major == 5) or target_version and target_version == "5":
-            assert "ReplaceReturns\n" in result.output
+            assert "│ ReplaceReturns             │ Yes" in result.output
         elif target_version and target_version == "4":
-            assert "ReplaceReturns (disabled)\n" in result.output
+            assert "│ ReplaceReturns             │ No" in result.output
 
     @pytest.mark.parametrize("flag", ["--desc", "-d"])
     @pytest.mark.parametrize(
         "name, expected_doc",
         [
-            ("ReplaceRunKeywordIf", ReplaceRunKeywordIf.__doc__.replace("::", ":").replace("``", "'")),
-            ("SmartSortKeywords", SmartSortKeywords.__doc__.replace("::", ":").replace("``", "'")),
+            ("ReplaceRunKeywordIf", "Run Keywords inside Run Keyword If will be split into separate keywords:"),
+            ("SmartSortKeywords", "By default sorting is case insensitive, but"),
         ],
     )
     def test_describe_transformer(self, flag, name, expected_doc):
@@ -256,8 +250,8 @@ class TestCli:
         assert not_expected_doc not in result.output
 
     def test_describe_transformer_all(self):
-        expected_doc = ReplaceRunKeywordIf.__doc__.replace("::", ":").replace("``", "'")
-        expected_doc2 = AlignSettingsSection.__doc__.replace("::", ":").replace("``", "'")
+        expected_doc = "Any return value will be applied to every"
+        expected_doc2 = "You can configure how many columns should"
         result = run_tidy(["--desc", "all"])
         assert expected_doc in result.output
         assert expected_doc2 in result.output
@@ -281,7 +275,7 @@ class TestCli:
     @pytest.mark.parametrize("flag", ["--help", "-h"])
     def test_help(self, flag):
         result = run_tidy([flag])
-        assert f"Version: {__version__}" in result.output
+        assert f"Robotidy is a tool for formatting" in result.output
 
     @pytest.mark.parametrize("source, return_status", [("golden.robot", 0), ("not_golden.robot", 1)])
     def test_check(self, source, return_status, test_data_dir):
@@ -412,17 +406,15 @@ class TestCli:
     def test_invalid_target_version(self, mocked_version, target_version):
         mocked_version.major = 5
         result = run_tidy(f"--target-version {target_version} .".split(), exit_code=2)
-        assert (
-            f"Error: Invalid value for '--target-version' / '-t':"
-            in result.output
-        )
+        assert f"Invalid value for '--target-version' / '-t':" in result.output
 
     @patch("robotidy.cli.ROBOT_VERSION")
     def test_too_recent_target_version(self, mocked_version):
         target_version = 5
         mocked_version.major = 4
         result = run_tidy(f"--target-version rf{target_version} .".split(), exit_code=2)
-        assert (
-            f"Error: Invalid value for '--target-version' / '-t': Target Robot Framework version ({target_version}) "
-            f"should not be higher than installed version ({mocked_version})." in result.output
-        )
+        # Split into parts due to rich click putting errors into boxes
+        assert "Invalid value for '--target-version' / '-t':" in result.output
+        assert "Target Robot Framework version" in result.output
+        assert f"({target_version})" in result.output
+        assert "should not be higher than installed version" in result.output

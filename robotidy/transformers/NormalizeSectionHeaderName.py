@@ -8,26 +8,30 @@ class NormalizeSectionHeaderName(ModelTransformer):
     Normalize section headers names.
     Robot Framework is quite flexible with the section header naming. Following lines are equal:
 
-        *setting
-        *** SETTINGS
-        *** SettingS ***
+    ```robotframework
+    *setting
+    *** SETTINGS
+    *** SettingS ***
+    ```
 
     This transformer normalizes naming to follow ``*** SectionName ***`` format (with plural variant):
 
-        *** Settings ***
-        *** Keywords ***
-        *** Test Cases ***
-        *** Variables ***
-        *** Comments ***
+    ```robotframework
+    *** Settings ***
+    *** Keywords ***
+    *** Test Cases ***
+    *** Variables ***
+    *** Comments ***
+    ```
 
     Optional data after section header (for example data driven column names) is preserved.
     It is possible to upper case section header names by passing ``uppercase=True`` parameter:
 
-        *** SETTINGS ***
+    ```robotframework
+    *** SETTINGS ***
+    ```
 
     Supports global formatting params: ``--startline`` and ``--endline``.
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/NormalizeSectionHeaderName.html for more examples.
     """
 
     def __init__(self, uppercase: bool = False):

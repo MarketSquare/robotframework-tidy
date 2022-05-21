@@ -1,12 +1,15 @@
 import os
 import re
 from pathlib import Path
-
+import sys
+import textwrap
 from typing import Any, Dict, List, Optional, Pattern, Tuple, Union
 
-import click
+import rich_click as click
+from rich.markdown import Markdown
 
 from robotidy.app import Robotidy
+from robotidy.console import console
 from robotidy.decorators import catch_exceptions
 from robotidy.files import DEFAULT_EXCLUDES, find_and_read_config, read_pyproject_config
 from robotidy.transformers import load_transformers
@@ -15,10 +18,42 @@ from robotidy.utils import (
     RecommendationFinder,
     ROBOT_VERSION,
     TargetVersion,
-    remove_rst_formatting,
     split_args_from_name_or_path,
 )
 from robotidy.version import __version__
+
+
+COLOR_SYSTEM = "auto"
+click.rich_click.USE_MARKDOWN = True
+click.rich_click.OPTION_GROUPS = {
+    "robotidy": [
+        {
+            "name": "Run only selected transformers",
+            "options": ["--transform"],
+        },
+        {
+            "name": "Work modes",
+            "options": ["--overwrite", "--diff", "--check", "--force-order"],
+        },
+        {
+            "name": "Documentation",
+            "options": ["--list", "--desc"],
+        },
+        {
+            "name": "Configuration",
+            "options": ["--configure", "--config"],
+        },
+        {
+            "name": "Global formatting settings",
+            "options": ["--spacecount", "--line-length", "--lineseparator", "--separator", "--startline", "--endline"],
+        },
+        {"name": "File exclusion", "options": ["--exclude", "--extend-exclude"]},
+        {
+            "name": "Other",
+            "options": ["--target-version", "--verbose", "--color", "--output", "--version", "--help"],
+        },
+    ],
+}
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 HELP_MSG = f"""
@@ -29,40 +64,35 @@ See examples at the end of this help message too see how you can use Robotidy.
 Full documentation available at https://robotidy.readthedocs.io .
 """
 EPILOG = """
-Examples:
-  # Format `path/to/src.robot` file
-  $ robotidy path/to/src.robot
+Examples:\n\n
+# Format `path/to/src.robot` file\n
+$ robotidy path/to/src.robot
 
-  # Format every Robot Framework file inside `dir_name` directory
-  $ robotidy dir_name
 
-  # List available transformers:
-  $ robotidy --list
-  
-  # Display transformer documentation
-  $ robotidy --desc <TRANSFORMER_NAME>
+# Format every Robot Framework file inside `dir_name` directory
 
-  # Format `src.robot` file using `SplitTooLongLine` transformer only
-  $ robotidy --transform SplitTooLongLine src.robot
+$ robotidy dir_name
 
-  # Format `src.robot` file using `SplitTooLongLine` transformer only and configured line length 140
-  $ robotidy --transform SplitTooLongLine:line_length=140 src.robot
 
+# List available transformers:
+
+$ robotidy --list
+
+
+# Display transformer documentation
+
+$ robotidy --desc <TRANSFORMER_NAME>
+
+
+# Format `src.robot` file using `SplitTooLongLine` transformer only
+
+$ robotidy --transform SplitTooLongLine src.robot
+
+
+# Format `src.robot` file using `SplitTooLongLine` transformer only and configured line length 140
+
+$ robotidy --transform SplitTooLongLine:line_length=140 src.robot
 """
-
-
-class RawHelp(click.Command):
-    def format_help_text(self, ctx, formatter):
-        if self.help:
-            formatter.write_paragraph()
-            for line in self.help.split("\n"):
-                formatter.write_text(line)
-
-    def format_epilog(self, ctx, formatter):
-        if self.epilog:
-            formatter.write_paragraph()
-            for line in self.epilog.split("\n"):
-                formatter.write_text(line)
 
 
 class TransformType(click.ParamType):
@@ -142,16 +172,21 @@ def validate_regex(value: Optional[str]) -> Optional[Pattern]:
         raise click.BadParameter("Not a valid regular expression")
 
 
+def print_transformer_docs(name, transformer):
+    documentation = f"## Transformer {name}\n" + textwrap.dedent(transformer.__doc__)
+    documentation += f"\nSee <https://robotidy.readthedocs.io/en/latest/transformers/{name}.html> for more examples."
+    md = Markdown(documentation, code_theme="native", inline_code_lexer="robotframework")
+    console.print(md)
+
+
 def print_description(name: str, target_version: int):
     transformers = load_transformers(None, {}, allow_disabled=True, target_version=target_version)
     transformer_by_names = {transformer.__class__.__name__: transformer for transformer in transformers}
     if name == "all":
         for tr_name, transformer in transformer_by_names.items():
-            click.echo(f"Transformer {tr_name}:")
-            click.echo(remove_rst_formatting(transformer.__doc__))
+            print_transformer_docs(tr_name, transformer)
     elif name in transformer_by_names:
-        click.echo(f"Transformer {name}:")
-        click.echo(remove_rst_formatting(transformer_by_names[name].__doc__))
+        print_transformer_docs(name, transformer_by_names[name])
     else:
         rec_finder = RecommendationFinder()
         similar = rec_finder.find_similar(name, transformer_by_names.keys())
@@ -161,22 +196,30 @@ def print_description(name: str, target_version: int):
 
 
 def print_transformers_list(target_version: int):
+    from rich.table import Table
+
+    table = Table(title="Transformers", header_style="bold red")
+    table.add_column("Name", justify="left", no_wrap=True)
+    table.add_column("Enabled by default")
     transformers = load_transformers(None, {}, allow_disabled=True, target_version=target_version)
-    click.echo(
-        "To see detailed docs run --desc <transformer_name> or --desc all. "
-        "Transformers with (disabled) tag \nare executed only when selected explicitly with --transform or "
-        "configured with param `enabled=True`.\n"
-        "Available transformers:\n"
-    )
     transformer_names = []
     for transformer in transformers:
-        disabled = " (disabled)" if not getattr(transformer, "ENABLED", True) else ""
-        transformer_names.append(transformer.__class__.__name__ + disabled)
-    for name in sorted(transformer_names):
-        click.echo(name)
+        enabled = "[bold magenta]No" if not getattr(transformer, "ENABLED", True) else "Yes"
+        transformer_names.append([transformer.__class__.__name__, enabled])
+    for name, enabled in sorted(transformer_names):
+        table.add_row(name, enabled)
+    console.print(table)
+    console.print(
+        "To see detailed docs run:\n"
+        "    [bold]robotidy --desc [bold magenta]transformer_name[/][/]\n"
+        "or\n"
+        "    [bold]robotidy --desc [bold blue]all[/][/]\n\n"
+        "Non-default transformers needs to be selected explicitly with [bold cyan]--transform[/] or "
+        "configured with param `enabled=True`.\n"
+    )
 
 
-@click.command(cls=RawHelp, help=HELP_MSG, epilog=EPILOG, context_settings=CONTEXT_SETTINGS)
+@click.command(context_settings=CONTEXT_SETTINGS)  # epilog=EPILOG,
 @click.option(
     "--transform",
     "-t",
@@ -339,7 +382,7 @@ def print_transformers_list(target_version: int):
     type=click.Path(file_okay=True, dir_okay=False, writable=True, allow_dash=False),
     default=None,
     metavar="PATH",
-    help="Path to output file where source file will be saved",
+    help="Use this option to override file destination path.",
 )
 @click.option("-v", "--verbose", is_flag=True, help="More verbose output", show_default=True)
 @click.option(
@@ -383,18 +426,24 @@ def cli(
     force_order: bool,
     target_version: int,
 ):
+    """
+    Robotidy is a tool for formatting Robot Framework source code.
+
+    See examples at the end of this help message too see how you can use Robotidy.
+    Full documentation available at https://robotidy.readthedocs.io .
+    """
     if list:
         print_transformers_list(target_version)
-        ctx.exit(0)
+        sys.exit(0)
     if desc is not None:
         return_code = print_description(desc, target_version)
-        ctx.exit(return_code)
+        sys.exit(return_code)
     if not src:
         if ctx.default_map is not None:
             src = ctx.default_map.get("src", None)
         if not src:
             print("No source path provided. Run robotidy --help to see how to use robotidy")
-            ctx.exit(1)
+            sys.exit(1)
 
     if exclude is None:
         exclude = re.compile(DEFAULT_EXCLUDES)
@@ -438,4 +487,4 @@ def cli(
         color=color,
     )
     status = tidy.transform_files()
-    ctx.exit(status)
+    sys.exit(status)

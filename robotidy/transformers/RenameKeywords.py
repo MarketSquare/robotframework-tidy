@@ -16,31 +16,37 @@ class RenameKeywords(ModelTransformer):
 
     You can keep underscores if you set remove_underscores to False:
 
-        robotidy --transform RenameKeywords -c RenameKeywords:remove_underscores=False .
+    ```
+    robotidy --transform RenameKeywords -c RenameKeywords:remove_underscores=False .
+    ```
 
     It is also possible to configure `replace_pattern` parameter to find and replace regex pattern. Use `replace_to`
     to set replacement value. This configuration (underscores are used instead of spaces):
 
-        robotidy --transform RenameKeywords -c RenameKeywords:replace_pattern=^(?i)rename\s?me$:replace_to=New_Shining_Name .
+    ```
+    robotidy --transform RenameKeywords -c RenameKeywords:replace_pattern=^(?i)rename\s?me$:replace_to=New_Shining_Name .
+    ```
 
     will transform following code:
 
-        *** Keywords ***
-        rename Me
-           Keyword Call
+    ```robotframework
+    *** Keywords ***
+    rename Me
+       Keyword Call
+    ```
 
     To:
 
-        *** Keywords ***
-        New Shining Name
-            Keyword Call
+    ```robotframework
+    *** Keywords ***
+    New Shining Name
+        Keyword Call
+    ```
 
     Use `ignore_library = True` parameter to control if the library name part (Library.Keyword) of keyword call
     should be renamed.
 
     Supports global formatting params: ``--startline`` and ``--endline``.
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/RenameKeywords.html for more examples.
     """
 
     ENABLED = False

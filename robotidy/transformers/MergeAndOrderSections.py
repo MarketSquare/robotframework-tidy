@@ -16,9 +16,11 @@ class MergeAndOrderSections(ModelTransformer):
     Default order is: Comments > Settings > Variables > Test Cases > Keywords.
 
     You can change sorting order by configuring ``order`` parameter with comma separated list of section names (without
-    spaces)::
+    spaces):
 
-        robotidy --transform MergeAndOrderSections:order=settings,keywords,variables,testcases,comments
+    ```
+    robotidy --transform MergeAndOrderSections:order=settings,keywords,variables,testcases,comments
+    ```
 
     Because merging and changing the order of sections can shuffle your empty lines it's greatly advised to always
     run ``NormalizeNewLines`` transformer after this one.
@@ -27,22 +29,24 @@ class MergeAndOrderSections(ModelTransformer):
     name will be taken from first encountered section).
 
     Any data before first section is treated as comment in Robot Framework. This transformer add ``*** Comments ***``
-    section for such lines::
+    section for such lines:
 
-        i am comment
-        # robocop: disable
-        *** Settings ***
+    ```robotframework
+    i am comment
+    # robocop: disable
+    *** Settings ***
+    ```
 
-    To::
+    To:
 
-        *** Comments ***
-        i am comment
-        # robocop: disable
-        *** Settings ***
+    ```robotframework
+    *** Comments ***
+    i am comment
+    # robocop: disable
+    *** Settings ***
+    ```
 
     You can disable this behaviour by setting ``create_comment_section`` to False.
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/MergeAndOrderSections.html for more examples.
     """
 
     def __init__(self, order: str = "", create_comment_section: bool = True):

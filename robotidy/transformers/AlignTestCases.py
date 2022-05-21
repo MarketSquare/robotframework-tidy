@@ -21,27 +21,31 @@ class AlignTestCases(ModelTransformer):
 
     Currently only templated tests are supported. Following code:
 
-        *** Test Cases ***    baz    qux
-        # some comment
-        test1    hi    hello
-        test2 long test name    asdfasdf    asdsdfgsdfg
+    ```robotframework
+    *** Test Cases ***    baz    qux
+    # some comment
+    test1    hi    hello
+    test2 long test name    asdfasdf    asdsdfgsdfg
+    ```
 
     will be transformed to:
 
-        *** Test Cases ***      baz         qux
-        # some comment
-        test1                   hi          hello
-        test2 long test name    asdfasdf    asdsdfgsdfg
-                                bar1        bar2
+    ```robotframework
+    *** Test Cases ***      baz         qux
+    # some comment
+    test1                   hi          hello
+    test2 long test name    asdfasdf    asdsdfgsdfg
+                            bar1        bar2
+    ```
 
     If you don't want to align test case section that does not contain header names (in above example baz and quz are
     header names) then configure `only_with_headers` parameter:
 
-        robotidy -c AlignSettingsSection:only_with_hedaers:True <src>
+    ```
+    robotidy -c AlignSettingsSection:only_with_hedaers:True <src>
+    ```
 
     Supports global formatting params: ``--startline``, ``--endline``.
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/AlignTestCases.html for more examples.
     """
 
     ENABLED = False

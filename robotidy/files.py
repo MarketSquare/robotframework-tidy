@@ -2,8 +2,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, Iterable, Iterator, List, Optional, Pattern, Tuple
 
-import click
-import toml
+import rich_click as click
+import tomli
 from pathspec import PathSpec
 
 DEFAULT_EXCLUDES = r"/(\.direnv|\.eggs|\.git|\.hg|\.nox|\.tox|\.venv|venv|\.svn)/"
@@ -58,9 +58,10 @@ def find_and_read_config(src_paths: Iterable[str]) -> Dict[str, Any]:
 
 def load_toml_file(path: str) -> Dict[str, Any]:
     try:
-        config = toml.load(path)
+        with Path(path).open("rb") as tf:
+            config = tomli.load(tf)
         return config
-    except (toml.TomlDecodeError, OSError) as e:
+    except (tomli.TOMLDecodeError, OSError) as e:
         raise click.FileError(filename=path, hint=f"Error reading configuration file: {e}")
 
 
