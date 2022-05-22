@@ -8,8 +8,8 @@ Normalize separators and indents.
 .. |TRANSFORMERNAME| replace:: NormalizeSeparators
 .. include:: enabled_hint.txt
 
-All separators (pipes included) are converted to fixed length of 4 spaces (configurable via global argument
-``--spacecount``).
+All separators (pipes included) are converted to fixed length of 4 spaces (configurable via global option
+``--spacecount``). To separately configure indent use ``--indent`` global option.
 
 .. note::
     There are transformers that also affect separator lengths - for example ``AlignSettingsSection``. ``NormalizeSeparators``
@@ -72,6 +72,9 @@ All separators (pipes included) are converted to fixed length of 4 spaces (confi
                 END
             END
 
+Configure separator
+--------------------
+
 By configuring global option ``spacecount`` you can change the default separator length::
 
     robotidy --spacecount 8 src
@@ -93,6 +96,38 @@ By configuring global option ``spacecount`` you can change the default separator
 
         Force Tags        tag
         ...        tag
+
+Indent
+-------
+
+By default indent is the same as ``spacecount`` value (default ``4`` spaces). To configure it use ``--indent``::
+
+    robotidy --indent 4 src
+
+Combine it with ``spacecount`` to set whitespace separately for indent and separators::
+
+    robotidy --indent 4 --spacecount 2 src
+
+.. tabs::
+
+    .. code-tab:: robotframework Before
+
+        *** Keywords ***
+        Keyword
+          FOR     ${var}  IN RANGE     10
+            Keyword With  ${var}
+          END
+
+    .. code-tab:: robotframework After
+
+        *** Keywords ***
+        Keyword
+            FOR  ${var}  IN RANGE  10
+                Keyword With  ${var}
+            END
+
+Ignore sections
+---------------
 
 You can decide which sections should be transformed by configuring
 ``sections = comments,settings,variables,keywords,testcases`` param::
