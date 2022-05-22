@@ -5,14 +5,11 @@ from unittest.mock import MagicMock, Mock, patch
 import pytest
 from click import FileError, NoSuchOption
 
+from robotidy.api import Robotidy
 from robotidy.cli import read_config, validate_regex
 from robotidy.files import DEFAULT_EXCLUDES, find_project_root, get_paths, read_pyproject_config
 from robotidy.utils import ROBOT_VERSION
-from robotidy.transformers import load_transformers
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
-from robotidy.transformers.ReplaceRunKeywordIf import ReplaceRunKeywordIf
-from robotidy.transformers.SmartSortKeywords import SmartSortKeywords
-from robotidy.version import __version__
 
 from .utils import run_tidy
 
@@ -418,3 +415,25 @@ class TestCli:
         assert "Target Robot Framework version" in result.output
         assert f"({target_version})" in result.output
         assert "should not be higher than installed version" in result.output
+
+    @pytest.mark.parametrize(
+        "cmd, exp_spacecount, exp_indent",
+        [("", 4, 4), ("--spacecount 8 ", 8, 8), ("--indent 8 ", 4, 8), ("--spacecount 2 --indent 4 ", 2, 4)],
+    )
+    @patch("robotidy.cli.GlobalFormattingConfig")
+    @patch("robotidy.app.load_transformers")
+    @patch.object(Robotidy, "transform_files")
+    def test_spacecount_and_indent(
+        self, mocked_transform, mocked_load, mocked_formatting, cmd, exp_spacecount, exp_indent
+    ):
+        mocked_transform.return_value = 0
+        run_tidy(f"{cmd}--no-overwrite .".split())
+        mocked_formatting.assert_called_with(
+            space_count=exp_spacecount,
+            indent=exp_indent,
+            line_sep="native",
+            start_line=None,
+            end_line=None,
+            separator="space",
+            line_length=120,
+        )

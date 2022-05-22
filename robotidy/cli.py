@@ -315,7 +315,7 @@ def print_transformers_list(target_version: int):
     "--indent",
     type=click.types.INT,
     default=None,
-    help="The number of spaces as indent [default: --spacecount value]", # TODO,
+    help="The number of spaces to be used as indent [default: --spacecount value]",
 )
 @click.option(
     "-ls",
