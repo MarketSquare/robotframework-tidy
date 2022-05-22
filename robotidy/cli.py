@@ -23,8 +23,14 @@ from robotidy.utils import (
 from robotidy.version import __version__
 
 
-COLOR_SYSTEM = "auto"
+click.rich_click.USE_RICH_MARKUP = True
 click.rich_click.USE_MARKDOWN = True
+click.rich_click.STYLE_OPTION = "bold sky_blue3"
+click.rich_click.STYLE_SWITCH = "bold sky_blue3"
+click.rich_click.STYLE_METAVAR = "bold white"
+click.rich_click.STYLE_OPTION_DEFAULT = "grey37"
+click.rich_click.STYLE_OPTIONS_PANEL_BORDER = "grey66"
+click.rich_click.STYLE_USAGE = "magenta"
 click.rich_click.OPTION_GROUPS = {
     "robotidy": [
         {
@@ -45,7 +51,15 @@ click.rich_click.OPTION_GROUPS = {
         },
         {
             "name": "Global formatting settings",
-            "options": ["--spacecount", "--line-length", "--lineseparator", "--separator", "--startline", "--endline"],
+            "options": [
+                "--spacecount",
+                "--indent",
+                "--line-length",
+                "--lineseparator",
+                "--separator",
+                "--startline",
+                "--endline",
+            ],
         },
         {"name": "File exclusion", "options": ["--exclude", "--extend-exclude"]},
         {
@@ -56,43 +70,6 @@ click.rich_click.OPTION_GROUPS = {
 }
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
-HELP_MSG = f"""
-Version: {__version__}
-
-Robotidy is a tool for formatting Robot Framework source code.
-See examples at the end of this help message too see how you can use Robotidy.
-Full documentation available at https://robotidy.readthedocs.io .
-"""
-EPILOG = """
-Examples:\n\n
-# Format `path/to/src.robot` file\n
-$ robotidy path/to/src.robot
-
-
-# Format every Robot Framework file inside `dir_name` directory
-
-$ robotidy dir_name
-
-
-# List available transformers:
-
-$ robotidy --list
-
-
-# Display transformer documentation
-
-$ robotidy --desc <TRANSFORMER_NAME>
-
-
-# Format `src.robot` file using `SplitTooLongLine` transformer only
-
-$ robotidy --transform SplitTooLongLine src.robot
-
-
-# Format `src.robot` file using `SplitTooLongLine` transformer only and configured line length 140
-
-$ robotidy --transform SplitTooLongLine:line_length=140 src.robot
-"""
 
 
 class TransformType(click.ParamType):
@@ -219,14 +196,14 @@ def print_transformers_list(target_version: int):
     )
 
 
-@click.command(context_settings=CONTEXT_SETTINGS)  # epilog=EPILOG,
+@click.command(context_settings=CONTEXT_SETTINGS)
 @click.option(
     "--transform",
     "-t",
     type=TransformType(),
     multiple=True,
     metavar="TRANSFORMER_NAME",
-    help="Transform files from [PATH(S)] with given transformer",
+    help="Transform files from \[PATH(S)] with given transformer",
 )
 @click.option(
     "--configure",
@@ -251,7 +228,7 @@ def print_transformers_list(target_version: int):
         "A regular expression that matches files and directories that should be"
         " excluded on recursive searches. An empty value means no paths are excluded."
         " Use forward slashes for directories on all platforms."
-        f" [default: '{DEFAULT_EXCLUDES}']"
+        f" \[default: '{DEFAULT_EXCLUDES}']"
     ),
     show_default=False,
 )
@@ -260,7 +237,7 @@ def print_transformers_list(target_version: int):
     type=str,
     callback=validate_regex_callback,
     help=(
-        "Like --exclude, but adds additional files and directories on top of the"
+        "Like **--exclude**, but adds additional files and directories on top of the"
         " excluded ones. (Useful if you simply want to add to the default)"
     ),
 )
@@ -308,34 +285,38 @@ def print_transformers_list(target_version: int):
     "--spacecount",
     type=click.types.INT,
     default=4,
-    help="The number of spaces between cells in the plain text format.\n",
+    help="The number of spaces between cells",
     show_default=True,
 )
 @click.option(
     "--indent",
     type=click.types.INT,
     default=None,
-    help="The number of spaces as indent [default: --spacecount value]", # TODO,
+    help=r"The number of spaces to be used as indent \[default: --spacecount value]",
 )
 @click.option(
     "-ls",
     "--lineseparator",
     type=click.types.Choice(["native", "windows", "unix", "auto"]),
     default="native",
-    help="Line separator to use in outputs.\n"
-    "native:  use operating system's native line endings\n"
-    "windows: use Windows line endings (CRLF)\n"
-    "unix:    use Unix line endings (LF)\n"
-    "auto:    maintain existing line endings (uses what's used in the first line)",
+    help="""
+    Line separator to use in the outputs:
+    - **native**:  use operating system's native line endings
+    - windows: use Windows line endings (CRLF)
+    - unix:    use Unix line endings (LF)
+    - auto:    maintain existing line endings (uses what's used in the first line)
+    """,
     show_default=True,
 )
 @click.option(
     "--separator",
     type=click.types.Choice(["space", "tab"]),
     default="space",
-    help="Token separator to use in outputs.\n"
-    "space:   use --spacecount spaces to separate tokens\n"
-    "tab:     use a single tabulation to separate tokens\n",
+    help="""
+    Token separator to use in the outputs:
+    - **space**:   use --spacecount spaces to separate tokens
+    - tab:     use a single tabulation to separate tokens
+    """,
     show_default=True,
 )
 @click.option(
@@ -343,7 +324,7 @@ def print_transformers_list(target_version: int):
     "--startline",
     default=None,
     type=int,
-    help="Limit robotidy only to selected area. If --endline is not provided, format text only at --startline. "
+    help="Limit robotidy only to selected area. If **--endline** is not provided, format text only at **--startline**. "
     "Line numbers start from 1.",
     show_default=True,
 )
@@ -352,7 +333,7 @@ def print_transformers_list(target_version: int):
     "--endline",
     default=None,
     type=int,
-    help="Limit robotidy only to selected area. " "Line numbers start from 1.",
+    help="Limit robotidy only to selected area. Line numbers start from 1.",
     show_default=True,
 )
 @click.option(
@@ -395,7 +376,7 @@ def print_transformers_list(target_version: int):
     "-t",
     type=click.Choice([v.name.lower() for v in TargetVersion], case_sensitive=False),
     callback=validate_target_version,
-    help="Only enable transformers supported in set target version. [default: installed Robot Framework version]",
+    help="Only enable transformers supported in set target version. \[default: installed Robot Framework version]",
 )
 @click.version_option(version=__version__, prog_name="robotidy")
 @click.pass_context
@@ -428,9 +409,7 @@ def cli(
 ):
     """
     Robotidy is a tool for formatting Robot Framework source code.
-
-    See examples at the end of this help message too see how you can use Robotidy.
-    Full documentation available at https://robotidy.readthedocs.io .
+    Full documentation available at <https://robotidy.readthedocs.io> .
     """
     if list:
         print_transformers_list(target_version)
