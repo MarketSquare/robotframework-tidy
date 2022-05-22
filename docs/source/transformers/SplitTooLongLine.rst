@@ -38,7 +38,7 @@ Allowed line length is configurable using global parameter ``--line-length``::
 
 Or using dedicated for this transformer parameter ``line_length``::
 
-    robotidy --configure SplitTooLongLine:line_length:140 src.robot
+    robotidy --configure SplitTooLongLine:line_length=140 src.robot
 
 Split argument on every line
 ----------------------------
