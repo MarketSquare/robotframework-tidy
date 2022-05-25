@@ -17,8 +17,10 @@ class RobotidyAPI(Robotidy):
         converter = TransformType()
         transformers = [converter.convert(tr, None, None) for tr in config.get("transform", ())]
         configurations = [converter.convert(c, None, None) for c in config.get("configure", ())]
+        space_count = kwargs.get("spacecount", None) or int(config.get("spacecount", 4))
         formatting_config = GlobalFormattingConfig(
-            space_count=kwargs.get("spacecount", None) or int(config.get("spacecount", 4)),
+            space_count=space_count,
+            indent=kwargs.get("indent", None) or int(config.get("indent", space_count)),
             separator=kwargs.get("separator", None) or config.get("separator", "space"),
             line_sep=config.get("lineseparator", "native"),
             start_line=kwargs.get("startline", None) or int(config["startline"]) if "startline" in config else None,
