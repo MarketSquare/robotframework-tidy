@@ -5,11 +5,15 @@ import sys
 import textwrap
 from typing import Any, Dict, List, Optional, Pattern, Tuple, Union
 
-import rich_click as click
-from rich.markdown import Markdown
+try:
+    import rich_click as click
+    RICH_SUPPORTED = True
+except ImportError:
+    import click
+    RICH_SUPPORTED = False
 
 from robotidy.app import Robotidy
-from robotidy.console import console
+from robotidy.rich_console import console, Table, Markdown
 from robotidy.decorators import catch_exceptions
 from robotidy.files import DEFAULT_EXCLUDES, find_and_read_config, read_pyproject_config
 from robotidy.transformers import load_transformers
@@ -23,37 +27,39 @@ from robotidy.utils import (
 from robotidy.version import __version__
 
 
-COLOR_SYSTEM = "auto"
-click.rich_click.USE_MARKDOWN = True
-click.rich_click.OPTION_GROUPS = {
-    "robotidy": [
-        {
-            "name": "Run only selected transformers",
-            "options": ["--transform"],
-        },
-        {
-            "name": "Work modes",
-            "options": ["--overwrite", "--diff", "--check", "--force-order"],
-        },
-        {
-            "name": "Documentation",
-            "options": ["--list", "--desc"],
-        },
-        {
-            "name": "Configuration",
-            "options": ["--configure", "--config"],
-        },
-        {
-            "name": "Global formatting settings",
-            "options": ["--spacecount", "--line-length", "--lineseparator", "--separator", "--startline", "--endline"],
-        },
-        {"name": "File exclusion", "options": ["--exclude", "--extend-exclude"]},
-        {
-            "name": "Other",
-            "options": ["--target-version", "--verbose", "--color", "--output", "--version", "--help"],
-        },
-    ],
-}
+if RICH_SUPPORTED:
+    COLOR_SYSTEM = "auto"
+    click.rich_click.USE_MARKDOWN = True
+    click.rich_click.OPTION_GROUPS = {
+        "robotidy": [
+            {
+                "name": "Run only selected transformers",
+                "options": ["--transform"],
+            },
+            {
+                "name": "Work modes",
+                "options": ["--overwrite", "--diff", "--check", "--force-order"],
+            },
+            {
+                "name": "Documentation",
+                "options": ["--list", "--desc"],
+            },
+            {
+                "name": "Configuration",
+                "options": ["--configure", "--config"],
+            },
+            {
+                "name": "Global formatting settings",
+                "options": ["--spacecount", "--line-length", "--lineseparator", "--separator", "--startline", "--endline"],
+            },
+            {"name": "File exclusion", "options": ["--exclude", "--extend-exclude"]},
+            {
+                "name": "Other",
+                "options": ["--target-version", "--verbose", "--color", "--output", "--version", "--help"],
+            },
+        ],
+    }
+
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 HELP_MSG = f"""
@@ -196,8 +202,6 @@ def print_description(name: str, target_version: int):
 
 
 def print_transformers_list(target_version: int):
-    from rich.table import Table
-
     table = Table(title="Transformers", header_style="bold red")
     table.add_column("Name", justify="left", no_wrap=True)
     table.add_column("Enabled by default")
@@ -219,7 +223,7 @@ def print_transformers_list(target_version: int):
     )
 
 
-@click.command(context_settings=CONTEXT_SETTINGS)  # epilog=EPILOG,
+@click.command(context_settings=CONTEXT_SETTINGS)
 @click.option(
     "--transform",
     "-t",

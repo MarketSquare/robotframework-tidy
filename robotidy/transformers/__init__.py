@@ -10,7 +10,10 @@ then add ``ENABLED = False`` class attribute inside.
 """
 from itertools import chain
 
-import rich_click as click
+try:
+    import rich_click as click
+except ImportError:
+    import click
 from robot.errors import DataError
 from robot.utils.importer import Importer
 

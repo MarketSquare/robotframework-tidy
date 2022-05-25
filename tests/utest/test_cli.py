@@ -6,7 +6,7 @@ import pytest
 from click import FileError, NoSuchOption
 
 from robotidy.api import Robotidy
-from robotidy.cli import read_config, validate_regex
+from robotidy.cli import read_config, validate_regex, RICH_SUPPORTED
 from robotidy.files import DEFAULT_EXCLUDES, find_project_root, get_paths, read_pyproject_config
 from robotidy.utils import ROBOT_VERSION
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
@@ -215,6 +215,7 @@ class TestCli:
         read_config(ctx_mock, param_mock, value=None)
         assert ctx_mock.default_map == expected_parsed_config
 
+    @pytest.mark.skipif(not RICH_SUPPORTED, reason="rich dependencies are not installed")
     @pytest.mark.parametrize("flag", ["--list", "-l"])
     @pytest.mark.parametrize("target_version", ["4", "5", None])
     def test_list_transformers(self, flag, target_version):

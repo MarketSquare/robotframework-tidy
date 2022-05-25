@@ -11,8 +11,7 @@ Coverage
 --------
 You can generate coverage html files locally by running in main directory::
 
-    coverage run -m pytest
-    coverage html
+    nox -s coverage
 
 Unit tests
 ----------
@@ -24,6 +23,10 @@ method.
 You can run tests by running::
 
     pytest tests\utest
+
+You can also use nox for running our tests in different environments::
+
+    nox -s unit
 
 Acceptance tests
 ----------------

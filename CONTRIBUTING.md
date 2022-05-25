@@ -15,10 +15,18 @@ Create your own fork of Robotidy first (instructions [here](https://docs.github.
 It will be easier to create Pull Requests later with your own fork. After cloning your fork to your disk install Robotidy
 from the source code with `dev` profile. Run following in the root of the project:
 ```
-pip install -e .[dev]
+pip install -e .[dev,rich]
 ```
-Option `-e` allows changes done by you to be automatically reloaded without need for reinstalling the package. `dev` profile 
-installs extra libraries useful for testing and scripting (such as pytest or invoke).
+Option `-e` allows changes done by you to be automatically reloaded without need for reinstalling the package.
+`dev` profile installs extra libraries useful for testing and scripting (such as pytest or invoke).
+`rich` profile provide prettified console outputs.
+
+Other dependencies
+-------------------
+For running our utility scripts and test environments following Python packages are needed:
+
+- invoke
+- nox
 
 Creating new transformer
 ------------------------
@@ -50,6 +58,10 @@ it will remove node from your file.
 
 See examples of creating external transformer [here](https://robotidy.readthedocs.io/en/latest/external_transformers.html). The same logic 
 can be used for internal transformers.
+
+Testing
+--------
+See ``tests/README.rst`` file for more information on testing.
 
 Other contributions
 -------------------

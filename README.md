@@ -40,6 +40,11 @@ You can install Robotidy simply by running:
 pip install -U robotframework-tidy
 ```
 
+If you want to have rich, colorful output, install robotidy with rich:
+```
+pip install -U robotframework-tidy[rich]
+```
+
 Usage <a name="usage"></a>
 -----
 Call robotidy with path(s) to file/directory with robot files:
