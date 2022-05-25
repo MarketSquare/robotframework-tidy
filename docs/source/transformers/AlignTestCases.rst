@@ -66,7 +66,7 @@ Align only test case section with named headers
 ------------------------------------------------
 If you don't want to align test case section that does not contain header names then configure ``only_with_headers`` parameter::
 
-    robotidy -c AlignSettingsSection:only_with_hedaers:True <src>
+    robotidy -c AlignSettingsSection:only_with_hedaers=True <src>
 
 Fixed width of column
 -------------------------
