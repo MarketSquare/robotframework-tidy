@@ -45,11 +45,9 @@ setup(
         "packaging>=21.0",
         "pathspec>=0.9.0,<0.10.0",
         "tomli>=2.0.0",
+        "rich_click>=1.3",
     ],
     extras_require={
-        "rich": [
-            "rich_click>=1.3",
-        ],
         "dev": [
             "coverage",
             "invoke",

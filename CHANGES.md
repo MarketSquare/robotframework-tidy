@@ -19,18 +19,6 @@ Keyword
     END
 ```
 
-## Other
-
-``click_rich`` is now extra dependency and can be installed using:
-
-```
-pip install robotframework-tidy[rich]
-```
-
-Thanks for this change robotidy will install by default without rich dependencies. It's useful if you're not using 
-command line interface. Otherwise, I highly recommend installing it with ``[rich]`` profile for more readable 
-and prettier outputs.
-
 ## 2.3
 
 ### Prettified output

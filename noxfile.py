@@ -8,12 +8,9 @@ nox.options.sessions = [
 ]
 
 
-def install_dev_deps(session, robot_major_ver, rich):
+def install_dev_deps(session, robot_major_ver):
     session.install("-r", f"tests/packages/{robot_major_ver}/requirements.txt")
-    if rich:
-        session.install(".[dev,rich]")
-    else:
-        session.install(".[dev]")
+    session.install(".[dev]")
 
 
 def install_doc_deps(session, robot_major_ver):
@@ -22,16 +19,15 @@ def install_doc_deps(session, robot_major_ver):
 
 
 @nox.session(python=UNIT_TEST_PYTHON_VERSIONS)
-@nox.parametrize('rich', [True, False])
 @nox.parametrize('robot_version', ["stable4", "stable5"])
-def unit(session, robot_version, rich):
-    install_dev_deps(session, robot_version, rich)
+def unit(session, robot_version):
+    install_dev_deps(session, robot_version)
     session.run('pytest', 'tests')
 
 
 @nox.session(python=DEFAULT_PYTHON_VERSION)
 def coverage(session):
-    install_dev_deps(session, "stable5", True)
+    install_dev_deps(session, "stable5")
     session.install("coverage")
     session.run('coverage', 'run', '-m', 'pytest')
     session.run('coverage', 'html')
