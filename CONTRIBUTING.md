@@ -17,7 +17,7 @@ from the source code with `dev` profile. Run following in the root of the projec
 ```
 pip install -e .[dev]
 ```
-Option `-e` allows changes done by you to be automatically reloaded without need for reinstalling the package.
+Option `-e/--editable` allows changes done by you to be automatically reloaded without need for reinstalling the package.
 `dev` profile installs extra libraries useful for testing and scripting (such as pytest or invoke).
 
 Other dependencies
@@ -64,6 +64,6 @@ See ``tests/README.rst`` file for more information on testing.
 
 Other contributions
 -------------------
-All contributions are welcome. If you're changing the source code remember to add tests - see `tests/README.md` for more information. 
+All contributions are welcome. If you're changing the source code remember to add tests - see `tests/README.rst` for more information.
 If you're not sure how to add tests to your changes then don't worry and contact us either through GitHub issues or Slack channel 
 ([#tidy](https://robotframework.slack.com/archives/C01FR5992N6)) - we will help you :). 
