@@ -126,6 +126,49 @@ Combine it with ``spacecount`` to set whitespace separately for indent and separ
                 Keyword With  ${var}
             END
 
+Formatting documentation
+--------------------------
+
+Documentation is formatted by default. To disable formatting the separators inside documentation, and to only format
+indentation, set ``skip_documentation`` to ``True``::
+
+    robotidy --configure NormalizeSeparators:skip_documentation=True src
+
+.. tabs::
+
+    .. code-tab:: robotframework Before
+
+        TEST_TC
+            [Argument]    ${a}    ${long_arg}
+            [Documentation]     Test Doc.
+            ...
+            ...    Arguments:
+            ...    a:               Argument A
+            ...    long_arg:        Argument long_arg.
+           Test Case Body
+
+    .. code-tab:: robotframework skip_documentation=False (default)
+
+        TEST_TC
+            [Argument]    ${a}    ${long_arg}
+            [Documentation]     Test Doc.
+            ...
+            ...    Arguments:
+            ...    a:    Argument A
+            ...    long_arg:    Argument long_arg.
+           Test Case Body
+
+    .. code-tab:: robotframework skip_documentation=True
+
+        TEST_TC
+            [Argument]    ${a}    ${long_arg}
+            [Documentation]     Test Doc.
+            ...
+            ...    Arguments:
+            ...    a:               Argument A
+            ...    long_arg:        Argument long_arg.
+           Test Case Body
+
 Ignored sections
 ---------------
 

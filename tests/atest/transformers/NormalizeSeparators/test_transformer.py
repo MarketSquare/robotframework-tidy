@@ -45,3 +45,9 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
 
     def test_disablers(self):
         self.compare(source="disablers.robot", not_modified=True)
+
+    def test_skip_documentation_default(self):
+        self.compare(source="test.robot", config=":skip_documentation=False")
+
+    def test_skip_documentation(self):
+        self.compare(source="test.robot", expected="skip_documentation.robot", config=":skip_documentation=True")

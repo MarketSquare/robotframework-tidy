@@ -19,21 +19,21 @@ def install_doc_deps(session, robot_major_ver):
 
 
 @nox.session(python=UNIT_TEST_PYTHON_VERSIONS)
-@nox.parametrize('robot_version', ["stable4", "stable5"])
+@nox.parametrize("robot_version", ["stable4", "stable5"])
 def unit(session, robot_version):
     install_dev_deps(session, robot_version)
-    session.run('pytest', 'tests')
+    session.run("pytest", "tests")
 
 
 @nox.session(python=DEFAULT_PYTHON_VERSION)
 def coverage(session):
     install_dev_deps(session, "stable5")
     session.install("coverage")
-    session.run('coverage', 'run', '-m', 'pytest')
-    session.run('coverage', 'html')
+    session.run("coverage", "run", "-m", "pytest")
+    session.run("coverage", "html")
 
 
 @nox.session(python=DEFAULT_PYTHON_VERSION)
 def docs(session):
     install_doc_deps(session, "stable5")
-    session.run('sphinx-build', '-b', 'html', 'docs/source', 'docs/_build/')
+    session.run("sphinx-build", "-b", "html", "docs/source", "docs/_build/")

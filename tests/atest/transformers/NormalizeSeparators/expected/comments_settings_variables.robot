@@ -17,6 +17,7 @@ ${var}    3
 *** Test Cases ***
 Test case
   [Setup]  Keyword
+  [Documentation]  First word   Second word
    Keyword  with  arg
    ...  and  multi  lines
      [Teardown]          Keyword
@@ -33,6 +34,8 @@ Test case with structures
 Keyword
 Another Keyword
           [Arguments]  ${arg}
+          [Documentation]  First word   Second word
+         ...  Third.
        Should Be Equal  1
        ...  ${arg}
    IF  ${condition}

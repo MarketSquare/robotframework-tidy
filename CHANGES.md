@@ -19,6 +19,16 @@ Keyword
     END
 ```
 
+### ``skip_documentation`` for NormalizeSeparators
+
+It is now possible to skip formatting suite, test case and keyword documentation with NormalizeSeparator transformer 
+by using ``skip_documentation`` parameter ([#300](https://github.com/MarketSquare/robotframework-tidy/issues/300)):
+
+```
+robotidy --configure NormalizeSeparators:skip_documentation=True src
+```
+
+
 ## 2.3
 
 ### Prettified output
