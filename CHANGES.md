@@ -19,6 +19,9 @@ Keyword
     END
 ```
 
+### Other
+- Added ``--ignore-gitignore`` flag to ignore ``.gitignore`` files and parse files listed there ([#299](https://github.com/MarketSquare/robotframework-tidy/issues/299)). 
+
 ## 2.3
 
 ### Prettified output

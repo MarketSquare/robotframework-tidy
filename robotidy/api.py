@@ -37,6 +37,7 @@ class RobotidyAPI(Robotidy):
             src=(),
             exclude=exclude,
             extend_exclude=extend_exclude,
+            ignore_gitignore=False,
             overwrite=False,
             show_diff=False,
             formatting_config=formatting_config,
