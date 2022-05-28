@@ -89,9 +89,7 @@ class RenameTestCases(ModelTransformer):
         token = node.get_token(Token.TESTCASE_NAME)
         if token.value:
             if self.capitalize_each_word:
-                token_value = ""
-                for word in token.value.split(" "):
-                    token_value = f"{token_value} {word[0].upper()}{word[1:]}"
+                token_value = " ".join(f"{word[0].upper()}{word[1:]}" for word in token.value.split(" "))
                 token.value = token_value.lstrip()
             else:
                 token.value = token.value[0].upper() + token.value[1:]
