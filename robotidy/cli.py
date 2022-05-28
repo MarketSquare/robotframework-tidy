@@ -6,10 +6,9 @@ import textwrap
 from typing import Any, Dict, List, Optional, Pattern, Tuple, Union
 
 import rich_click as click
-from rich.markdown import Markdown
 
 from robotidy.app import Robotidy
-from robotidy.console import console
+from robotidy.rich_console import console
 from robotidy.decorators import catch_exceptions
 from robotidy.files import DEFAULT_EXCLUDES, find_and_read_config, read_pyproject_config
 from robotidy.transformers import load_transformers
@@ -68,6 +67,7 @@ click.rich_click.OPTION_GROUPS = {
         },
     ],
 }
+
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
@@ -150,6 +150,8 @@ def validate_regex(value: Optional[str]) -> Optional[Pattern]:
 
 
 def print_transformer_docs(name, transformer):
+    from rich.markdown import Markdown
+
     documentation = f"## Transformer {name}\n" + textwrap.dedent(transformer.__doc__)
     documentation += f"\nSee <https://robotidy.readthedocs.io/en/latest/transformers/{name}.html> for more examples."
     md = Markdown(documentation, code_theme="native", inline_code_lexer="robotframework")
@@ -292,7 +294,7 @@ def print_transformers_list(target_version: int):
     "--indent",
     type=click.types.INT,
     default=None,
-    help=r"The number of spaces to be used as indent \[default: --spacecount value]",
+    help="The number of spaces to be used as indentation [default: same as --spacecount value]",
 )
 @click.option(
     "-ls",

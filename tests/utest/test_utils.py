@@ -15,7 +15,7 @@ from robotidy.utils import (
 @pytest.fixture
 def app():
     formatting_config = GlobalFormattingConfig(
-        space_count=4, line_sep="auto", start_line=None, separator="space", end_line=None, line_length=120
+        space_count=4, indent=4, line_sep="auto", start_line=None, separator="space", end_line=None, line_length=120
     )
     return Robotidy(
         transformers=[],
@@ -102,6 +102,6 @@ class TestUtils:
     def test_get_line_ending(self, line_sep, source_file, expected, app):
         source = str(Path(__file__).parent / "testdata" / "auto_line_sep" / source_file)
         app.formatting_config = GlobalFormattingConfig(
-            space_count=4, line_sep=line_sep, start_line=None, separator="space", end_line=None, line_length=120
+            space_count=4, indent=4, line_sep=line_sep, start_line=None, separator="space", end_line=None, line_length=120
         )
         assert app.get_line_ending(source) == expected

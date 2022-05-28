@@ -1,5 +1,29 @@
 # Change Log
 
+## Unreleased
+
+### Extra ``--indent`` option
+
+Robotidy normalizes all whitespaces using the same fixed amount of spaces (configurable via ``--spacecount``).
+It's then optionally modified by various transformers such as AlignSettingsSection. 
+This release add additional option ``--indent`` that allows to configure indentation separately ([#293](https://github.com/MarketSquare/robotframework-tidy/issues/293)). 
+
+It's now possible to have for example indentation of 4, but separator between the tokens (``spacecount``) equal to 2 spaces:
+```
+robotidy --indent 4 --spacecount 2
+```
+```
+Keyword
+    FOR  ${index}  ${item}  IN ENUMERATE  @{LIST}
+        My Keyword  ${index}  ${item}
+    END
+```
+
+## 2.3
+
+### Prettified output
+Tidied out and colorized the console output of the Robotidy such as help messages, transformer docstrings and errors ([#298](https://github.com/MarketSquare/robotframework-tidy/issues/298)).
+
 ## 2.2
 
 ### Disable formatting from source code

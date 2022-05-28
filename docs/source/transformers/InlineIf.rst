@@ -128,7 +128,7 @@ Multi statements IF blocks are also skipped:
 ``line_length`` parameter is configurable. Note that ``line_length`` is different than global ``--line-length`` (used
 in other transformers such as SplitTooLongLine)::
 
-    robotidy --line-length 80 --configure InlineIf:line_length:140 src.robot
+    robotidy --line-length 80 --configure InlineIf:line_length=140 src.robot
 
 With above configuration ``InlineIf`` will be configured to use ``line_length`` of 140 characters limit and
 global ``--line-length`` is set to 80 (and is not used by ``InlineIf``).
