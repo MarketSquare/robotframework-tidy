@@ -59,6 +59,8 @@ setup(
         "doc": [
             "sphinx_rtd_theme",
             "sphinx",
+            "sphinx-tabs==3.3.1",
+            "sphinx-copybutton==0.3.3",
         ],
     },
     entry_points={"console_scripts": ["robotidy=robotidy.cli:cli"]},
