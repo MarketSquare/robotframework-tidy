@@ -45,6 +45,7 @@ TRANSFORMERS = [
     "ReplaceReturns",
     "ReplaceBreakContinue",
     "InlineIf",
+    "IndentRunKeywords",
 ]
 
 
