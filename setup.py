@@ -40,12 +40,12 @@ setup(
     python_requires=">=3.7",
     install_requires=[
         "robotframework>=4.0",
-        "click>=7.0",
+        "click>=7.1.2",
         "colorama>=0.4.3",
         "packaging>=21.0",
         "pathspec>=0.9.0,<0.10.0",
         "tomli>=2.0.0",
-        "rich_click>=1.3",
+        "rich_click>=1.4",
     ],
     extras_require={
         "dev": [
@@ -59,6 +59,8 @@ setup(
         "doc": [
             "sphinx_rtd_theme",
             "sphinx",
+            "sphinx-tabs==3.3.1",
+            "sphinx-copybutton==0.3.3",
         ],
     },
     entry_points={"console_scripts": ["robotidy=robotidy.cli:cli"]},

@@ -21,12 +21,15 @@ class NormalizeSeparators(ModelTransformer):
     You can decide which sections should be transformed by configuring
     ``sections = comments,settings,variables,keywords,testcases`` param.
 
+    To not format documentation configure ``skip_documentation`` to ``True``.
+
     Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
-    def __init__(self, sections: str = None):
+    def __init__(self, sections: str = None, skip_documentation: bool = False):
         self.indent = 0
         self.sections = self.parse_sections(sections)
+        self.skip_documentation = skip_documentation
         self.is_inline = False
 
     def parse_sections(self, sections):
@@ -129,12 +132,18 @@ class NormalizeSeparators(ModelTransformer):
         self.is_inline = False
         return node
 
+    def visit_Documentation(self, doc):  # noqa
+        if self.skip_documentation:
+            has_pipes = doc.tokens[0].value.startswith("|")
+            return self._handle_spaces(doc, has_pipes, only_indent=True)
+        return self.visit_Statement(doc)
+
     @skip_if_disabled
     def visit_Statement(self, statement):  # noqa
         has_pipes = statement.tokens[0].value.startswith("|")
         return self._handle_spaces(statement, has_pipes)
 
-    def _handle_spaces(self, statement, has_pipes):
+    def _handle_spaces(self, statement, has_pipes, only_indent=False):
         new_tokens = []
         for line in statement.lines:
             prev_sep = False
@@ -145,7 +154,7 @@ class NormalizeSeparators(ModelTransformer):
                     prev_sep = True
                     if index == 0:
                         token.value = self.formatting_config.indent * self.indent
-                    else:
+                    elif not only_indent:
                         token.value = self.formatting_config.separator
                 else:
                     prev_sep = False
