@@ -23,7 +23,7 @@ def app():
         src=(".",),
         exclude=None,
         extend_exclude=None,
-        ignore_gitignore=False,
+        skip_gitignore=False,
         overwrite=False,
         show_diff=False,
         formatting_config=formatting_config,

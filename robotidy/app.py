@@ -26,7 +26,7 @@ class Robotidy:
         src: Tuple[str, ...],
         exclude: Optional[Pattern],
         extend_exclude: Optional[Pattern],
-        ignore_gitignore: bool,
+        skip_gitignore: bool,
         overwrite: bool,
         show_diff: bool,
         formatting_config: GlobalFormattingConfig,
@@ -37,7 +37,7 @@ class Robotidy:
         target_version: int,
         color: bool,
     ):
-        self.sources = get_paths(src, exclude, extend_exclude, ignore_gitignore)
+        self.sources = get_paths(src, exclude, extend_exclude, skip_gitignore)
         self.overwrite = overwrite
         self.show_diff = show_diff
         self.check = check

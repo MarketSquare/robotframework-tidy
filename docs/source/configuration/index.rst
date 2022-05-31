@@ -28,9 +28,9 @@ Robotidy reads and ignores paths from ``.gitignore`` and ``--exclude``. You can 
 
     robotidy --extend-exclude skip_me.robot|some_dir/* .
 
-To parse files listed in ``.gitignore`` use ``--ignore-gitignore`` flag::
+To parse files listed in ``.gitignore`` use ``--skip-gitignore`` flag::
 
-    robotidy --ignore-gitignore .
+    robotidy --skip-gitignore .
 
 .. rubric:: Target Version
 

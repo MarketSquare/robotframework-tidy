@@ -105,10 +105,10 @@ def should_parse_path(
 
 
 def get_paths(
-    src: Tuple[str, ...], exclude: Optional[Pattern], extend_exclude: Optional[Pattern], ignore_gitignore: bool
+    src: Tuple[str, ...], exclude: Optional[Pattern], extend_exclude: Optional[Pattern], skip_gitignore: bool
 ):
     root = find_project_root(src)
-    if ignore_gitignore:
+    if skip_gitignore:
         gitignore = None
     else:
         gitignore = get_gitignore(root)

@@ -20,7 +20,7 @@ Keyword
 ```
 
 ### Other
-- Added ``--ignore-gitignore`` flag to ignore ``.gitignore`` files and parse files listed there ([#299](https://github.com/MarketSquare/robotframework-tidy/issues/299)). 
+- Added ``--skip-gitignore`` flag to ignore ``.gitignore`` files and parse files listed there ([#299](https://github.com/MarketSquare/robotframework-tidy/issues/299)). 
 
 ## 2.3
 

@@ -337,7 +337,7 @@ class TestCli:
             actual_str = f.read()
         assert actual_str == expected_str, "Line endings does not match"
 
-    @pytest.mark.parametrize("ignore_gitignore", [True, False])
+    @pytest.mark.parametrize("skip_gitignore", [True, False])
     @pytest.mark.parametrize(
         "exclude, extend_exclude, allowed",
         [
@@ -347,8 +347,8 @@ class TestCli:
             ("test.resource", "nested/*", ["test.robot"]),
         ],
     )
-    def test_exclude_gitignore(self, exclude, extend_exclude, ignore_gitignore, allowed, test_data_dir):
-        if ignore_gitignore:
+    def test_exclude_gitignore(self, exclude, extend_exclude, skip_gitignore, allowed, test_data_dir):
+        if skip_gitignore:
             allowed = allowed + ["test2.robot"]  # extend will not work due to mutability of list
             if not extend_exclude or "nested" not in extend_exclude:
                 allowed = allowed + ["nested/test2.robot"]
@@ -358,7 +358,7 @@ class TestCli:
             (str(source),),
             exclude=validate_regex(exclude),
             extend_exclude=validate_regex(extend_exclude),
-            ignore_gitignore=ignore_gitignore,
+            skip_gitignore=skip_gitignore,
         )
         assert paths == allowed_paths
 

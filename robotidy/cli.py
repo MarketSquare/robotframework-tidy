@@ -46,7 +46,7 @@ click.rich_click.OPTION_GROUPS = {
             "name": "Global formatting settings",
             "options": ["--spacecount", "--line-length", "--lineseparator", "--separator", "--startline", "--endline"],
         },
-        {"name": "File exclusion", "options": ["--exclude", "--extend-exclude", "--ignore-gitignore"]},
+        {"name": "File exclusion", "options": ["--exclude", "--extend-exclude", "--skip-gitignore"]},
         {
             "name": "Other",
             "options": ["--target-version", "--verbose", "--color", "--output", "--version", "--help"],
@@ -267,7 +267,10 @@ def print_transformers_list(target_version: int):
     ),
 )
 @click.option(
-    "--ignore-gitignore", is_flag=True, show_default=True, help="Do not skip files listed in **.gitignore** files."
+    "--skip-gitignore",
+    is_flag=True,
+    show_default=True,
+    help="Skip **.gitignore** files and do not ignore files listed inside.",
 )
 @click.option(
     "--config",
@@ -412,7 +415,7 @@ def cli(
     src: Tuple[str, ...],
     exclude: Optional[Pattern],
     extend_exclude: Optional[Pattern],
-    ignore_gitignore: bool,
+    skip_gitignore: bool,
     overwrite: bool,
     diff: bool,
     color: bool,
@@ -482,7 +485,7 @@ def cli(
         src=src,
         exclude=exclude,
         extend_exclude=extend_exclude,
-        ignore_gitignore=ignore_gitignore,
+        skip_gitignore=skip_gitignore,
         overwrite=overwrite,
         show_diff=diff,
         formatting_config=formatting_config,
