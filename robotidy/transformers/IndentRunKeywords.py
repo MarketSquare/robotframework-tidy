@@ -22,9 +22,11 @@ class RunKeywordVariant:
 
 class IndentRunKeywords(ModelTransformer):
     """
-    Format indentation inside run keywords variants such as **Run Keywords** or **Run Keyword And Continue On Failure**.
+    Format indentation inside run keywords variants such as **Run Keywords** or
+    **Run Keyword And Continue On Failure**.
 
-    Keywords inside run keywords variants are detected and whitespace is formatted to outline them. This code:
+    Keywords inside run keywords variants are detected and
+    whitespace is formatted to outline them. This code:
 
     ```robotframework
         Run Keyword    Run Keyword If    ${True}    Run keywords   Log    foo    AND    Log    bar    ELSE    Log    baz
@@ -43,8 +45,8 @@ class IndentRunKeywords(ModelTransformer):
         ...        Log    baz
     ```
 
-    It is possible to provide extra indentation for keywords using **AND** separators by configuring **indent_and** to
-    **True**:
+    It is possible to provide extra indentation for keywords using **AND** separators
+    by configuring **indent_and** to **True**:
     ```
     robotidy -c IndentRunKeywords:indent_and=True src
     ```
@@ -60,11 +62,22 @@ class IndentRunKeywords(ModelTransformer):
 
     ENABLED = False
     RUN_KW = [
-        RunKeywordVariant("BuiltIn", "Run Keyword And Continue On Failure"),
         RunKeywordVariant("BuiltIn", "Run Keyword"),
-        RunKeywordVariant("BuiltIn", "Run Keywords", split_on_and=True),
+        RunKeywordVariant("BuiltIn", "Run Keyword And Continue On Failure"),
+        RunKeywordVariant("BuiltIn", "Run Keyword And Expect Error", resolve=2),
+        RunKeywordVariant("BuiltIn", "Run Keyword And Ignore Error"),
+        RunKeywordVariant("BuiltIn", "Run Keyword And Return"),
+        RunKeywordVariant("BuiltIn", "Run Keyword And Return If", resolve=2),
+        RunKeywordVariant("BuiltIn", "Run Keyword And Return Status"),
+        RunKeywordVariant("BuiltIn", "Run Keyword And Warn On Failure"),
         RunKeywordVariant("BuiltIn", "Run Keyword If", resolve=2, branches=["ELSE IF", "ELSE"]),
+        RunKeywordVariant("BuiltIn", "Run Keyword If All Tests Passed"),
+        RunKeywordVariant("BuiltIn", "Run Keyword If Any Tests Failed"),
+        RunKeywordVariant("BuiltIn", "Run Keyword If Test Failed"),
+        RunKeywordVariant("BuiltIn", "Run Keyword If Test Passed"),
+        RunKeywordVariant("BuiltIn", "Run Keyword If Timeout Occurred"),
         RunKeywordVariant("BuiltIn", "Run Keyword Unless", resolve=2),
+        RunKeywordVariant("BuiltIn", "Run Keywords", split_on_and=True),
         RunKeywordVariant("BuiltIn", "Repeat Keyword", resolve=2),
         RunKeywordVariant("BuiltIn", "Wait Until Keyword Succeeds", resolve=3),
     ]

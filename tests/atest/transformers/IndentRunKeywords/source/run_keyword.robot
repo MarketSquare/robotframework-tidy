@@ -91,3 +91,42 @@ Keyword
 
 Run Keywords
     Run Keywords    No Operation    No Operation
+
+Run Keyword
+    Run Keyword    ${KW_NAME}    ${arg}    a
+
+Run Keyword And Continue On Failure
+    Run_Keyword_AndContinueonFailure    Keyword    argument
+
+Run Keyword And Expect Error
+    Run Keyword And Expect Error    ${expected_error}    Keyword    argument
+
+Run Keyword And Ignore Error
+    Run Keyword And Ignore Error    Keyword    argument
+
+Run Keyword And Return
+    Run Keyword And Return    Keyword    argument
+
+Run Keyword And Return If
+    Run Keyword And Return If    ${condition}    Keyword    argument
+
+Run Keyword And Return Status
+    Run Keyword And Return Status    Keyword    argument
+
+Run Keyword And Warn On Failure
+    Run Keyword And Warn On Failure    Keyword    argument
+
+Run Keyword If All Tests Passed
+    Run Keyword If All Tests Passed    Keyword    argument
+
+Run Keyword If Any Tests Failed
+    Run Keyword If Any Tests Failed    Keyword    argument
+
+Run Keyword If Test Failed
+    Run Keyword If Test Failed    Keyword    argument
+
+Run Keyword If Test Passed
+    Run Keyword If Test Passed    Keyword    argument
+
+Run Keyword If Timeout Occurred
+    Run Keyword If Timeout Occurred    Keyword    argument
