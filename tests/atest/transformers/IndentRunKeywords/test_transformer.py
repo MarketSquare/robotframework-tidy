@@ -14,5 +14,4 @@ class TestIndentRunKeywords(TransformerAcceptanceTest):
         self.compare(source="comments.robot")
 
     def test_run_keyword_in_settings(self):
-        # TODO: remove not_modified when settings will be supported
-        self.compare(source="settings.robot", not_modified=True)
+        self.compare(source="settings.robot")

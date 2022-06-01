@@ -6,6 +6,7 @@ from robotidy.utils import (
     is_token_value_in_tokens,
     join_tokens_with_token,
     normalize_name,
+    merge_comments_into_one,
     split_on_token_type,
     split_on_token_value,
 )
@@ -82,8 +83,9 @@ class IndentRunKeywords(ModelTransformer):
         RunKeywordVariant("BuiltIn", "Wait Until Keyword Succeeds", resolve=3),
     ]
 
-    def __init__(self, indent_and: bool = False):
+    def __init__(self, indent_and: bool = False, skip_settings: bool = False):
         self.indent_and = indent_and
+        self.skip_settings = skip_settings
         self.run_keywords = dict()
         for run_kw in self.RUN_KW:
             self.run_keywords[run_kw.name] = run_kw
@@ -94,8 +96,61 @@ class IndentRunKeywords(ModelTransformer):
         return self.run_keywords.get(kw_norm, None)
 
     @skip_if_disabled
+    def visit_SuiteSetup(self, node):  # noqa
+        if self.skip_settings or node.errors or not len(node.data_tokens) > 1:
+            return node
+        run_keyword = self.get_run_keyword(node.data_tokens[1].value)
+        if not run_keyword:
+            return node
+        lines = self.parse_sub_kw(node.data_tokens[1:])
+        if not lines:
+            return node
+        comments = collect_comments_from_tokens(node.tokens, indent=None)
+        separator = Token(Token.SEPARATOR, self.formatting_config.separator)
+        new_line = [Token(Token.EOL), Token(Token.CONTINUATION)]
+        tokens = [node.data_tokens[0], separator, *join_tokens_with_token(lines[0][1], separator)]
+        for level, line in lines[1:]:
+            tokens.extend(new_line)
+            tokens.append(Token(Token.SEPARATOR, self.formatting_config.separator * level))
+            tokens.extend(join_tokens_with_token(line, separator))
+        tokens.append(node.tokens[-1])  # eol
+        node.tokens = tokens
+        return (*comments, node)
+
+    visit_SuiteTeardown = visit_TestSetup = visit_TestTeardown = visit_SuiteSetup
+
+    @skip_if_disabled
+    def visit_Setup(self, node):  # noqa
+        if self.skip_settings or node.errors or not len(node.data_tokens) > 1:
+            return node
+        run_keyword = self.get_run_keyword(node.data_tokens[1].value)
+        if not run_keyword:
+            return node
+        lines = self.parse_sub_kw(node.data_tokens[1:])
+        if not lines:
+            return node
+        indent = node.tokens[0]
+        separator = Token(Token.SEPARATOR, self.formatting_config.separator)
+        new_line = [Token(Token.EOL), indent, Token(Token.CONTINUATION)]
+        tokens = [indent, node.data_tokens[0], separator, *join_tokens_with_token(lines[0][1], separator)]
+        comment = merge_comments_into_one(node.tokens)
+        if comment:
+            # need to add comments on first line for [Setup] / [Teardown] settings
+            comment_sep = Token(Token.SEPARATOR, "  ")
+            tokens.extend([comment_sep, Token(Token.COMMENT, comment)])
+        for level, line in lines[1:]:
+            tokens.extend(new_line)
+            tokens.append(Token(Token.SEPARATOR, self.formatting_config.separator * level))
+            tokens.extend(join_tokens_with_token(line, separator))
+        tokens.append(node.tokens[-1])  # eol
+        node.tokens = tokens
+        return node
+
+    visit_Teardown = visit_Setup
+
+    @skip_if_disabled
     def visit_KeywordCall(self, node):  # noqa
-        if not node.keyword:
+        if node.errors or not node.keyword:
             return node
         run_keyword = self.get_run_keyword(node.keyword)
         if not run_keyword:

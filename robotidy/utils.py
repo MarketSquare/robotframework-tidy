@@ -321,9 +321,25 @@ def get_comments(tokens):
     return comments
 
 
+def merge_comments_into_one(tokens):
+    comments = []
+    for token in tokens:
+        if token.type == Token.COMMENT:
+            comments.append(token.value.lstrip("#").strip())
+    if not comments:
+        return None
+    comment = " ".join(comments)
+    return f"# {comment}"
+
+
 def collect_comments_from_tokens(tokens, indent):
     comments = get_comments(tokens)
-    return [Comment.from_params(comment=comment.value, indent=indent.value) for comment in comments]
+    eol = Token(Token.EOL)
+    if indent:
+        indent_token = Token(Token.SEPARATOR, indent)
+        return [Comment([indent_token, comment, eol]) for comment in comments]
+    else:
+        return [Comment([comment, eol]) for comment in comments]
 
 
 def flatten_multiline(tokens, separator, remove_comments: bool = False):
