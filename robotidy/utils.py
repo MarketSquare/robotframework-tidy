@@ -371,7 +371,7 @@ def split_on_token_value(tokens, value, resolve: int):
 
 
 def join_tokens_with_token(tokens, token):
-    """ Insert token between every token in tokens list. """
+    """Insert token between every token in tokens list."""
     joined = [token] * (len(tokens) * 2 - 1)
     joined[0::2] = tokens
     return joined

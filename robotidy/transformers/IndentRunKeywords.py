@@ -1,7 +1,14 @@
 from robot.api.parsing import ModelTransformer, Token
 
 from robotidy.disablers import skip_if_disabled
-from robotidy.utils import normalize_name, split_on_token_type, split_on_token_value, join_tokens_with_token, is_token_value_in_tokens, collect_comments_from_tokens
+from robotidy.utils import (
+    collect_comments_from_tokens,
+    is_token_value_in_tokens,
+    join_tokens_with_token,
+    normalize_name,
+    split_on_token_type,
+    split_on_token_value,
+)
 
 
 class RunKeywordVariant:
