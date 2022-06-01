@@ -28,6 +28,8 @@ by using ``skip_documentation`` parameter ([#300](https://github.com/MarketSquar
 robotidy --configure NormalizeSeparators:skip_documentation=True src
 ```
 
+### Other
+- Added ``--skip-gitignore`` flag to ignore ``.gitignore`` files and parse files listed there ([#299](https://github.com/MarketSquare/robotframework-tidy/issues/299)). 
 
 ## 2.3
 
