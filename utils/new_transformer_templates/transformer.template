@@ -6,8 +6,6 @@ class {{ transformer_name }}(ModelTransformer):
     Short description in one line.
 
     Long description with short example before/after.
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/{{ transformer_name }}.html for more examples.
     """
     {% if disabled -%}
     ENABLED = False

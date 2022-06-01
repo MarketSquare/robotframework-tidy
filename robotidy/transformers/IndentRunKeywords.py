@@ -15,11 +15,40 @@ class RunKeywordVariant:
 
 class IndentRunKeywords(ModelTransformer):
     """
-    Short description in one line.
+    Format indentation inside run keywords variants such as **Run Keywords** or **Run Keyword And Continue On Failure**.
 
-    Long description with short example before/after.
+    Keywords inside run keywords variants are detected and whitespace is formatted to outline them. This code:
 
-    See https://robotidy.readthedocs.io/en/latest/transformers/IndentRunKeywords.html for more examples.
+    ```robotframework
+        Run Keyword    Run Keyword If    ${True}    Run keywords   Log    foo    AND    Log    bar    ELSE    Log    baz
+    ```
+
+    will be transformed to:
+
+    ```robotframework
+        Run Keyword
+        ...    Run Keyword If    ${True}
+        ...        Run keywords
+        ...            Log    foo
+        ...            AND
+        ...            Log    bar
+        ...    ELSE
+        ...        Log    baz
+    ```
+
+    It is possible to provide extra indentation for keywords using **AND** separators by configuring **indent_and** to
+    **True**:
+    ```
+    robotidy -c IndentRunKeywords:indent_and=True src
+    ```
+
+    It will result in:
+    ```
+    Run keywords
+    ...        Log    foo
+    ...    AND
+    ...        Log    bar
+    ```
     """
 
     ENABLED = False
