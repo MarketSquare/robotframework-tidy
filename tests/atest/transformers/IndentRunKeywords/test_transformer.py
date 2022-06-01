@@ -15,3 +15,6 @@ class TestIndentRunKeywords(TransformerAcceptanceTest):
 
     def test_run_keyword_in_settings(self):
         self.compare(source="settings.robot")
+
+    def test_skip_settings(self):
+        self.compare(source="settings.robot", not_modified=True, config=":skip_settings=True")

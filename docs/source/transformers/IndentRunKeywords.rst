@@ -55,3 +55,12 @@ It is possible to provide extra indentation for keywords using ``AND`` separator
             ...        Log    foo
             ...    AND
             ...        Log    bar
+
+
+Skip formatting settings
+-------------------------
+To skip formatting run keywords inside settings (such as ``Suite Setup``, ``[Setup]``, ``[Teardown]`` etc.) set
+``skip_settings`` to ``True``::
+
+    robotidy -c IndentRunKeywords:skip_settings:True .
+

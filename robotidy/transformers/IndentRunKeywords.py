@@ -23,8 +23,8 @@ class RunKeywordVariant:
 
 class IndentRunKeywords(ModelTransformer):
     """
-    Format indentation inside run keywords variants such as **Run Keywords** or
-    **Run Keyword And Continue On Failure**.
+    Format indentation inside run keywords variants such as ``Run Keywords`` or
+    ``Run Keyword And Continue On Failure``.
 
     Keywords inside run keywords variants are detected and
     whitespace is formatted to outline them. This code:
@@ -46,8 +46,8 @@ class IndentRunKeywords(ModelTransformer):
         ...        Log    baz
     ```
 
-    It is possible to provide extra indentation for keywords using **AND** separators
-    by configuring **indent_and** to **True**:
+    It is possible to provide extra indentation for keywords using ``AND`` separators
+    by configuring ``indent_and`` to ``True``:
     ```
     robotidy -c IndentRunKeywords:indent_and=True src
     ```
@@ -59,6 +59,9 @@ class IndentRunKeywords(ModelTransformer):
     ...    AND
     ...        Log    bar
     ```
+    
+    To skip formatting run keywords inside settings (such as ``Suite Setup``, ``[Setup]``, ``[Teardown]`` etc.) set
+    ``skip_settings`` to ``True``.
     """
 
     ENABLED = False
