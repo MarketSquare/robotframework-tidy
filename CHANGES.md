@@ -2,6 +2,27 @@
 
 ## Unreleased
 
+## Indent run keywords
+
+New ``IndentRunKeywords`` transformer for formatting whitespace in run keywords variants such as ``Run Keywords`` or 
+``Run Keyword And Continue On Failure``. It will result in transforming following code:
+```robotframework
+Run Keyword    Run Keyword If    ${True}    Run keywords   Log    foo    AND    Log    bar    ELSE    Log    baz
+```
+to:
+```robotframework
+Run Keyword
+...    Run Keyword If    ${True}
+...        Run keywords
+...            Log    foo
+...            AND
+...            Log    bar
+...    ELSE
+...        Log    baz
+```
+
+## 2.4
+
 ### Extra ``--indent`` option
 
 Robotidy normalizes all whitespaces using the same fixed amount of spaces (configurable via ``--spacecount``).
@@ -18,6 +39,18 @@ Keyword
         My Keyword  ${index}  ${item}
     END
 ```
+
+### ``skip_documentation`` for NormalizeSeparators
+
+It is now possible to skip formatting suite, test case and keyword documentation with NormalizeSeparator transformer 
+by using ``skip_documentation`` parameter ([#300](https://github.com/MarketSquare/robotframework-tidy/issues/300)):
+
+```
+robotidy --configure NormalizeSeparators:skip_documentation=True src
+```
+
+### Other
+- Added ``--skip-gitignore`` flag to ignore ``.gitignore`` files and parse files listed there ([#299](https://github.com/MarketSquare/robotframework-tidy/issues/299)). 
 
 ## 2.3
 

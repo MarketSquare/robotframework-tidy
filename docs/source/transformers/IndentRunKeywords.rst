@@ -7,15 +7,18 @@ Format indentation inside run keywords variants such as ``Run Keywords`` or ``Ru
 .. |TRANSFORMERNAME| replace:: IndentRunKeywords
 .. include:: disabled_hint.txt
 
-Keywords inside run keywords variants are detected and whitespace is formatted to outline them. This code:
+Keywords inside run keywords variants are detected and whitespace is formatted to outline them.
 
 .. tabs::
 
     .. code-tab:: robotframework Before
+
         *** Test Cases ***
         Test
             Run Keyword    Run Keyword If    ${True}    Run keywords   Log    foo    AND    Log    bar    ELSE    Log    baz
+
     .. code-tab:: robotframework After
+
         *** Test Cases ***
         Test
             Run Keyword
