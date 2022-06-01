@@ -336,8 +336,7 @@ def collect_comments_from_tokens(tokens, indent):
     comments = get_comments(tokens)
     eol = Token(Token.EOL)
     if indent:
-        indent_token = Token(Token.SEPARATOR, indent)
-        return [Comment([indent_token, comment, eol]) for comment in comments]
+        return [Comment([indent, comment, eol]) for comment in comments]
     else:
         return [Comment([comment, eol]) for comment in comments]
 
@@ -395,3 +394,9 @@ def join_tokens_with_token(tokens, token):
 
 def is_token_value_in_tokens(value, tokens):
     return any(value == token.value for token in tokens)
+
+
+def get_new_line(indent=None):
+    if indent:
+        return [Token(Token.EOL), indent, Token(Token.CONTINUATION)]
+    return [Token(Token.EOL), Token(Token.CONTINUATION)]

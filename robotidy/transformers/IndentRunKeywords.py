@@ -4,6 +4,7 @@ from robotidy.disablers import skip_if_disabled
 from robotidy.utils import (
     collect_comments_from_tokens,
     is_token_value_in_tokens,
+    get_new_line,
     join_tokens_with_token,
     normalize_name,
     merge_comments_into_one,
@@ -59,7 +60,7 @@ class IndentRunKeywords(ModelTransformer):
     ...    AND
     ...        Log    bar
     ```
-    
+
     To skip formatting run keywords inside settings (such as ``Suite Setup``, ``[Setup]``, ``[Teardown]`` etc.) set
     ``skip_settings`` to ``True``.
     """
@@ -98,55 +99,55 @@ class IndentRunKeywords(ModelTransformer):
         kw_norm = normalize_name(kw_name)
         return self.run_keywords.get(kw_norm, None)
 
-    @skip_if_disabled
-    def visit_SuiteSetup(self, node):  # noqa
+    def get_setting_lines(self, node):  # noqa
         if self.skip_settings or node.errors or not len(node.data_tokens) > 1:
-            return node
+            return None
         run_keyword = self.get_run_keyword(node.data_tokens[1].value)
         if not run_keyword:
-            return node
-        lines = self.parse_sub_kw(node.data_tokens[1:])
+            return None
+        return self.parse_sub_kw(node.data_tokens[1:])
+
+    def get_separator(self, column=1):
+        return Token(Token.SEPARATOR, self.formatting_config.separator * column)
+
+    def parse_keyword_lines(self, lines, tokens, new_line, eol):
+        separator = self.get_separator()
+        for column, line in lines[1:]:
+            tokens.extend(new_line)
+            tokens.append(self.get_separator(column))
+            tokens.extend(join_tokens_with_token(line, separator))
+        tokens.append(eol)
+        return tokens
+
+    @skip_if_disabled
+    def visit_SuiteSetup(self, node):  # noqa
+        lines = self.get_setting_lines(node)
         if not lines:
             return node
         comments = collect_comments_from_tokens(node.tokens, indent=None)
-        separator = Token(Token.SEPARATOR, self.formatting_config.separator)
-        new_line = [Token(Token.EOL), Token(Token.CONTINUATION)]
+        separator = self.get_separator()
+        new_line = get_new_line()
         tokens = [node.data_tokens[0], separator, *join_tokens_with_token(lines[0][1], separator)]
-        for level, line in lines[1:]:
-            tokens.extend(new_line)
-            tokens.append(Token(Token.SEPARATOR, self.formatting_config.separator * level))
-            tokens.extend(join_tokens_with_token(line, separator))
-        tokens.append(node.tokens[-1])  # eol
-        node.tokens = tokens
+        node.tokens = self.parse_keyword_lines(lines, tokens, new_line, eol=node.tokens[-1])
         return (*comments, node)
 
     visit_SuiteTeardown = visit_TestSetup = visit_TestTeardown = visit_SuiteSetup
 
     @skip_if_disabled
     def visit_Setup(self, node):  # noqa
-        if self.skip_settings or node.errors or not len(node.data_tokens) > 1:
-            return node
-        run_keyword = self.get_run_keyword(node.data_tokens[1].value)
-        if not run_keyword:
-            return node
-        lines = self.parse_sub_kw(node.data_tokens[1:])
+        lines = self.get_setting_lines(node)
         if not lines:
             return node
         indent = node.tokens[0]
-        separator = Token(Token.SEPARATOR, self.formatting_config.separator)
-        new_line = [Token(Token.EOL), indent, Token(Token.CONTINUATION)]
+        separator = self.get_separator()
+        new_line = get_new_line(indent)
         tokens = [indent, node.data_tokens[0], separator, *join_tokens_with_token(lines[0][1], separator)]
         comment = merge_comments_into_one(node.tokens)
         if comment:
             # need to add comments on first line for [Setup] / [Teardown] settings
             comment_sep = Token(Token.SEPARATOR, "  ")
             tokens.extend([comment_sep, Token(Token.COMMENT, comment)])
-        for level, line in lines[1:]:
-            tokens.extend(new_line)
-            tokens.append(Token(Token.SEPARATOR, self.formatting_config.separator * level))
-            tokens.extend(join_tokens_with_token(line, separator))
-        tokens.append(node.tokens[-1])  # eol
-        node.tokens = tokens
+        node.tokens = self.parse_keyword_lines(lines, tokens, new_line, eol=node.tokens[-1])
         return node
 
     visit_Teardown = visit_Setup
@@ -158,66 +159,59 @@ class IndentRunKeywords(ModelTransformer):
         run_keyword = self.get_run_keyword(node.keyword)
         if not run_keyword:
             return node
+
         indent = node.tokens[0]
         comments = collect_comments_from_tokens(node.tokens, indent)
-
         assign, kw_tokens = split_on_token_type(node.data_tokens, Token.KEYWORD)
         lines = self.parse_sub_kw(kw_tokens)
+        if not lines:
+            return node
 
-        tokens = []
-        separator = Token(Token.SEPARATOR, self.formatting_config.separator)
-        new_line = [Token(Token.EOL), indent, Token(Token.CONTINUATION)]
-        for index, (level, line) in enumerate(lines):
-            if index == 0:
-                tokens.append(indent)
-                if assign:
-                    tokens.extend(join_tokens_with_token(assign, separator))
-                    tokens.append(separator)
-            else:
-                tokens.extend(new_line)
-                tokens.append(Token(Token.SEPARATOR, self.formatting_config.separator * level))
-            tokens.extend(join_tokens_with_token(line, separator))
-        tokens.append(node.tokens[-1])  # eol
-        node.tokens = tokens
+        separator = self.get_separator()
+        tokens = [indent]
+        if assign:
+            tokens.extend([*join_tokens_with_token(assign, separator), separator])
+        tokens.extend(join_tokens_with_token(lines[0][1], separator))
+        new_line = get_new_line(indent)
+        node.tokens = self.parse_keyword_lines(lines, tokens, new_line, eol=node.tokens[-1])
         return (*comments, node)
 
-    def parse_sub_kw(self, tokens, level=0):
+    def parse_sub_kw(self, tokens, column=0):
         if not tokens:
             return []
         run_keyword = self.get_run_keyword(tokens[0].value)
         if not run_keyword:
-            return [(level, list(tokens))]
-        lines = [(level, tokens[: run_keyword.resolve])]
+            return [(column, list(tokens))]
+        lines = [(column, tokens[: run_keyword.resolve])]
         tokens = tokens[run_keyword.resolve :]
         if run_keyword.branches:
             if "ELSE IF" in run_keyword.branches:
                 while is_token_value_in_tokens("ELSE IF", tokens):
-                    level = max(level, 1)
+                    column = max(column, 1)
                     prefix, branch, tokens = split_on_token_value(tokens, "ELSE IF", 2)
-                    lines += self.parse_sub_kw(prefix, level + 1)
-                    lines.append((level, branch))
+                    lines.extend(self.parse_sub_kw(prefix, column + 1))
+                    lines.append((column, branch))
             if "ELSE" in run_keyword.branches and is_token_value_in_tokens("ELSE", tokens):
-                return self.split_on_else(tokens, lines, level)
+                return self.split_on_else(tokens, lines, column)
         elif run_keyword.split_on_and:
-            return self.split_on_and(tokens, lines, level)
-        return lines + self.parse_sub_kw(tokens, level + 1)
+            return self.split_on_and(tokens, lines, column)
+        return lines + self.parse_sub_kw(tokens, column + 1)
 
-    def split_on_else(self, tokens, lines, level):
-        level = max(level, 1)
+    def split_on_else(self, tokens, lines, column):
+        column = max(column, 1)
         prefix, branch, tokens = split_on_token_value(tokens, "ELSE", 1)
-        lines += self.parse_sub_kw(prefix, level + 1)
-        lines.append((level, branch))
-        lines += self.parse_sub_kw(tokens, level + 1)
+        lines.extend(self.parse_sub_kw(prefix, column + 1))
+        lines.append((column, branch))
+        lines.extend(self.parse_sub_kw(tokens, column + 1))
         return lines
 
-    def split_on_and(self, tokens, lines, level):
+    def split_on_and(self, tokens, lines, column):
         if is_token_value_in_tokens("AND", tokens):
             while is_token_value_in_tokens("AND", tokens):
                 prefix, branch, tokens = split_on_token_value(tokens, "AND", 1)
-                lines += self.parse_sub_kw(prefix, level + 1 + int(self.indent_and))
-                lines.append((level + 1, branch))
-            lines += self.parse_sub_kw(tokens, level + 1 + int(self.indent_and))
+                lines.extend(self.parse_sub_kw(prefix, column + 1 + int(self.indent_and)))
+                lines.append((column + 1, branch))
+            lines.extend(self.parse_sub_kw(tokens, column + 1 + int(self.indent_and)))
         else:
-            keywords = [(level + 1, [kw_token]) for kw_token in tokens]
-            lines += keywords
+            lines.extend([(column + 1, [kw_token]) for kw_token in tokens])
         return lines
