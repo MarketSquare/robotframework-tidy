@@ -3,8 +3,8 @@
 RenameTestCases
 ================================
 
-Enforce test case naming. This transformer capitalizes first letter of test case name, removes trailing dot and
-strips leading/trailing whitespaces.
+Enforce test case naming. This transformer capitalizes first letter of test case name removes trailing dot and
+strips leading/trailing whitespaces. If ``capitalize_each_word`` is ``True``, will capitalize each word in test case name.
 
 .. |TRANSFORMERNAME| replace:: RenameTestCases
 .. include:: disabled_hint.txt
@@ -28,6 +28,26 @@ replaces all occurrences of given pattern with string 'foo':
 
         *** Test Cases ***
         Test foo
+            No Operation
+
+Capitalize each word
+------------------------
+If you set ``capitalize_each_word`` to ``True`` it will capitalize each word in the test case name::
+
+     robotidy --transform RenameTestCases -c RenameTestCases:capitalize_each_word=True
+
+.. tabs::
+
+    .. code-tab:: robotframework Before
+
+        *** Test Cases ***
+        compare XML with json
+            No Operation
+
+    .. code-tab:: robotframework After
+
+        *** Test Cases ***
+        Compare XML With Json
             No Operation
 
 Supports global formatting params: ``--startline`` and ``--endline``.

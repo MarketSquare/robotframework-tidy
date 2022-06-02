@@ -48,3 +48,7 @@ class TestRenameTestCases(TransformerAcceptanceTest):
 
     def test_disablers(self):
         self.compare(source="disablers.robot", not_modified=True)
+
+    def test_upper_case_words(self):
+        self.compare(source="test.robot", expected="test.robot", config=":capitalize_each_word=False")
+        self.compare(source="test.robot", expected="upper_case.robot", config=":capitalize_each_word=True")
