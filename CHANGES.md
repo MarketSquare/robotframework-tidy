@@ -2,9 +2,30 @@
 
 ## Unreleased
 
-## 2.3.1
+# Remove empty lines in multiline statements
+``NormalizeNewLines`` transformer now removes empty lines inside multiline statements:
+```robotframework
+*** Keywords ***
+Keyword
+    Keyword With
+    ...  Multiline arguments
+
+    ...  With empty lines
+```
+will be formatted to:
+```robotframework
+*** Keywords ***
+Keyword
+    Keyword With
+    ...  Multiline arguments
+    ...  With empty lines
+```
+
+## 2.4.1
 
 Fix for ``SplitTooLongLine`` transformer breaking keywords with veeery long names ([#314](https://github.com/MarketSquare/robotframework-tidy/issues/314))
+
+## 2.4
 
 ### Extra ``--indent`` option
 
