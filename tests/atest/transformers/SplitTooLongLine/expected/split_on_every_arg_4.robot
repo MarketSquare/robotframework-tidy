@@ -333,3 +333,13 @@ Too long inline IF  # shall be handled by InlineIf transformer
     ...    $condition2
     ...    Short Keyword
     ...    ${arg}
+
+Keyword name over the limit
+    Enter "${VNFname}" in the field with XPath "//label[contains(text(), 'Product Name')]/../mat-form-field/div/div/div/textarea"
+
+    ${assign}
+    ...    Enter "${VNFname}" in the field with XPath "//label[contains(text(), 'Product Name')]/../mat-form-field/div/div/div/textarea"
+
+    ${assign}
+    ...    ${assign}
+    ...    Enter "${VNFname}" in the field with XPath "//label[contains(text(), 'Product Name')]/../mat-form-field/div/div/div/textarea"

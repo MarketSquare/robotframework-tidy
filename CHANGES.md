@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2.3.1
+
+Fix for ``SplitTooLongLine`` transformer breaking keywords with veeery long names ([#314](https://github.com/MarketSquare/robotframework-tidy/issues/314))
+
 ### Extra ``--indent`` option
 
 Robotidy normalizes all whitespaces using the same fixed amount of spaces (configurable via ``--spacecount``).
