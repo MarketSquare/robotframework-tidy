@@ -324,3 +324,13 @@ If - else if - else clause
 
 Too long inline IF  # shall be handled by InlineIf transformer
     ${var}    ${var2}    IF    $condition != $condition2    Longer Keyword Name    ${argument}    values    ELSE IF    $condition2    Short Keyword    ${arg}  # comment
+
+Keyword name over the limit
+    Enter "${VNFname}" in the field with XPath "//label[contains(text(), 'Product Name')]/../mat-form-field/div/div/div/textarea"
+
+    ${assign}
+    ...    Enter "${VNFname}" in the field with XPath "//label[contains(text(), 'Product Name')]/../mat-form-field/div/div/div/textarea"
+
+    ${assign}
+    ...    ${assign}
+    ...    Enter "${VNFname}" in the field with XPath "//label[contains(text(), 'Product Name')]/../mat-form-field/div/div/div/textarea"

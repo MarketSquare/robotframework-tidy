@@ -87,6 +87,8 @@ class SplitTooLongLine(ModelTransformer):
     def visit_KeywordCall(self, node):  # noqa
         if all(line[-1].end_col_offset < self.line_length for line in node.lines):
             return node
+        if not len(node.data_tokens) > 1:  # nothing to split anyway
+            return node
         if self.disablers.is_node_disabled(node, full_match=False):
             return node
         return self.split_keyword_call(node)
@@ -113,11 +115,9 @@ class SplitTooLongLine(ModelTransformer):
         separator = Token(Token.SEPARATOR, self.formatting_config.separator)
         indent = node.tokens[0]
 
-        split_every_arg = self.split_on_every_arg
         keyword = node.get_token(Token.KEYWORD)
         line = [indent, *self.join_on_separator(node.get_tokens(Token.ASSIGN), separator), keyword]
         if not self.col_fit_in_line(line):
-            split_every_arg
             head = [
                 *self.split_to_multiple_lines(node.get_tokens(Token.ASSIGN), indent=indent, separator=separator),
                 indent,
