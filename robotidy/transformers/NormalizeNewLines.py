@@ -24,6 +24,8 @@ class NormalizeNewLines(ModelTransformer):
     is set to True.
     """
 
+    WHITESPACE_TOKENS = {Token.EOL, Token.SEPARATOR}
+
     def __init__(
         self,
         test_case_lines: int = 1,
@@ -84,7 +86,10 @@ class NormalizeNewLines(ModelTransformer):
 
     def visit_Statement(self, node):  # noqa
         tokens = []
+        cont = node.get_token(Token.CONTINUATION)
         for line in node.lines:
+            if cont and all(token.type in self.WHITESPACE_TOKENS for token in line):
+                continue
             if line[-1].type == Token.EOL:
                 line[-1].value = "\n"  # TODO: use global formatting in the future
             tokens.extend(line)
