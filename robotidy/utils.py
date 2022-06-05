@@ -6,7 +6,7 @@ from typing import Iterable, List, Optional
 
 from click import style
 from packaging import version
-from robot.api.parsing import End, If, IfHeader, ModelVisitor, Token
+from robot.api.parsing import End, If, IfHeader, ModelVisitor, Token, Comment
 from robot.parsing.model import Statement
 from robot.utils.robotio import file_writer
 from robot.version import VERSION as RF_VERSION
@@ -321,6 +321,26 @@ def get_comments(tokens):
     return comments
 
 
+def merge_comments_into_one(tokens):
+    comments = []
+    for token in tokens:
+        if token.type == Token.COMMENT:
+            comments.append(token.value.lstrip("#").strip())
+    if not comments:
+        return None
+    comment = " ".join(comments)
+    return f"# {comment}"
+
+
+def collect_comments_from_tokens(tokens, indent):
+    comments = get_comments(tokens)
+    eol = Token(Token.EOL)
+    if indent:
+        return [Comment([indent, comment, eol]) for comment in comments]
+    else:
+        return [Comment([comment, eol]) for comment in comments]
+
+
 def flatten_multiline(tokens, separator, remove_comments: bool = False):
     flattened = []
     skip_start = False
@@ -341,3 +361,42 @@ def flatten_multiline(tokens, separator, remove_comments: bool = False):
                 flattened.append(tok)
     flattened.append(tokens[-1])
     return flattened
+
+
+def split_on_token_type(tokens, token_type):
+    """Split list of tokens into two lists on token with token_type type."""
+    for index, token in enumerate(tokens):
+        if token.type == token_type:
+            return tokens[:index], tokens[index:]
+
+
+def split_on_token_value(tokens, value, resolve: int):
+    """
+    Split list of tokens into three lists based on token value.
+    Returns tokens before found token, found token + `resolve` number of tokens, remaining tokens.
+    """
+    for index, token in enumerate(tokens):
+        if value == token.value:
+            prefix = tokens[:index]
+            branch = tokens[index : index + resolve]
+            remainder = tokens[index + resolve :]
+            return prefix, branch, remainder
+    else:
+        return [], [], tokens
+
+
+def join_tokens_with_token(tokens, token):
+    """Insert token between every token in tokens list."""
+    joined = [token] * (len(tokens) * 2 - 1)
+    joined[0::2] = tokens
+    return joined
+
+
+def is_token_value_in_tokens(value, tokens):
+    return any(value == token.value for token in tokens)
+
+
+def get_new_line(indent=None):
+    if indent:
+        return [Token(Token.EOL), indent, Token(Token.CONTINUATION)]
+    return [Token(Token.EOL), Token(Token.CONTINUATION)]

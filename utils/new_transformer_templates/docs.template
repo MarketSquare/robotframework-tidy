@@ -11,5 +11,6 @@ Short description.
 {% else %}
 .. |TRANSFORMERNAME| replace:: {{ transformer_name }}
 .. include:: enabled_hint.txt
+{% endif %}
 
 Long description with code examples.

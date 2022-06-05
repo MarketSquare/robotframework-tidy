@@ -63,10 +63,10 @@ class RenameTestCases(ModelTransformer):
     ENABLED = False
 
     def __init__(
-            self,
-            replace_pattern: Optional[str] = None,
-            replace_to: Optional[str] = None,
-            capitalize_each_word: bool = False
+        self,
+        replace_pattern: Optional[str] = None,
+        replace_to: Optional[str] = None,
+        capitalize_each_word: bool = False,
     ):
         try:
             self.replace_pattern = re.compile(replace_pattern) if replace_pattern is not None else None
