@@ -1,8 +1,8 @@
 from .. import TransformerAcceptanceTest
 
 
-class TestIndentRunKeywords(TransformerAcceptanceTest):
-    TRANSFORMER_NAME = "IndentRunKeywords"
+class TestIndentNestedKeywords(TransformerAcceptanceTest):
+    TRANSFORMER_NAME = "IndentNestedKeywords"
 
     def test_run_keyword(self):
         self.compare(source="run_keyword.robot")

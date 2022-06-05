@@ -1,10 +1,10 @@
-.. _IndentRunKeywords:
+.. _IndentNestedKeywords:
 
-IndentRunKeywords
+IndentNestedKeywords
 ================================
 Format indentation inside run keywords variants such as ``Run Keywords`` or ``Run Keyword And Continue On Failure``.
 
-.. |TRANSFORMERNAME| replace:: IndentRunKeywords
+.. |TRANSFORMERNAME| replace:: IndentNestedKeywords
 .. include:: disabled_hint.txt
 
 Keywords inside run keywords variants are detected and whitespace is formatted to outline them.
@@ -34,7 +34,7 @@ Keywords inside run keywords variants are detected and whitespace is formatted t
 It is possible to provide extra indentation for keywords using ``AND`` separators by configuring ``indent_and`` to
 ``True``::
 
-    robotidy -c IndentRunKeywords:indent_and=True src
+    robotidy -c IndentNestedKeywords:indent_and=True src
 
 .. tabs::
 
@@ -62,5 +62,5 @@ Skip formatting settings
 To skip formatting run keywords inside settings (such as ``Suite Setup``, ``[Setup]``, ``[Teardown]`` etc.) set
 ``skip_settings`` to ``True``::
 
-    robotidy -c IndentRunKeywords:skip_settings:True .
+    robotidy -c IndentNestedKeywords:skip_settings:True .
 

@@ -22,7 +22,7 @@ class RunKeywordVariant:
         self.split_on_and = split_on_and
 
 
-class IndentRunKeywords(ModelTransformer):
+class IndentNestedKeywords(ModelTransformer):
     """
     Format indentation inside run keywords variants such as ``Run Keywords`` or
     ``Run Keyword And Continue On Failure``.
@@ -50,7 +50,7 @@ class IndentRunKeywords(ModelTransformer):
     It is possible to provide extra indentation for keywords using ``AND`` separators
     by configuring ``indent_and`` to ``True``:
     ```
-    robotidy -c IndentRunKeywords:indent_and=True src
+    robotidy -c IndentNestedKeywords:indent_and=True src
     ```
 
     It will result in:

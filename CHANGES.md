@@ -4,7 +4,7 @@
 
 ## Indent run keywords
 
-New ``IndentRunKeywords`` transformer for formatting whitespace in run keywords variants such as ``Run Keywords`` or 
+New ``IndentNestedKeywords`` transformer for formatting whitespace in run keywords variants such as ``Run Keywords`` or 
 ``Run Keyword And Continue On Failure``. It will result in transforming following code:
 ```robotframework
 Run Keyword    Run Keyword If    ${True}    Run keywords   Log    foo    AND    Log    bar    ELSE    Log    baz
