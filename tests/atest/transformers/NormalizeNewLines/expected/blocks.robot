@@ -31,7 +31,6 @@ TRY EXCEPT
     ELSE
         Keyword With
         ...    ${arg}
-
         ...    break
     FINALLY
         Trailing
