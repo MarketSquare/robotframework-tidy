@@ -34,6 +34,7 @@ TRANSFORMERS = [
     "AlignSettingsSection",
     "AlignVariablesSection",
     "AlignTestCases",
+    'AlignKeywordsSection',
     "NormalizeNewLines",
     "NormalizeSectionHeaderName",
     "NormalizeSettingName",
@@ -45,7 +46,7 @@ TRANSFORMERS = [
     "ReplaceReturns",
     "ReplaceBreakContinue",
     "InlineIf",
-    'AlignKeywordsSection',
+    "IndentNestedKeywords",
 ]
 
 
