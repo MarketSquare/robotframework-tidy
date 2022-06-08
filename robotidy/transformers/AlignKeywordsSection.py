@@ -37,7 +37,6 @@ class AlignKeywordsSection(ModelTransformer):
             self.widths = None
         self.auto_widths = []
 
-    # TODO: widths only >= 0
     def parse_handle_too_long(self, value):
         if value not in ("align_to_next_col", "ignore_line"):
             raise InvalidParameterValueError(
@@ -111,6 +110,13 @@ class AlignKeywordsSection(ModelTransformer):
         return widths[len(widths) - 1]  # if there is no such column, use last column width
 
     @skip_if_disabled
+    def visit_TestCase(self, node):  # noqa  FIXME Move to AlignTestCases
+        self.create_auto_widths_for_context(node)
+        self.generic_visit(node)
+        self.remove_auto_widths_for_context()
+        return node
+
+    @skip_if_disabled
     def visit_Keyword(self, node):  # noqa
         self.create_auto_widths_for_context(node)
         self.generic_visit(node)
@@ -151,9 +157,15 @@ class AlignKeywordsSection(ModelTransformer):
                 aligned_statement.extend(line)
                 continue
             column = 0
-            if len(line) < 2:  # only happens with weird encoding, better to skip
+            tokens, comments = [], []
+            for token in line:
+                if token.type == Token.COMMENT:
+                    comments.append(token)
+                else:
+                    tokens.append(token)
+            if len(tokens) < 2:  # only happens with weird encoding, better to skip
                 return node
-            for token in line[:-2]:
+            for token in tokens[:-2]:
                 aligned_statement.append(token)
                 width = self.get_width(column)
                 if width == 0:
@@ -171,13 +183,23 @@ class AlignKeywordsSection(ModelTransformer):
                         separator_len = width - len(token.value)
                 aligned_statement.append(Token(Token.SEPARATOR, separator_len * " "))
                 column += 1
-            last_token = line[-2]
+            last_token = tokens[-2]
             # remove leading whitespace before token
             last_token.value = last_token.value.strip() if last_token.value else last_token.value
             aligned_statement.append(last_token)
-            aligned_statement.append(line[-1])  # eol
+            aligned_statement.extend(join_comments(comments))
+            aligned_statement.append(tokens[-1])  # eol
 
         return Statement.from_tokens(aligned_statement)
+
+
+def join_comments(comments):
+    tokens = []
+    separator = Token(Token.SEPARATOR, "  ")
+    for token in comments:
+        tokens.append(separator)
+        tokens.append(token)
+    return tokens
 
 
 class ColumnWidthCounter(ModelVisitor):
@@ -215,5 +237,4 @@ class ColumnWidthCounter(ModelVisitor):
                 token_len = round_to_four(len(token.value) + self.min_separator)
                 self.raw_widths[column].append(token_len)
 
-
-# TODO: comments, should be last in line -> don't align them, just 2 spaces of indent
+    visit_Setting = visit_KeywordCall

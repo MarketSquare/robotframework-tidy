@@ -52,3 +52,5 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
         config = f":alignment_type={alignment_type}:handle_too_long={handle_too_long}"
         config += f":widths={width_csv}"
         self.compare(source="simple.robot", expected=expected, config=config, not_modified=not_modified)
+
+    def test_settings(self):
