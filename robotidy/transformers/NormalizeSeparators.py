@@ -1,5 +1,3 @@
-from itertools import takewhile
-
 from robot.api.parsing import ModelTransformer, Token
 
 try:

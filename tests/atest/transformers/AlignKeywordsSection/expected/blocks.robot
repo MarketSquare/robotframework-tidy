@@ -17,3 +17,15 @@ Nested FOR loop
         END
         Keyword That Goes Over Limit Of The Column      ${short}                ${loooooooooooooooooooooooooooong}
     END
+
+IF
+    IF    ${condition}
+        ${variable}             Keyword                 ${var}
+        Another Keyword
+    ELSE IF    $flag
+        ${variable}             Keyword                 ${var}
+        Another Keyword
+    ELSE
+        ${variable}             Keyword                 ${var}
+        Another Keyword
+    END

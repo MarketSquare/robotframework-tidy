@@ -1,9 +1,15 @@
 from collections import defaultdict
 
-from robot.api.parsing import ModelTransformer, ModelVisitor, Token, EmptyLine, Comment
+from robot.api.parsing import ModelTransformer, ModelVisitor, Token, EmptyLine, Comment, ElseHeader, ElseIfHeader
 from robot.parsing.model import Statement
 
+try:
+    from robot.api.parsing import InlineIfHeader, TryHeader
+except ImportError:
+    InlineIfHeader, TryHeader = None, None
+
 from robotidy.disablers import skip_if_disabled
+from robotidy.exceptions import InvalidParameterValueError
 from robotidy.utils import tokens_by_lines, round_to_four, is_blank_multiline
 
 
@@ -15,46 +21,115 @@ class AlignKeywordsSection(ModelTransformer):
 
     See https://robotidy.readthedocs.io/en/latest/transformers/AlignKeywordsSection.html for more examples.
     """
+
     ENABLED = False
     DEFAULT_WIDTH = 24
 
-    def __init__(self, widths: str = "", overflow_allowed: bool = True):
+    def __init__(self, widths: str = "", alignment_type: str = "fixed", handle_too_long: str = "align_to_next_col"):
+        self.is_inline = False
         self.indent = 1
-        self.overflow_allowed = overflow_allowed
+        self.overflow_allowed = self.parse_handle_too_long(handle_too_long)
+        self.fixed_alignment = self.parse_alignment_type(alignment_type)
         # column widths map - 0: 40, 1: 30
         if widths:
             self.widths = {index: int(width) for index, width in enumerate(widths.split(","))}  # TODO type check
         else:
             self.widths = None
+        self.auto_widths = []
+
+    # TODO: widths only >= 0
+    def parse_handle_too_long(self, value):
+        if value not in ("align_to_next_col", "ignore_line"):
+            raise InvalidParameterValueError(
+                self.__class__.__name__,
+                "handle_too_long",
+                value,
+                "Chose between two modes: 'align_to_next_col' (align to the next column) or "
+                "'ignore_line' (ignore this line in alignment)",
+            )
+        return value == "align_to_next_col"
+
+    def parse_alignment_type(self, value):
+        if value not in ("fixed", "auto"):
+            raise InvalidParameterValueError(
+                self.__class__.__name__,
+                "alignment_type",
+                value,
+                "Chose between two modes: 'fixed' (align to fixed width) or "
+                "'auto' (align to longest token in column)",
+            )
+        return value == "fixed"
 
     def visit_If(self, node):  # noqa
+        # ignore inline ifs and their else/else if branches
+        if self.is_inline:
+            return node
+        self.create_auto_widths_for_context(node)
+        self.is_inline = InlineIfHeader and isinstance(node.header, InlineIfHeader)
+        if self.is_inline:
+            self.is_inline = False
+            return node
+        if not isinstance(node.header, (ElseHeader, ElseIfHeader)):
+            self.indent += 1
+        self.generic_visit(node)
+        if not isinstance(node.header, (ElseHeader, ElseIfHeader)):
+            self.indent -= 1
+        self.remove_auto_widths_for_context()
+        return node
+
+    def visit_Try(self, node):  # noqa
+        self.create_auto_widths_for_context(node)
+        # do not increase header for Except, Else, Finally - it was done in Try already
+        if isinstance(node.header, TryHeader):
+            self.indent += 1
+        self.generic_visit(node)
+        if isinstance(node.header, TryHeader):
+            self.indent -= 1
+        self.remove_auto_widths_for_context()
+        return node
+
+    def visit_For(self, node):  # noqa
+        self.create_auto_widths_for_context(node)
         self.indent += 1
         self.generic_visit(node)
         self.indent -= 1
+        self.remove_auto_widths_for_context()
         return node
 
-    visit_Else = visit_ElseIf = visit_For = visit_If
+    visit_While = visit_For
 
     def get_width(self, col):
-        if not self.widths:
+        # If auto mode is enabled, use auto widths for current context (last defined widths)
+        if self.auto_widths:
+            widths = self.auto_widths[-1]
+        else:
+            widths = self.widths
+        if not widths:
             return self.DEFAULT_WIDTH
-        if col in self.widths:
-            return self.widths[col]
-        return self.widths[len(self.widths) - 1]  # last element
+        if col in widths:
+            return widths[col]
+        return widths[len(widths) - 1]  # if there is no such column, use last column width
 
     @skip_if_disabled
     def visit_Keyword(self, node):  # noqa
-        # counter = ColumnWidthCounter(self.disablers)
-        # # counter.visit(node)
-        # # self.widths = counter.widths
-        # # statements = []
-        # # for child in node.body:
-        # #     if self.disablers.is_node_disabled(child) or isinstance(child, (EmptyLine, Comment)):
-        # #         statements.append(child)
-        # #     else:
-        # #         statements.append(list(tokens_by_lines(child)))
-        # widths = counter.collect_widths(node)
-        return self.generic_visit(node)
+        self.create_auto_widths_for_context(node)
+        self.generic_visit(node)
+        self.remove_auto_widths_for_context()
+        return node
+
+    def create_auto_widths_for_context(self, node):
+        if self.fixed_alignment:
+            return
+        counter = ColumnWidthCounter(
+            self.disablers, self.widths, self.DEFAULT_WIDTH, self.formatting_config.space_count
+        )
+        counter.visit(node)
+        counter.calculate_column_widths()
+        self.auto_widths.append(counter.widths)
+    
+    def remove_auto_widths_for_context(self):
+        if not self.fixed_alignment:
+            self.auto_widths.pop()
 
     def visit_ForHeader(self, node):  # noqa
         # Fix indent for FOR, IF, WHILE, TRY block headers & ends
@@ -62,7 +137,7 @@ class AlignKeywordsSection(ModelTransformer):
         node.tokens = [indent] + list(node.tokens[1:])
         return node
 
-    visit_End = visit_ForHeader  # TOOD add other headers
+    visit_End = visit_ForHeader  # TODO add other headers
 
     @skip_if_disabled
     def visit_KeywordCall(self, node):  # noqa
@@ -70,28 +145,30 @@ class AlignKeywordsSection(ModelTransformer):
         indent = Token(Token.SEPARATOR, self.indent * self.formatting_config.indent)
         aligned_statement = []
         for line in lines:
-            if is_blank_multiline(line):
+            aligned_statement.append(indent)
+            if is_blank_multiline(line):  # ...\n edge case
                 line[-1].value = line[-1].value.lstrip(" \t")  # normalize eol from '  \n' to '\n'
                 aligned_statement.extend(line)
                 continue
-            aligned_statement.append(indent)
             column = 0
-            # FIXME if line has only one element, just fix indent and go on
-            if len(line) < 2:
+            if len(line) < 2:  # only happens with weird encoding, better to skip
                 return node
             for token in line[:-2]:
                 aligned_statement.append(token)
                 width = self.get_width(column)
-                # TODO rework overflow - we are not interested in aligning to next column, just any next witch matching alignment
-                separator_len = width - len(token.value)  # TODO round to 4 for auto
-                if separator_len < self.formatting_config.space_count:
-                    if not self.overflow_allowed:
-                        return node  # TODO overflow logic
-                    # (len(token) + separator) - width
-                    while (len(token.value) + self.formatting_config.space_count) > width:
-                        column += 1
-                        width += self.get_width(column)
+                if width == 0:
+                    separator_len = round_to_four(len(token.value) + self.formatting_config.space_count) - len(
+                        token.value
+                    )
+                else:
                     separator_len = width - len(token.value)
+                    if separator_len < self.formatting_config.space_count:
+                        if not self.overflow_allowed:
+                            return node
+                        while (len(token.value) + self.formatting_config.space_count) > width:
+                            column += 1
+                            width += self.get_width(column)
+                        separator_len = width - len(token.value)
                 aligned_statement.append(Token(Token.SEPARATOR, separator_len * " "))
                 column += 1
             last_token = line[-2]
@@ -104,37 +181,39 @@ class AlignKeywordsSection(ModelTransformer):
 
 
 class ColumnWidthCounter(ModelVisitor):
-    def __init__(self, disablers):
-        # column width should be min from (longest_token shorter than 30, 30)
-        # longest_token should be chosen first (
-        self.max_width = 40
+    NON_DATA_TOKENS = frozenset((Token.SEPARATOR, Token.COMMENT, Token.EOL, Token.EOS))
+
+    def __init__(self, disablers, max_widths, default_width, min_separator):
+        self.max_widths = max_widths
+        self.default_width = default_width
+        self.min_separator = min_separator
+        self.raw_widths = defaultdict(list)
+        self.widths = dict()
         self.disablers = disablers
 
-    def collect_widths(self, node):
-        lines = []
-        for child in node.body:
-            if self.disablers.is_node_disabled(child) or isinstance(child, (EmptyLine, Comment)):
-                continue
+    def get_width(self, col):
+        if not self.max_widths:
+            return self.default_width
+        if col in self.max_widths:
+            return self.max_widths[col]
+        return self.max_widths[len(self.max_widths) - 1]  # if there is no such column, use last column width
+
+    def calculate_column_widths(self):
+        for column, widths in self.raw_widths.items():
+            max_width = self.get_width(column)
+            if max_width == 0:
+                self.widths[column] = max(widths)
             else:
-                lines.append(list(tokens_by_lines(child)))
-                # statements.append(list(tokens_by_lines(child)))
-        widths = self.create_look_up(lines)
-        return widths
+                filter_widths = [width for width in widths if width < max_width]
+                self.widths[column] = max(filter_widths, default=max_width)
 
-    def create_look_up(self, statements):
-        look_up = defaultdict(int)
-        for st in statements:
-            for line in st:
-                for index, token in enumerate(line):
-                    if len(token.value) > self.max_width:
-                        continue
-                    look_up[index] = max(look_up[index], len(token.value))
-                    # look_up[index] = min(look_up[index], self.max_width)
-        return {index: round_to_four(length) for index, length in look_up.items()}
+    @skip_if_disabled
+    def visit_KeywordCall(self, node):  # noqa
+        for line in node.lines:
+            data_tokens = [token for token in line if token.type not in self.NON_DATA_TOKENS]
+            for column, token in enumerate(data_tokens):
+                token_len = round_to_four(len(token.value) + self.min_separator)
+                self.raw_widths[column].append(token_len)
 
-    # @skip_if_disabled
-    # def visit_Statement(self, statement):  # noqa
-    #     if statement.type == Token.COMMENT:
-    #         return
 
-# maybe IFs, WHILEs, TRYs, FORs should be aligned separately?
+# TODO: comments, should be last in line -> don't align them, just 2 spaces of indent
