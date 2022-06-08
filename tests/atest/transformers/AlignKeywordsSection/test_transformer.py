@@ -54,3 +54,4 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
         self.compare(source="simple.robot", expected=expected, config=config, not_modified=not_modified)
 
     def test_settings(self):
+        self.compare(source="settings.robot")

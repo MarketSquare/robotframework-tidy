@@ -192,6 +192,8 @@ class AlignKeywordsSection(ModelTransformer):
 
         return Statement.from_tokens(aligned_statement)
 
+    visit_Arguments = visit_Setup = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags = visit_KeywordCall  # TODO skip
+
 
 def join_comments(comments):
     tokens = []
@@ -237,4 +239,4 @@ class ColumnWidthCounter(ModelVisitor):
                 token_len = round_to_four(len(token.value) + self.min_separator)
                 self.raw_widths[column].append(token_len)
 
-    visit_Setting = visit_KeywordCall
+    visit_Arguments = visit_Setup = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags = visit_KeywordCall  # TODO skip
