@@ -40,7 +40,7 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
     @pytest.mark.parametrize("handle_too_long", ["align_to_next_col", "ignore_line"])
     @pytest.mark.parametrize("alignment_type", ["auto", "fixed"])
     def test_simple(self, alignment_type, handle_too_long, widths: Tuple):
-        if widths == (4,4,4) and handle_too_long == "ignore_line":
+        if widths == (4, 4, 4) and handle_too_long == "ignore_line":
             not_modified = True  # it will never fit, so all lines are ignored
         else:
             not_modified = False

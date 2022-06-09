@@ -18,14 +18,18 @@ class AlignKeywordsSection(ModelTransformer):
     Short description in one line.
 
     Long description with short example before/after.
-
-    See https://robotidy.readthedocs.io/en/latest/transformers/AlignKeywordsSection.html for more examples.
     """
 
     ENABLED = False
     DEFAULT_WIDTH = 24
 
-    def __init__(self, widths: str = "", alignment_type: str = "fixed", handle_too_long: str = "align_to_next_col", compact_overflow: bool = False):
+    def __init__(
+        self,
+        widths: str = "",
+        alignment_type: str = "fixed",
+        handle_too_long: str = "align_to_next_col",
+        compact_overflow: bool = False,
+    ):
         self.is_inline = False
         self.indent = 1
         self.overflow_allowed = self.parse_handle_too_long(handle_too_long)
@@ -133,7 +137,7 @@ class AlignKeywordsSection(ModelTransformer):
         counter.visit(node)
         counter.calculate_column_widths()
         self.auto_widths.append(counter.widths)
-    
+
     def remove_auto_widths_for_context(self):
         if not self.fixed_alignment:
             self.auto_widths.pop()
@@ -148,6 +152,8 @@ class AlignKeywordsSection(ModelTransformer):
 
     @skip_if_disabled
     def visit_KeywordCall(self, node):  # noqa
+        if node.errors:
+            return node
         lines = list(tokens_by_lines(node))
         indent = Token(Token.SEPARATOR, self.indent * self.formatting_config.indent)
         aligned_statement = []
@@ -170,30 +176,37 @@ class AlignKeywordsSection(ModelTransformer):
                         token.value
                     )
                 else:
-                    separator_len = width - len(token.value) - prev_overflow_len
+                    token_len = len(token.value)
+                    separator_len = width - token_len - prev_overflow_len
                     if separator_len < self.formatting_config.space_count:
                         if not self.overflow_allowed:
                             return node
                         if self.compact_overflow:
-                            separator_len = round_to_four(len(token.value) + self.formatting_config.space_count) - len(token.value)
-                            prev_overflow_len = (len(token.value) + separator_len) - width
+                            required_width = round_to_four(token_len + self.formatting_config.space_count)
+                            separator_len = required_width - token_len
+                            prev_overflow_len = required_width - width
                         else:
-                            while (len(token.value) + self.formatting_config.space_count) > width:
+                            while (token_len + self.formatting_config.space_count) > width:
                                 column += 1
                                 width += self.get_width(column)
-                            separator_len = width - len(token.value)
+                            separator_len = width - token_len
                 aligned_statement.append(Token(Token.SEPARATOR, separator_len * " "))
                 column += 1
-            last_token = tokens[-2]
-            # remove leading whitespace before token
-            last_token.value = last_token.value.strip() if last_token.value else last_token.value
-            aligned_statement.append(last_token)
-            aligned_statement.extend(join_comments(comments))
-            aligned_statement.append(tokens[-1])  # eol
+            last_token = strip_extra_whitespace(tokens[-2])
+            aligned_statement.extend([last_token, *join_comments(comments), tokens[-1]])
 
         return Statement.from_tokens(aligned_statement)
 
-    visit_Arguments = visit_Setup = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags = visit_KeywordCall  # TODO skip
+    visit_Arguments = (
+        visit_Setup
+    ) = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags = visit_KeywordCall  # TODO skip
+
+
+def strip_extra_whitespace(token):
+    if not token.value:
+        return token
+    token.value = token.value.strip()
+    return token
 
 
 def separate_comments(tokens):
@@ -244,10 +257,14 @@ class ColumnWidthCounter(ModelVisitor):
 
     @skip_if_disabled
     def visit_KeywordCall(self, node):  # noqa
+        if node.errors:
+            return node
         for line in node.lines:
             data_tokens = [token for token in line if token.type not in self.NON_DATA_TOKENS]
             for column, token in enumerate(data_tokens):
                 token_len = round_to_four(len(token.value) + self.min_separator)
                 self.raw_widths[column].append(token_len)
 
-    visit_Arguments = visit_Setup = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags = visit_KeywordCall  # TODO skip
+    visit_Arguments = (
+        visit_Setup
+    ) = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags = visit_KeywordCall  # TODO skip
