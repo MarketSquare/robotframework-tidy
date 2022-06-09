@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from robot.api.parsing import ModelTransformer, ModelVisitor, Token, EmptyLine, Comment, ElseHeader, ElseIfHeader
+from robot.api.parsing import ModelTransformer, ModelVisitor, Token, ElseHeader, ElseIfHeader
 from robot.parsing.model import Statement
 
 try:
@@ -25,10 +25,11 @@ class AlignKeywordsSection(ModelTransformer):
     ENABLED = False
     DEFAULT_WIDTH = 24
 
-    def __init__(self, widths: str = "", alignment_type: str = "fixed", handle_too_long: str = "align_to_next_col"):
+    def __init__(self, widths: str = "", alignment_type: str = "fixed", handle_too_long: str = "align_to_next_col", compact_overflow: bool = False):
         self.is_inline = False
         self.indent = 1
         self.overflow_allowed = self.parse_handle_too_long(handle_too_long)
+        self.compact_overflow = compact_overflow
         self.fixed_alignment = self.parse_alignment_type(alignment_type)
         # column widths map - 0: 40, 1: 30
         if widths:
@@ -150,21 +151,17 @@ class AlignKeywordsSection(ModelTransformer):
         lines = list(tokens_by_lines(node))
         indent = Token(Token.SEPARATOR, self.indent * self.formatting_config.indent)
         aligned_statement = []
+        prev_overflow_len = 0
         for line in lines:
             aligned_statement.append(indent)
             if is_blank_multiline(line):  # ...\n edge case
                 line[-1].value = line[-1].value.lstrip(" \t")  # normalize eol from '  \n' to '\n'
                 aligned_statement.extend(line)
                 continue
-            column = 0
-            tokens, comments = [], []
-            for token in line:
-                if token.type == Token.COMMENT:
-                    comments.append(token)
-                else:
-                    tokens.append(token)
+            tokens, comments = separate_comments(line)
             if len(tokens) < 2:  # only happens with weird encoding, better to skip
                 return node
+            column = 0
             for token in tokens[:-2]:
                 aligned_statement.append(token)
                 width = self.get_width(column)
@@ -173,14 +170,18 @@ class AlignKeywordsSection(ModelTransformer):
                         token.value
                     )
                 else:
-                    separator_len = width - len(token.value)
+                    separator_len = width - len(token.value) - prev_overflow_len
                     if separator_len < self.formatting_config.space_count:
                         if not self.overflow_allowed:
                             return node
-                        while (len(token.value) + self.formatting_config.space_count) > width:
-                            column += 1
-                            width += self.get_width(column)
-                        separator_len = width - len(token.value)
+                        if self.compact_overflow:
+                            separator_len = round_to_four(len(token.value) + self.formatting_config.space_count) - len(token.value)
+                            prev_overflow_len = (len(token.value) + separator_len) - width
+                        else:
+                            while (len(token.value) + self.formatting_config.space_count) > width:
+                                column += 1
+                                width += self.get_width(column)
+                            separator_len = width - len(token.value)
                 aligned_statement.append(Token(Token.SEPARATOR, separator_len * " "))
                 column += 1
             last_token = tokens[-2]
@@ -193,6 +194,16 @@ class AlignKeywordsSection(ModelTransformer):
         return Statement.from_tokens(aligned_statement)
 
     visit_Arguments = visit_Setup = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags = visit_KeywordCall  # TODO skip
+
+
+def separate_comments(tokens):
+    non_comments, comments = [], []
+    for token in tokens:
+        if token.type == Token.COMMENT:
+            comments.append(token)
+        else:
+            non_comments.append(token)
+    return non_comments, comments
 
 
 def join_comments(comments):
