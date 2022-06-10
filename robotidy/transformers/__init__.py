@@ -31,6 +31,7 @@ TRANSFORMERS = [
     "OrderSettingsSection",
     "NormalizeTags",
     "OrderTags",
+    "IndentNestedKeywords",
     "AlignSettingsSection",
     "AlignVariablesSection",
     "AlignTestCases",
@@ -45,7 +46,6 @@ TRANSFORMERS = [
     "ReplaceReturns",
     "ReplaceBreakContinue",
     "InlineIf",
-    "IndentNestedKeywords",
 ]
 
 
