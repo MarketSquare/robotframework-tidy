@@ -3,11 +3,11 @@ from robot.api.parsing import ModelTransformer, Token
 from robotidy.disablers import skip_if_disabled
 from robotidy.utils import (
     collect_comments_from_tokens,
-    is_token_value_in_tokens,
     get_new_line,
+    is_token_value_in_tokens,
     join_tokens_with_token,
-    normalize_name,
     merge_comments_into_one,
+    normalize_name,
     split_on_token_type,
     split_on_token_value,
 )

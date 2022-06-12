@@ -1,9 +1,9 @@
-import pytest
 from unittest.mock import Mock, patch
 
+import pytest
 
-from robotidy.utils import ROBOT_VERSION
 from robotidy.transformers import load_transformers
+from robotidy.utils import ROBOT_VERSION
 
 
 class TestLoadTransformers:

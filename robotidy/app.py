@@ -9,6 +9,7 @@ try:
     import rich_click as click
 except ImportError:
     import click
+
 from robot.api import get_model
 from robot.errors import DataError
 

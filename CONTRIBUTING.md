@@ -27,6 +27,19 @@ For running our utility scripts and test environments following Python packages 
 - invoke
 - nox
 
+Pre commit checks
+------------------
+Every change is required to pass pre-commit checks. To install pre-commit tool run:
+```
+pip install pre-commit
+```
+Then install the pre-commits for this repository run in the root:
+```
+pre-commit install
+```
+
+Now all commits will trigger pre-commit script that will scan & format your code.
+
 Creating new transformer
 ------------------------
 When you want to add new a transformer to Robotidy you can use `add-transformer` invoke helper script. It will create stub
