@@ -157,8 +157,8 @@ class AlignKeywordsSection(ModelTransformer):
         lines = list(tokens_by_lines(node))
         indent = Token(Token.SEPARATOR, self.indent * self.formatting_config.indent)
         aligned_statement = []
-        prev_overflow_len = 0
         for line in lines:
+            prev_overflow_len = 0
             aligned_statement.append(indent)
             if is_blank_multiline(line):  # ...\n edge case
                 line[-1].value = line[-1].value.lstrip(" \t")  # normalize eol from '  \n' to '\n'

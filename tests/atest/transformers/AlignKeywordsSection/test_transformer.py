@@ -55,3 +55,9 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
 
     def test_settings(self):
         self.compare(source="settings.robot")
+
+    def test_examples(self):
+        self.compare(source="example_cases.robot", config=":compact_overflow=True")
+
+    def test_compact_overflow_first_line(self):
+        self.compare(source="overflow_first_line.robot", config=":widths=24,28,20,20:compact_overflow=True")
