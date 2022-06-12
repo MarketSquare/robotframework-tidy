@@ -10,3 +10,6 @@ compact_overflow issue case
     RaAn_RaporttiTarkista_REP98
     ...                     70 Procurement              RPOR LOG Ostoa odottavat rivit (REP98).xdo    HTML       ${LUONTIYKSIKKÖ}
     ...                     ${LIIKEYKSIKKÖ}             ${TOIMITTAJA}       ${TOIMITTAJAN_TOIMIPAIKKA}              ${ASIAKASTYYPPI}    ${NIMIKETYYPPI}
+
+compact_overflow OK working case
+    Set Library Search Order    QWeb                    QMobile

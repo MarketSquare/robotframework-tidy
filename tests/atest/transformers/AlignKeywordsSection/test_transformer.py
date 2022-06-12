@@ -61,3 +61,12 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
 
     def test_compact_overflow_first_line(self):
         self.compare(source="overflow_first_line.robot", config=":widths=24,28,20,20:compact_overflow=True")
+
+    @pytest.mark.parametrize("alignment_type", ["fixed", "auto"])
+    @pytest.mark.parametrize("doc_mode", ["skip", "align_first_col"])
+    def test_documentation(self, doc_mode, alignment_type):
+        self.compare(
+            source="documentation.robot",
+            expected=f"documentation_{alignment_type}_{doc_mode}.robot",
+            config=f":documentation={doc_mode}:alignment_type={alignment_type}",
+        )

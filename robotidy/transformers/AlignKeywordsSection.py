@@ -29,12 +29,14 @@ class AlignKeywordsSection(ModelTransformer):
         alignment_type: str = "fixed",
         handle_too_long: str = "align_to_next_col",
         compact_overflow: bool = False,
+        documentation: str = "skip",
     ):
         self.is_inline = False
         self.indent = 1
         self.overflow_allowed = self.parse_handle_too_long(handle_too_long)
         self.compact_overflow = compact_overflow
         self.fixed_alignment = self.parse_alignment_type(alignment_type)
+        self.skip_documentation = self.parse_documentation_mode(documentation)
         # column widths map - 0: 40, 1: 30
         if widths:
             self.widths = {index: int(width) for index, width in enumerate(widths.split(","))}  # TODO type check
@@ -60,9 +62,20 @@ class AlignKeywordsSection(ModelTransformer):
                 "alignment_type",
                 value,
                 "Chose between two modes: 'fixed' (align to fixed width) or "
-                "'auto' (align to longest token in column)",
+                "'auto' (align to longest token in column).",
             )
         return value == "fixed"
+
+    def parse_documentation_mode(self, doc_mode):
+        if doc_mode not in ("skip", "align_first_col"):
+            raise InvalidParameterValueError(
+                self.__class__.__name__,
+                "doc_mode",
+                doc_mode,
+                "Chose between two modes: 'skip' (default - do not align documentation) or "
+                "'align_first_col' (align first documentation indentation).",
+            )
+        return doc_mode == "skip"
 
     def visit_If(self, node):  # noqa
         # ignore inline ifs and their else/else if branches
@@ -114,6 +127,37 @@ class AlignKeywordsSection(ModelTransformer):
             return widths[col]
         return widths[len(widths) - 1]  # if there is no such column, use last column width
 
+    def visit_SettingSection(self, node):  # do the same for test case section in keywords alignment etc
+        return node
+
+    @skip_if_disabled
+    def visit_Documentation(self, node):  # noqa
+        if self.skip_documentation:
+            return node
+        # For every line:
+        # {indent}...{align}{leave alone}
+        for line in node.lines:
+            sep_count = 0
+            prev_token = None
+            for token in line:
+                if token.type == Token.SEPARATOR:
+                    sep_count += 1
+                    if sep_count == 1:
+                        token.value = self.formatting_config.indent
+                    else:
+                        width = self.get_width(0)
+                        if width == 0:
+                            separator_len = round_to_four(
+                                len(prev_token.value) + self.formatting_config.space_count
+                            ) - len(prev_token.value)
+                        else:
+                            separator_len = max(width - len(prev_token.value), self.formatting_config.space_count)
+                        token.value = " " * separator_len
+                        break
+                elif token.type != Token.ARGUMENT:  # ...   # comment edge case
+                    prev_token = token
+        return node
+
     @skip_if_disabled
     def visit_TestCase(self, node):  # noqa  FIXME Move to AlignTestCases
         self.create_auto_widths_for_context(node)
@@ -132,7 +176,7 @@ class AlignKeywordsSection(ModelTransformer):
         if self.fixed_alignment:
             return
         counter = ColumnWidthCounter(
-            self.disablers, self.widths, self.DEFAULT_WIDTH, self.formatting_config.space_count
+            self.disablers, self.skip_documentation, self.widths, self.DEFAULT_WIDTH, self.formatting_config.space_count
         )
         counter.visit(node)
         counter.calculate_column_widths()
@@ -231,7 +275,8 @@ def join_comments(comments):
 class ColumnWidthCounter(ModelVisitor):
     NON_DATA_TOKENS = frozenset((Token.SEPARATOR, Token.COMMENT, Token.EOL, Token.EOS))
 
-    def __init__(self, disablers, max_widths, default_width, min_separator):
+    def __init__(self, disablers, skip_documentation, max_widths, default_width, min_separator):
+        self.skip_documentation = skip_documentation
         self.max_widths = max_widths
         self.default_width = default_width
         self.min_separator = min_separator
@@ -252,7 +297,7 @@ class ColumnWidthCounter(ModelVisitor):
             if max_width == 0:
                 self.widths[column] = max(widths)
             else:
-                filter_widths = [width for width in widths if width < max_width]
+                filter_widths = [width for width in widths if width <= max_width]
                 self.widths[column] = max(filter_widths, default=max_width)
 
     @skip_if_disabled
@@ -268,3 +313,10 @@ class ColumnWidthCounter(ModelVisitor):
     visit_Arguments = (
         visit_Setup
     ) = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags = visit_KeywordCall  # TODO skip
+
+    @skip_if_disabled
+    def visit_Documentation(self, node):  # noqa
+        if self.skip_documentation:
+            return
+        doc_header_len = round_to_four(len(node.data_tokens[0].value) + self.min_separator)
+        self.raw_widths[0].append(doc_header_len)
