@@ -83,3 +83,6 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
             expected=expected,
             config=f":alignment_type=auto:handle_too_long={handle_too_long}",
         )
+
+    def test_compact_overflow_last_0(self):
+        self.compare(source="compact_overflow_last_0.robot", config=":widths=4,0")
