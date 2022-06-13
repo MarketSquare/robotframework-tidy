@@ -8,8 +8,8 @@ from click import FileError, NoSuchOption
 from robotidy.api import Robotidy
 from robotidy.cli import read_config, validate_regex
 from robotidy.files import DEFAULT_EXCLUDES, find_project_root, get_paths, read_pyproject_config
-from robotidy.utils import ROBOT_VERSION
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
+from robotidy.utils import ROBOT_VERSION
 
 from .utils import run_tidy
 

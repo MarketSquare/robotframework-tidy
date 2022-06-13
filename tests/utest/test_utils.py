@@ -4,12 +4,7 @@ from pathlib import Path
 import pytest
 
 from robotidy.app import Robotidy
-from robotidy.utils import (
-    decorate_diff_with_color,
-    split_args_from_name_or_path,
-    GlobalFormattingConfig,
-    ROBOT_VERSION,
-)
+from robotidy.utils import ROBOT_VERSION, GlobalFormattingConfig, decorate_diff_with_color, split_args_from_name_or_path
 
 
 @pytest.fixture

@@ -55,6 +55,7 @@ setup(
             "pylama_pylint",
             "pylama",
             "pytest",
+            "pre-commit",
         ],
         "doc": [
             "sphinx_rtd_theme",

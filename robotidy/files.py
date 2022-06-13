@@ -6,6 +6,7 @@ try:
     import rich_click as click
 except ImportError:
     import click
+
 import tomli
 from pathspec import PathSpec
 

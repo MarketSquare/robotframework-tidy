@@ -1,26 +1,25 @@
 import os
 import re
-from pathlib import Path
 import sys
 import textwrap
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Pattern, Tuple, Union
 
 import rich_click as click
 
 from robotidy.app import Robotidy
-from robotidy.rich_console import console
 from robotidy.decorators import catch_exceptions
 from robotidy.files import DEFAULT_EXCLUDES, find_and_read_config, read_pyproject_config
+from robotidy.rich_console import console
 from robotidy.transformers import load_transformers
 from robotidy.utils import (
+    ROBOT_VERSION,
     GlobalFormattingConfig,
     RecommendationFinder,
-    ROBOT_VERSION,
     TargetVersion,
     split_args_from_name_or_path,
 )
 from robotidy.version import __version__
-
 
 click.rich_click.USE_RICH_MARKUP = True
 click.rich_click.USE_MARKDOWN = True
