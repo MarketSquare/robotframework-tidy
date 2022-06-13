@@ -1,6 +1,6 @@
 *** Keywords ***
 Keyword
-    ${assign}       Looooooooonger Keyword Name                 ${argument}
+    ${assign}       Looooooooonger Keyword Name    ${argument}
     Short           Short       Short
     Single
     Multi           ${arg}

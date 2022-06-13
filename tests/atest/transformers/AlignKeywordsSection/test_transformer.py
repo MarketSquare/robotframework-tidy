@@ -37,7 +37,7 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
             (4, 4, 4),
         ],
     )
-    @pytest.mark.parametrize("handle_too_long", ["align_to_next_col", "ignore_line"])
+    @pytest.mark.parametrize("handle_too_long", ["overflow", "ignore_line", "ignore_rest"])
     @pytest.mark.parametrize("alignment_type", ["auto", "fixed"])
     def test_simple(self, alignment_type, handle_too_long, widths: Tuple):
         if widths == (4, 4, 4) and handle_too_long == "ignore_line":
@@ -57,10 +57,10 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
         self.compare(source="settings.robot")
 
     def test_examples(self):
-        self.compare(source="example_cases.robot", config=":compact_overflow=True")
+        self.compare(source="example_cases.robot", config=":handle_too_long=compact_overflow")
 
     def test_compact_overflow_first_line(self):
-        self.compare(source="overflow_first_line.robot", config=":widths=24,28,20,20:compact_overflow=True")
+        self.compare(source="overflow_first_line.robot", config=":widths=24,28,20,20:handle_too_long=compact_overflow")
 
     @pytest.mark.parametrize("alignment_type", ["fixed", "auto"])
     @pytest.mark.parametrize("doc_mode", ["skip", "align_first_col"])
@@ -69,4 +69,17 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
             source="documentation.robot",
             expected=f"documentation_{alignment_type}_{doc_mode}.robot",
             config=f":documentation={doc_mode}:alignment_type={alignment_type}",
+        )
+
+    def test_skip_keyword_name(self):
+        # skip=keyword_name=lib.test
+        self.compare("example_cases.robot", config=":skip=keyword_name=lib.test")
+
+    @pytest.mark.parametrize("handle_too_long", ["overflow", "compact_overflow", "ignore_line", "ignore_rest"])
+    def test_auto_overflow_token_should_not_be_counted(self, handle_too_long):
+        expected = f"too_long_token_counter_{handle_too_long}.robot"
+        self.compare(
+            "too_long_token_counter.robot",
+            expected=expected,
+            config=f":alignment_type=auto:handle_too_long={handle_too_long}",
         )
