@@ -1,12 +1,12 @@
 import ast
-from enum import Enum
 import difflib
 import os
+from enum import Enum
 from typing import Iterable, List, Optional
 
 from click import style
 from packaging import version
-from robot.api.parsing import End, If, IfHeader, ModelVisitor, Token, Comment
+from robot.api.parsing import Comment, End, If, IfHeader, ModelVisitor, Token
 from robot.parsing.model import Statement
 from robot.utils.robotio import file_writer
 from robot.version import VERSION as RF_VERSION
