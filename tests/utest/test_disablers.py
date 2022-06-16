@@ -90,3 +90,43 @@ def test_skip_keyword_call(skip_config, names, disabled):
     for name, disable in zip(names, disabled):
         mock_node.keyword = name
         assert disable == skip.keyword_call(mock_node)
+
+
+@pytest.mark.parametrize(
+    "skip_config, names, disabled",
+    [
+        ("executejavascript", ["Execute Javascript"], [True]),
+        ("Execute Javascript", ["executejavascript"], [True]),
+        ("executejavascript", ["Keyword"], [False]),
+        ("Execute", ["Execute Javascript"], [True]),
+        ("Execute1", ["Execute Javascript"], [False]),
+        ("Execute", ["Execute Javascript", "Execute Other Stuff", "Keyword"], [True, True, False]),
+        ("Library.", ["Library.Stuff", "Library2.Stuff", "library.Other_stuff", "library"], [True, False, True, False]),
+        (None, ["Execute Javascript"], [False]),
+        ("executejavascript", [None], [False]),
+    ],
+)
+def test_skip_keyword_call_starts_with(skip_config, names, disabled):
+    mock_node = Mock()
+    skip = Skip(keyword_call_starts_with=skip_config)
+    for name, disable in zip(names, disabled):
+        mock_node.keyword = name
+        assert disable == skip.keyword_call(mock_node)
+
+
+@pytest.mark.parametrize(
+    "skip_config, names, disabled",
+    [
+        ("java", ["Java", "javascript", "script"], [True, True, False]),
+        ("javascript", ["java", "javascript", "Execute Javascript"], [False, True, True]),
+        ("Library.", ["Library.Stuff", "Library2.Stuff", "library.Other_stuff", "library"], [True, False, True, False]),
+        (None, ["Keyword"], [False]),
+        ("Keyword", [None], [False]),
+    ],
+)
+def test_skip_keyword_call_contains(skip_config, names, disabled):
+    mock_node = Mock()
+    skip = Skip(keyword_call_contains=skip_config)
+    for name, disable in zip(names, disabled):
+        mock_node.keyword = name
+        assert disable == skip.keyword_call(mock_node)
