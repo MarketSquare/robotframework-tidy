@@ -61,4 +61,5 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
             expected=f"inline_if_{indent}indent_{spaces}spaces.robot",
             config=f" --spacecount {spaces} --indent {indent}",
             not_modified=not_modified,
+            target_version=5,
         )
