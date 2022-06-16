@@ -181,8 +181,10 @@ class RegisterDisablers(ModelVisitor):
                     self.disablers.add_disabler(node.lineno, node.end_lineno)
 
 
-def parse_csv(value):
-    return value.split(",")
+def parse_and_normalize_csv(value):
+    if not value:
+        return []
+    return [normalize_name(val) for val in value.split(",")]
 
 
 class Skip:
@@ -198,9 +200,9 @@ class Skip:
     ):
         self.return_values = return_values
         self.documentation = documentation
-        self.keyword_call_names = set(parse_csv(keyword_call))
-        self.keyword_call_startswith = set(parse_csv(keyword_call))
-        self.keyword_call_contains = set(parse_csv(keyword_call))
+        self.keyword_call_names = set(parse_and_normalize_csv(keyword_call))
+        self.keyword_call_startswith = set(parse_and_normalize_csv(keyword_call_starts_with))
+        self.keyword_call_contains = set(parse_and_normalize_csv(keyword_call_contains))
         self.any_keword_call = self.check_any_keyword_call()
 
     def check_any_keyword_call(self):

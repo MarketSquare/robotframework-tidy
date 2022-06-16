@@ -4,7 +4,7 @@ from unittest.mock import Mock
 import pytest
 from robot.api import get_model
 
-from robotidy.disablers import DisabledLines, RegisterDisablers
+from robotidy.disablers import DisabledLines, RegisterDisablers, Skip
 from robotidy.utils import ROBOT_VERSION
 
 
@@ -66,3 +66,27 @@ def test_register_disablers(test_file, expected_lines, file_disabled, rf_version
     register_disablers.visit(model)
     assert register_disablers.disablers.lines == expected_lines
     assert register_disablers.file_disabled == file_disabled
+
+
+@pytest.mark.parametrize(
+    "skip_config, names, disabled",
+    [
+        ("executejavascript", ["Execute Javascript"], [True]),
+        ("executejavascript", ["OtherLib.Execute Javascript"], [False]),
+        ("executejavascript", ["Keyword"], [False]),
+        ("Execute_Javascript", ["Keyword", "Execute_Javas cript"], [False, True]),
+        ("executejavascript", [None], [False]),
+        (None, ["Execute Javascript"], [False]),
+        (
+            "executejavascript,otherkeyword",
+            ["Execute Javascript", "Test Keyword", "Other_keyword"],
+            [True, False, True],
+        ),
+    ],
+)
+def test_skip_keyword_call(skip_config, names, disabled):
+    mock_node = Mock()
+    skip = Skip(keyword_call=skip_config)
+    for name, disable in zip(names, disabled):
+        mock_node.keyword = name
+        assert disable == skip.keyword_call(mock_node)
