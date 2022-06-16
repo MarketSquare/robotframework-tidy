@@ -89,7 +89,7 @@ class AlignKeywordsSection(ModelTransformer):
                 "doc_mode",
                 doc_mode,
                 "Chose between two modes: 'skip' (default - do not align documentation) or "
-                "'align_first_col' (align first documentation indentation).",
+                "'align_first_col' (align first indent in the documentation).",
             )
         return doc_mode == "skip"
 
@@ -131,7 +131,7 @@ class AlignKeywordsSection(ModelTransformer):
 
     visit_While = visit_For
 
-    def get_width(self, col, skip_default_zero=False):
+    def get_width(self, col, override_default_zero=False):
         # If auto mode is enabled, use auto widths for current context (last defined widths)
         if self.auto_widths:
             widths = self.auto_widths[-1]
@@ -142,7 +142,7 @@ class AlignKeywordsSection(ModelTransformer):
         if col in widths:
             return widths[col]
         width = widths[len(widths) - 1]  # if there is no such column, use last column width
-        if skip_default_zero and width == 0:  # edge case where 0 is last of widths and we're overflowing
+        if override_default_zero and width == 0:  # edge case where 0 is last of widths and we're overflowing
             return self.formatting_config.space_count
         return width
 
@@ -261,7 +261,7 @@ class AlignKeywordsSection(ModelTransformer):
                         else:
                             while round_to_four(len(token.value) + separator) > width:
                                 column += 1
-                                width += self.get_width(column, skip_default_zero=True)
+                                width += self.get_width(column, override_default_zero=True)
                             separator_len = width - len(token.value)
                 aligned_statement.append(Token(Token.SEPARATOR, separator_len * " "))
                 column += 1
