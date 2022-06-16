@@ -8,12 +8,13 @@ try:
 except ImportError:
     InlineIfHeader, TryHeader = None, None
 
-from robotidy.disablers import skip_if_disabled
+from robotidy.disablers import Skip, skip_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.transformers import Transformer
 from robotidy.utils import is_blank_multiline, round_to_four, tokens_by_lines
 
 
-class AlignKeywordsSection(ModelTransformer):
+class AlignKeywordsSection(Transformer):
     """
     Short description in one line.
 
@@ -28,14 +29,24 @@ class AlignKeywordsSection(ModelTransformer):
         widths: str = "",
         alignment_type: str = "fixed",
         handle_too_long: str = "overflow",
-        documentation: str = "skip",
-        skip: str = "",
+        skip_documentation: bool = True,
+        skip_return_values: bool = False,
+        skip_keyword_call: str = "",
+        skip_keyword_call_contains: str = "",
+        skip_keyword_call_starts_with: str = "",
     ):
+        skip = Skip(
+            documentation=skip_documentation,
+            return_vales=skip_return_values,
+            keyword_call=skip_keyword_call,
+            keyword_call_contains=skip_keyword_call_contains,
+            keyword_call_starts_with=skip_keyword_call_starts_with,
+        )
+        super().__init__(skip)
         self.is_inline = False
         self.indent = 1
         self.handle_too_long = self.parse_handle_too_long(handle_too_long)
         self.fixed_alignment = self.parse_alignment_type(alignment_type)
-        self.skip_documentation = self.parse_documentation_mode(documentation)
         # column widths map - 0: 40, 1: 30
         if widths:
             self.widths = self.parse_widths(widths)
