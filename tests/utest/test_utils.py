@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from robotidy.app import Robotidy
+from robotidy.config import Config
 from robotidy.utils import ROBOT_VERSION, GlobalFormattingConfig, decorate_diff_with_color, split_args_from_name_or_path
 
 
@@ -12,7 +13,7 @@ def app():
     formatting_config = GlobalFormattingConfig(
         space_count=4, indent=4, line_sep="auto", start_line=None, separator="space", end_line=None, line_length=120
     )
-    return Robotidy(
+    config = Config(
         transformers=[],
         transformers_config=[],
         src=(".",),
@@ -21,13 +22,16 @@ def app():
         skip_gitignore=False,
         overwrite=False,
         show_diff=False,
-        formatting_config=formatting_config,
+        formatting=formatting_config,
         verbose=False,
         check=False,
         output=None,
         force_order=False,
         target_version=ROBOT_VERSION.major,
         color=True,
+    )
+    return Robotidy(
+        config=config,
     )
 
 
@@ -97,7 +101,7 @@ class TestUtils:
     )
     def test_get_line_ending(self, line_sep, source_file, expected, app):
         source = str(Path(__file__).parent / "testdata" / "auto_line_sep" / source_file)
-        app.formatting_config = GlobalFormattingConfig(
+        app.config.formatting = GlobalFormattingConfig(
             space_count=4,
             indent=4,
             line_sep=line_sep,

@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional, Pattern, Tuple, Union
 import rich_click as click
 
 from robotidy.app import Robotidy
+from robotidy.config import Config
 from robotidy.decorators import catch_exceptions
 from robotidy.files import DEFAULT_EXCLUDES, find_and_read_config, read_pyproject_config
 from robotidy.rich_console import console
@@ -448,7 +449,7 @@ def cli(
     if color:
         color = "NO_COLOR" not in os.environ
 
-    formatting_config = GlobalFormattingConfig(
+    formatting = GlobalFormattingConfig(
         space_count=spacecount,
         indent=indent,
         line_sep=lineseparator,
@@ -457,7 +458,8 @@ def cli(
         end_line=endline,
         line_length=line_length,
     )
-    tidy = Robotidy(
+    config = Config(
+        formatting=formatting,
         transformers=transform,
         transformers_config=configure,
         src=src,
@@ -466,7 +468,6 @@ def cli(
         skip_gitignore=skip_gitignore,
         overwrite=overwrite,
         show_diff=diff,
-        formatting_config=formatting_config,
         verbose=verbose,
         check=check,
         output=output,
@@ -474,5 +475,6 @@ def cli(
         target_version=target_version,
         color=color,
     )
+    tidy = Robotidy(config=config)
     status = tidy.transform_files()
     sys.exit(status)
