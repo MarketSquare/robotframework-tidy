@@ -13,6 +13,9 @@ Suite Setup         Run Keywords
 ...                     No Operation
 ```
 
+### Fixes
+- Extended encoding (such as characters like ÁáÉéĚěÍíÓóÚúÝýŮůŘřŤťŠšĎďŽžČčŇň) are now supported in ``--diff`` mode ([#324](https://github.com/MarketSquare/robotframework-tidy/issues/324))
+
 ## 2.5
 
 ### Indent run keywords
