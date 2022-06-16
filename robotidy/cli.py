@@ -8,18 +8,12 @@ from typing import Any, Dict, List, Optional, Pattern, Tuple, Union
 import rich_click as click
 
 from robotidy.app import Robotidy
-from robotidy.config import Config
+from robotidy.config import Config, FormattingConfig
 from robotidy.decorators import catch_exceptions
 from robotidy.files import DEFAULT_EXCLUDES, find_and_read_config, read_pyproject_config
 from robotidy.rich_console import console
 from robotidy.transformers import load_transformers
-from robotidy.utils import (
-    ROBOT_VERSION,
-    GlobalFormattingConfig,
-    RecommendationFinder,
-    TargetVersion,
-    split_args_from_name_or_path,
-)
+from robotidy.utils import ROBOT_VERSION, RecommendationFinder, TargetVersion, split_args_from_name_or_path
 from robotidy.version import __version__
 
 click.rich_click.USE_RICH_MARKUP = True
@@ -53,6 +47,7 @@ click.rich_click.OPTION_GROUPS = {
             "options": [
                 "--spacecount",
                 "--indent",
+                "--continuation-indent",
                 "--line-length",
                 "--lineseparator",
                 "--separator",
@@ -303,6 +298,13 @@ def print_transformers_list(target_version: int):
     help="The number of spaces to be used as indentation [default: same as --spacecount value]",
 )
 @click.option(
+    "--continuation-indent",
+    type=click.types.INT,
+    default=None,
+    help="The number of spaces to be used as separator after ... (line continuation) token "
+    "[default: same as --spacecount value]",
+)
+@click.option(
     "-ls",
     "--lineseparator",
     type=click.types.Choice(["native", "windows", "unix", "auto"]),
@@ -403,6 +405,7 @@ def cli(
     check: bool,
     spacecount: int,
     indent: Optional[int],
+    continuation_indent: Optional[int],
     lineseparator: str,
     verbose: bool,
     config: Optional[str],
@@ -443,15 +446,13 @@ def cli(
         # None is default, with check not set -> overwrite, with check set -> overwrite only when overwrite flag is set
         overwrite = not check
 
-    if indent is None:
-        indent = spacecount
-
     if color:
         color = "NO_COLOR" not in os.environ
 
-    formatting = GlobalFormattingConfig(
+    formatting = FormattingConfig(
         space_count=spacecount,
         indent=indent,
+        continuation_indent=continuation_indent,
         line_sep=lineseparator,
         start_line=startline,
         separator=separator,
