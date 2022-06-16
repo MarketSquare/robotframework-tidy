@@ -4,10 +4,11 @@ from robot.api.parsing import ModelTransformer, Token
 from robot.parsing.model import Statement
 
 from robotidy.disablers import skip_section_if_disabled
+from robotidy.transformers import Transformer
 from robotidy.utils import is_blank_multiline, left_align, round_to_four, tokens_by_lines
 
 
-class AlignSettingsSection(ModelTransformer):
+class AlignSettingsSection(Transformer):
     """
     Align statements in ``*** Settings ***`` section to columns.
 
@@ -69,6 +70,7 @@ class AlignSettingsSection(ModelTransformer):
     }
 
     def __init__(self, up_to_column: int = 2, argument_indent: int = 4, min_width: int = None):
+        super().__init__()
         self.up_to_column = up_to_column - 1
         self.argument_indent = argument_indent
         self.min_width = min_width

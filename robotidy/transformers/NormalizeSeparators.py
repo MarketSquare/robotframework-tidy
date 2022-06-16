@@ -1,17 +1,16 @@
-from itertools import takewhile
-
-from robot.api.parsing import ModelTransformer, Token
+from robot.api.parsing import Token
 
 try:
     from robot.api.parsing import InlineIfHeader
 except ImportError:
     InlineIfHeader = None
 
-from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
+from robotidy.disablers import Skip, skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.transformers import Transformer
 
 
-class NormalizeSeparators(ModelTransformer):
+class NormalizeSeparators(Transformer):
     """
     Normalize separators and indents.
 
@@ -27,9 +26,10 @@ class NormalizeSeparators(ModelTransformer):
     """
 
     def __init__(self, sections: str = None, skip_documentation: bool = False):
+        skip = Skip(documentation=skip_documentation)
+        super().__init__(skip=skip)
         self.indent = 0
         self.sections = self.parse_sections(sections)
-        self.skip_documentation = skip_documentation
         self.is_inline = False
 
     def parse_sections(self, sections):
@@ -133,7 +133,7 @@ class NormalizeSeparators(ModelTransformer):
         return node
 
     def visit_Documentation(self, doc):  # noqa
-        if self.skip_documentation:
+        if self.skip.documentation:
             has_pipes = doc.tokens[0].value.startswith("|")
             return self._handle_spaces(doc, has_pipes, only_indent=True)
         return self.visit_Statement(doc)

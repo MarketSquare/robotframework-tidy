@@ -8,10 +8,11 @@ except ImportError:
     ReturnStatement, Break, Continue, InlineIfHeader = None, None, None, None
 
 from robotidy.disablers import skip_section_if_disabled
-from robotidy.utils import ROBOT_VERSION, flatten_multiline, get_comments, normalize_name
+from robotidy.transformers import Transformer
+from robotidy.utils import flatten_multiline, get_comments, normalize_name
 
 
-class InlineIf(ModelTransformer):
+class InlineIf(Transformer):
     """
     Replaces IF blocks with inline IF.
 
@@ -59,6 +60,7 @@ class InlineIf(ModelTransformer):
     MIN_VERSION = 5
 
     def __init__(self, line_length: int = 80, skip_else: bool = False):
+        super().__init__()
         self.line_length = line_length
         self.skip_else = skip_else
 

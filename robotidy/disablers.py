@@ -3,6 +3,8 @@ import re
 
 from robot.api.parsing import Comment, ModelVisitor, Token
 
+from robotidy.utils import normalize_name
+
 
 def skip_if_disabled(func):
     """
@@ -177,3 +179,49 @@ class RegisterDisablers(ModelVisitor):
                 disabler = self.get_disabler(comment)
                 if disabler and disabler.group("disabler") == "off":
                     self.disablers.add_disabler(node.lineno, node.end_lineno)
+
+
+def parse_csv(value):
+    return value.split(",")
+
+
+class Skip:
+    """Defines global skip conditions for each transformer."""
+
+    def __init__(
+        self,
+        documentation: bool = False,
+        return_values: bool = False,
+        keyword_call: str = "",
+        keyword_call_contains: str = "",
+        keyword_call_starts_with: str = "",
+    ):
+        self.return_values = return_values
+        self.documentation = documentation
+        self.keyword_call_names = set(parse_csv(keyword_call))
+        self.keyword_call_startswith = set(parse_csv(keyword_call))
+        self.keyword_call_contains = set(parse_csv(keyword_call))
+        self.any_keword_call = self.check_any_keyword_call()
+
+    def check_any_keyword_call(self):
+        if self.keyword_call_names:
+            return True
+        if self.keyword_call_startswith:
+            return True
+        if self.keyword_call_contains:
+            return True
+        return False
+
+    def keyword_call(self, node):
+        if not node.keyword or not self.any_keword_call:
+            return False
+        normalized = normalize_name(node.keyword)
+        if normalized in self.keyword_call_names:
+            return True
+        for name in self.keyword_call_startswith:
+            if normalized.startswith(name):
+                return True
+        for name in self.keyword_call_contains:
+            if name in normalized:
+                return True
+        return False

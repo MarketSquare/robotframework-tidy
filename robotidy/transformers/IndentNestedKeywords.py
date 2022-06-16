@@ -1,6 +1,7 @@
 from robot.api.parsing import ModelTransformer, Token
 
 from robotidy.disablers import skip_if_disabled
+from robotidy.transformers import Transformer
 from robotidy.utils import (
     collect_comments_from_tokens,
     get_new_line,
@@ -22,7 +23,7 @@ class RunKeywordVariant:
         self.split_on_and = split_on_and
 
 
-class IndentNestedKeywords(ModelTransformer):
+class IndentNestedKeywords(Transformer):
     """
     Format indentation inside run keywords variants such as ``Run Keywords`` or
     ``Run Keyword And Continue On Failure``.
@@ -88,6 +89,7 @@ class IndentNestedKeywords(ModelTransformer):
     ]
 
     def __init__(self, indent_and: bool = False, skip_settings: bool = False):
+        super().__init__()
         self.indent_and = indent_and
         self.skip_settings = skip_settings
         self.run_keywords = dict()

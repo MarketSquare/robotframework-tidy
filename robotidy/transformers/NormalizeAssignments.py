@@ -6,9 +6,10 @@ from robot.api.parsing import ModelTransformer, Token, Variable
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.transformers import Transformer
 
 
-class NormalizeAssignments(ModelTransformer):
+class NormalizeAssignments(Transformer):
     """
     Normalize assignments.
 
@@ -64,6 +65,7 @@ class NormalizeAssignments(ModelTransformer):
         equal_sign_type: str = "autodetect",
         equal_sign_type_variables: str = "remove",
     ):
+        super().__init__()
         self.remove_equal_sign = re.compile(r"\s?=$")
         self.file_equal_sign_type = None
         self.file_equal_sign_type_variables = None

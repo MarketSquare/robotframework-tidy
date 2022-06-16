@@ -6,16 +6,16 @@ from robot.api.parsing import (
     End,
     ForHeader,
     IfHeader,
-    ModelTransformer,
     ModelVisitor,
     Token,
 )
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
+from robotidy.transformers import Transformer
 from robotidy.utils import is_suite_templated, round_to_four
 
 
-class AlignTestCases(ModelTransformer):
+class AlignTestCases(Transformer):
     """
     Align Test Cases to columns.
 
@@ -51,6 +51,7 @@ class AlignTestCases(ModelTransformer):
     ENABLED = False
 
     def __init__(self, only_with_headers: bool = False, min_width: int = None):
+        super().__init__()
         self.only_with_headers = only_with_headers
         self.min_width = min_width
         self.widths = None
