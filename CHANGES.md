@@ -13,6 +13,9 @@ Suite Setup         Run Keywords
 ...                     No Operation
 ```
 
+### Fixes
+- ``spacecount`` parameter is now properly taken into account in inline IFs by NormalizeSeparators transformer ([#322](https://github.com/MarketSquare/robotframework-tidy/issues/322))
+
 ## 2.5
 
 ### Indent run keywords
