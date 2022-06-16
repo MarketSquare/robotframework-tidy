@@ -13,6 +13,9 @@ Suite Setup         Run Keywords
 ...                     No Operation
 ```
 
+### Fixes
+- ``indent`` parameter is now taken into account by ``NormalizeTags`` transformer ([#323](https://github.com/MarketSquare/robotframework-tidy/issues/323))
+
 ## 2.5
 
 ### Indent run keywords
