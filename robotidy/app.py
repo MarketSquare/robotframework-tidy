@@ -7,8 +7,10 @@ from typing import Dict, List, Optional, Pattern, Tuple
 
 try:
     import rich_click as click
-except ImportError:
+except ImportError:  # Fails on vendored-in LSP plugin
     import click
+
+    escape = None
 
 from robot.api import get_model
 from robot.errors import DataError
@@ -16,7 +18,18 @@ from robot.errors import DataError
 from robotidy.disablers import RegisterDisablers
 from robotidy.files import get_paths
 from robotidy.transformers import load_transformers
-from robotidy.utils import GlobalFormattingConfig, ModelWriter, StatementLinesCollector, decorate_diff_with_color
+from robotidy.utils import (
+    GlobalFormattingConfig,
+    ModelWriter,
+    StatementLinesCollector,
+    decorate_diff_with_color,
+    escape_rich_markup,
+)
+
+try:
+    from robotidy.rich_console import console
+except ImportError:  # Fails on vendored-in LSP plugin
+    console = None
 
 
 class Robotidy:
@@ -137,8 +150,9 @@ class Robotidy:
         if self.color:
             output = decorate_diff_with_color(lines)
         else:
-            output = "".join(lines)
-        click.echo(output.encode("ascii", "ignore").decode("ascii"), color=self.color)
+            output = escape_rich_markup(lines)
+        for line in output:
+            console.print(line, end="", highlight=False)
 
     @staticmethod
     def convert_configure(configure: List[Tuple[str, List]]) -> Dict[str, List]:
