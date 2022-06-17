@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.6.0
+
 ### IndentNestedKeywords
 The order of the transformers changed - now ``IndentNestedKeyword`` runs before ``AlignSettingsSection``. Thanks for 
 this change settings will be properly indented by other transformers after ``IndentNestedKeyword`` splits the keywords ([#318](https://github.com/MarketSquare/robotframework-tidy/issues/318)):
