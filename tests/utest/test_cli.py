@@ -429,7 +429,7 @@ class TestCli:
         [("", 4, 4), ("--spacecount 8 ", 8, 8), ("--indent 8 ", 4, 8), ("--spacecount 2 --indent 4 ", 2, 4)],
     )
     @patch("robotidy.cli.GlobalFormattingConfig")
-    @patch("robotidy.app.load_transformers")
+    @patch("robotidy.config.load_transformers")
     @patch.object(Robotidy, "transform_files")
     def test_spacecount_and_indent(
         self, mocked_transform, mocked_load, mocked_formatting, cmd, exp_spacecount, exp_indent
