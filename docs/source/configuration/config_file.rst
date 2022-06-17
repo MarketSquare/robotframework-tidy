@@ -27,6 +27,8 @@ See example:
     [tool.robotidy]
     overwrite = false
     diff = true
+    spacecount = 2
+    continuation-indent = 4
     startline = 10
     endline = 20
     transform = [

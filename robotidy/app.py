@@ -15,7 +15,7 @@ from robot.errors import DataError
 
 from robotidy.config import Config
 from robotidy.disablers import RegisterDisablers
-from robotidy.utils import GlobalFormattingConfig, ModelWriter, StatementLinesCollector, decorate_diff_with_color
+from robotidy.utils import ModelWriter, StatementLinesCollector, decorate_diff_with_color
 
 
 class Robotidy:

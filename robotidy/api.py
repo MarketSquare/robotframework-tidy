@@ -5,10 +5,10 @@ from typing import Optional
 
 from robotidy.app import Robotidy
 from robotidy.cli import TransformType, find_and_read_config, validate_regex
-from robotidy.config import Config
+from robotidy.config import Config, FormattingConfig
 from robotidy.disablers import RegisterDisablers
 from robotidy.files import DEFAULT_EXCLUDES
-from robotidy.utils import ROBOT_VERSION, GlobalFormattingConfig
+from robotidy.utils import ROBOT_VERSION
 
 
 def get_robotidy(src: str, output: Optional[str], **kwargs):
@@ -18,9 +18,12 @@ def get_robotidy(src: str, output: Optional[str], **kwargs):
     transformers = [converter.convert(tr, None, None) for tr in config.get("transform", ())]
     configurations = [converter.convert(c, None, None) for c in config.get("configure", ())]
     space_count = kwargs.get("spacecount", None) or int(config.get("spacecount", 4))
-    formatting_config = GlobalFormattingConfig(
+    indent = kwargs.get("indent", None) or int(config.get("indent", space_count))
+    cont_indent = kwargs.get("continuation_indent", None) or int(config.get("continuation_indent", space_count))
+    formatting_config = FormattingConfig(
         space_count=space_count,
-        indent=kwargs.get("indent", None) or int(config.get("indent", space_count)),
+        indent=indent,
+        continuation_indent=cont_indent,
         separator=kwargs.get("separator", None) or config.get("separator", "space"),
         line_sep=config.get("lineseparator", "native"),
         start_line=kwargs.get("startline", None) or int(config["startline"]) if "startline" in config else None,
