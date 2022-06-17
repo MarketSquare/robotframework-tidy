@@ -113,16 +113,17 @@ class SplitTooLongLine(ModelTransformer):
 
     def split_keyword_call(self, node):
         separator = Token(Token.SEPARATOR, self.formatting_config.separator)
+        cont_indent = Token(Token.SEPARATOR, self.formatting_config.continuation_indent)
         indent = node.tokens[0]
 
         keyword = node.get_token(Token.KEYWORD)
         line = [indent, *self.join_on_separator(node.get_tokens(Token.ASSIGN), separator), keyword]
         if not self.col_fit_in_line(line):
             head = [
-                *self.split_to_multiple_lines(node.get_tokens(Token.ASSIGN), indent=indent, separator=separator),
+                *self.split_to_multiple_lines(node.get_tokens(Token.ASSIGN), indent=indent, separator=cont_indent),
                 indent,
                 CONTINUATION,
-                separator,
+                cont_indent,
                 keyword,
             ]
             line = []
@@ -160,7 +161,7 @@ class SplitTooLongLine(ModelTransformer):
                 if self.split_on_every_arg or not self.col_fit_in_line(line + [separator, token]):
                     line.append(EOL)
                     head += line
-                    line = [indent, CONTINUATION, separator, token]
+                    line = [indent, CONTINUATION, cont_indent, token]
                 else:
                     line += [separator, token]
 

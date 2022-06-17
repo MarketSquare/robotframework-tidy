@@ -52,3 +52,17 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
 
     def test_disablers(self):
         self.compare(source="disablers.robot", config=":line_length=80", not_modified=True, target_version=5)
+
+    def test_continuation_indent(self):
+        self.compare(
+            source="continuation_indent.robot",
+            expected="continuation_indent_feed.robot",
+            config=":line_length=80:split_on_every_arg=False -s 2 --continuation-indent 4 --indent 2",
+            target_version=5,
+        )
+        self.compare(
+            source="continuation_indent.robot",
+            expected="continuation_indent_split.robot",
+            config=":line_length=80:split_on_every_arg=True -s 2 --continuation-indent 4 --indent 2",
+            target_version=5,
+        )

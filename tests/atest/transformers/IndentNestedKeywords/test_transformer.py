@@ -10,6 +10,13 @@ class TestIndentNestedKeywords(TransformerAcceptanceTest):
     def test_indent_and(self):
         self.compare(source="run_keyword.robot", expected="indent_and.robot", config=":indent_and=True")
 
+    def test_indent_and_continuation_indent(self):
+        self.compare(
+            source="run_keyword.robot",
+            expected="indent_and_2spaces_4cont_indent.robot",
+            config=":indent_and=True --spacecount 2 --continuation-indent 4",
+        )
+
     def test_comments(self):
         self.compare(source="comments.robot")
 

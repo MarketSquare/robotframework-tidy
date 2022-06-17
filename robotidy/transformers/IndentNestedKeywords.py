@@ -107,14 +107,18 @@ class IndentNestedKeywords(ModelTransformer):
             return None
         return self.parse_sub_kw(node.data_tokens[1:])
 
-    def get_separator(self, column=1):
-        return Token(Token.SEPARATOR, self.formatting_config.separator * column)
+    def get_separator(self, column=1, continuation=False):
+        if continuation:
+            separator = self.formatting_config.continuation_indent * column
+        else:
+            separator = self.formatting_config.separator * column
+        return Token(Token.SEPARATOR, separator)
 
     def parse_keyword_lines(self, lines, tokens, new_line, eol):
         separator = self.get_separator()
         for column, line in lines[1:]:
             tokens.extend(new_line)
-            tokens.append(self.get_separator(column))
+            tokens.append(self.get_separator(column, True))
             tokens.extend(join_tokens_with_token(line, separator))
         tokens.append(eol)
         return tokens
