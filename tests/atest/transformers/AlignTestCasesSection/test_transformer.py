@@ -23,8 +23,8 @@ class TestAlignTestCasesSection(TransformerAcceptanceTest):
     def test_one_column(self):
         self.compare(source="one_column.robot")
 
-    # def test_invalid(self):
-    #     self.compare(source="non_ascii_spaces.robot")
+    def test_invalid(self):
+        self.compare(source="non_ascii_spaces.robot")
 
     @pytest.mark.parametrize(
         "widths",

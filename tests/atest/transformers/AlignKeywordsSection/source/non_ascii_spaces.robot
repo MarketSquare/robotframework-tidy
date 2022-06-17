@@ -8,24 +8,6 @@ ${NO-BREAK SPACE} =         : :
 ${OGHAM SPACE MARK} =       : :  　  　# Trailing  　  　  　
 ${IDEOGRAPHIC　SPACE}　=    :　:  　  　  　  　  　  　
 
-*** Test Cases ***
-In test and keywords
-    [Documentation]    Used in keyword name, arguments and assign.
-    [ Tags ]    NBSP and Ogham
-    ${x} =    No-break space        : :
-    ${x} =    Ogham space mark       : :  　  　# Trailing  　  　  　
-    ${x}　=    Ideographic　space    :　:  　  　  　  　  　  　
-
-As separator
-    No-break space    : :
-     Ogham space mark    : :
-　　　　Ideographic　space　　　　:　:
-
-With pipes
-| | No-break space  | : : |
-| | Ogham space mark | : : |
-|　|　Ideographic　space　|　:　:　|
-
 *** Keywords ***
 No-break space
     [ Arguments ]    ${arg}
