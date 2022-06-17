@@ -21,3 +21,11 @@ Misaligned with empty
     Keyword
     ...                     misaligned
     ...                     arg
+
+Edge Cases
+    Set Library Search Order                        QWeb                    QMobile
+    Set Suite Variable      ${provider}
+    Login_D365              TEST_AUT_ERP_CLOUD
+
+    Log                     Navigate to Transfer order
+    Navigate_Modules        Inventory management>Outbound orders>Transfer order                     timeout=10s

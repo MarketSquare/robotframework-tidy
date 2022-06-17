@@ -14,7 +14,7 @@ from robotidy.transformers.aligners_core import AlignKeywordsTestsSection
 from robotidy.utils import is_blank_multiline, round_to_four, tokens_by_lines
 
 
-class AlignKeywordsSection(AlignKeywordsTestsSection):
+class AlignTestCasesSection(AlignKeywordsTestsSection):
     """
     Short description in one line.
 
@@ -44,7 +44,7 @@ class AlignKeywordsSection(AlignKeywordsTestsSection):
         )
 
     @skip_if_disabled
-    def visit_Keyword(self, node):  # noqa
+    def visit_TestCase(self, node):
         self.create_auto_widths_for_context(node)
         self.generic_visit(node)
         self.remove_auto_widths_for_context()

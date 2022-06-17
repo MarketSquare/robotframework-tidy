@@ -63,7 +63,7 @@ class NormalizeTags(Transformer):
         if indent:
             tag_node = tag_class.from_params(
                 tags,
-                indent=self.formatting_config.separator,
+                indent=self.formatting_config.indent,
                 separator=self.formatting_config.separator,
             )
         else:

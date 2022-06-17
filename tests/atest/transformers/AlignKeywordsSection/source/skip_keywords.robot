@@ -1,17 +1,17 @@
-*** Settings ***
-Documentation               This file contains examples of preferred output when run with command
-...                         robotidy --transform AlignKeywordsSection:widths=24,28,20,20:compact_overflow=True example_cases.robot
-...                         Exception is the  test "Examples where alignment to second column of Documentation text part would be nice to be possible" 
-...                         where optional preferred output is in the next test below that 
-
-*** Test Cases ***
-
+*** Keywords ***
 Exclude whole multiline case by rule "Should_Not_Be_None"
     Should_Not_Be_None      ${NIMIKEKUVAUS}   ${HINTA_OCC_ULKOINEN}   ${MITTAYKSIKKÖ}  ${NIMIKETYYPPI_OCC}  ${OSANUMERO}
     ...                     ${NIMIKE}  ${MÄÄRÄ}   ${MITTAYKSIKKÖ}   ${LÄHETYSOSOITE_OCC}   ${LASKUTUSOSOITE_OCC}
 
+    Should Be None    ${VALUE}
 
-Multiple return values ability to prevent alignment for return values
+    Should Contain Word    ${VALUE}
+
+    Prefix_starts_with    ${VALUE}
+    ...    ${VALUE}
+
+    not_prefix_starts_with    ${ARG}
+
     ${HINTA_YKSI}  ${HINTA_RIVI}  ${HINTA_TILAUS_ALV}  ${toimituspvm}=
     ...                     TiHa_MyyntitilausTarkista_Tiedot
     ...                     ${TILAUS_FUSION}            ${NIMIKE}           ${NIMIKEKUVAUS}     ${MÄÄRÄ}            ${MITTAYKSIKKÖ}     ${TILAUSPVM}

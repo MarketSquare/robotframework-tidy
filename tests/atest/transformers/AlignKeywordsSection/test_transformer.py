@@ -56,24 +56,24 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
     def test_settings(self):
         self.compare(source="settings.robot")
 
-    def test_examples(self):
-        self.compare(source="example_cases.robot", config=":handle_too_long=compact_overflow")
-
     def test_compact_overflow_first_line(self):
         self.compare(source="overflow_first_line.robot", config=":widths=24,28,20,20:handle_too_long=compact_overflow")
 
     @pytest.mark.parametrize("alignment_type", ["fixed", "auto"])
-    @pytest.mark.parametrize("doc_mode", ["skip", "align_first_col"])
-    def test_documentation(self, doc_mode, alignment_type):
+    @pytest.mark.parametrize("skip_doc", [True, False])
+    def test_documentation(self, skip_doc, alignment_type):
+        doc_formatting = "skip" if skip_doc else "align_first_col"
         self.compare(
             source="documentation.robot",
-            expected=f"documentation_{alignment_type}_{doc_mode}.robot",
-            config=f":documentation={doc_mode}:alignment_type={alignment_type}",
+            expected=f"documentation_{alignment_type}_{doc_formatting}.robot",
+            config=f":skip_documentation={skip_doc}:alignment_type={alignment_type}",
         )
 
     def test_skip_keyword_name(self):
-        # skip=keyword_name=lib.test
-        self.compare("example_cases.robot", config=":skip=keyword_name=lib.test")
+        self.compare(
+            "skip_keywords.robot",
+            config=":skip_keyword_call=should_not_be_none:skip_keyword_call_contains=contain:skip_keyword_call_starts_with=prefix",
+        )
 
     @pytest.mark.parametrize("handle_too_long", ["overflow", "compact_overflow", "ignore_line", "ignore_rest"])
     def test_auto_overflow_token_should_not_be_counted(self, handle_too_long):

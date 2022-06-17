@@ -1,4 +1,4 @@
-from robot.api.parsing import Token
+from robot.api.parsing import KeywordCall, Token
 
 try:
     from robot.api.parsing import InlineIfHeader
@@ -114,17 +114,9 @@ class NormalizeSeparators(Transformer):
             return node
         self.is_inline = InlineIfHeader and isinstance(node.header, InlineIfHeader)
         self.visit_Statement(node.header)
-        indent = 1
-        if self.is_inline:
-            indent = self.indent
-            self.indent = 1
-        else:
-            self.indent += 1
+        self.indent += 1
         node.body = [self.visit(item) for item in node.body]
-        if self.is_inline:
-            self.indent = indent
-        else:
-            self.indent -= 1
+        self.indent -= 1
         if node.orelse:
             self.visit(node.orelse)
         if node.end:
@@ -137,6 +129,9 @@ class NormalizeSeparators(Transformer):
             has_pipes = doc.tokens[0].value.startswith("|")
             return self._handle_spaces(doc, has_pipes, only_indent=True)
         return self.visit_Statement(doc)
+
+    def is_keyword_inside_inline_if(self, node):
+        return self.is_inline and isinstance(node, KeywordCall)
 
     @skip_if_disabled
     def visit_Statement(self, statement):  # noqa
@@ -153,7 +148,7 @@ class NormalizeSeparators(Transformer):
                     if prev_sep:
                         continue
                     prev_sep = True
-                    if index == 0:
+                    if index == 0 and not self.is_keyword_inside_inline_if(statement):
                         token.value = self.formatting_config.indent * self.indent
                     elif not only_indent:
                         if prev_token and prev_token.type == Token.CONTINUATION:
