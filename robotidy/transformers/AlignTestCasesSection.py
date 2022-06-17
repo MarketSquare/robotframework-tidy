@@ -1,17 +1,11 @@
-from collections import defaultdict
-
-from robot.api.parsing import ElseHeader, ElseIfHeader, ModelVisitor, Token
-from robot.parsing.model import Statement
-
 try:
     from robot.api.parsing import InlineIfHeader, TryHeader
 except ImportError:
     InlineIfHeader, TryHeader = None, None
 
 from robotidy.disablers import skip_if_disabled
-from robotidy.transformers import Transformer
 from robotidy.transformers.aligners_core import AlignKeywordsTestsSection
-from robotidy.utils import is_blank_multiline, round_to_four, tokens_by_lines
+from robotidy.utils import is_suite_templated
 
 
 class AlignTestCasesSection(AlignKeywordsTestsSection):
@@ -43,9 +37,17 @@ class AlignTestCasesSection(AlignKeywordsTestsSection):
             skip_keyword_call_starts_with,
         )
 
+    def visit_File(self, node):  # noqa
+        if is_suite_templated(node):
+            return node
+        return self.generic_visit(node)
+
     @skip_if_disabled
-    def visit_TestCase(self, node):
+    def visit_TestCase(self, node):  # noqa
         self.create_auto_widths_for_context(node)
         self.generic_visit(node)
         self.remove_auto_widths_for_context()
+        return node
+
+    def visit_Keyword(self, node):  # noqa
         return node

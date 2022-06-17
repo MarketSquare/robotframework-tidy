@@ -1,14 +1,16 @@
-.. _AlignTestCases:
+.. _AlignTemplatedTestCases:
 
-AlignTestCases
+AlignTemplatedTestCases
 ================================
 
-Align Test Cases to columns.
+Align templated Test Cases to columns.
+
+For non-templated test cases use ``AlignTestCasesSection`` transformer.
 
 .. |TRANSFORMERNAME| replace:: AlignTestCases
 .. include:: disabled_hint.txt
 
-Currently only templated tests are supported. Examples:
+Examples:
 
 .. tabs::
 

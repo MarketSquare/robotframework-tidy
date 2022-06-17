@@ -38,7 +38,7 @@ TRANSFORMERS = [
     "IndentNestedKeywords",
     "AlignSettingsSection",
     "AlignVariablesSection",
-    "AlignTestCases",
+    "AlignTemplatedTestCases",
     "AlignTestCasesSection",
     "AlignKeywordsSection",
     "NormalizeNewLines",

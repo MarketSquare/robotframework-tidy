@@ -15,11 +15,11 @@ from robotidy.transformers import Transformer
 from robotidy.utils import is_suite_templated, round_to_four
 
 
-class AlignTestCases(Transformer):
+class AlignTemplatedTestCases(Transformer):
     """
-    Align Test Cases to columns.
+    Align templated Test Cases to columns.
 
-    Currently only templated tests are supported. Following code:
+    Following code:
 
     ```robotframework
     *** Test Cases ***    baz    qux
@@ -44,6 +44,8 @@ class AlignTestCases(Transformer):
     ```
     robotidy -c AlignSettingsSection:only_with_hedaers:True <src>
     ```
+
+    For non-templated test cases use ``AlignTestCasesSection`` transformer.
 
     Supports global formatting params: ``--startline``, ``--endline``.
     """

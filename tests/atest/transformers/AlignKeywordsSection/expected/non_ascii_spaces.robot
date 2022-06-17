@@ -33,7 +33,7 @@ Ideographic　space
     Should　be　equal         ${arg}                  ${IDEOGRAPHIC SPACE}
     Should　be　equal         ${arg}                  ${IDEOGRAPHIC　SPACE}
 
-*** Test Cases　***
+*** Keywords　***
 In header
     No operation
 

@@ -30,3 +30,13 @@ Edge Cases
 
     Log    Navigate to Transfer order
     Navigate_Modules    Inventory management>Outbound orders>Transfer order    timeout=10s
+
+
+*** Test Cases ***
+Keyword
+    Single column
+      One column
+    No args
+    Args
+    ...
+    ...    In Last

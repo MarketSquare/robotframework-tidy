@@ -89,3 +89,6 @@ class TestAlignTestCasesSection(TransformerAcceptanceTest):
 
     def test_compact_overflow_last_0(self):
         self.compare(source="compact_overflow_last_0.robot", config=":widths=4,0")
+
+    def test_templated(self):
+        self.compare(source="templated.robot", not_modified=True)

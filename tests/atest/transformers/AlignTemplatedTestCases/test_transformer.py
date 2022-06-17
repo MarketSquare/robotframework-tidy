@@ -3,8 +3,8 @@ import pytest
 from .. import TransformerAcceptanceTest
 
 
-class TestAlignTestCases(TransformerAcceptanceTest):
-    TRANSFORMER_NAME = "AlignTestCases"
+class TestAlignTemplatedTestCases(TransformerAcceptanceTest):
+    TRANSFORMER_NAME = "AlignTemplatedTestCases"
 
     @pytest.mark.parametrize(
         "source",
