@@ -1,4 +1,4 @@
-*** Keywords ***
+*** Test Cases ***
 Exclude whole multiline case by rule "Should_Not_Be_None"
     Should_Not_Be_None      ${NIMIKEKUVAUS}   ${HINTA_OCC_ULKOINEN}   ${MITTAYKSIKKÖ}  ${NIMIKETYYPPI_OCC}  ${OSANUMERO}
     ...                     ${NIMIKE}  ${MÄÄRÄ}   ${MITTAYKSIKKÖ}   ${LÄHETYSOSOITE_OCC}   ${LASKUTUSOSOITE_OCC}

@@ -39,6 +39,7 @@ TRANSFORMERS = [
     "AlignSettingsSection",
     "AlignVariablesSection",
     "AlignTestCases",
+    "AlignTestCasesSection",
     "AlignKeywordsSection",
     "NormalizeNewLines",
     "NormalizeSectionHeaderName",

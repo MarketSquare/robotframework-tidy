@@ -236,7 +236,7 @@ class AlignKeywordsTestsSection(Transformer):
             column = 0
             for token in tokens[:-2]:
                 aligned_statement.append(token)
-                if fixed_separator:  # ignore_rest is on
+                if fixed_separator or (self.skip.return_values and token.type == Token.ASSIGN):
                     aligned_statement.append(Token(Token.SEPARATOR, separator * " "))
                     continue
                 width = self.get_width(column)
@@ -268,7 +268,7 @@ class AlignKeywordsTestsSection(Transformer):
 
     visit_Arguments = (
         visit_Setup
-    ) = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags = visit_KeywordCall  # TODO skip
+    ) = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags = visit_KeywordCall
 
 
 def strip_extra_whitespace(token):

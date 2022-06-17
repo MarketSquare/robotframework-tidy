@@ -5,8 +5,8 @@ import pytest
 from .. import TransformerAcceptanceTest
 
 
-class TestAlignKeywordsSection(TransformerAcceptanceTest):
-    TRANSFORMER_NAME = "AlignKeywordsSection"
+class TestAlignTestCasesSection(TransformerAcceptanceTest):
+    TRANSFORMER_NAME = "AlignTestCasesSection"
 
     def test_blocks(self):
         self.compare(source="blocks.robot")

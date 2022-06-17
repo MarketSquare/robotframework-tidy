@@ -215,7 +215,7 @@ class Skip:
         return False
 
     def keyword_call(self, node):
-        if not node.keyword or not self.any_keword_call:
+        if not getattr(node, "keyword", None) or not self.any_keword_call:
             return False
         normalized = normalize_name(node.keyword)
         if normalized in self.keyword_call_names:
