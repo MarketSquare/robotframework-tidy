@@ -2,9 +2,27 @@
 
 ## Unreleased
 
-## 2.5
+### Other
+- Robotidy transformers now inherits from ``Transformer`` core class (instead of ``ModelTransformer``). 
+ ``ModelTransformer`` will be still supported in external transformers, however the ``Transformer`` will provide 
+  more utility over the time.
 
-## Indent run keywords
+## 2.6.0
+
+### IndentNestedKeywords
+The order of the transformers changed - now ``IndentNestedKeyword`` runs before ``AlignSettingsSection``. Thanks for 
+this change settings will be properly indented by other transformers after ``IndentNestedKeyword`` splits the keywords ([#318](https://github.com/MarketSquare/robotframework-tidy/issues/318)):
+
+```robotframework
+*** Settings ***
+Suite Setup         Run Keywords
+...                     No Operation
+...                     No Operation
+```
+
+## 2.5.0
+
+### Indent run keywords
 
 New ``IndentNestedKeywords`` transformer for formatting whitespace in run keywords variants such as ``Run Keywords`` or 
 ``Run Keyword And Continue On Failure``. It will result in transforming following code:
@@ -23,7 +41,7 @@ Run Keyword
 ...        Log    baz
 ```
 
-# Remove empty lines in multiline statements
+### Remove empty lines in multiline statements
 ``NormalizeNewLines`` transformer now removes empty lines inside multiline statements:
 ```robotframework
 *** Keywords ***

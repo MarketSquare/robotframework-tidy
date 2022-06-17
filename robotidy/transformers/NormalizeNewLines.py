@@ -3,6 +3,7 @@ from typing import Optional
 from robot.api.parsing import EmptyLine, ModelTransformer, Token
 
 from robotidy.disablers import skip_section_if_disabled
+from robotidy.transformers import Transformer
 from robotidy.utils import is_suite_templated
 
 

@@ -2,6 +2,7 @@ from robot.api.parsing import ModelTransformer, Token
 from robot.utils.normalizing import normalize_whitespace
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
+from robotidy.transformers import Transformer
 
 
 class NormalizeSettingName(ModelTransformer):
@@ -37,6 +38,9 @@ class NormalizeSettingName(ModelTransformer):
 
     Supports global formatting params: ``--startline`` and ``--endline``.
     """
+
+    def __init__(self):
+        super().__init__()  # workaround for our dynamically imported classes with args from cli/config
 
     @skip_section_if_disabled
     def visit_Section(self, node):  # noqa

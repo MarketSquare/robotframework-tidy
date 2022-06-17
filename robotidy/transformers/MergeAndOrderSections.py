@@ -7,6 +7,7 @@ try:
     from robot.api.parsing import InlineIfHeader
 except ImportError:
     InlineIfHeader = None
+from robotidy.transformers import Transformer
 
 
 class MergeAndOrderSections(ModelTransformer):

@@ -9,15 +9,18 @@ If you don't want to run your transformer by default and only when calling robot
 then add ``ENABLED = False`` class attribute inside.
 """
 from itertools import chain
+from typing import Optional
 
 try:
     import rich_click as click
 except ImportError:
     import click
 
+from robot.api.parsing import ModelTransformer
 from robot.errors import DataError
 from robot.utils.importer import Importer
 
+from robotidy.disablers import Skip
 from robotidy.exceptions import ImportTransformerError, InvalidParameterError, InvalidParameterFormatError
 from robotidy.utils import ROBOT_VERSION, RecommendationFinder
 
@@ -32,6 +35,7 @@ TRANSFORMERS = [
     "OrderSettingsSection",
     "NormalizeTags",
     "OrderTags",
+    "IndentNestedKeywords",
     "AlignSettingsSection",
     "AlignVariablesSection",
     "AlignTestCases",
@@ -47,11 +51,17 @@ TRANSFORMERS = [
     "ReplaceReturns",
     "ReplaceBreakContinue",
     "InlineIf",
-    "IndentNestedKeywords",
 ]
 
 
 IMPORTER = Importer()
+
+
+class Transformer(ModelTransformer):
+    def __init__(self, skip: Optional[Skip] = None):
+        self.formatting_config = None  # to make lint happy (we're injecting the configs)
+        self.disablers = None
+        self.skip = skip
 
 
 def import_transformer(name, args):
