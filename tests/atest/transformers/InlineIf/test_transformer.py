@@ -1,3 +1,5 @@
+import pytest
+
 from .. import TransformerAcceptanceTest
 
 
@@ -18,3 +20,12 @@ class TestInlineIf(TransformerAcceptanceTest):
 
     def test_disablers(self):
         self.compare(source="test_disablers.robot")
+
+    @pytest.mark.parametrize("indent", [2, 4])
+    @pytest.mark.parametrize("spaces", [2, 4])
+    def test_one_if_spacing(self, spaces, indent):
+        self.compare(
+            source="one_if.robot",
+            expected=f"one_if_{spaces}spaces.robot",
+            config=f" --spacecount {spaces} --indent {indent}",
+        )
