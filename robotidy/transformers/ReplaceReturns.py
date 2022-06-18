@@ -1,5 +1,3 @@
-from typing import Iterable
-
 from robot.api.parsing import Comment, EmptyLine, ModelTransformer, Token
 
 try:
@@ -8,6 +6,7 @@ except ImportError:
     ReturnStatement = None
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
+from robotidy.transformers import Transformer
 from robotidy.utils import (
     ROBOT_VERSION,
     after_last_dot,
@@ -17,7 +16,7 @@ from robotidy.utils import (
 )
 
 
-class ReplaceReturns(ModelTransformer):
+class ReplaceReturns(Transformer):
     """
     Replace return statements (such as [Return] setting or Return From Keyword keyword) with RETURN statement.
 
@@ -55,6 +54,7 @@ class ReplaceReturns(ModelTransformer):
     MIN_VERSION = 5
 
     def __init__(self):
+        super().__init__()
         self.return_statement = None
 
     @skip_section_if_disabled

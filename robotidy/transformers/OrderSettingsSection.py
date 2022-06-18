@@ -5,9 +5,10 @@ from robot.libraries import STDLIBS
 
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.transformers import Transformer
 
 
-class OrderSettingsSection(ModelTransformer):
+class OrderSettingsSection(Transformer):
     """
     Order settings inside ``*** Settings ***`` section.
 
@@ -46,6 +47,7 @@ class OrderSettingsSection(ModelTransformer):
         settings_order: str = None,
         tags_order: str = None,
     ):
+        super().__init__()
         self.last_section = None
         self.disabled_group = set()
         self.new_lines_between_groups = new_lines_between_groups

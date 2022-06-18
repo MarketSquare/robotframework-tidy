@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Other
+- Robotidy transformers now inherits from ``Transformer`` core class (instead of ``ModelTransformer``). 
+ ``ModelTransformer`` will be still supported in external transformers, however the ``Transformer`` will provide 
+  more utility over the time.
+
 ## 2.6.0
 
 ### IndentNestedKeywords
@@ -20,7 +25,9 @@ Suite Setup         Run Keywords
 - ``indent`` parameter is now taken into account by ``NormalizeTags`` transformer ([#323](https://github.com/MarketSquare/robotframework-tidy/issues/323))
 - ``spacecount`` parameter is now taken into account in inline IFs by NormalizeSeparators transformer ([#322](https://github.com/MarketSquare/robotframework-tidy/issues/322))
 
-## 2.5
+
+
+## 2.5.0
 
 ### Indent run keywords
 

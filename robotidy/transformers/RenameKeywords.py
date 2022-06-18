@@ -2,10 +2,11 @@ import re
 import string
 from typing import Optional
 
-from robot.api.parsing import KeywordCall, ModelTransformer, Token
+from robot.api.parsing import ModelTransformer, Token
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.transformers import Transformer
 
 
 class RenameKeywords(ModelTransformer):

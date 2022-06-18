@@ -2,9 +2,10 @@ from robot.api.parsing import DefaultTags, ForceTags, ModelTransformer, Tags, To
 
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.transformers import Transformer
 
 
-class NormalizeTags(ModelTransformer):
+class NormalizeTags(Transformer):
     """
     Normalize tag names by normalizing case and removing duplicates.
     Example usage:
@@ -28,6 +29,7 @@ class NormalizeTags(ModelTransformer):
     }
 
     def __init__(self, case: str = "lowercase", normalize_case: bool = True):
+        super().__init__()
         self.case = case.lower()
         self.normalize_case = normalize_case
         try:
