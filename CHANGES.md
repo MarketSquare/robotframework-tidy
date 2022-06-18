@@ -20,14 +20,10 @@ Suite Setup         Run Keywords
 ...                     No Operation
 ```
 
-## 2.5.0
-
 ### Fixes
 - Extended encoding (such as characters like ÁáÉéĚěÍíÓóÚúÝýŮůŘřŤťŠšĎďŽžČčŇň) is now supported in ``--diff`` mode ([#324](https://github.com/MarketSquare/robotframework-tidy/issues/324))
 - ``indent`` parameter is now taken into account by ``NormalizeTags`` transformer ([#323](https://github.com/MarketSquare/robotframework-tidy/issues/323))
 - ``spacecount`` parameter is now taken into account in inline IFs by NormalizeSeparators transformer ([#322](https://github.com/MarketSquare/robotframework-tidy/issues/322))
-
-
 
 ## 2.5.0
 
