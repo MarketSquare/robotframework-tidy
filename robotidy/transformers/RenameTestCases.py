@@ -1,4 +1,3 @@
-import logging
 import re
 from typing import Optional
 
@@ -6,9 +5,10 @@ from robot.api.parsing import ModelTransformer, Token
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.transformers import Transformer
 
 
-class RenameTestCases(ModelTransformer):
+class RenameTestCases(Transformer):
     r"""
     Enforce test case naming.
 
@@ -68,6 +68,7 @@ class RenameTestCases(ModelTransformer):
         replace_to: Optional[str] = None,
         capitalize_each_word: bool = False,
     ):
+        super().__init__()
         try:
             self.replace_pattern = re.compile(replace_pattern) if replace_pattern is not None else None
         except re.error as err:

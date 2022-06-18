@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Other
+- Robotidy transformers now inherits from ``Transformer`` core class (instead of ``ModelTransformer``). 
+ ``ModelTransformer`` will be still supported in external transformers, however the ``Transformer`` will provide 
+  more utility over the time.
+
+## 2.6.0
+
 ### IndentNestedKeywords
 The order of the transformers changed - now ``IndentNestedKeyword`` runs before ``AlignSettingsSection``. Thanks for 
 this change settings will be properly indented by other transformers after ``IndentNestedKeyword`` splits the keywords ([#318](https://github.com/MarketSquare/robotframework-tidy/issues/318)):
@@ -13,7 +20,14 @@ Suite Setup         Run Keywords
 ...                     No Operation
 ```
 
-## 2.5
+### Fixes
+- Extended encoding (such as characters like ÁáÉéĚěÍíÓóÚúÝýŮůŘřŤťŠšĎďŽžČčŇň) is now supported in ``--diff`` mode ([#324](https://github.com/MarketSquare/robotframework-tidy/issues/324))
+- ``indent`` parameter is now taken into account by ``NormalizeTags`` transformer ([#323](https://github.com/MarketSquare/robotframework-tidy/issues/323))
+- ``spacecount`` parameter is now taken into account in inline IFs by NormalizeSeparators transformer ([#322](https://github.com/MarketSquare/robotframework-tidy/issues/322))
+
+
+
+## 2.5.0
 
 ### Indent run keywords
 

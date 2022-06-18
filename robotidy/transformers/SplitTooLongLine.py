@@ -5,13 +5,14 @@ try:
 except ImportError:
     InlineIfHeader = None
 from robotidy.disablers import skip_section_if_disabled
+from robotidy.transformers import Transformer
 from robotidy.utils import ROBOT_VERSION
 
 EOL = Token(Token.EOL)
 CONTINUATION = Token(Token.CONTINUATION)
 
 
-class SplitTooLongLine(ModelTransformer):
+class SplitTooLongLine(Transformer):
     """
     Split too long lines.
     If any line in keyword call exceeds given length limit (120 by default) it will be

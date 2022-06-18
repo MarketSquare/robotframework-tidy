@@ -1,9 +1,10 @@
 from robot.api.parsing import Comment, CommentSection, EmptyLine, ModelTransformer
 
 from robotidy.disablers import skip_section_if_disabled
+from robotidy.transformers import Transformer
 
 
-class DiscardEmptySections(ModelTransformer):
+class DiscardEmptySections(Transformer):
     """
     Remove empty sections.
     Sections are considered empty if there are only empty lines inside.
@@ -18,6 +19,7 @@ class DiscardEmptySections(ModelTransformer):
     """
 
     def __init__(self, allow_only_comments: bool = True):
+        super().__init__()
         # If False then sections with only with comments are considered to be empty
         self.allow_only_comments = allow_only_comments
 

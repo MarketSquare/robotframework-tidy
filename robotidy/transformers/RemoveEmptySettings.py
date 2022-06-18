@@ -4,10 +4,11 @@ from robot.api.parsing import ModelTransformer, Token
 
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.transformers import Transformer
 
 
 # TODO: preserve comments?
-class RemoveEmptySettings(ModelTransformer):
+class RemoveEmptySettings(Transformer):
     """
     Remove empty settings.
 
@@ -41,6 +42,7 @@ class RemoveEmptySettings(ModelTransformer):
     """
 
     def __init__(self, work_mode: str = "overwrite_ok", more_explicit: bool = True):
+        super().__init__()
         if work_mode not in ("overwrite_ok", "always"):
             raise InvalidParameterValueError(
                 self.__class__.__name__, "work_mode", work_mode, "Possible values:\n    overwrite_ok\n    always"

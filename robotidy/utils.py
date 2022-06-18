@@ -4,7 +4,11 @@ import os
 from enum import Enum
 from typing import Iterable, List
 
-from click import style
+try:
+    from rich.markup import escape
+except ImportError:  # Fails on vendored-in LSP plugin
+    escape = None
+
 from packaging import version
 from robot.api.parsing import Comment, End, If, IfHeader, ModelVisitor, Token
 from robot.parsing.model import Statement
@@ -36,19 +40,28 @@ class StatementLinesCollector(ModelVisitor):
         return other.text == self.text
 
 
-def decorate_diff_with_color(contents: List[str]) -> str:
-    """Inject the ANSI color codes to the diff."""
-    for i, line in enumerate(contents):
+def decorate_diff_with_color(contents: List[str]) -> List[str]:
+    """Decorate diff lines with rich console styles."""
+    lines = []
+    for line in contents:
+        style = None
         if line.startswith("+++") or line.startswith("---"):
-            line = style(line, bold=True, reset=True)
+            style = "bold"
         elif line.startswith("@@"):
-            line = style(line, fg="cyan", reset=True)
+            style = "cyan"
         elif line.startswith("+"):
-            line = style(line, fg="green", reset=True)
+            style = "green"
         elif line.startswith("-"):
-            line = style(line, fg="red", reset=True)
-        contents[i] = line
-    return "".join(contents)
+            style = "red"
+        line = escape(line)
+        if style:
+            line = f"[{style}]{line}"
+        lines.append(line)
+    return lines
+
+
+def escape_rich_markup(lines):
+    return [escape(line) for line in lines]
 
 
 def normalize_name(name):
