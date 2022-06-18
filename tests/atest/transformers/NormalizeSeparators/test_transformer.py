@@ -52,6 +52,10 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
     def test_skip_documentation(self):
         self.compare(source="test.robot", expected="skip_documentation.robot", config=":skip_documentation=True")
 
+
+    def test_continuation_indent(self):
+        self.compare(source="continuation_indent.robot", config=" --continuation-indent 4 --indent 4 --spacecount 2")
+
     @pytest.mark.parametrize("indent", [2, 4])
     @pytest.mark.parametrize("spaces", [2, 4])
     def test_inline_if(self, spaces, indent):
@@ -63,3 +67,4 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
             not_modified=not_modified,
             target_version=5,
         )
+

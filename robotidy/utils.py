@@ -2,7 +2,7 @@ import ast
 import difflib
 import os
 from enum import Enum
-from typing import Iterable, List, Optional
+from typing import Iterable, List
 
 try:
     from rich.markup import escape
@@ -38,39 +38,6 @@ class StatementLinesCollector(ModelVisitor):
 
     def __eq__(self, other):
         return other.text == self.text
-
-
-class GlobalFormattingConfig:
-    def __init__(
-        self,
-        space_count: int,
-        indent: int,
-        line_sep: str,
-        start_line: Optional[int],
-        end_line: Optional[int],
-        separator: str,
-        line_length: int,
-    ):
-        self.start_line = start_line
-        self.end_line = end_line
-        self.space_count = space_count
-        self.line_length = line_length
-
-        if separator == "space":
-            self.separator = " " * space_count
-            self.indent = " " * indent
-        elif separator == "tab":
-            self.separator = "\t"
-            self.indent = "\t"
-
-        if line_sep == "windows":
-            self.line_sep = "\r\n"
-        elif line_sep == "unix":
-            self.line_sep = "\n"
-        elif line_sep == "auto":
-            self.line_sep = "auto"
-        else:
-            self.line_sep = os.linesep
 
 
 def decorate_diff_with_color(contents: List[str]) -> List[str]:

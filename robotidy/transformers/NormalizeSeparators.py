@@ -140,6 +140,7 @@ class NormalizeSeparators(Transformer):
 
     def _handle_spaces(self, statement, has_pipes, only_indent=False):
         new_tokens = []
+        prev_token = None
         for line in statement.lines:
             prev_sep = False
             for index, token in enumerate(line):
@@ -150,9 +151,13 @@ class NormalizeSeparators(Transformer):
                     if index == 0 and not self.is_keyword_inside_inline_if(statement):
                         token.value = self.formatting_config.indent * self.indent
                     elif not only_indent:
-                        token.value = self.formatting_config.separator
+                        if prev_token and prev_token.type == Token.CONTINUATION:
+                            token.value = self.formatting_config.continuation_indent
+                        else:
+                            token.value = self.formatting_config.separator
                 else:
                     prev_sep = False
+                    prev_token = token
                 if has_pipes and index == len(line) - 2:
                     token.value = token.value.rstrip()
                 new_tokens.append(token)
