@@ -27,7 +27,9 @@ Suite Setup         Run Keywords
 - ``indent`` parameter is now taken into account by ``NormalizeTags`` transformer ([#323](https://github.com/MarketSquare/robotframework-tidy/issues/323))
 - ``spacecount`` parameter is now taken into account in inline IFs by NormalizeSeparators transformer ([#322](https://github.com/MarketSquare/robotframework-tidy/issues/322))
 
-## 2.5
+
+
+## 2.5.0
 
 ### Indent run keywords
 

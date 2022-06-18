@@ -17,8 +17,6 @@ from robot.errors import DataError
 
 from robotidy.config import Config
 from robotidy.disablers import RegisterDisablers
-from robotidy.files import get_paths
-from robotidy.transformers import load_transformers
 from robotidy.utils import ModelWriter, StatementLinesCollector, decorate_diff_with_color, escape_rich_markup
 
 try:
