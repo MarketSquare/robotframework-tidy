@@ -24,7 +24,7 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
         self.compare(source="one_column.robot")
 
     def test_invalid(self):
-        self.compare(source="non_ascii_spaces.robot")
+        self.compare(source="non_ascii_spaces.robot", target_version=5)
 
     @pytest.mark.parametrize(
         "widths",
