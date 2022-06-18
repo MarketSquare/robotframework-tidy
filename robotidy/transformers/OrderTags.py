@@ -1,9 +1,10 @@
 from robot.api.parsing import DefaultTags, ForceTags, ModelTransformer, Tags, Token
 
 from robotidy.disablers import skip_section_if_disabled
+from robotidy.transformers import Transformer
 
 
-class OrderTags(ModelTransformer):
+class OrderTags(Transformer):
     """
     Order tags.
 
@@ -49,6 +50,7 @@ class OrderTags(ModelTransformer):
         default_tags: bool = True,
         force_tags: bool = True,
     ):
+        super().__init__()
         self.key = self.get_key(case_sensitive)
         self.reverse = reverse
         self.default_tags = default_tags

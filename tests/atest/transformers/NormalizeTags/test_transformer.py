@@ -1,3 +1,5 @@
+import pytest
+
 from .. import TransformerAcceptanceTest
 
 
@@ -37,3 +39,12 @@ class TestNormalizeTags(TransformerAcceptanceTest):
 
     def test_disablers(self):
         self.compare(source="disablers.robot", not_modified=True)
+
+    @pytest.mark.parametrize("indent", [2, 4])
+    @pytest.mark.parametrize("spaces", [2, 4])
+    def test_spacing(self, spaces, indent):
+        self.compare(
+            source="spacing.robot",
+            expected=f"spacing_{indent}indent_{spaces}spaces.robot",
+            config=f" --spacecount {spaces} --indent {indent}",
+        )

@@ -2,9 +2,10 @@ from robot.api.parsing import EmptyLine, ModelTransformer
 from robot.parsing.model.blocks import Keyword
 
 from robotidy.disablers import skip_section_if_disabled
+from robotidy.transformers import Transformer
 
 
-class SmartSortKeywords(ModelTransformer):
+class SmartSortKeywords(Transformer):
     """
     Sort keywords in ``*** Keywords ***`` section.
 
@@ -56,6 +57,7 @@ class SmartSortKeywords(ModelTransformer):
         ignore_leading_underscore=False,
         ignore_other_underscore=True,
     ):
+        super().__init__()
         self.ci = case_insensitive
         self.ilu = ignore_leading_underscore
         self.iou = ignore_other_underscore

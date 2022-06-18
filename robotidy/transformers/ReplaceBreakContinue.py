@@ -8,10 +8,11 @@ except ImportError:
     Continue, Break = None, None
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
-from robotidy.utils import ROBOT_VERSION, after_last_dot, normalize_name, wrap_in_if_and_replace_statement
+from robotidy.transformers import Transformer
+from robotidy.utils import after_last_dot, normalize_name, wrap_in_if_and_replace_statement
 
 
-class ReplaceBreakContinue(ModelTransformer):
+class ReplaceBreakContinue(Transformer):
     """
     Replace Continue For Loop and Exit For Loop keyword variants with CONTINUE and BREAK statements.
 
@@ -51,6 +52,7 @@ class ReplaceBreakContinue(ModelTransformer):
     MIN_VERSION = 5
 
     def __init__(self):
+        super().__init__()
         self.in_loop = False
 
     def visit_File(self, node):  # noqa

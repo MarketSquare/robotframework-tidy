@@ -5,10 +5,11 @@ from robot.parsing.model import Statement
 
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.transformers import Transformer
 from robotidy.utils import is_blank_multiline, left_align, round_to_four, tokens_by_lines
 
 
-class AlignVariablesSection(ModelTransformer):
+class AlignVariablesSection(Transformer):
     """
     Align variables in ``*** Variables ***`` section to columns.
 
@@ -46,6 +47,7 @@ class AlignVariablesSection(ModelTransformer):
     """
 
     def __init__(self, up_to_column: int = 2, skip_types: str = "", min_width: int = None):
+        super().__init__()
         self.up_to_column = up_to_column - 1
         self.min_width = min_width
         self.skip_types = self.parse_skip_types(skip_types)

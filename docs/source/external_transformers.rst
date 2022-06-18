@@ -48,3 +48,22 @@ Configurable params should be supplied through ``__init__`` together with the ty
             empty_line = EmptyLine.from_params()
             node.body += [empty_line] * self.param
             return node
+
+ModelTransformer vs Transformer
+-------------------------------
+Instead of using RobotFramework ``ModelTransformer`` class directly, it is possible to inherit from Robotidy ``Transformer``
+class:
+
+  .. code-block:: python
+
+    from robotidy.transformers import Transformer
+
+
+    class ExternalTransformer(Transformer):
+        def __init__(self):
+            super().__init__()
+
+``Transformer`` also inherits from ``ModelTransformer`` but provides more utility methods (and better lint support).
+However because of how we are dynamically loading class arguments from cli/config we need to make a call to
+``super().__init__()`` even if our class don't have any arguments to set. If you're unsure what to use - use
+``ModelTransformer``.

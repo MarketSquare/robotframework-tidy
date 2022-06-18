@@ -2,9 +2,10 @@ from robot.api.parsing import Comment, EmptyLine, ModelTransformer, Token
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.transformers import Transformer
 
 
-class OrderSettings(ModelTransformer):
+class OrderSettings(Transformer):
     """
     Order settings like ``[Arguments]``, ``[Setup]``, ``[Return]`` inside Keywords and Test Cases.
 
@@ -61,6 +62,7 @@ class OrderSettings(ModelTransformer):
         test_before: str = None,
         test_after: str = None,
     ):
+        super().__init__()
         (
             self.keyword_before,
             self.keyword_after,

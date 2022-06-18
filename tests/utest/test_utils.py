@@ -39,7 +39,7 @@ class TestUtils:
     def test_not_changed_lines_not_colorized(self):
         lines = ["this is one line\n", "and another\n"]
         output = decorate_diff_with_color(lines)
-        assert output == "".join(lines)
+        assert output == lines
 
     def test_diff_lines_colorized(self):
         lines = [
@@ -52,16 +52,16 @@ class TestUtils:
             "signs + in the - middle @@ +++ ---\n",
         ]
         expected_lines = [
-            "\033[1m+++ color category\n\033[0m",
-            "\033[1m--- color category\n\033[0m",
-            "\033[32m+ new line\n\033[0m",
-            "\033[31m- removed line\n\033[0m",
-            "\033[36m@@ line numbers\n\033[0m",
+            "[bold]+++ color category\n",
+            "[bold]--- color category\n",
+            "[green]+ new line\n",
+            "[red]- removed line\n",
+            "[cyan]@@ line numbers\n",
             "no diff line\n",
             "signs + in the - middle @@ +++ ---\n",
         ]
         output = decorate_diff_with_color(lines)
-        assert output == "".join(expected_lines)
+        assert output == expected_lines
 
     @pytest.mark.parametrize(
         "name_or_path, expected_name, expected_args",

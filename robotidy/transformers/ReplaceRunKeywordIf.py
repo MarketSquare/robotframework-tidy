@@ -1,6 +1,7 @@
 from robot.api.parsing import ElseHeader, ElseIfHeader, End, If, IfHeader, KeywordCall, ModelTransformer, Token
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
+from robotidy.transformers import Transformer
 from robotidy.utils import after_last_dot, normalize_name
 
 
@@ -13,7 +14,7 @@ def insert_separators(indent, tokens, separator):
     yield Token(Token.EOL)
 
 
-class ReplaceRunKeywordIf(ModelTransformer):
+class ReplaceRunKeywordIf(Transformer):
     """
     Replace ``Run Keyword If`` keyword calls with IF expressions.
 
@@ -83,6 +84,9 @@ class ReplaceRunKeywordIf(ModelTransformer):
 
     Supports global formatting params: ``--spacecount``, ``--separator``, ``--startline`` and ``--endline``.
     """
+
+    def __init__(self):
+        super().__init__()  # workaround for our dynamically imported classes with args from cli/config
 
     @skip_section_if_disabled
     def visit_Section(self, node):  # noqa
