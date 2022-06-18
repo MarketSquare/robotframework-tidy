@@ -114,5 +114,4 @@ class Robotidy:
         else:
             output = escape_rich_markup(lines)
         for line in output:
-            console.print(line, end="", highlight=False)
-
+            console.print(line, end="", highlight=False, soft_wrap=True)

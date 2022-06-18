@@ -131,7 +131,7 @@ class TestLoadTransformers:
             ([], {}),
             ([("AlignVariablesSection", ["up_to_column=3"])], {"AlignVariablesSection": ["up_to_column=4"]}),
             ([("InlineIf", [])], {}),
-            ([("InlineIf", []), ("AlignTestCases", [])], {}),
+            ([("InlineIf", []), ("AlignTemplatedTestCases", [])], {}),
             ([], {"ReplaceReturns": ["enabled=True"]}),
             ([("ReplaceReturns", [])], {"InlineIf": ["enabled=True"]}),
         ],

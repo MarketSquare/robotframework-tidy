@@ -5,6 +5,7 @@ from typing import List, Optional
 
 import pytest
 from click.testing import CliRunner
+from rich.console import Console
 
 from robotidy.cli import cli
 from robotidy.utils import ROBOT_VERSION, decorate_diff_with_color
@@ -28,7 +29,9 @@ def display_file_diff(expected, actual):
         )
     ]
     colorized_output = decorate_diff_with_color(lines)
-    print(colorized_output)
+    console = Console(color_system="windows", width=400)
+    for line in colorized_output:
+        console.print(line, end="", highlight=False)
 
 
 class TransformerAcceptanceTest:
