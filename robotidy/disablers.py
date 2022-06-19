@@ -1,5 +1,6 @@
 import functools
 import re
+from typing import List, Optional
 
 from robot.api.parsing import Comment, ModelVisitor, Token
 
@@ -187,23 +188,66 @@ def parse_and_normalize_csv(value):
     return [normalize_name(val) for val in value.split(",")]
 
 
+def make_set(container):
+    if container is None:
+        return set()
+    return set(container)
+
+
+def str_to_bool(value):
+    return value.lower() == "true"
+
+
 class Skip:
     """Defines global skip conditions for each transformer."""
+
+    # Following names will be taken from transformer config and provided to Skip class instead
+    HANDLES = frozenset(
+        {
+            "skip_documentation",
+            "skip_return_values",
+            "skip_keyword_call",
+            "skip_keyword_call_contains",
+            "skip_keyword_call_starts_with",
+        }
+    )
 
     def __init__(
         self,
         documentation: bool = False,
         return_values: bool = False,
+        keyword_call: Optional[List] = None,
+        keyword_call_contains: Optional[List] = None,
+        keyword_call_starts_with: Optional[List] = None,
+    ):
+        self.return_values = return_values
+        self.documentation = documentation
+        self.keyword_call_names = make_set(keyword_call)
+        self.keyword_call_startswith = make_set(keyword_call_starts_with)
+        self.keyword_call_contains = make_set(keyword_call_contains)
+        self.any_keword_call = self.check_any_keyword_call()
+
+    @classmethod
+    def from_str_config(
+        cls,
+        documentation: str = "False",
+        return_values: str = "False",
         keyword_call: str = "",
         keyword_call_contains: str = "",
         keyword_call_starts_with: str = "",
     ):
-        self.return_values = return_values
-        self.documentation = documentation
-        self.keyword_call_names = set(parse_and_normalize_csv(keyword_call))
-        self.keyword_call_startswith = set(parse_and_normalize_csv(keyword_call_starts_with))
-        self.keyword_call_contains = set(parse_and_normalize_csv(keyword_call_contains))
-        self.any_keword_call = self.check_any_keyword_call()
+        documentation = str_to_bool(documentation)
+        return_values = str_to_bool(return_values)
+        keyword_calls = parse_and_normalize_csv(keyword_call)
+        keyword_calls_startswiths = parse_and_normalize_csv(keyword_call_starts_with)
+        keyword_calls_contains = parse_and_normalize_csv(keyword_call_contains)
+        return cls(
+            documentation=documentation,
+            return_values=return_values,
+            keyword_call=keyword_calls,
+            keyword_call_contains=keyword_calls_contains,
+            keyword_call_starts_with=keyword_calls_startswiths,
+        )
 
     def check_any_keyword_call(self):
         if self.keyword_call_names:
@@ -227,3 +271,13 @@ class Skip:
             if name in normalized:
                 return True
         return False
+
+    def __eq__(self, other):
+        return (
+            self.documentation == other.documentation
+            and self.return_values == other.return_values
+            and self.keyword_call_names == other.keyword_call_names
+            and self.keyword_call_startswith == other.keyword_call_startswith
+            and self.keyword_call_contains == other.keyword_call_contains
+            and self.any_keword_call == other.any_keword_call
+        )

@@ -3,7 +3,7 @@ try:
 except ImportError:
     InlineIfHeader, TryHeader = None, None
 
-from robotidy.disablers import skip_if_disabled
+from robotidy.disablers import Skip, skip_if_disabled
 from robotidy.transformers.aligners_core import AlignKeywordsTestsSection
 from robotidy.utils import is_suite_templated
 
@@ -20,22 +20,10 @@ class AlignTestCasesSection(AlignKeywordsTestsSection):
         widths: str = "",
         alignment_type: str = "fixed",
         handle_too_long: str = "overflow",
-        skip_documentation: bool = True,
-        skip_return_values: bool = False,
-        skip_keyword_call: str = "",
-        skip_keyword_call_contains: str = "",
-        skip_keyword_call_starts_with: str = "",
+        skip_documentation: str = "True",  # noqa - override skip_documentation from Skip
+        skip: Skip = None,
     ):
-        super().__init__(
-            widths,
-            alignment_type,
-            handle_too_long,
-            skip_documentation,
-            skip_return_values,
-            skip_keyword_call,
-            skip_keyword_call_contains,
-            skip_keyword_call_starts_with,
-        )
+        super().__init__(widths, alignment_type, handle_too_long, skip)
 
     def visit_File(self, node):  # noqa
         if is_suite_templated(node):

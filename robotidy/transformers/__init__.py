@@ -78,12 +78,30 @@ def import_transformer(name, args):
             f"Importing transformer '{short_name}' failed. "
             f"Verify if correct name or configuration was provided.{similar}"
         ) from None
-    return imported_class(*positional, **dict(named))
+    return imported_class(*positional, **named)
 
 
-def resolve_args(transformer, spec, args):
+def split_args_to_class_and_skip(args):
+    filtered_args = []
+    skip_args = {}
+    for arg, value in args.items():
+        if arg == "enabled":
+            continue
+        if arg in Skip.HANDLES:
+            skip_args[arg.replace("skip_", "")] = value
+        else:
+            filtered_args.append(f"{arg}={value}")
+    return filtered_args, skip_args
+
+
+def assert_class_accepts_arguments(transformer, args, spec):
     if args and not spec.argument_names:
         raise InvalidParameterError(transformer, " This transformer does not accept arguments but they were provided.")
+
+
+def assert_handled_arguments(transformer, args, spec):
+    """Check if provided arguments are handled by given transformer.
+    Raises InvalidParameterError if arguments does not match."""
     arg_names = [arg.split("=")[0] for arg in args]
     for arg in arg_names:
         # it's fine to only check for first non-matching parameter
@@ -94,17 +112,55 @@ def resolve_args(transformer, spec, args):
                 arg_names = "\n".join(spec.argument_names)
                 similar = f" This transformer accepts following arguments: {arg_names}"
             raise InvalidParameterError(transformer, similar) from None
+
+
+def get_skip_args_from_spec(spec):
+    """
+    It is possible to override default skip value (such as skip_documentation
+    from False to True in AlignKeywordsSection).
+    This method iterate over spec and finds such overrides.
+    """
+    defaults = dict()
+    for arg, value in spec.defaults.items():
+        if arg in Skip.HANDLES:
+            defaults[arg.replace("skip_", "")] = value
+    return defaults
+
+
+def resolve_args(transformer, spec, args):
+    """
+    Use class definition to identify which arguments from configuration
+    should be used to invoke it.
+
+    First we're splitting arguments into class arguments and skip arguments
+    (those that are handled by Skip class).
+    Class arguments are resolved with their definition and if class accepts
+    "skip" parameter the Skip class will be also added to class arguments.
+    """
+    args, skip_args = split_args_to_class_and_skip(args)
+    assert_class_accepts_arguments(transformer, args, spec)
+    assert_handled_arguments(transformer, args, spec)
     try:
-        return spec.resolve(args)
+        positional, named = spec.resolve(args)
+        named = dict(named)
+        if "skip" in spec.argument_names:
+            defaults = get_skip_args_from_spec(spec)
+            defaults.update(skip_args)
+            named["skip"] = Skip.from_str_config(**defaults)
+        return positional, named
     except ValueError as err:
         raise InvalidParameterError(transformer, f" {err}") from None
+
+
+def resolve_core_import_path(name):
+    """Append import path if transformer is core Robotidy transformer."""
+    return f"robotidy.transformers.{name}" if name in TRANSFORMERS else name
 
 
 def load_transformer(name, args):
     if not args.get("enabled", True):
         return None
-    args = [f"{key}={value}" for key, value in args.items() if key != "enabled"]
-    import_name = f"robotidy.transformers.{name}" if name in TRANSFORMERS else name
+    import_name = resolve_core_import_path(name)
     return import_transformer(import_name, args)
 
 
