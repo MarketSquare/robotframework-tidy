@@ -73,8 +73,7 @@ class TestAlignTestCasesSection(TransformerAcceptanceTest):
         self.compare(
             "skip_keywords.robot",
             config=":skip_keyword_call=should_not_be_none"
-            ":skip_keyword_call_contains=contain"
-            ":skip_keyword_call_starts_with=prefix"
+            ":skip_keyword_call_pattern=Contain,^(?i)prefix"
             ":skip_return_values=True",
         )
 

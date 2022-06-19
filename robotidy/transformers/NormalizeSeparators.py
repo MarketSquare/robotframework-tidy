@@ -129,6 +129,11 @@ class NormalizeSeparators(Transformer):
             return self._handle_spaces(doc, has_pipes, only_indent=True)
         return self.visit_Statement(doc)
 
+    def visit_KeywordCall(self, keyword):  # noqa
+        if self.skip.keyword_call(keyword):
+            return keyword
+        return self.visit_Statement(keyword)
+
     def is_keyword_inside_inline_if(self, node):
         return self.is_inline and isinstance(node, KeywordCall)
 

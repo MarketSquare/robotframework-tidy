@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from unittest.mock import Mock
 
@@ -105,45 +106,34 @@ class TestSkip:
     @pytest.mark.parametrize(
         "skip_config, names, disabled",
         [
-            ("executejavascript", ["Execute Javascript"], [True]),
-            ("Execute Javascript", ["executejavascript"], [True]),
+            ("Execute Javascript", ["Execute Javascript"], [True]),
+            ("Execute Javascript", ["executejavascript"], [False]),
+            ("(?i)execute\s?javascript", ["Execute Javascript"], [True]),
             ("executejavascript", ["Keyword"], [False]),
+            ("Javascript", ["Execute Javascript"], [True]),
+            ("^Javascript", ["Execute Javascript"], [False]),
             ("Execute", ["Execute Javascript"], [True]),
             ("Execute1", ["Execute Javascript"], [False]),
             ("Execute", ["Execute Javascript", "Execute Other Stuff", "Keyword"], [True, True, False]),
             (
-                "Library.",
+                "(?i)Library\.",
                 ["Library.Stuff", "Library2.Stuff", "library.Other_stuff", "library"],
                 [True, False, True, False],
             ),
+            ("(?i)execute,javascript", ["Execute", "Quasadilla", "Javascript"], [True, False, False]),
             (None, ["Execute Javascript"], [False]),
             ("executejavascript", [None], [False]),
         ],
     )
-    def test_skip_keyword_call_starts_with(self, skip_config, names, disabled):
+    def test_skip_keyword_call_pattern(self, skip_config, names, disabled):
         mock_node = Mock()
-        skip = Skip.from_str_config(keyword_call_starts_with=skip_config)
+        skip = Skip.from_str_config(keyword_call_pattern=skip_config)
         for name, disable in zip(names, disabled):
             mock_node.keyword = name
             assert disable == skip.keyword_call(mock_node)
 
-    @pytest.mark.parametrize(
-        "skip_config, names, disabled",
-        [
-            ("java", ["Java", "javascript", "script"], [True, True, False]),
-            ("javascript", ["java", "javascript", "Execute Javascript"], [False, True, True]),
-            (
-                "Library.",
-                ["Library.Stuff", "Library2.Stuff", "library.Other_stuff", "library"],
-                [True, False, True, False],
-            ),
-            (None, ["Keyword"], [False]),
-            ("Keyword", [None], [False]),
-        ],
-    )
-    def test_skip_keyword_call_contains(self, skip_config, names, disabled):
-        mock_node = Mock()
-        skip = Skip.from_str_config(keyword_call_contains=skip_config)
-        for name, disable in zip(names, disabled):
-            mock_node.keyword = name
-            assert disable == skip.keyword_call(mock_node)
+    def test_keyword_call_pattern_invalid(self):
+        invalid_regex = "[0-9]++"
+        msg_error = re.escape(f"'{invalid_regex}' is not a valid regular expression.")
+        with pytest.raises(ValueError, match=msg_error):
+            Skip.from_str_config(keyword_call_pattern=invalid_regex)

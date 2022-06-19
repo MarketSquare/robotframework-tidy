@@ -66,3 +66,10 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
             not_modified=not_modified,
             target_version=5,
         )
+
+    def test_skip_keyword_call(self):
+        self.compare(
+            source="test.robot",
+            expected="test_skip_keyword.robot",
+            config=":skip_keyword_call_pattern=(?i)should\sbe\sequal",
+        )

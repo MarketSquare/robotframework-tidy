@@ -1,7 +1,7 @@
 .. _external-transformers:
 
 External transformers
--------------------------------
+======================
 It is possible to develop your own transformers. You can use module name (if it is installed in your env) or path to
 file with class to run external transformers with *robotidy*::
 
@@ -50,7 +50,7 @@ Configurable params should be supplied through ``__init__`` together with the ty
             return node
 
 ModelTransformer vs Transformer
--------------------------------
+--------------------------------
 Instead of using RobotFramework ``ModelTransformer`` class directly, it is possible to inherit from Robotidy ``Transformer``
 class:
 
