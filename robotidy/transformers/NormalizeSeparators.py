@@ -25,8 +25,7 @@ class NormalizeSeparators(Transformer):
     Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
-    def __init__(self, sections: str = None, skip_documentation: bool = False):
-        skip = Skip(documentation=skip_documentation)
+    def __init__(self, sections: str = None, skip: Skip = None):
         super().__init__(skip=skip)
         self.indent = 0
         self.sections = self.parse_sections(sections)

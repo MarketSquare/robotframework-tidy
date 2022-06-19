@@ -24,19 +24,8 @@ class AlignKeywordsTestsSection(Transformer):
         widths: str,
         alignment_type: str,
         handle_too_long: str,
-        skip_documentation: bool,
-        skip_return_values: bool,
-        skip_keyword_call: str,
-        skip_keyword_call_contains: str,
-        skip_keyword_call_starts_with: str,
+        skip: Skip = None,
     ):
-        skip = Skip(
-            documentation=skip_documentation,
-            return_values=skip_return_values,
-            keyword_call=skip_keyword_call,
-            keyword_call_contains=skip_keyword_call_contains,
-            keyword_call_starts_with=skip_keyword_call_starts_with,
-        )
         super().__init__(skip)
         self.is_inline = False
         self.indent = 1
