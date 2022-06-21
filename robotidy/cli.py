@@ -227,9 +227,8 @@ def print_transformers_list(target_version: int):
         "A regular expression that matches files and directories that should be"
         " excluded on recursive searches. An empty value means no paths are excluded."
         " Use forward slashes for directories on all platforms."
-        f" \[default: '{DEFAULT_EXCLUDES}']"
     ),
-    show_default=False,
+    show_default=f"{DEFAULT_EXCLUDES}",
 )
 @click.option(
     "--extend-exclude",
@@ -297,14 +296,15 @@ def print_transformers_list(target_version: int):
     "--indent",
     type=click.types.INT,
     default=None,
-    help="The number of spaces to be used as indentation [default: same as --spacecount value]",
+    help="The number of spaces to be used as indentation",
+    show_default="same as --spacecount value",
 )
 @click.option(
     "--continuation-indent",
     type=click.types.INT,
     default=None,
-    help="The number of spaces to be used as separator after ... (line continuation) token "
-    "[default: same as --spacecount value]",
+    help="The number of spaces to be used as separator after ... (line continuation) token",
+    show_default="same as --spacecount value]",
 )
 @click.option(
     "-ls",
@@ -338,7 +338,6 @@ def print_transformers_list(target_version: int):
     type=int,
     help="Limit robotidy only to selected area. If **--endline** is not provided, format text only at **--startline**. "
     "Line numbers start from 1.",
-    show_default=True,
 )
 @click.option(
     "-el",
@@ -346,7 +345,6 @@ def print_transformers_list(target_version: int):
     default=None,
     type=int,
     help="Limit robotidy only to selected area. Line numbers start from 1.",
-    show_default=True,
 )
 @click.option(
     "--line-length",
@@ -388,7 +386,8 @@ def print_transformers_list(target_version: int):
     "-t",
     type=click.Choice([v.name.lower() for v in TargetVersion], case_sensitive=False),
     callback=validate_target_version,
-    help="Only enable transformers supported in set target version. \[default: installed Robot Framework version]",
+    help="Only enable transformers supported in set target version",
+    show_default="installed Robot Framework version",
 )
 @skip.documentation_option
 @skip.return_values_option
