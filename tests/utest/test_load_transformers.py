@@ -2,48 +2,65 @@ from unittest.mock import Mock, patch
 
 import pytest
 
+from robotidy.disablers import SkipConfig
 from robotidy.transformers import load_transformers
 from robotidy.utils import ROBOT_VERSION
 
 
+@pytest.fixture(scope="session")
+def skip_config():
+    return SkipConfig()
+
+
 class TestLoadTransformers:
-    def test_transformer_order(self):
+    def test_transformer_order(self, skip_config):
         order_1 = ["NormalizeSeparators", "OrderSettings"]
         order_2 = ["OrderSettings", "NormalizeSeparators"]
-        transformers_1 = load_transformers([(transf, []) for transf in order_1], {}, target_version=ROBOT_VERSION.major)
-        transformers_2 = load_transformers([(transf, []) for transf in order_2], {}, target_version=ROBOT_VERSION.major)
+        transformers_1 = load_transformers(
+            [(transf, []) for transf in order_1], {}, skip=skip_config, target_version=ROBOT_VERSION.major
+        )
+        transformers_2 = load_transformers(
+            [(transf, []) for transf in order_2], {}, skip=skip_config, target_version=ROBOT_VERSION.major
+        )
         assert all(t1.__class__.__name__ == t2.__class__.__name__ for t1, t2 in zip(transformers_1, transformers_2))
 
-    def test_transformer_force_order(self):
+    def test_transformer_force_order(self, skip_config):
         # default_order = ['NormalizeSeparators', 'OrderSettings']
         custom_order = ["OrderSettings", "NormalizeSeparators"]
         transformers = load_transformers(
-            [(transf, []) for transf in custom_order], {}, force_order=True, target_version=ROBOT_VERSION.major
+            [(transf, []) for transf in custom_order],
+            {},
+            skip=skip_config,
+            force_order=True,
+            target_version=ROBOT_VERSION.major,
         )
         assert all(t1.__class__.__name__ == t2 for t1, t2 in zip(transformers, custom_order))
 
-    def test_disabled_transformer(self):
-        transformers = load_transformers(None, {}, target_version=ROBOT_VERSION.major)
+    def test_disabled_transformer(self, skip_config):
+        transformers = load_transformers(None, {}, skip=skip_config, target_version=ROBOT_VERSION.major)
         assert all(transformer.__class__.__name__ != "SmartSortKeywords" for transformer in transformers)
 
-    def test_enable_disable_transformer(self):
-        transformers = load_transformers([("SmartSortKeywords", [])], {}, target_version=ROBOT_VERSION.major)
+    def test_enable_disable_transformer(self, skip_config):
+        transformers = load_transformers(
+            [("SmartSortKeywords", [])], {}, skip=skip_config, target_version=ROBOT_VERSION.major
+        )
         assert transformers[0].__class__.__name__ == "SmartSortKeywords"
 
-    def test_configure_transformer(self):
+    def test_configure_transformer(self, skip_config):
         transformers = load_transformers(
-            None, {"AlignVariablesSection": ["up_to_column=4"]}, target_version=ROBOT_VERSION.major
+            None, {"AlignVariablesSection": ["up_to_column=4"]}, skip=skip_config, target_version=ROBOT_VERSION.major
         )
-        transformers_not_configured = load_transformers(None, {}, target_version=ROBOT_VERSION.major)
+        transformers_not_configured = load_transformers(None, {}, skip=skip_config, target_version=ROBOT_VERSION.major)
         assert len(transformers) == len(transformers_not_configured)
         for transformer in transformers:
             if transformer.__class__.__name__ == "AlignVariablesSection":
                 assert transformer.up_to_column + 1 == 4
 
-    def test_configure_transformer_overwrite(self):
+    def test_configure_transformer_overwrite(self, skip_config):
         transformers = load_transformers(
             [("AlignVariablesSection", ["up_to_column=3"])],
             {"AlignVariablesSection": ["up_to_column=4"]},
+            skip=skip_config,
             target_version=ROBOT_VERSION.major,
         )
         assert transformers[0].up_to_column + 1 == 4
@@ -108,12 +125,15 @@ class TestLoadTransformers:
             ),
         ],
     )
-    def test_disable_transformers(self, transformers, configure, present, force_order, allow_disabled, test_for):
+    def test_disable_transformers(
+        self, transformers, configure, present, force_order, allow_disabled, test_for, skip_config
+    ):
         if force_order and not transformers:
             present = False
         loaded_transformers = load_transformers(
             transformers,
             configure,
+            skip=skip_config,
             allow_disabled=allow_disabled,
             force_order=force_order,
             target_version=ROBOT_VERSION.major,
@@ -136,7 +156,7 @@ class TestLoadTransformers:
             ([("ReplaceReturns", [])], {"InlineIf": ["enabled=True"]}),
         ],
     )
-    def test_overwriting_disabled_in_version(self, target_version, version, transform, config, capsys):
+    def test_overwriting_disabled_in_version(self, target_version, version, transform, config, capsys, skip_config):
         if target_version and target_version > version:
             pytest.skip("Handled by exception")
         warn_with = []
@@ -158,7 +178,7 @@ class TestLoadTransformers:
         expected_transformers = sorted(expected_transformers)
         mocked_version = Mock(major=version)
         with patch("robotidy.transformers.ROBOT_VERSION", mocked_version):
-            transformers = load_transformers(transform, config, target_version=target_version)
+            transformers = load_transformers(transform, config, skip=skip_config, target_version=target_version)
         transformers_names = sorted([transformer.__class__.__name__ for transformer in transformers])
         if expected_transformers == ["all_default"]:
             only_5_found = any(
