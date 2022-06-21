@@ -9,6 +9,7 @@ Configuration
 
    config_file
    configuring_transformers
+   skip_formatting
 
 Behaviour of *robotidy* can be changed through global options or by configuring specific transformer.
 To read more about configuring transformer go to :ref:`configuring-transformers`. To see how to configure robotidy

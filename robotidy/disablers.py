@@ -1,6 +1,6 @@
 import functools
 import re
-from typing import List, Optional
+from typing import List, Optional, Pattern
 
 from robot.api.parsing import Comment, ModelVisitor, Token
 
@@ -24,7 +24,8 @@ def skip_if_disabled(func):
 
 def skip_section_if_disabled(func):
     """
-    Does the same checks as ``skip_if_disabled`` and additionally checks if the section header does not contain disabler
+    Does the same checks as ``skip_if_disabled`` and additionally checks
+    if the section header does not contain disabler
     """
 
     @functools.wraps(func)
@@ -182,20 +183,21 @@ class RegisterDisablers(ModelVisitor):
                     self.disablers.add_disabler(node.lineno, node.end_lineno)
 
 
-def parse_and_normalize_csv(value):
+def parse_csv(value):
     if not value:
         return []
-    return [normalize_name(val) for val in value.split(",")]
-
-
-def make_set(container):
-    if container is None:
-        return set()
-    return set(container)
+    return [val for val in value.split(",")]
 
 
 def str_to_bool(value):
     return value.lower() == "true"
+
+
+def validate_regex(value: str) -> Optional[Pattern]:
+    try:
+        return re.compile(value)
+    except re.error:
+        raise ValueError(f"'{value}' is not a valid regular expression.") from None
 
 
 class Skip:
@@ -207,8 +209,7 @@ class Skip:
             "skip_documentation",
             "skip_return_values",
             "skip_keyword_call",
-            "skip_keyword_call_contains",
-            "skip_keyword_call_starts_with",
+            "skip_keyword_call_pattern",
         }
     )
 
@@ -217,14 +218,18 @@ class Skip:
         documentation: bool = False,
         return_values: bool = False,
         keyword_call: Optional[List] = None,
-        keyword_call_contains: Optional[List] = None,
-        keyword_call_starts_with: Optional[List] = None,
+        keyword_call_pattern: Optional[List] = None,
     ):
         self.return_values = return_values
         self.documentation = documentation
-        self.keyword_call_names = make_set(keyword_call)
-        self.keyword_call_startswith = make_set(keyword_call_starts_with)
-        self.keyword_call_contains = make_set(keyword_call_contains)
+        if keyword_call:
+            self.keyword_call_names = {normalize_name(name) for name in keyword_call}
+        else:
+            self.keyword_call_names = set()
+        if keyword_call_pattern:
+            self.keyword_call_pattern = {validate_regex(pattern) for pattern in keyword_call_pattern}
+        else:
+            self.keyword_call_pattern = set()
         self.any_keword_call = self.check_any_keyword_call()
 
     @classmethod
@@ -233,30 +238,21 @@ class Skip:
         documentation: str = "False",
         return_values: str = "False",
         keyword_call: str = "",
-        keyword_call_contains: str = "",
-        keyword_call_starts_with: str = "",
+        keyword_call_pattern: str = "",
     ):
         documentation = str_to_bool(documentation)
         return_values = str_to_bool(return_values)
-        keyword_calls = parse_and_normalize_csv(keyword_call)
-        keyword_calls_startswiths = parse_and_normalize_csv(keyword_call_starts_with)
-        keyword_calls_contains = parse_and_normalize_csv(keyword_call_contains)
+        keyword_calls = parse_csv(keyword_call)
+        keyword_call_pattern = parse_csv(keyword_call_pattern)
         return cls(
             documentation=documentation,
             return_values=return_values,
             keyword_call=keyword_calls,
-            keyword_call_contains=keyword_calls_contains,
-            keyword_call_starts_with=keyword_calls_startswiths,
+            keyword_call_pattern=keyword_call_pattern,
         )
 
     def check_any_keyword_call(self):
-        if self.keyword_call_names:
-            return True
-        if self.keyword_call_startswith:
-            return True
-        if self.keyword_call_contains:
-            return True
-        return False
+        return self.keyword_call_names or self.keyword_call_pattern
 
     def keyword_call(self, node):
         if not getattr(node, "keyword", None) or not self.any_keword_call:
@@ -264,11 +260,8 @@ class Skip:
         normalized = normalize_name(node.keyword)
         if normalized in self.keyword_call_names:
             return True
-        for name in self.keyword_call_startswith:
-            if normalized.startswith(name):
-                return True
-        for name in self.keyword_call_contains:
-            if name in normalized:
+        for pattern in self.keyword_call_pattern:
+            if pattern.search(node.keyword):
                 return True
         return False
 
@@ -277,7 +270,6 @@ class Skip:
             self.documentation == other.documentation
             and self.return_values == other.return_values
             and self.keyword_call_names == other.keyword_call_names
-            and self.keyword_call_startswith == other.keyword_call_startswith
-            and self.keyword_call_contains == other.keyword_call_contains
+            and self.keyword_call_pattern == other.keyword_call_pattern
             and self.any_keword_call == other.any_keword_call
         )
