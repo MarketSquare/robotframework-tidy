@@ -21,6 +21,22 @@ Flag that disables formatting of the documentation. Example usage::
 
     robotidy -c NormalizeSeparators:skip_documentation=True src
 
+It is possible to use global flag to skip formatting for every transformer that supports it::
+
+    robotidy --skip-documentation src
+
+Configuration file
+~~~~~~~~~~~~~~~~~~~~
+Both options are configurable using configuration file (:ref:`config-file`).
+
+.. code-block:: toml
+
+    [tool.robotidy]
+    skip-documentation = true
+    configure = [
+        "NormalizeSeparators:skip_documentation=False"
+    ]
+
 .. _skip return_values:
 
 Skip return values
@@ -28,6 +44,22 @@ Skip return values
 Flag that disables formatting of the return values (assignments). Example usage::
 
     robotidy -c AlignKeywordsSection:skip_return_values=True src
+
+It is possible to use global flag to skip formatting for every transformer that supports it::
+
+    robotidy --skip-return-values src
+
+Configuration file
+~~~~~~~~~~~~~~~~~~~~
+Both options are configurable using configuration file (:ref:`config-file`).
+
+.. code-block:: toml
+
+    [tool.robotidy]
+    skip-return-values = true
+    configure = [
+        "AlignKeywordsSection:skip_return_values=False"
+    ]
 
 .. _skip keyword call:
 
@@ -41,6 +73,25 @@ With this configuration::
     robotidy -c AlignTestCasesSection:skip_keyword_call=ExecuteJavascript,catenate
 
 All instances of ``Execute Javascript`` and ``Catenate`` keywords will not be formatted.
+
+It is possible to use global option to skip formatting for every transformer that supports it::
+
+    robotidy --skip-keyword-call Name --skip-keyword-call othername src
+
+Configuration file
+~~~~~~~~~~~~~~~~~~~~
+Both options are configurable using configuration file (:ref:`config-file`).
+
+.. code-block:: toml
+
+    [tool.robotidy]
+    skip-keyword-call = [
+        "GlobalSkip",
+        "supports spaces too"
+    ]
+    configure = [
+        "AlignKeywordsSection:skip_keyword_call=Name,othername"
+    ]
 
 .. _skip keyword call pattern:
 
@@ -58,3 +109,22 @@ All instances of keywords that start with "First" or contain "contains words" (c
 not be formatted.
 
 > Note that list is comma-separated - it is currently not possible to provide regex with ``,``.
+
+It is possible to use global option to skip formatting for every transformer that supports it::
+
+    robotidy --skip-keyword-call-pattern ^Second --skip-keyword-call-pattern (i?)contains\s?words src
+
+Configuration file
+~~~~~~~~~~~~~~~~~~~~
+Both options are configurable using configuration file (:ref:`config-file`).
+
+.. code-block:: toml
+
+    [tool.robotidy]
+    skip-keyword-call-pattern = [
+        "^Second",
+        "(i?)contains\s?words"
+    ]
+    configure = [
+        "AlignKeywordsSection:skip_keyword_call_pattern=first,secondname"
+    ]
