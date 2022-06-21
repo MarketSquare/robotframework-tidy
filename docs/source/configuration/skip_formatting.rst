@@ -11,13 +11,13 @@ Following transformers provide support for skip option:
 - :ref:`AlignTestCasesSection`
 - :ref:`NormalizeSeparators`
 
-To see what types are possible to skip see ``Skip formatting`` sections in each transformer documentation.
+To see what types are possible to skip, see ``Skip formatting`` sections in each transformer documentation.
 
 .. _skip documentation:
 
 Skip documentation
 -------------------
-Flag that disables formatting the documentation. Example usage::
+Flag that disables formatting of the documentation. Example usage::
 
     robotidy -c NormalizeSeparators:skip_documentation=True src
 
@@ -25,7 +25,7 @@ Flag that disables formatting the documentation. Example usage::
 
 Skip return values
 -------------------
-Flag that disables formatting the return values (assignments). Example usage::
+Flag that disables formatting of the return values (assignments). Example usage::
 
     robotidy -c AlignKeywordsSection:skip_return_values=True src
 
@@ -33,7 +33,7 @@ Flag that disables formatting the return values (assignments). Example usage::
 
 Skip keyword call
 ------------------
-Comma separated list of keyword call names that should not be formatted. Names will be
+Comma-separated list of keyword call names that should not be formatted. Names will be
 normalized before search (spaces and underscores removed, lowercase).
 
 With this configuration::
@@ -46,15 +46,15 @@ All instances of ``Execute Javascript`` and ``Catenate`` keywords will not be fo
 
 Skip keyword call pattern
 -------------------------
-Comma separated list of keyword call name patterns that should not be formatted. The keyword names are not normalized.
-If you're using different case for the same keyword ("Keyword" and "keyword") or using both spaces and underscores it is
+Comma-separated list of keyword call name patterns that should not be formatted. The keyword names are not normalized.
+If you're using different case for the same keyword ("Keyword" and "keyword") or using both spaces and underscores, it is
 recommended to use proper regex flags to match it properly.
 
 With this configuration::
 
     robotidy -c AlignKeywordsSection:skip_keyword_call_pattern=^First,(i?)contains\s?words src
 
-All instances of keywords that starts with "First" or contains "contains words" (case insensitive, space optional) will
+All instances of keywords that start with "First" or contain "contains words" (case insensitive, space optional) will
 not be formatted.
 
-Note that list is comma separated - it is currently not possible to provide regex with ``,``.
+> Note that list is comma-separated - it is currently not possible to provide regex with ``,``.

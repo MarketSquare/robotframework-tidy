@@ -128,7 +128,7 @@ Combine it with ``spacecount`` to set whitespace separately for indent and separ
 
 Skip formatting
 ----------------
-It is possible to use following arguments to skip formatting the code:
+It is possible to use the following arguments to skip formatting of the code:
 
 - :ref:`skip documentation`
 - :ref:`skip keyword call`
