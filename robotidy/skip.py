@@ -115,10 +115,21 @@ class Skip:
         return False
 
 
-documentation_option = click.option("--skip-documentation", is_flag=True, help="Skip formatting of documentation")
-return_values_option = click.option("--skip-return-values", is_flag=True, help="Skip formatting of return values")
+documentation_option = click.option(
+    "--skip-documentation",
+    is_flag=True,
+    help="Skip formatting of documentation",
+)
+return_values_option = click.option(
+    "--skip-return-values",
+    is_flag=True,
+    help="Skip formatting of return values",
+)
 keyword_call_option = click.option(
-    "--skip-keyword-call", type=str, multiple=True, help="Keyword call name that should not be formatted"
+    "--skip-keyword-call",
+    type=str,
+    multiple=True,
+    help="Keyword call name that should not be formatted",
 )
 keyword_call_pattern_option = click.option(
     "--skip-keyword-call-pattern",
@@ -126,3 +137,7 @@ keyword_call_pattern_option = click.option(
     multiple=True,
     help="Keyword call name pattern that should not be formatted",
 )
+option_group = {
+    "name": "Skip formatting",
+    "options": ["--skip-documentation", "--skip-return-values", "--skip-keyword-call", "--skip-keyword-call-pattern"],
+}

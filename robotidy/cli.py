@@ -57,6 +57,7 @@ click.rich_click.OPTION_GROUPS = {
             ],
         },
         {"name": "File exclusion", "options": ["--exclude", "--extend-exclude", "--skip-gitignore"]},
+        skip.option_group,
         {
             "name": "Other",
             "options": ["--target-version", "--verbose", "--color", "--output", "--version", "--help"],
