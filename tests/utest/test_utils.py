@@ -5,11 +5,13 @@ import pytest
 
 from robotidy.app import Robotidy
 from robotidy.config import Config, FormattingConfig
+from robotidy.disablers import SkipConfig
 from robotidy.utils import ROBOT_VERSION, decorate_diff_with_color, split_args_from_name_or_path
 
 
 @pytest.fixture
 def app():
+    skip_config = SkipConfig()
     formatting_config = FormattingConfig(
         space_count=4,
         indent=4,
@@ -23,6 +25,7 @@ def app():
     config = Config(
         transformers=[],
         transformers_config=[],
+        skip=skip_config,
         src=(".",),
         exclude=None,
         extend_exclude=None,

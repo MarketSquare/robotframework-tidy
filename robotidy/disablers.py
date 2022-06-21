@@ -1,10 +1,9 @@
 import functools
 import re
-from typing import List, Optional, Pattern
 
 from robot.api.parsing import Comment, ModelVisitor, Token
 
-from robotidy.utils import normalize_name
+from robotidy.skip import Skip, SkipConfig
 
 
 def skip_if_disabled(func):
@@ -181,95 +180,3 @@ class RegisterDisablers(ModelVisitor):
                 disabler = self.get_disabler(comment)
                 if disabler and disabler.group("disabler") == "off":
                     self.disablers.add_disabler(node.lineno, node.end_lineno)
-
-
-def parse_csv(value):
-    if not value:
-        return []
-    return [val for val in value.split(",")]
-
-
-def str_to_bool(value):
-    return value.lower() == "true"
-
-
-def validate_regex(value: str) -> Optional[Pattern]:
-    try:
-        return re.compile(value)
-    except re.error:
-        raise ValueError(f"'{value}' is not a valid regular expression.") from None
-
-
-class Skip:
-    """Defines global skip conditions for each transformer."""
-
-    # Following names will be taken from transformer config and provided to Skip class instead
-    HANDLES = frozenset(
-        {
-            "skip_documentation",
-            "skip_return_values",
-            "skip_keyword_call",
-            "skip_keyword_call_pattern",
-        }
-    )
-
-    def __init__(
-        self,
-        documentation: bool = False,
-        return_values: bool = False,
-        keyword_call: Optional[List] = None,
-        keyword_call_pattern: Optional[List] = None,
-    ):
-        self.return_values = return_values
-        self.documentation = documentation
-        if keyword_call:
-            self.keyword_call_names = {normalize_name(name) for name in keyword_call}
-        else:
-            self.keyword_call_names = set()
-        if keyword_call_pattern:
-            self.keyword_call_pattern = {validate_regex(pattern) for pattern in keyword_call_pattern}
-        else:
-            self.keyword_call_pattern = set()
-        self.any_keword_call = self.check_any_keyword_call()
-
-    @classmethod
-    def from_str_config(
-        cls,
-        documentation: str = "False",
-        return_values: str = "False",
-        keyword_call: str = "",
-        keyword_call_pattern: str = "",
-    ):
-        documentation = str_to_bool(documentation)
-        return_values = str_to_bool(return_values)
-        keyword_calls = parse_csv(keyword_call)
-        keyword_call_pattern = parse_csv(keyword_call_pattern)
-        return cls(
-            documentation=documentation,
-            return_values=return_values,
-            keyword_call=keyword_calls,
-            keyword_call_pattern=keyword_call_pattern,
-        )
-
-    def check_any_keyword_call(self):
-        return self.keyword_call_names or self.keyword_call_pattern
-
-    def keyword_call(self, node):
-        if not getattr(node, "keyword", None) or not self.any_keword_call:
-            return False
-        normalized = normalize_name(node.keyword)
-        if normalized in self.keyword_call_names:
-            return True
-        for pattern in self.keyword_call_pattern:
-            if pattern.search(node.keyword):
-                return True
-        return False
-
-    def __eq__(self, other):
-        return (
-            self.documentation == other.documentation
-            and self.return_values == other.return_values
-            and self.keyword_call_names == other.keyword_call_names
-            and self.keyword_call_pattern == other.keyword_call_pattern
-            and self.any_keword_call == other.any_keword_call
-        )

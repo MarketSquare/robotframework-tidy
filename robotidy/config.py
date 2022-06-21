@@ -56,6 +56,7 @@ class Config:
     def __init__(
         self,
         formatting: FormattingConfig,
+        skip,
         transformers: List[Tuple[str, List]],
         transformers_config: List[Tuple[str, List]],
         src: Tuple[str, ...],
@@ -81,7 +82,7 @@ class Config:
         self.color = color
         transformers_config = self.convert_configure(transformers_config)
         self.transformers = load_transformers(
-            transformers, transformers_config, force_order=force_order, target_version=target_version
+            transformers, transformers_config, force_order=force_order, target_version=target_version, skip=skip
         )
         for transformer in self.transformers:
             # inject global settings TODO: handle it better

@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional, Pattern, Tuple, Union
 
 import rich_click as click
 
+from robotidy import skip
 from robotidy.app import Robotidy
 from robotidy.config import Config, FormattingConfig
 from robotidy.decorators import catch_exceptions
@@ -56,6 +57,7 @@ click.rich_click.OPTION_GROUPS = {
             ],
         },
         {"name": "File exclusion", "options": ["--exclude", "--extend-exclude", "--skip-gitignore"]},
+        skip.option_group,
         {
             "name": "Other",
             "options": ["--target-version", "--verbose", "--color", "--output", "--version", "--help"],
@@ -388,6 +390,10 @@ def print_transformers_list(target_version: int):
     callback=validate_target_version,
     help="Only enable transformers supported in set target version. \[default: installed Robot Framework version]",
 )
+@skip.documentation_option
+@skip.return_values_option
+@skip.keyword_call_option
+@skip.keyword_call_pattern_option
 @click.version_option(version=__version__, prog_name="robotidy")
 @click.pass_context
 @catch_exceptions
@@ -418,6 +424,10 @@ def cli(
     output: Optional[Path],
     force_order: bool,
     target_version: int,
+    skip_documentation: bool,
+    skip_return_values: bool,
+    skip_keyword_call: List[str],
+    skip_keyword_call_pattern: List[str],
 ):
     """
     Robotidy is a tool for formatting Robot Framework source code.
@@ -449,6 +459,13 @@ def cli(
     if color:
         color = "NO_COLOR" not in os.environ
 
+    skip_config = skip.SkipConfig(
+        documentation=skip_documentation,
+        return_values=skip_return_values,
+        keyword_call=skip_keyword_call,
+        keyword_call_pattern=skip_keyword_call_pattern,
+    )
+
     formatting = FormattingConfig(
         space_count=spacecount,
         indent=indent,
@@ -461,6 +478,7 @@ def cli(
     )
     config = Config(
         formatting=formatting,
+        skip=skip_config,
         transformers=transform,
         transformers_config=configure,
         src=src,

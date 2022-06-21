@@ -20,7 +20,7 @@ from robot.api.parsing import ModelTransformer
 from robot.errors import DataError
 from robot.utils.importer import Importer
 
-from robotidy.disablers import Skip
+from robotidy.disablers import Skip, SkipConfig
 from robotidy.exceptions import ImportTransformerError, InvalidParameterError, InvalidParameterFormatError
 from robotidy.utils import ROBOT_VERSION, RecommendationFinder
 
@@ -65,12 +65,12 @@ class Transformer(ModelTransformer):
         self.skip = skip
 
 
-def import_transformer(name, args):
+def import_transformer(name, args, skip):
     short_name = name.split(".")[-1]
     try:
         imported_class = IMPORTER.import_class_or_module(name)
         spec = IMPORTER._get_arg_spec(imported_class)
-        positional, named = resolve_args(short_name, spec, args)
+        positional, named = resolve_args(short_name, spec, args, skip)
     except DataError:
         similar_finder = RecommendationFinder()
         similar = similar_finder.find_similar(short_name, TRANSFORMERS)
@@ -87,7 +87,7 @@ def split_args_to_class_and_skip(args):
     for arg, value in args.items():
         if arg == "enabled":
             continue
-        if arg in Skip.HANDLES:
+        if arg in SkipConfig.HANDLES:
             skip_args[arg.replace("skip_", "")] = value
         else:
             filtered_args.append(f"{arg}={value}")
@@ -122,12 +122,21 @@ def get_skip_args_from_spec(spec):
     """
     defaults = dict()
     for arg, value in spec.defaults.items():
-        if arg in Skip.HANDLES:
+        if arg in SkipConfig.HANDLES:
             defaults[arg.replace("skip_", "")] = value
     return defaults
 
 
-def resolve_args(transformer, spec, args):
+def get_skip_class(spec, skip_args, global_skip):
+    defaults = get_skip_args_from_spec(spec)
+    defaults.update(skip_args)
+    if global_skip is None:
+        global_skip = SkipConfig()
+    skip_config = SkipConfig.from_str_config(global_skip, **defaults)
+    return Skip(skip_config)
+
+
+def resolve_args(transformer, spec, args, global_skip):
     """
     Use class definition to identify which arguments from configuration
     should be used to invoke it.
@@ -144,9 +153,7 @@ def resolve_args(transformer, spec, args):
         positional, named = spec.resolve(args)
         named = dict(named)
         if "skip" in spec.argument_names:
-            defaults = get_skip_args_from_spec(spec)
-            defaults.update(skip_args)
-            named["skip"] = Skip.from_str_config(**defaults)
+            named["skip"] = get_skip_class(spec, skip_args, global_skip)
         return positional, named
     except ValueError as err:
         raise InvalidParameterError(transformer, f" {err}") from None
@@ -157,11 +164,11 @@ def resolve_core_import_path(name):
     return f"robotidy.transformers.{name}" if name in TRANSFORMERS else name
 
 
-def load_transformer(name, args):
+def load_transformer(name, args, skip):
     if not args.get("enabled", True):
         return None
     import_name = resolve_core_import_path(name)
-    return import_transformer(import_name, args)
+    return import_transformer(import_name, args, skip)
 
 
 def join_configs(args, config):
@@ -217,7 +224,7 @@ def can_run_in_robot_version(transformer, overwritten, target_version):
     return False
 
 
-def load_transformers(allowed_transformers, config, target_version, allow_disabled=False, force_order=False):
+def load_transformers(allowed_transformers, config, target_version, skip=None, allow_disabled=False, force_order=False):
     """Dynamically load all classes from this file with attribute `name` defined in allowed_transformers"""
     loaded_transformers = []
     allowed_mapped = {name: args for name, args in allowed_transformers} if allowed_transformers else {}
@@ -226,7 +233,7 @@ def load_transformers(allowed_transformers, config, target_version, allow_disabl
         for name in TRANSFORMERS:
             if not allowed_mapped or name in allowed_mapped:
                 args = get_args(name, allowed_mapped, config)
-                imported_class = load_transformer(name, args)
+                imported_class = load_transformer(name, args, skip)
                 if imported_class is None:
                     continue
                 enabled = getattr(imported_class, "ENABLED", True) or args.get("enabled", False)
@@ -240,7 +247,7 @@ def load_transformers(allowed_transformers, config, target_version, allow_disabl
     for name in allowed_mapped:
         if force_order or name not in TRANSFORMERS:
             args = get_args(name, allowed_mapped, config)
-            imported_class = load_transformer(name, args)
+            imported_class = load_transformer(name, args, skip)
             if imported_class is not None:
                 if can_run_in_robot_version(imported_class, overwritten=True, target_version=target_version):
                     loaded_transformers.append(imported_class)

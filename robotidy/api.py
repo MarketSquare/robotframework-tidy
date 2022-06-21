@@ -6,17 +6,25 @@ from typing import Optional
 from robotidy.app import Robotidy
 from robotidy.cli import TransformType, find_and_read_config, validate_regex
 from robotidy.config import Config, FormattingConfig
-from robotidy.disablers import RegisterDisablers
+from robotidy.disablers import RegisterDisablers, SkipConfig
 from robotidy.files import DEFAULT_EXCLUDES
 from robotidy.utils import ROBOT_VERSION
 
 
-def get_robotidy(src: str, output: Optional[str], **kwargs):
-    config = find_and_read_config((src,))
-    config = {k: str(v) if not isinstance(v, (list, dict)) else v for k, v in config.items()}
-    converter = TransformType()
-    transformers = [converter.convert(tr, None, None) for tr in config.get("transform", ())]
-    configurations = [converter.convert(c, None, None) for c in config.get("configure", ())]
+def get_skip_config(config):
+    skip_documentation = config.get("skip_documentation", False)
+    skip_return_values = config.get("skip_return_values", False)
+    skip_keyword_call = config.get("skip_keyword_call", [])
+    skip_keyword_call_pattern = config.get("skip_keyword_call_pattern", [])
+    return SkipConfig(
+        documentation=skip_documentation,
+        return_values=skip_return_values,
+        keyword_call=skip_keyword_call,
+        keyword_call_pattern=skip_keyword_call_pattern,
+    )
+
+
+def get_formatting_config(config, kwargs):
     space_count = kwargs.get("spacecount", None) or int(config.get("spacecount", 4))
     indent = kwargs.get("indent", None) or int(config.get("indent", space_count))
     cont_indent = kwargs.get("continuation_indent", None) or int(config.get("continuation_indent", space_count))
@@ -30,13 +38,27 @@ def get_robotidy(src: str, output: Optional[str], **kwargs):
         end_line=kwargs.get("endline", None) or int(config["endline"]) if "endline" in config else None,
         line_length=kwargs.get("line_length", None) or int(config.get("line_length", 120)),
     )
+    return formatting_config
+
+
+def get_robotidy(src: str, output: Optional[str], **kwargs):
+    # TODO Refactor - Config should be read in one place both for API and CLI
+    # TODO Remove kwargs usage - other SDKs are not using this feature
+    config = find_and_read_config((src,))
+    config = {k: str(v) if not isinstance(v, (list, dict)) else v for k, v in config.items()}
+    converter = TransformType()
+    transformers = [converter.convert(tr, None, None) for tr in config.get("transform", ())]
+    configurations = [converter.convert(c, None, None) for c in config.get("configure", ())]
+    formatting_config = get_formatting_config(config, kwargs)
     exclude = config.get("exclude", None)
     extend_exclude = config.get("extend_exclude", None)
     exclude = validate_regex(exclude if exclude is not None else DEFAULT_EXCLUDES)
     extend_exclude = validate_regex(extend_exclude)
+    global_skip = get_skip_config(config)
     configuration = Config(
         transformers=transformers,
         transformers_config=configurations,
+        skip=global_skip,
         src=(),
         exclude=exclude,
         extend_exclude=extend_exclude,
