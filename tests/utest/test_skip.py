@@ -80,3 +80,21 @@ class TestSkip:
         msg_error = re.escape(f"'{invalid_regex}' is not a valid regular expression.")
         with pytest.raises(ValueError, match=msg_error):
             Skip(skip_config=skip_config)
+
+    def test_global_local_skip_documentation(self):
+        # local overrides global
+        global_config = SkipConfig(documentation=False)
+        local_config = SkipConfig.from_str_config(global_skip=global_config, documentation="True")
+        assert local_config.documentation
+
+    def test_global_local_keyword_call(self):
+        # list are joined
+        global_config = SkipConfig(keyword_call=["name", "name2"])
+        local_config = SkipConfig.from_str_config(global_skip=global_config, keyword_call="name,name3")
+        assert local_config.keyword_call == ["name", "name3", "name", "name2"]
+
+    def test_only_global_return_values(self):
+        # global takes precedence
+        global_config = SkipConfig(return_values=True)
+        local_config = SkipConfig.from_str_config(global_skip=global_config)
+        assert local_config.return_values
