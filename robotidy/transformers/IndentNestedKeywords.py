@@ -1,5 +1,6 @@
-from robot.api.parsing import ModelTransformer, Token
+from robot.api.parsing import Token
 
+from robotidy.exceptions import InvalidParameterValueError
 from robotidy.disablers import skip_if_disabled
 from robotidy.transformers import Transformer
 from robotidy.utils import (
@@ -48,19 +49,8 @@ class IndentNestedKeywords(Transformer):
         ...        Log    baz
     ```
 
-    It is possible to provide extra indentation for keywords using ``AND`` separators
-    by configuring ``indent_and`` to ``True``:
-    ```
-    robotidy -c IndentNestedKeywords:indent_and=True src
-    ```
-
-    It will result in:
-    ```
-    Run keywords
-    ...        Log    foo
-    ...    AND
-    ...        Log    bar
-    ```
+    ``AND`` argument inside ``Run Keywords`` can be handled in different ways. It is controlled via ``indent_and``
+    parameter. For more details see the full documentation.
 
     To skip formatting run keywords inside settings (such as ``Suite Setup``, ``[Setup]``, ``[Teardown]`` etc.) set
     ``skip_settings`` to ``True``.
@@ -88,14 +78,25 @@ class IndentNestedKeywords(Transformer):
         RunKeywordVariant("BuiltIn", "Wait Until Keyword Succeeds", resolve=3),
     ]
 
-    def __init__(self, indent_and: bool = False, skip_settings: bool = False):
+    def __init__(self, indent_and: str = "split", skip_settings: bool = False):
         super().__init__()
         self.indent_and = indent_and
+        self.validate_indent_and()
         self.skip_settings = skip_settings
         self.run_keywords = dict()
         for run_kw in self.RUN_KW:
             self.run_keywords[run_kw.name] = run_kw
             self.run_keywords[f"{run_kw.libname}.{run_kw.name}"] = run_kw
+
+    def validate_indent_and(self):
+        modes = {"keep_in_line", "split", "split_and_indent"}
+        if self.indent_and not in modes:
+            raise InvalidParameterValueError(
+                self.__class__.__name__,
+                "indent_and",
+                self.indent_and,
+                f"Select one of: {','.join(modes)}",
+            )
 
     def get_run_keyword(self, kw_name):
         kw_norm = normalize_name(kw_name)
@@ -215,9 +216,14 @@ class IndentNestedKeywords(Transformer):
         if is_token_value_in_tokens("AND", tokens):
             while is_token_value_in_tokens("AND", tokens):
                 prefix, branch, tokens = split_on_token_value(tokens, "AND", 1)
-                lines.extend(self.parse_sub_kw(prefix, column + 1 + int(self.indent_and)))
-                lines.append((column + 1, branch))
-            lines.extend(self.parse_sub_kw(tokens, column + 1 + int(self.indent_and)))
+                if self.indent_and == "keep_in_line":
+                    lines.extend(self.parse_sub_kw(prefix + branch, column + 1))
+                else:
+                    indent = int(self.indent_and == "split_and_indent")  # indent = 1 for split_and_indent, else 0
+                    lines.extend(self.parse_sub_kw(prefix, column + 1 + indent))
+                    lines.append((column + 1, branch))
+            indent = int(self.indent_and == "split_and_indent")  # indent = 1 for split_and_indent, else 0
+            lines.extend(self.parse_sub_kw(tokens, column + 1 + indent))
         else:
             lines.extend([(column + 1, [kw_token]) for kw_token in tokens])
         return lines

@@ -30,15 +30,23 @@ Keywords inside run keywords variants are detected and whitespace is formatted t
             ...    ELSE
             ...        Log    baz
 
+Handle AND inside Run Keywords
+-------------------------------
+``AND`` argument inside ``Run Keywords`` can be handled in different ways. It is controlled via ``indent_and``
+parameter.
+You can configure it using ``indent_and``::
 
-It is possible to provide extra indentation for keywords using ``AND`` separators by configuring ``indent_and`` to
-``True``::
+    robotidy -c IndentNestedKeywords:indent_and=keep_and_indent src
 
-    robotidy -c IndentNestedKeywords:indent_and=True src
+Following values are available:
+
+ - ``indent_and=split`` splits ``AND`` to new line,
+ - ``indent_and=split_and_indent`` splits ``AND`` and additionally indents the keywords,
+ - ``indent_and=keep_in_line`` keeps ``AND`` next to the previous keyword.
 
 .. tabs::
 
-    .. code-tab:: robotframework indent_and=False (default)
+    .. code-tab:: robotframework indent_and=split (default)
 
         *** Test Cases ***
         Test
@@ -47,7 +55,7 @@ It is possible to provide extra indentation for keywords using ``AND`` separator
             ...    AND
             ...    Log    bar
 
-    .. code-tab:: robotframework indent_and=True
+    .. code-tab:: robotframework indent_and=split_and_indent
 
         *** Test Cases ***
         Test
@@ -55,6 +63,14 @@ It is possible to provide extra indentation for keywords using ``AND`` separator
             ...        Log    foo
             ...    AND
             ...        Log    bar
+
+    .. code-tab:: robotframework indent_and=keep_in_line
+
+        *** Test Cases ***
+        Test
+            Run keywords
+            ...    Log    foo    AND
+            ...    Log    bar
 
 
 Skip formatting settings
