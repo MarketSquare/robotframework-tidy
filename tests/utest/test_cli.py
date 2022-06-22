@@ -413,7 +413,9 @@ class TestCli:
     def test_invalid_target_version(self, mocked_version, target_version):
         mocked_version.major = 5
         result = run_tidy(f"--target-version {target_version} .".split(), exit_code=2)
-        assert f"Invalid value for '--target-version' / '-t':" in result.output
+        error = result.output
+        error = error.replace("│", "").replace("\n", "")
+        assert f"Invalid value for '--target-version' / '-t':" in error
 
     @patch("robotidy.cli.ROBOT_VERSION")
     def test_too_recent_target_version(self, mocked_version):
