@@ -165,15 +165,15 @@ class AlignKeywordsTestsSection(Transformer):
                     if first_sep:
                         token.value = self.formatting_config.indent
                         first_sep = False
+                        continue
+                    if width == 0:
+                        separator_len = round_to_four(len(prev_token.value) + self.formatting_config.space_count) - len(
+                            prev_token.value
+                        )
                     else:
-                        if width == 0:
-                            separator_len = round_to_four(
-                                len(prev_token.value) + self.formatting_config.space_count
-                            ) - len(prev_token.value)
-                        else:
-                            separator_len = max(width - len(prev_token.value), self.formatting_config.space_count)
-                        token.value = " " * separator_len
-                        break
+                        separator_len = max(width - len(prev_token.value), self.formatting_config.space_count)
+                    token.value = " " * separator_len
+                    break
                 elif token.type != Token.ARGUMENT:  # ...   # comment edge case
                     prev_token = token
         return node
@@ -236,6 +236,31 @@ class AlignKeywordsTestsSection(Transformer):
     visit_Arguments = visit_Setup = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags
 
     def align_line(self, line, indent):
+        """
+        Align single line of the node.
+
+        New, aligned line consist of the indent and tokens separated by separator. The separator width is calculated
+        depending on the configured particular column width and the alignment mode.
+
+        The alignment mode could be auto or fixed - it's calculated before running this method and self.widths already
+        returns width of the column according to the selected mode.
+
+        First, empty multiline is return as it can't be aligned.
+        Then comments are removed from the line - they will be added at the end of the alignment.
+        Afterwards we start to align the tokens.
+        If the configured width is set to 0 it means we don't need to calculate width of the separator - we should use
+        length of the token with minimal separator rounded to the closest multiply of 4.
+        Otherwise, we are calculating if line will fit in width of the column. In case it will not fit there are
+        several options (configurable via ``handle_too_long):
+            - ignore_line - the whole line will be separated using fixed, minimal width of the separator
+            - ignore_rest - all tokens before too long token will be aligned to the columns, but remaining tokens will
+              be aligned using fixed, minimal width of the separator
+            - compact_overflow - the too long token will go over the width of the column, but it will try to fit it
+              together with next token (in second column)
+            - overflow - we are looking for next column width that will fit our token
+
+        At the end comments are appended at the end of the line and line is returned.
+        """
         prev_overflow_len = 0
         separator = self.formatting_config.space_count
         aligned = [indent]
