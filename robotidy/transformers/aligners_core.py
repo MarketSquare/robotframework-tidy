@@ -31,12 +31,18 @@ class AlignKeywordsTestsSection(Transformer):
         self.indent = 1
         self.handle_too_long = self.parse_handle_too_long(handle_too_long)
         self.fixed_alignment = self.parse_alignment_type(alignment_type)
+        self.split_too_long = False
         # column widths map - 0: 40, 1: 30
         if widths:
             self.widths = self.parse_widths(widths)
         else:
             self.widths = None
         self.auto_widths = []
+
+    @skip_if_disabled
+    def visit_File(self, node):  # noqa
+        self.split_too_long = self.is_split_too_long_enabled()
+        return self.generic_visit(node)
 
     def parse_widths(self, widths):
         parsed_widths = dict()
@@ -205,6 +211,15 @@ class AlignKeywordsTestsSection(Transformer):
             return node
         if self.skip.keyword_call(node):
             return node
+        return self.align_node(node, check_length=self.split_too_long)
+
+    @skip_if_disabled
+    def visit_Tags(self, node):  # noqa
+        if node.errors:
+            return node
+        return self.align_node(node, check_length=False)
+
+    def align_node(self, node, check_length):
         lines = list(tokens_by_lines(node))
         indent = Token(Token.SEPARATOR, self.indent * self.formatting_config.indent)
         aligned_lines = []
@@ -212,12 +227,13 @@ class AlignKeywordsTestsSection(Transformer):
             aligned_line = self.align_line(line, indent)
             if aligned_line is None:
                 return node
+            if check_length and self.is_line_too_long(aligned_line):
+                split_node = self.split_too_long_node(node)
+                return self.align_node(split_node, check_length=False)
             aligned_lines.extend(aligned_line)
         return Statement.from_tokens(aligned_lines)
 
-    visit_Arguments = (
-        visit_Setup
-    ) = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags = visit_KeywordCall
+    visit_Arguments = visit_Setup = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags
 
     def align_line(self, line, indent):
         prev_overflow_len = 0
@@ -243,10 +259,10 @@ class AlignKeywordsTestsSection(Transformer):
                 separator_len = width - len(token.value) - prev_overflow_len
                 if separator_len < separator:
                     if self.handle_too_long == "ignore_line":
-                        aligned = self.align_fixed(tokens[:-2], separator, indent)
+                        aligned = align_fixed(tokens[:-2], separator, indent)
                         break
                     if self.handle_too_long == "ignore_rest":
-                        aligned.extend(self.align_fixed(tokens[index + 1 : -2], separator))
+                        aligned.extend(align_fixed(tokens[index + 1 : -2], separator))
                         break
                     if self.handle_too_long == "compact_overflow":
                         required_width = round_to_four(len(token.value) + separator)
@@ -265,13 +281,19 @@ class AlignKeywordsTestsSection(Transformer):
         aligned.extend([last_token, *join_comments(comments), tokens[-1]])
         return aligned
 
-    def align_fixed(self, tokens, separator, indent=None):
-        sep_token = Token(Token.SEPARATOR, separator * " ")
-        aligned = [indent if indent else sep_token]
-        for token in tokens:
-            aligned.append(token)
-            aligned.append(sep_token)
-        return aligned
+    def is_line_too_long(self, line):
+        if "SplitTooLongLine" not in self.transformers:
+            return False
+        if not self.transformers["SplitTooLongLine"].split_on_every_arg:  # TODO not support for overflow yet
+            return False
+        line_length = get_line_length(line)
+        return line_length > self.transformers["SplitTooLongLine"].line_length
+
+    def is_split_too_long_enabled(self):
+        return "SplitTooLongLine" in self.transformers
+
+    def split_too_long_node(self, node):
+        return self.transformers["SplitTooLongLine"].split_keyword_call(node)
 
 
 def strip_extra_whitespace(token):
@@ -298,6 +320,20 @@ def join_comments(comments):
         tokens.append(separator)
         tokens.append(token)
     return tokens
+
+
+def align_fixed(tokens, separator, indent=None):
+    """Align tokens with fixed spacing and optional indent."""
+    sep_token = Token(Token.SEPARATOR, separator * " ")
+    aligned = [indent if indent else sep_token]
+    for token in tokens:
+        aligned.append(token)
+        aligned.append(sep_token)
+    return aligned
+
+
+def get_line_length(tokens):
+    return sum(len(token.value) for token in tokens)
 
 
 class ColumnWidthCounter(ModelVisitor):
