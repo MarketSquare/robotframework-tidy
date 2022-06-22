@@ -13,17 +13,17 @@ Long description with code examples.
 
 Split too long lines
 ---------------------
-``AlignKeywordsSection`` will split the lines if the lines after alignment would exceed the limits set in
-the :ref:`SplitTooLongLine` transformer.
+``AlignKeywordsSection`` will split the lines if the lines after the alignment would exceed the limits set
+in the :ref:`SplitTooLongLine` transformer.
 
 .. note::
-    Currently only ``--configure SplitTooLongLine:split_on_every_arg=True`` mode is supported.
+    Currently, only ``--configure SplitTooLongLine:split_on_every_arg=True`` mode is supported.
 
 Using this configuration (``SplitTooLongLine`` is enabled by default)::
 
     robotidy -c AlignTestCasesSection:enabled=True:widths=14,24 --line-length 80 src
 
-Will result in the following transformation:
+will result in the following transformation:
 
 .. tabs::
 
@@ -34,7 +34,7 @@ Will result in the following transformation:
             # fits now but it will not fit after the alignment
             Keyword    argument1    argument2    argument3    argument4
 
-            # does not fit before alignment
+            # does not fit before the alignment
             Longer Keyword Name That Could Happen    argument value with sentence that goes over
 
             # fits, will not be split
@@ -51,7 +51,7 @@ Will result in the following transformation:
             ...           argument3
             ...           argument4
 
-            # does not fit before alignment
+            # does not fit before the alignment
             Longer Keyword Name That Could Happen
             ...           argument value with sentence that goes over
 
