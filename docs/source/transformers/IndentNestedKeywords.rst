@@ -40,9 +40,9 @@ You can configure it using ``indent_and``::
 
 Following values are available:
 
- - ``indent_and=split`` splits AND to new line,
- - ``indent_and=split_and_indent`` splits ``AND`` and additionally indent the keywords,
- - ``indent_and=keep_in_line`` keeps ``AND`` next to previous keyword.
+ - ``indent_and=split`` splits ``AND`` to new line,
+ - ``indent_and=split_and_indent`` splits ``AND`` and additionally indents the keywords,
+ - ``indent_and=keep_in_line`` keeps ``AND`` next to the previous keyword.
 
 .. tabs::
 
