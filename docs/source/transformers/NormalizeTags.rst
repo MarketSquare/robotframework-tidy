@@ -5,7 +5,7 @@ NormalizeTags
 Normalize tag names by normalizing case and removing duplicates.
 
 .. |TRANSFORMERNAME| replace:: NormalizeTags
-.. include:: disabled_hint.txt
+.. include:: enabled_hint.txt
 
 Supported cases: lowercase (default), uppercase, title case.
 You can configure case using ``case`` parameter::
