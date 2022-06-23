@@ -70,7 +70,8 @@ class TestAlignTestCasesSection(TransformerAcceptanceTest):
             "skip_keywords.robot",
             config=":skip_keyword_call=should_not_be_none"
             ":skip_keyword_call_pattern=Contain,^(?i)prefix"
-            ":skip_return_values=True",
+            ":skip_return_values=True"
+            ":widths=24,24,24,28",
         )
 
     @pytest.mark.parametrize("handle_too_long", ["overflow", "compact_overflow", "ignore_line", "ignore_rest"])

@@ -155,7 +155,7 @@ class AlignKeywordsTestsSection(Transformer):
         if self.skip.documentation:
             return node
         # For every line:
-        # {indent}...{align}{leave rest alone}
+        # {indent}...{aligned separator}{leave rest alone}
         width = self.get_width(0)
         for line in node.lines:
             first_sep = True
@@ -261,34 +261,47 @@ class AlignKeywordsTestsSection(Transformer):
 
         At the end comments are appended at the end of the line and line is returned.
         """
-        prev_overflow_len = 0
-        separator = self.formatting_config.space_count
-        aligned = [indent]
         if is_blank_multiline(line):  # ...\n edge case
             line[-1].value = line[-1].value.lstrip(" \t")  # normalize eol from '  \n' to '\n'
-            aligned.extend(line)
-            return aligned
+            return [indent] + line
         tokens, comments = separate_comments(line)
         if len(tokens) < 2:  # only happens with weird encoding, better to skip
             return None
+        aligned = self.align_tokens(tokens[:-2], indent)
+        last_token = strip_extra_whitespace(tokens[-2])
+        aligned.extend([last_token, *join_comments(comments), tokens[-1]])
+        return aligned
+
+    def align_tokens(self, tokens, indent):
+        prev_overflow_len = 0
+        last_assign = 0
+        separator = self.formatting_config.space_count
         column = 0
-        for index, token in enumerate(tokens[:-2]):
+        aligned = [indent]
+        for index, token in enumerate(tokens):
             aligned.append(token)
+            width = self.get_width(column)
             if self.skip.return_values and token.type == Token.ASSIGN:
+                width -= len(token.value) + separator + last_assign
+                last_assign = len(token.value) + separator
+                if width > 0:
+                    prev_overflow_len = -width
+                while width <= 0:
+                    # change column if assigns overflow
+                    column += 1
+                    width += self.get_width(column, override_default_zero=True)
+                    prev_overflow_len = self.get_width(column, override_default_zero=True) - width
                 aligned.append(Token(Token.SEPARATOR, separator * " "))
                 continue
-            width = self.get_width(column)
             if width == 0:
                 separator_len = round_to_four(len(token.value) + separator) - len(token.value)
             else:
                 separator_len = width - len(token.value) - prev_overflow_len
                 if separator_len < separator:
                     if self.handle_too_long == "ignore_line":
-                        aligned = align_fixed(tokens[:-2], separator, indent)
-                        break
+                        return align_fixed(tokens, separator, indent)
                     if self.handle_too_long == "ignore_rest":
-                        aligned.extend(align_fixed(tokens[index + 1 : -2], separator))
-                        break
+                        return aligned + align_fixed(tokens[index + 1 :], separator)
                     if self.handle_too_long == "compact_overflow":
                         required_width = round_to_four(len(token.value) + separator)
                         separator_len = required_width - len(token.value)
@@ -301,9 +314,7 @@ class AlignKeywordsTestsSection(Transformer):
                 else:
                     prev_overflow_len = 0
             aligned.append(Token(Token.SEPARATOR, separator_len * " "))
-            column += 1
-        last_token = strip_extra_whitespace(tokens[-2])
-        aligned.extend([last_token, *join_comments(comments), tokens[-1]])
+            column += 1 + (separator_len == width)
         return aligned
 
     def is_line_too_long(self, line):
