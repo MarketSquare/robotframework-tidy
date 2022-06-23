@@ -37,7 +37,7 @@ Both options are configurable using configuration file (:ref:`config-file`).
         "NormalizeSeparators:skip_documentation=False"
     ]
 
-.. _skip return_values:
+.. _skip return values:
 
 Skip return values
 -------------------

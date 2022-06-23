@@ -11,7 +11,7 @@ except ImportError:
 from robotidy.disablers import Skip, skip_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 from robotidy.transformers import Transformer
-from robotidy.utils import is_blank_multiline, round_to_four, tokens_by_lines
+from robotidy.utils import is_blank_multiline, join_tokens_with_token, round_to_four, tokens_by_lines
 
 
 class AlignKeywordsTestsSection(Transformer):
@@ -31,12 +31,18 @@ class AlignKeywordsTestsSection(Transformer):
         self.indent = 1
         self.handle_too_long = self.parse_handle_too_long(handle_too_long)
         self.fixed_alignment = self.parse_alignment_type(alignment_type)
+        self.split_too_long = False
         # column widths map - 0: 40, 1: 30
         if widths:
             self.widths = self.parse_widths(widths)
         else:
             self.widths = None
         self.auto_widths = []
+
+    @skip_if_disabled
+    def visit_File(self, node):  # noqa
+        self.split_too_long = self.is_split_too_long_enabled()
+        return self.generic_visit(node)
 
     def parse_widths(self, widths):
         parsed_widths = dict()
@@ -149,7 +155,7 @@ class AlignKeywordsTestsSection(Transformer):
         if self.skip.documentation:
             return node
         # For every line:
-        # {indent}...{align}{leave rest alone}
+        # {indent}...{aligned separator}{leave rest alone}
         width = self.get_width(0)
         for line in node.lines:
             first_sep = True
@@ -159,15 +165,15 @@ class AlignKeywordsTestsSection(Transformer):
                     if first_sep:
                         token.value = self.formatting_config.indent
                         first_sep = False
+                        continue
+                    if width == 0:
+                        separator_len = round_to_four(len(prev_token.value) + self.formatting_config.space_count) - len(
+                            prev_token.value
+                        )
                     else:
-                        if width == 0:
-                            separator_len = round_to_four(
-                                len(prev_token.value) + self.formatting_config.space_count
-                            ) - len(prev_token.value)
-                        else:
-                            separator_len = max(width - len(prev_token.value), self.formatting_config.space_count)
-                        token.value = " " * separator_len
-                        break
+                        separator_len = max(width - len(prev_token.value), self.formatting_config.space_count)
+                    token.value = " " * separator_len
+                    break
                 elif token.type != Token.ARGUMENT:  # ...   # comment edge case
                     prev_token = token
         return node
@@ -205,57 +211,125 @@ class AlignKeywordsTestsSection(Transformer):
             return node
         if self.skip.keyword_call(node):
             return node
+        return self.align_node(node, check_length=self.split_too_long)
+
+    @skip_if_disabled
+    def visit_Tags(self, node):  # noqa
+        if node.errors:
+            return node
+        return self.align_node(node, check_length=False)
+
+    def align_node(self, node, check_length):
         lines = list(tokens_by_lines(node))
         indent = Token(Token.SEPARATOR, self.indent * self.formatting_config.indent)
-        separator = self.formatting_config.space_count
-        aligned_statement = []
+        aligned_lines = []
         for line in lines:
-            prev_overflow_len = 0
-            fixed_separator = False
-            aligned_statement.append(indent)
-            if is_blank_multiline(line):  # ...\n edge case
-                line[-1].value = line[-1].value.lstrip(" \t")  # normalize eol from '  \n' to '\n'
-                aligned_statement.extend(line)
-                continue
-            tokens, comments = separate_comments(line)
-            if len(tokens) < 2:  # only happens with weird encoding, better to skip
+            aligned_line = self.align_line(line, indent)
+            if aligned_line is None:
                 return node
-            column = 0
-            for token in tokens[:-2]:
-                aligned_statement.append(token)
-                if fixed_separator or (self.skip.return_values and token.type == Token.ASSIGN):
-                    aligned_statement.append(Token(Token.SEPARATOR, separator * " "))
-                    continue
-                width = self.get_width(column)
-                if width == 0:
-                    separator_len = round_to_four(len(token.value) + separator) - len(token.value)
+            if check_length and self.is_line_too_long(aligned_line):
+                split_node = self.split_too_long_node(node)
+                return self.align_node(split_node, check_length=False)
+            aligned_lines.extend(aligned_line)
+        return Statement.from_tokens(aligned_lines)
+
+    visit_Arguments = visit_Setup = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags
+
+    def align_line(self, line, indent):
+        """
+        Align single line of the node.
+
+        New, aligned line consist of the indent and tokens separated by separator. The separator width is calculated
+        depending on the configured particular column width and the alignment mode.
+
+        The alignment mode could be auto or fixed - it's calculated before running this method and self.widths already
+        returns width of the column according to the selected mode.
+
+        First, empty multiline is return as it can't be aligned.
+        Then comments are removed from the line - they will be added at the end of the alignment.
+        Afterwards we start to align the tokens.
+        If the configured width is set to 0 it means we don't need to calculate width of the separator - we should use
+        length of the token with minimal separator rounded to the closest multiply of 4.
+        Otherwise, we are calculating if line will fit in width of the column. In case it will not fit there are
+        several options (configurable via ``handle_too_long):
+            - ignore_line - the whole line will be separated using fixed, minimal width of the separator
+            - ignore_rest - all tokens before too long token will be aligned to the columns, but remaining tokens will
+              be aligned using fixed, minimal width of the separator
+            - compact_overflow - the too long token will go over the width of the column, but it will try to fit it
+              together with next token (in second column)
+            - overflow - we are looking for next column width that will fit our token
+
+        At the end comments are appended at the end of the line and line is returned.
+        """
+        if is_blank_multiline(line):  # ...\n edge case
+            line[-1].value = line[-1].value.lstrip(" \t")  # normalize eol from '  \n' to '\n'
+            return [indent] + line
+        tokens, comments = separate_comments(line)
+        if len(tokens) < 2:  # only happens with weird encoding, better to skip
+            return None
+        aligned = self.align_tokens(tokens[:-2], indent)
+        last_token = strip_extra_whitespace(tokens[-2])
+        aligned.extend([last_token, *join_comments(comments), tokens[-1]])
+        return aligned
+
+    def align_tokens(self, tokens, indent):
+        prev_overflow_len = 0
+        last_assign = 0
+        separator = self.formatting_config.space_count
+        column = 0
+        aligned = [indent]
+        for index, token in enumerate(tokens):
+            aligned.append(token)
+            width = self.get_width(column)
+            if self.skip.return_values and token.type == Token.ASSIGN:
+                width -= len(token.value) + separator + last_assign
+                last_assign = len(token.value) + separator
+                if width > 0:
+                    prev_overflow_len = -width
+                while width <= 0:
+                    # change column if assigns overflow
+                    column += 1
+                    width += self.get_width(column, override_default_zero=True)
+                    prev_overflow_len = self.get_width(column, override_default_zero=True) - width
+                aligned.append(Token(Token.SEPARATOR, separator * " "))
+                continue
+            if width == 0:
+                separator_len = round_to_four(len(token.value) + separator) - len(token.value)
+            else:
+                separator_len = width - len(token.value) - prev_overflow_len
+                if separator_len < separator:
+                    if self.handle_too_long == "ignore_line":
+                        return align_fixed(tokens, separator, indent)
+                    if self.handle_too_long == "ignore_rest":
+                        return aligned + align_fixed(tokens[index + 1 :], separator)
+                    if self.handle_too_long == "compact_overflow":
+                        required_width = round_to_four(len(token.value) + separator)
+                        separator_len = required_width - len(token.value)
+                        prev_overflow_len = required_width - width
+                    else:  # "overflow"
+                        while round_to_four(len(token.value) + separator) > width:
+                            column += 1
+                            width += self.get_width(column, override_default_zero=True)
+                        separator_len = width - len(token.value)
                 else:
-                    separator_len = width - len(token.value) - prev_overflow_len
-                    if separator_len < separator:
-                        if self.handle_too_long == "ignore_line":
-                            return node
-                        elif self.handle_too_long == "ignore_rest":
-                            fixed_separator = True
-                            separator_len = separator
-                        elif self.handle_too_long == "compact_overflow":
-                            required_width = round_to_four(len(token.value) + separator)
-                            separator_len = required_width - len(token.value)
-                            prev_overflow_len = required_width - width
-                        else:
-                            while round_to_four(len(token.value) + separator) > width:
-                                column += 1
-                                width += self.get_width(column, override_default_zero=True)
-                            separator_len = width - len(token.value)
-                aligned_statement.append(Token(Token.SEPARATOR, separator_len * " "))
-                column += 1
-            last_token = strip_extra_whitespace(tokens[-2])
-            aligned_statement.extend([last_token, *join_comments(comments), tokens[-1]])
+                    prev_overflow_len = 0
+            aligned.append(Token(Token.SEPARATOR, separator_len * " "))
+            column += 1 + (separator_len == width)
+        return aligned
 
-        return Statement.from_tokens(aligned_statement)
+    def is_line_too_long(self, line):
+        if "SplitTooLongLine" not in self.transformers:
+            return False
+        if not self.transformers["SplitTooLongLine"].split_on_every_arg:  # TODO not support for overflow yet
+            return False
+        line_length = get_line_length(line)
+        return line_length > self.transformers["SplitTooLongLine"].line_length
 
-    visit_Arguments = (
-        visit_Setup
-    ) = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags = visit_KeywordCall
+    def is_split_too_long_enabled(self):
+        return "SplitTooLongLine" in self.transformers
+
+    def split_too_long_node(self, node):
+        return self.transformers["SplitTooLongLine"].split_keyword_call(node)
 
 
 def strip_extra_whitespace(token):
@@ -282,6 +356,20 @@ def join_comments(comments):
         tokens.append(separator)
         tokens.append(token)
     return tokens
+
+
+def align_fixed(tokens, separator, indent=None):
+    """Align tokens with fixed spacing and optional indent."""
+    sep_token = Token(Token.SEPARATOR, separator * " ")
+    aligned = [indent if indent else sep_token]
+    for token in tokens:
+        aligned.append(token)
+        aligned.append(sep_token)
+    return aligned
+
+
+def get_line_length(tokens):
+    return sum(len(token.value) for token in tokens)
 
 
 class ColumnWidthCounter(ModelVisitor):

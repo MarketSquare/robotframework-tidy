@@ -9,7 +9,7 @@ If you don't want to run your transformer by default and only when calling robot
 then add ``ENABLED = False`` class attribute inside.
 """
 from itertools import chain
-from typing import Optional
+from typing import Dict, Optional
 
 try:
     import rich_click as click
@@ -61,6 +61,7 @@ IMPORTER = Importer()
 class Transformer(ModelTransformer):
     def __init__(self, skip: Optional[Skip] = None):
         self.formatting_config = None  # to make lint happy (we're injecting the configs)
+        self.transformers: Dict = dict()
         self.disablers = None
         self.skip = skip
 

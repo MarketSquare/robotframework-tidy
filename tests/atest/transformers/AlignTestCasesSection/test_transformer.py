@@ -40,10 +40,6 @@ class TestAlignTestCasesSection(TransformerAcceptanceTest):
     @pytest.mark.parametrize("handle_too_long", ["overflow", "ignore_line", "ignore_rest"])
     @pytest.mark.parametrize("alignment_type", ["auto", "fixed"])
     def test_simple(self, alignment_type, handle_too_long, widths: Tuple):
-        if widths == (4, 4, 4) and handle_too_long == "ignore_line":
-            not_modified = True  # it will never fit, so all lines are ignored
-        else:
-            not_modified = False
         width_name = "_".join(str(width) for width in widths)
         if width_name == "0_0_0":
             width_name = "0"  # it should be the same result so we can reuse expected file
@@ -51,7 +47,7 @@ class TestAlignTestCasesSection(TransformerAcceptanceTest):
         expected = f"simple_{alignment_type}_{handle_too_long}_{width_name}.robot"
         config = f":alignment_type={alignment_type}:handle_too_long={handle_too_long}"
         config += f":widths={width_csv}"
-        self.compare(source="simple.robot", expected=expected, config=config, not_modified=not_modified)
+        self.compare(source="simple.robot", expected=expected, config=config)
 
     def test_settings(self):
         self.compare(source="settings.robot")
@@ -74,7 +70,8 @@ class TestAlignTestCasesSection(TransformerAcceptanceTest):
             "skip_keywords.robot",
             config=":skip_keyword_call=should_not_be_none"
             ":skip_keyword_call_pattern=Contain,^(?i)prefix"
-            ":skip_return_values=True",
+            ":skip_return_values=True"
+            ":widths=24,24,24,28",
         )
 
     @pytest.mark.parametrize("handle_too_long", ["overflow", "compact_overflow", "ignore_line", "ignore_rest"])
