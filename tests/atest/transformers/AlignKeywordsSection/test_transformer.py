@@ -89,4 +89,4 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
         self.compare(source="too_long_line.robot", config=" --transform SplitTooLongLine")
 
     def test_error_node(self):
-        self.compare(source="error_node.robot", not_modified=True)
+        self.compare(source="error_node.robot", not_modified=True, target_version=5)
