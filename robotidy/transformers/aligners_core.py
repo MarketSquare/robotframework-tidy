@@ -303,8 +303,8 @@ class AlignKeywordsTestsSection(Transformer):
                     if self.handle_too_long == "ignore_rest":
                         return aligned + align_fixed(tokens[index + 1 :], separator)
                     if self.handle_too_long == "compact_overflow":
-                        required_width = round_to_four(len(token.value) + separator)
-                        separator_len = required_width - len(token.value)
+                        required_width = len(token.value) + separator + prev_overflow_len
+                        separator_len = separator
                         prev_overflow_len = required_width - width
                     else:  # "overflow"
                         while round_to_four(len(token.value) + separator) > width:
