@@ -25,6 +25,8 @@ class NormalizeSeparators(Transformer):
     Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
+    HANDLES_SKIP = frozenset({"skip_documentation", "skip_keyword_call", "skip_keyword_call_pattern"})
+
     def __init__(self, sections: str = None, skip: Skip = None):
         super().__init__(skip=skip)
         self.indent = 0

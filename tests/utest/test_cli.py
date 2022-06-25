@@ -72,10 +72,31 @@ class TestCli:
         expected_output = (
             "Error: DiscardEmptySections: Failed to import. "
             "Verify if correct name or configuration was provided. "
-            "This transformer accepts following arguments: allow_only_comments\n"
+            "This transformer accepts following arguments:\n    enable\n    allow_only_comments\n"
         )
 
         args = "--transform DiscardEmptySections:invalid=True -".split()
+        result = run_tidy(args, exit_code=1)
+        assert result.output == expected_output
+
+    def test_not_existing_configurable_skip(self):
+        expected_args = [
+            "enable",
+            "widths",
+            "alignment_type",
+            "handle_too_long",
+            "skip_documentation",
+            "skip_keyword_call",
+            "skip_keyword_call_pattern",
+            "skip_return_values",
+        ]
+        expected_args_str = "\n    ".join(expected_args)
+        expected_output = (
+            "Error: AlignTestCasesSection: Failed to import. "
+            "Verify if correct name or configuration was provided. "
+            f"This transformer accepts following arguments:\n    {expected_args_str}\n"
+        )
+        args = "--transform AlignTestCasesSection:invalid=True -".split()
         result = run_tidy(args, exit_code=1)
         assert result.output == expected_output
 

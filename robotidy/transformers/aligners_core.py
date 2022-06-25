@@ -18,6 +18,9 @@ class AlignKeywordsTestsSection(Transformer):
 
     ENABLED = False
     DEFAULT_WIDTH = 24
+    HANDLES_SKIP = frozenset(
+        {"skip_documentation", "skip_return_values", "skip_keyword_call", "skip_keyword_call_pattern"}
+    )
 
     def __init__(
         self,
