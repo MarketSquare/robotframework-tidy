@@ -71,7 +71,8 @@ def import_transformer(name, args, skip):
     try:
         imported_class = IMPORTER.import_class_or_module(name)
         spec = IMPORTER._get_arg_spec(imported_class)
-        positional, named = resolve_args(short_name, spec, args, skip)
+        handles_skip = getattr(imported_class, "HANDLES_SKIP", {})
+        positional, named = resolve_args(short_name, spec, args, skip, handles_skip=handles_skip)
     except DataError:
         similar_finder = RecommendationFinder()
         similar = similar_finder.find_similar(short_name, TRANSFORMERS)
@@ -100,18 +101,29 @@ def assert_class_accepts_arguments(transformer, args, spec):
         raise InvalidParameterError(transformer, " This transformer does not accept arguments but they were provided.")
 
 
-def assert_handled_arguments(transformer, args, spec):
+def resolve_argument_names(argument_names, handles_skip):
+    """Get transformer argument names with resolved skip parameters."""
+    new_args = ["enable"]
+    if "skip" not in argument_names:
+        return new_args + argument_names
+    new_args.extend([arg for arg in argument_names if arg != "skip"])
+    new_args.extend(arg for arg in sorted(handles_skip) if arg not in new_args)
+    return new_args
+
+
+def assert_handled_arguments(transformer, args, spec, handles_skip):
     """Check if provided arguments are handled by given transformer.
     Raises InvalidParameterError if arguments does not match."""
     arg_names = [arg.split("=")[0] for arg in args]
     for arg in arg_names:
         # it's fine to only check for first non-matching parameter
-        if arg not in spec.argument_names:
+        argument_names = resolve_argument_names(spec.argument_names, handles_skip)
+        if arg not in argument_names:
             similar_finder = RecommendationFinder()
-            similar = similar_finder.find_similar(arg, spec.argument_names)
+            similar = similar_finder.find_similar(arg, argument_names)
             if not similar:
-                arg_names = "\n".join(spec.argument_names)
-                similar = f" This transformer accepts following arguments: {arg_names}"
+                arg_names = "\n    " + "\n    ".join(argument_names)
+                similar = f" This transformer accepts following arguments:{arg_names}"
             raise InvalidParameterError(transformer, similar) from None
 
 
@@ -137,7 +149,7 @@ def get_skip_class(spec, skip_args, global_skip):
     return Skip(skip_config)
 
 
-def resolve_args(transformer, spec, args, global_skip):
+def resolve_args(transformer, spec, args, global_skip, handles_skip):
     """
     Use class definition to identify which arguments from configuration
     should be used to invoke it.
@@ -149,7 +161,7 @@ def resolve_args(transformer, spec, args, global_skip):
     """
     args, skip_args = split_args_to_class_and_skip(args)
     assert_class_accepts_arguments(transformer, args, spec)
-    assert_handled_arguments(transformer, args, spec)
+    assert_handled_arguments(transformer, args, spec, handles_skip)
     try:
         positional, named = spec.resolve(args)
         named = dict(named)
