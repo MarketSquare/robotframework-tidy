@@ -130,13 +130,8 @@ class SkipConfig:
             tags=tags,
         )
 
-    def __eq__(self, other):  # TODO remove or update
-        return (
-            self.documentation == other.documentation
-            and self.return_values == other.return_values
-            and self.keyword_call == other.keyword_call
-            and self.keyword_call_pattern == other.keyword_call_pattern
-        )
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
 
 
 class Skip:
