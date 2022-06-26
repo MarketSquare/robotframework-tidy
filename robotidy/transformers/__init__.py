@@ -8,6 +8,7 @@ need to inherit from ``ModelTransformer`` or ``ast.NodeTransformer`` class. Fina
 If you don't want to run your transformer by default and only when calling robotidy with --transform YourTransformer
 then add ``ENABLED = False`` class attribute inside.
 """
+import copy
 from itertools import chain
 from typing import Dict, Optional
 
@@ -144,8 +145,10 @@ def get_skip_class(spec, skip_args, global_skip):
     defaults = get_skip_args_from_spec(spec)
     defaults.update(skip_args)
     if global_skip is None:
-        global_skip = SkipConfig()
-    skip_config = SkipConfig.from_str_config(global_skip, **defaults)
+        skip_config = SkipConfig()
+    else:
+        skip_config = copy.deepcopy(global_skip)
+    skip_config.update_with_str_config(**defaults)
     return Skip(skip_config)
 
 
