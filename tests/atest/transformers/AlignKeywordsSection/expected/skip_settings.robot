@@ -2,8 +2,8 @@
 Keyword With Settings
     [Documentation]  Docs should be left alone
     ...  even misaligned.
-    [Arguments]             ${args}                 ${args}  # comment
-    [Teardown]              Keyword
+    [Arguments]  ${args}  ${args}    # comment
+    [Teardown]  Keyword
     [Timeout]  1min
     Short
     Keyword Arg             ${arg}

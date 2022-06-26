@@ -16,11 +16,27 @@ def get_skip_config(config):
     skip_return_values = config.get("skip_return_values", False)
     skip_keyword_call = config.get("skip_keyword_call", [])
     skip_keyword_call_pattern = config.get("skip_keyword_call_pattern", [])
+    skip_settings = config.get("skip_settings", False)
+    skip_arguments = config.get("skip_arguments", False)
+    skip_setup = config.get("skip_setup", False)
+    skip_teardown = config.get("skip_teardown", False)
+    skip_template = config.get("skip_template", False)
+    skip_timeout = config.get("skip_timeout", False)
+    skip_return = config.get("skip_return", False)
+    skip_tags = config.get("skip_tags", False)
     return SkipConfig(
         documentation=skip_documentation,
         return_values=skip_return_values,
         keyword_call=skip_keyword_call,
         keyword_call_pattern=skip_keyword_call_pattern,
+        settings=skip_settings,
+        arguments=skip_arguments,
+        setup=skip_setup,
+        teardown=skip_teardown,
+        template=skip_template,
+        timeout=skip_timeout,
+        return_statement=skip_return,
+        tags=skip_tags,
     )
 
 

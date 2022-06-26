@@ -34,7 +34,7 @@ Both options are configurable using configuration file (:ref:`config-file`).
     [tool.robotidy]
     skip-documentation = true
     configure = [
-        "NormalizeSeparators:skip_documentation=False"
+        "NormalizeSeparators : skip_documentation = False"
     ]
 
 .. _skip return values:
@@ -58,7 +58,7 @@ Both options are configurable using configuration file (:ref:`config-file`).
     [tool.robotidy]
     skip-return-values = true
     configure = [
-        "AlignKeywordsSection:skip_return_values=False"
+        "AlignKeywordsSection : skip_return_values = False"
     ]
 
 .. _skip keyword call:
@@ -90,7 +90,7 @@ Both options are configurable using configuration file (:ref:`config-file`).
         "supports spaces too"
     ]
     configure = [
-        "AlignKeywordsSection:skip_keyword_call=Name,othername"
+        "AlignKeywordsSection : skip_keyword_call = Name,othername"
     ]
 
 .. _skip keyword call pattern:
@@ -126,5 +126,54 @@ Both options are configurable using configuration file (:ref:`config-file`).
         "(i?)contains\s?words"
     ]
     configure = [
-        "AlignKeywordsSection:skip_keyword_call_pattern=first,secondname"
+        "AlignKeywordsSection : skip_keyword_call_pattern = first,secondname"
+    ]
+.. _skip settings:
+
+Skip settings
+-------------------
+Flag that disables formatting of the settings. Example usage::
+
+    robotidy -c AlignTestCasesSection:skip_settings=True src
+
+It is possible to use global flag to skip formatting for every transformer that supports it::
+
+    robotidy --skip-settings src
+
+Formatting of the settings can be also skip based on the type of the settings.
+The name of the option is ``skip_<setting_name>`` (for example ``skip_arguments``).
+Following types are possible to skip:
+
+- arguments - ``[Arguments]``
+- setup - ``[Setup]``
+- teardown - ``[Teardown]``
+- template - ``[Template]``
+- timeout - ``[Timeout]``
+- return - ``[Return]`` or ``RETURN``
+- tags - ``[Tags]``
+
+Configuration file
+~~~~~~~~~~~~~~~~~~~~
+Option is configurable using configuration file (:ref:`config-file`).
+
+Skip formatting of all settings:
+
+.. code-block:: toml
+
+    [tool.robotidy]
+    skip-settings = true
+    configure = [
+        "AlignTestCasesSection : skip_settings = False"
+    ]
+
+Skip formatting of selected settings:
+
+.. code-block:: toml
+
+    [tool.robotidy]
+    skip-setup = true
+    skip-teardown = true
+    configure = [
+        "AlignTestCasesSection : skip_setup = False"
+        "AlignKeywordsSection : skip_arguments = True"
     ]

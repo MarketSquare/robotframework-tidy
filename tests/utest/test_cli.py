@@ -8,6 +8,7 @@ from click import FileError, NoSuchOption
 from robotidy.api import Robotidy
 from robotidy.cli import read_config, validate_regex
 from robotidy.files import DEFAULT_EXCLUDES, find_project_root, get_paths, read_pyproject_config
+from robotidy.transformers.aligners_core import AlignKeywordsTestsSection
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
 from robotidy.utils import ROBOT_VERSION
 
@@ -86,10 +87,9 @@ class TestCli:
             "alignment_type",
             "handle_too_long",
             "skip_documentation",
-            "skip_keyword_call",
-            "skip_keyword_call_pattern",
-            "skip_return_values",
         ]
+        # skip_documentation is overriden in transformer - the order is different because of that
+        expected_args += sorted(AlignKeywordsTestsSection.HANDLES_SKIP - {"skip_documentation"})
         expected_args_str = "\n    ".join(expected_args)
         expected_output = (
             "Error: AlignTestCasesSection: Failed to import. "
