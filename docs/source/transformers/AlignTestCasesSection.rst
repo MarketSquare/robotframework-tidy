@@ -187,7 +187,7 @@ Indented blocks (``FOR``, ``IF``, ``WHILE``, ``TRY..EXCEPT..``) are aligned inde
             END
             Keyword Call            ${value}  # aligned together with keyword call before FOR loop
 
-Currently inline IFs are ignored. Block headers (``FOR ${var} IN @{LIST}`` or ``IF  $condition``) are not aligned.
+Currently, inline IFs are ignored. Block headers (``FOR ${var} IN @{LIST}`` or ``IF  $condition``) are not aligned.
 
 Split too long lines
 ---------------------
@@ -247,6 +247,6 @@ It is possible to use the following arguments to skip formatting of the code:
 - :ref:`skip keyword call pattern`
 - :ref:`skip settings`
 
-It is highly recommended to use one of the skip options if you wish to use alignment but you have part of the code
-that looks better with manual alignment. It is also possible to use disablers (:ref:`disablers`) but skip option
-make it easier to skip all instances of given type of the code.
+It is highly recommended to use one of the ``skip`` options if you wish to use the alignment but you have part of the code
+that looks better with manual alignment. It is also possible to use disablers (:ref:`disablers`) but ``skip`` option
+makes it easier to skip all instances of given type of the code.

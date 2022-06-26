@@ -70,8 +70,8 @@ It's possible to configure width of the several columns (using comma separated l
 
     robotidy -c AlignKeywordsSection:widths=10,10,24,30
 
-The last width will be used for the remaining columns. In previous example we configured widths for the 4 columns.
-The last width (``30``) will be used for 5th, 6th.. and following columns.
+The last width will be used for the remaining columns. In the previous example we configured widths for 4 columns.
+The last width (``30``) will be used for 5th, 6th... and the following columns.
 
 Use width ``0`` to disable column width limit. In ``auto`` alignment type it will always align whole column to the
 longest token (no matter how long the token is).
@@ -84,7 +84,7 @@ Tokens that do not fit in the column go into ``overflow`` state. There are sever
 via ``handle_too_long`` parameter):
 
 - ``overflow`` (default): align token to the next column
-- ``compact_overflow``: try to fit next token between current (overflowed) token and the next column
+- ``compact_overflow``: try to fit the next token between current (overflowed) token and the next column
 - ``ignore_rest``: ignore remaining tokens in the line
 - ``ignore_line``: ignore whole line
 
@@ -185,7 +185,7 @@ Indented blocks (``FOR``, ``IF``, ``WHILE``, ``TRY..EXCEPT..``) are aligned inde
             END
             Keyword Call            ${value}  # aligned together with keyword call before FOR loop
 
-Currently inline IFs are ignored. Block headers (``FOR ${var} IN @{LIST}`` or ``IF  $condition``) are not aligned.
+Currently, inline IFs are ignored. Block headers (``FOR ${var} IN @{LIST}`` or ``IF  $condition``) are not aligned.
 
 Split too long lines
 ---------------------
@@ -244,6 +244,6 @@ It is possible to use the following arguments to skip formatting of the code:
 - :ref:`skip keyword call pattern`
 - :ref:`skip settings`
 
-It is highly recommended to use one of the skip options if you wish to use alignment but you have part of the code
-that looks better with manual alignment. It is also possible to use disablers (:ref:`disablers`) but skip option
-make it easier to skip all instances of given type of the code.
+It is highly recommended to use one of the ``skip`` options if you wish to use alignment but you have part of the code
+that looks better with manual alignment. It is also possible to use disablers (:ref:`disablers`) but ``skip`` option
+makes it easier to skip all instances of given type of the code.
