@@ -20,7 +20,7 @@ The width of the column sets limit to the maximum width of the column. Default w
 With ``fixed`` alignment each column have fixed width (and tokens that does not fit
 go into ``overflow`` state - see :ref:`overflow keywords`).
 
-``auto`` alignment align tokens to the longest token in the column - the column width can be shorter than
+``auto`` alignment aligns tokens to the longest token in the column - the column width can be shorter than
 configured width (but no longer).
 
 See examples of the alignment types:
