@@ -140,7 +140,7 @@ It is possible to use global flag to skip formatting for every transformer that 
 
     robotidy --skip-settings src
 
-Formatting of the settings can be also skip based on the type of the settings.
+Formatting of the settings can be also skipped based on the type of the settings.
 The name of the option is ``skip_<setting_name>`` (for example ``skip_arguments``).
 Following types are possible to skip:
 
