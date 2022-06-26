@@ -393,6 +393,14 @@ def print_transformers_list(target_version: int):
 @skip.return_values_option
 @skip.keyword_call_option
 @skip.keyword_call_pattern_option
+@skip.settings_option
+@skip.arguments_option
+@skip.setup_option
+@skip.teardown_option
+@skip.timeout_option
+@skip.template_option
+@skip.return_option
+@skip.tags_option
 @click.version_option(version=__version__, prog_name="robotidy")
 @click.pass_context
 @catch_exceptions
@@ -427,6 +435,14 @@ def cli(
     skip_return_values: bool,
     skip_keyword_call: List[str],
     skip_keyword_call_pattern: List[str],
+    skip_settings: bool,
+    skip_arguments: bool,
+    skip_setup: bool,
+    skip_teardown: bool,
+    skip_timeout: bool,
+    skip_template: bool,
+    skip_return: bool,
+    skip_tags: bool,
 ):
     """
     Robotidy is a tool for formatting Robot Framework source code.
@@ -463,6 +479,14 @@ def cli(
         return_values=skip_return_values,
         keyword_call=skip_keyword_call,
         keyword_call_pattern=skip_keyword_call_pattern,
+        settings=skip_settings,
+        arguments=skip_arguments,
+        setup=skip_setup,
+        teardown=skip_teardown,
+        template=skip_template,
+        timeout=skip_timeout,
+        return_statement=skip_return,
+        tags=skip_tags,
     )
 
     formatting = FormattingConfig(

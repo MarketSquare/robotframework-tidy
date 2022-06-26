@@ -50,7 +50,11 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
         self.compare(source="simple.robot", expected=expected, config=config)
 
     def test_settings(self):
-        self.compare(source="settings.robot")
+        self.compare(source="settings.robot", config=":skip_timeout=True")
+
+    def test_skip_settings(self):
+        self.compare(source="settings.robot", expected="skip_settings.robot", config=":skip_settings=True")
+        self.compare(source="settings.robot", expected="skip_settings.robot", config=" --skip-settings")
 
     def test_compact_overflow_first_line(self):
         self.compare(source="overflow_first_line.robot", config=":widths=24,28,20,20:handle_too_long=compact_overflow")
@@ -69,7 +73,7 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
         self.compare(
             "skip_keywords.robot",
             config=":skip_keyword_call=should_not_be_none"
-            ":skip_keyword_call_pattern=Contain,^(?i)prefix"
+            ":skip_keyword_call_pattern=Contain,(?i)^prefix"
             ":skip_return_values=True",
         )
 

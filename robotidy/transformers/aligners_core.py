@@ -11,7 +11,7 @@ except ImportError:
 from robotidy.disablers import Skip, skip_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 from robotidy.transformers import Transformer
-from robotidy.utils import is_blank_multiline, join_tokens_with_token, round_to_four, tokens_by_lines
+from robotidy.utils import is_blank_multiline, round_to_four, tokens_by_lines
 
 
 class AlignKeywordsTestsSection(Transformer):
@@ -19,7 +19,20 @@ class AlignKeywordsTestsSection(Transformer):
     ENABLED = False
     DEFAULT_WIDTH = 24
     HANDLES_SKIP = frozenset(
-        {"skip_documentation", "skip_return_values", "skip_keyword_call", "skip_keyword_call_pattern"}
+        {
+            "skip_documentation",
+            "skip_return_values",
+            "skip_keyword_call",
+            "skip_keyword_call_pattern",
+            "skip_settings",
+            "skip_arguments",
+            "skip_setup",
+            "skip_teardown",
+            "skip_template",
+            "skip_timeout",
+            "skip_return",
+            "skip_tags",
+        }
     )
 
     def __init__(
@@ -150,7 +163,7 @@ class AlignKeywordsTestsSection(Transformer):
             return self.formatting_config.space_count
         return width
 
-    def visit_SettingSection(self, node):  # do the same for test case section in keywords alignment etc
+    def visit_SettingSection(self, node):  # noqa
         return node
 
     @skip_if_disabled
@@ -216,12 +229,6 @@ class AlignKeywordsTestsSection(Transformer):
             return node
         return self.align_node(node, check_length=self.split_too_long)
 
-    @skip_if_disabled
-    def visit_Tags(self, node):  # noqa
-        if node.errors:
-            return node
-        return self.align_node(node, check_length=False)
-
     def align_node(self, node, check_length):
         lines = list(tokens_by_lines(node))
         indent = Token(Token.SEPARATOR, self.indent * self.formatting_config.indent)
@@ -236,7 +243,49 @@ class AlignKeywordsTestsSection(Transformer):
             aligned_lines.extend(aligned_line)
         return Statement.from_tokens(aligned_lines)
 
-    visit_Arguments = visit_Setup = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags
+    @skip_if_disabled
+    def visit_Tags(self, node):  # noqa
+        if node.errors or self.skip.setting("Tags"):
+            return node
+        return self.align_node(node, check_length=False)
+
+    @skip_if_disabled
+    def visit_Return(self, node):  # noqa
+        if node.errors or self.skip.setting("Return_Statement"):
+            return node
+        return self.align_node(node, check_length=False)
+
+    visit_ReturnStatement = visit_Return
+
+    @skip_if_disabled
+    def visit_Template(self, node):  # noqa
+        if node.errors or self.skip.setting("Template"):
+            return node
+        return self.align_node(node, check_length=False)
+
+    @skip_if_disabled
+    def visit_Timeout(self, node):  # noqa
+        if node.errors or self.skip.setting("Timeout"):
+            return node
+        return self.align_node(node, check_length=False)
+
+    @skip_if_disabled
+    def visit_Teardown(self, node):  # noqa
+        if node.errors or self.skip.setting("Teardown"):
+            return node
+        return self.align_node(node, check_length=False)
+
+    @skip_if_disabled
+    def visit_Setup(self, node):  # noqa
+        if node.errors or self.skip.setting("Setup"):
+            return node
+        return self.align_node(node, check_length=False)
+
+    @skip_if_disabled
+    def visit_Arguments(self, node):  # noqa
+        if node.errors or self.skip.setting("Arguments"):
+            return node
+        return self.align_node(node, check_length=False)
 
     def align_line(self, line, indent):
         """

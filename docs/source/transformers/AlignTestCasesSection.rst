@@ -67,3 +67,4 @@ It is possible to use the following arguments to skip formatting of the code:
 - :ref:`skip return values`
 - :ref:`skip keyword call`
 - :ref:`skip keyword call pattern`
+- :ref:`skip settings`
