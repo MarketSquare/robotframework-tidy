@@ -88,7 +88,7 @@ class TestCli:
             "handle_too_long",
             "skip_documentation",
         ]
-        # skip_documentation is overriden in transformer - the order is different because of that
+        # skip_documentation is overridden in transformer - the order is different because of that
         expected_args += sorted(AlignKeywordsTestsSection.HANDLES_SKIP - {"skip_documentation"})
         expected_args_str = "\n    ".join(expected_args)
         expected_output = (
