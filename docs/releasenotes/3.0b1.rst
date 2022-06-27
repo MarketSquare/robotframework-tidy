@@ -1,0 +1,172 @@
+Robotidy 3.0 beta 1
+=========================================
+
+Major release of the Robotidy that brings long awaited align keywords and test cases transformers. This release also
+includes other improvements and bug fixes - read the changelog for the details. There are also backward incompatible
+changes (listed in `Backward incompatible changes`_).
+
+You can install the latest available version by running::
+
+    pip install --pre --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==3.0b1
+
+Backward incompatible changes
+------------------------------
+- ``AlignTestCases`` transformer was renamed to ``AlignTemplatedTestCases``. The behaviour of the transformer did not
+  change. With addition of ``AlignTestCasesSection`` transformer (which align non-templated test cases) the new name
+  is more consistent.
+- ``indent_and`` parameter in ``IndentNestedKeywords`` transformers changed type from boolean to string.
+  See `IndentNestedKeywords - AND handling`_ section for more details (`#319 <https://github.com/MarketSquare/robotframework-tidy/issues/319>`_).
+
+AlignKeywordsSection & AlignTestCasesSection transformers
+----------------------------------------------------------
+New transformers for aligning the code in the ``*** Keywords ***`` and ``*** Test Cases ***`` sections in columns.
+Example output from the transformers:
+
+::
+
+    *** Keywords ***
+    Keyword
+        ${var}        Create Resource       ${argument}       value
+        Assert        value
+        Multi
+        ...           line
+        ...           args
+
+To read detailed information on each transformer go to the documentation pages:
+
+- `AlignKeywordsSection <https://robotidy.readthedocs.io/en/latest/transformers/AlignKeywordsSection.html>`_
+- `AlignTestCasesSection <https://robotidy.readthedocs.io/en/latest/transformers/AlignTestCasesSection.html>`_
+
+Skip formatting
+----------------
+This feature was added together with align transformers (to help to skip of formatting parts of the code). It is
+currently supported by ``AlignKeywordsSection``, ``AlignTestCasesSection`` and ``NormalizeSeparators``
+transformers. The support will be extended to other transformers in the upcoming releases.
+
+By using it, it is possible to skip formatting of the code with given type or values. It is also possible
+by defining ``# robotidy: off`` disablers in the code, but with skip formatting you can disable formatting on all
+instances of code that match your conditions.
+
+For example, you can have the keyword that you want to to align automatically (using ``AlignKeywordsSection``) and
+keyword call that should not be formatted:
+
+::
+
+    *** Keywords ***
+    Keyword
+        Keyword Call    ${var}    string
+        ${date_string}    Catenate
+        ...    {
+        ...    "Customer":
+        ...    {
+        ...        "Customer account":   {"type": "text",  "value": "${CUSTOMER}"}
+        ...    }
+        ${variable}    Parse Results    ${var}    string
+
+In this example ``Catenate`` keyword looks better when manually aligned. To skip formatting on all instances of
+``Catenate`` we can use ``skip_keyword_call`` parameter::
+
+    robotidy --configure AlignKeywordsSection:skip_keyword_call=Catenate src
+
+More information in the (`documentation <https://robotidy.readthedocs.io/en/latest/configuration/skip_formatting.html>`_)
+
+IndentNestedKeywords - AND handling
+------------------------------------
+``indent_and`` parameter in ``IndentNestedKeywords`` now allows you to configure one of three ways of handling the
+``AND`` argument used in ``Run Keywords`` (`#328 <https://github.com/MarketSquare/robotframework-tidy/issues/328>`_).
+
+``indent_and=split`` (default, previously False)
+
+::
+
+    *** Keywords ***
+        Keyword
+            Run Keywords
+            ...    No Operation  arg
+            ...    AND
+            ...    No Operation  arg1  arg2
+
+``indent_and=split_and_indent`` (previously True)
+
+::
+
+    *** Keywords ***
+        Keyword
+            Run Keywords
+            ...        No Operation  arg
+            ...    AND
+            ...        No Operation  arg1  arg2
+
+``indent_and=keep_in_line`` (new mode)
+
+::
+
+*** Keywords ***
+    Keyword
+        Run Keywords
+        ...    No Operation  arg    AND
+        ...    No Operation  arg1  arg2
+
+Continuation indent
+--------------------
+It's extension of ``--indent`` option added in ``2.4.0`` release. ``--indent`` allows you to configure indentation
+separetely from separator (``--spacecount``). Continuation indent ``--continuation-indent`` allow you define indent
+after `...` continuation marks (`#331 <https://github.com/MarketSquare/robotframework-tidy/issues/331>`_).
+
+Following configuration::
+
+    robotidy --spacecount 2 --indent 4
+
+leads to this formatting:
+
+::
+
+*** Test Cases ***
+Test case
+    Multiline  ${argument}
+    ...  value
+    ...  value2  value3  value4
+
+By using ``--continuation-indent``::
+
+    robotidy --spacecount 2 --indent 4 --continuation-indent 4
+
+we can achieve this:
+
+::
+
+*** Test Cases ***
+Test case
+    Multiline  ${argument}
+    ...    value
+    ...    value2  value3  value4
+
+Fixes
+-----
+- documentation now properly states that ``NormalizeTags`` is default transformer (`#335 <https://github.com/MarketSquare/robotframework-tidy/issues/335>`_)
+- default values for some options in help message are now formatted correctly (`#337 <https://github.com/MarketSquare/robotframework-tidy/issues/337>`_)
+
+Other
+-----
+There are major changes to core features of Robotidy that doesn't affect the users but make it easier to develop and
+maintain the tool:
+
+- Configuration is now stored in separate class (`#329 <https://github.com/MarketSquare/robotframework-tidy/issues/329>`_)
+- Transformers inherits now from Robotidy internal ``Transformer`` class rather than ``ModelTransformer``
+  from robotframework. Previous way of defining the transformer is still supported - see
+  `docs <https://robotidy.readthedocs.io/en/latest/external_transformers.html#modeltransformer-vs-transformer>`_
+  for details .
+
+Acknowledgements
+-----------------
+The development of the Robotidy 3.0 wouldn't be possible if not for the community - contributing by sharing ideas,
+reporting bugs or providing the feedback on early versions:
+
+- `@tkopra <https://github.com/tkopra>`__ for helping in design and test of
+  AlignKeywordsSection & AlignTestCasesSection transformers
+- `@Reddriver <https://github.com/Reddriver>`__ for reporting bugs and retesting the fixes
+- `@mnojek <https://github.com/mnojek>`__ for code reviews
