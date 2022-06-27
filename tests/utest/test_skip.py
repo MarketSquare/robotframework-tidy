@@ -11,17 +11,17 @@ class TestSkip:
     @pytest.mark.parametrize("return_values, str_return_values", [(True, "True"), (False, "False")])
     @pytest.mark.parametrize("doc, str_doc", [(True, "True"), (False, "False")])
     def test_from_str_cfg(self, doc, str_doc, return_values, str_return_values, keyword_call, str_keyword_call):
-        skip_from_str = SkipConfig.from_str_config(  # TODO other tests for global_skip overrides
-            global_skip=SkipConfig(),
+        skip_config = SkipConfig()
+        skip_config.update_with_str_config(
             documentation=str_doc,
             return_values=str_return_values,
             keyword_call=str_keyword_call,
         )
         skip = SkipConfig(documentation=doc, return_values=return_values, keyword_call=keyword_call)
-        assert skip_from_str == skip
+        assert skip_config == skip
 
     @pytest.mark.parametrize(
-        "skip_config, names, disabled",
+        "skip_keyword, names, disabled",
         [
             ("executejavascript", ["Execute Javascript"], [True]),
             ("executejavascript", ["OtherLib.Execute Javascript"], [False]),
@@ -36,16 +36,17 @@ class TestSkip:
             ),
         ],
     )
-    def test_skip_keyword_call(self, skip_config, names, disabled):
+    def test_skip_keyword_call(self, skip_keyword, names, disabled):
         mock_node = Mock()
-        skip_config = SkipConfig.from_str_config(global_skip=SkipConfig(), keyword_call=skip_config)
+        skip_config = SkipConfig()
+        skip_config.update_with_str_config(keyword_call=skip_keyword)
         skip = Skip(skip_config=skip_config)
         for name, disable in zip(names, disabled):
             mock_node.keyword = name
             assert disable == skip.keyword_call(mock_node)
 
     @pytest.mark.parametrize(
-        "skip_config, names, disabled",
+        "skip_keyword, names, disabled",
         [
             ("Execute Javascript", ["Execute Javascript"], [True]),
             ("Execute Javascript", ["executejavascript"], [False]),
@@ -66,9 +67,10 @@ class TestSkip:
             ("executejavascript", [None], [False]),
         ],
     )
-    def test_skip_keyword_call_pattern(self, skip_config, names, disabled):
+    def test_skip_keyword_call_pattern(self, skip_keyword, names, disabled):
         mock_node = Mock()
-        skip_config = SkipConfig.from_str_config(global_skip=SkipConfig(), keyword_call_pattern=skip_config)
+        skip_config = SkipConfig()
+        skip_config.update_with_str_config(keyword_call_pattern=skip_keyword)
         skip = Skip(skip_config=skip_config)
         for name, disable in zip(names, disabled):
             mock_node.keyword = name
@@ -83,18 +85,18 @@ class TestSkip:
 
     def test_global_local_skip_documentation(self):
         # local overrides global
-        global_config = SkipConfig(documentation=False)
-        local_config = SkipConfig.from_str_config(global_skip=global_config, documentation="True")
-        assert local_config.documentation
+        skip_config = SkipConfig(documentation=False)
+        skip_config.update_with_str_config(documentation="True")
+        assert skip_config.documentation
 
     def test_global_local_keyword_call(self):
         # list are joined
-        global_config = SkipConfig(keyword_call=["name", "name2"])
-        local_config = SkipConfig.from_str_config(global_skip=global_config, keyword_call="name,name3")
-        assert local_config.keyword_call == ["name", "name3", "name", "name2"]
+        skip_config = SkipConfig(keyword_call=["name", "name2"])
+        skip_config.update_with_str_config(keyword_call="name,name3")
+        assert skip_config.keyword_call == ["name", "name2", "name", "name3"]
 
     def test_only_global_return_values(self):
         # global takes precedence
-        global_config = SkipConfig(return_values=True)
-        local_config = SkipConfig.from_str_config(global_skip=global_config)
-        assert local_config.return_values
+        skip_config = SkipConfig(return_values=True)
+        skip_config.update_with_str_config()
+        assert skip_config.return_values

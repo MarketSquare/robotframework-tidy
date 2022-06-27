@@ -84,59 +84,18 @@ class SkipConfig:
         self.return_statement = return_statement
         self.tags = tags
 
-    @classmethod
-    def from_str_config(
-        cls,
-        global_skip,
-        documentation: Optional[str] = None,
-        return_values: Optional[str] = None,
-        keyword_call: Optional[str] = None,
-        keyword_call_pattern: Optional[str] = None,
-        settings: Optional[str] = None,
-        arguments: Optional[str] = None,
-        setup: Optional[str] = None,
-        teardown: Optional[str] = None,
-        timeout: Optional[str] = None,
-        template: Optional[str] = None,
-        return_statement: Optional[str] = None,
-        tags: Optional[str] = None,
-    ):
-        """Integrate local and global configurations into one (local takes precedence if specified)."""
-        # FIXME DRY
-        documentation = join_optional_flag_with_global(documentation, global_skip.documentation)
-        return_values = join_optional_flag_with_global(return_values, global_skip.return_values)
-        settings = join_optional_flag_with_global(settings, global_skip.settings)
-        arguments = join_optional_flag_with_global(arguments, global_skip.arguments)
-        setup = join_optional_flag_with_global(setup, global_skip.setup)
-        teardown = join_optional_flag_with_global(teardown, global_skip.teardown)
-        timeout = join_optional_flag_with_global(timeout, global_skip.timeout)
-        template = join_optional_flag_with_global(template, global_skip.template)
-        return_statement = join_optional_flag_with_global(return_statement, global_skip.return_statement)
-        tags = join_optional_flag_with_global(tags, global_skip.tags)
-        keyword_call = join_optional_list_with_global(keyword_call, global_skip.keyword_call)
-        keyword_call_pattern = join_optional_list_with_global(keyword_call_pattern, global_skip.keyword_call_pattern)
-        return cls(
-            documentation=documentation,
-            return_values=return_values,
-            keyword_call=keyword_call,
-            keyword_call_pattern=keyword_call_pattern,
-            settings=settings,
-            arguments=arguments,
-            setup=setup,
-            teardown=teardown,
-            timeout=timeout,
-            template=template,
-            return_statement=return_statement,
-            tags=tags,
-        )
+    def update_with_str_config(self, **kwargs):
+        for name, value in kwargs.items():
+            # find the value we're overriding and get its type from it
+            original_value = self.__dict__[name]
+            if isinstance(original_value, bool):
+                self.__dict__[name] = str_to_bool(value)
+            elif isinstance(original_value, list):
+                parsed_list = parse_csv(value)
+                self.__dict__[name].extend(parsed_list)
 
-    def __eq__(self, other):  # TODO remove or update
-        return (
-            self.documentation == other.documentation
-            and self.return_values == other.return_values
-            and self.keyword_call == other.keyword_call
-            and self.keyword_call_pattern == other.keyword_call_pattern
-        )
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
 
 
 class Skip:
