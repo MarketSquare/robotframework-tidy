@@ -1,7 +1,8 @@
 from robot.api.parsing import Token
 
-from robotidy.exceptions import InvalidParameterValueError
 from robotidy.disablers import skip_if_disabled
+from robotidy.exceptions import InvalidParameterValueError
+from robotidy.skip import Skip
 from robotidy.transformers import Transformer
 from robotidy.utils import (
     collect_comments_from_tokens,
@@ -77,12 +78,12 @@ class IndentNestedKeywords(Transformer):
         RunKeywordVariant("BuiltIn", "Repeat Keyword", resolve=2),
         RunKeywordVariant("BuiltIn", "Wait Until Keyword Succeeds", resolve=3),
     ]
+    HANDLES_SKIP = frozenset({"skip_settings"})
 
-    def __init__(self, indent_and: str = "split", skip_settings: bool = False):
-        super().__init__()
+    def __init__(self, indent_and: str = "split", skip: Skip = None):
+        super().__init__(skip=skip)
         self.indent_and = indent_and
         self.validate_indent_and()
-        self.skip_settings = skip_settings
         self.run_keywords = dict()
         for run_kw in self.RUN_KW:
             self.run_keywords[run_kw.name] = run_kw
@@ -103,7 +104,7 @@ class IndentNestedKeywords(Transformer):
         return self.run_keywords.get(kw_norm, None)
 
     def get_setting_lines(self, node):  # noqa
-        if self.skip_settings or node.errors or not len(node.data_tokens) > 1:
+        if self.skip.setting("any") or node.errors or not len(node.data_tokens) > 1:
             return None
         run_keyword = self.get_run_keyword(node.data_tokens[1].value)
         if not run_keyword:

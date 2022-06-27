@@ -9,6 +9,8 @@ from robotidy.transformers.aligners_core import AlignKeywordsTestsSection
 
 class AlignKeywordsSection(AlignKeywordsTestsSection):
     """
+    Align ``*** Keywords ***`` section to columns.
+
     Align keyword calls and settings into columns with predefined width. There are two possible alignment types
     (configurable via ``alignment_type``):
       - ``fixed`` (default): pad the tokens to the fixed width of the column

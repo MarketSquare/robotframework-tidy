@@ -10,6 +10,8 @@ from robotidy.utils import is_suite_templated
 
 class AlignTestCasesSection(AlignKeywordsTestsSection):
     """
+    Align ``*** Test Cases ***`` section to columns.
+
     Align non-templated tests and settings into columns with predefined width. There are two possible alignment types
     (configurable via ``alignment_type``):
       - ``fixed`` (default): pad the tokens to the fixed width of the column
