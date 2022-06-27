@@ -32,7 +32,7 @@ class AlignKeywordsSection(AlignKeywordsTestsSection):
     Tokens that are longer than width of the column go into "overflow" state. It's possible to decide in this
     situation (by configuring ``handle_too_long``):
       - ``overflow`` (default): align token to the next column
-      - ``compact_overflow``: try to fit next token between current (overflowed) token and next column
+      - ``compact_overflow``: try to fit next token between current (overflowed) token and the next column
       - ``ignore_rest``: ignore remaining tokens in the line
       - ``ignore_line``: ignore whole line
 

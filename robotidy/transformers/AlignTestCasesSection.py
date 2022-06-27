@@ -20,7 +20,7 @@ class AlignTestCasesSection(AlignKeywordsTestsSection):
     Example output:
     ```robotframework
     *** Test Cases ***
-    Keyword
+    Test
         ${var}        Create Resource       ${argument}       value
         Assert        value
         Multi

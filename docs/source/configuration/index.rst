@@ -43,6 +43,8 @@ Robot Framework version::
 
 It will disable all transformers that require Robot Framework greater than <target-version> to run (even if you have Robot Framework greater than <target-version> installed).
 
+.. _disablers:
+
 .. rubric:: Disablers
 
 You can disable formatting in Robot Framework statement or in span of lines using ``# robocop: off`` marker.
