@@ -51,7 +51,7 @@ By using it, it is possible to skip formatting of the code with given type or va
 by defining ``# robotidy: off`` disablers in the code, but with skip formatting you can disable formatting on all
 instances of code that match your conditions.
 
-For example, you can have the keyword that you want to to align automatically (using ``AlignKeywordsSection``) and
+For example, you can have the keyword that you want to align automatically (using ``AlignKeywordsSection``) and
 keyword call that should not be formatted:
 
 ::
@@ -114,7 +114,7 @@ IndentNestedKeywords - AND handling
 Continuation indent
 --------------------
 It's extension of ``--indent`` option added in ``2.4.0`` release. ``--indent`` allows you to configure indentation
-separetely from separator (``--spacecount``). Continuation indent ``--continuation-indent`` allow you define indent
+separately from separator (``--spacecount``). Continuation indent ``--continuation-indent`` allows you define indent
 after `...` continuation marks (`#331 <https://github.com/MarketSquare/robotframework-tidy/issues/331>`_).
 
 Following configuration::
@@ -147,7 +147,7 @@ Test case
 
 Fixes
 -----
-- documentation now properly states that ``NormalizeTags`` is default transformer (`#335 <https://github.com/MarketSquare/robotframework-tidy/issues/335>`_)
+- documentation now properly states that ``NormalizeTags`` is the default transformer (`#335 <https://github.com/MarketSquare/robotframework-tidy/issues/335>`_)
 - default values for some options in help message are now formatted correctly (`#337 <https://github.com/MarketSquare/robotframework-tidy/issues/337>`_)
 
 Other
@@ -156,7 +156,7 @@ There are major changes to core features of Robotidy that doesn't affect the use
 maintain the tool:
 
 - Configuration is now stored in separate class (`#329 <https://github.com/MarketSquare/robotframework-tidy/issues/329>`_)
-- Transformers inherits now from Robotidy internal ``Transformer`` class rather than ``ModelTransformer``
+- Transformers inherit now from Robotidy internal ``Transformer`` class rather than ``ModelTransformer``
   from robotframework. Previous way of defining the transformer is still supported - see
   `docs <https://robotidy.readthedocs.io/en/latest/external_transformers.html#modeltransformer-vs-transformer>`_
   for details .
