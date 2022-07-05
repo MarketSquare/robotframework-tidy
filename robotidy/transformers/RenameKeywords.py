@@ -91,7 +91,9 @@ class RenameKeywords(ModelTransformer):
                 value = self.replace_pattern.sub(repl=self.replace_to, string=value)
             if self.remove_underscores and set(value) != {"_"}:
                 value = re.sub("_+", " ", value)  # replace one or more _ with one space
-            value = "".join([a if a.isupper() else b for a, b in zip(value, string.capwords(value.strip()))])
+            value = value.strip()
+            # capitalize first letter of every word, leave rest untouched
+            value = "".join([a if a.isupper() else b for a, b in zip(value, string.capwords(value))])
             values.append(value)
         token.value = ".".join(values)
         return node

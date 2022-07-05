@@ -46,3 +46,7 @@ Double__underscores
 All Upper Case
     Connect To System ABC
     Create Product DFG
+
+Underscores and. dots
+    Foo. BAR Baz A b C
+    _Foo bar BAZ
