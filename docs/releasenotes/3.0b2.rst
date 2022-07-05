@@ -105,6 +105,7 @@ IndentNestedKeywords - AND handling
 
 ::
 
+<<<<<<< HEAD
     *** Keywords ***
         Keyword
             Run Keywords
@@ -130,6 +131,13 @@ Example output::
 By default too long lines are split to multiple lines, one value per line.
 You can change this behaviour to put multiple values in one line till the character limit
 with ``split_on_every_value`` flag (default ``False``).
+=======
+*** Keywords ***
+    Keyword
+        Run Keywords
+        ...    No Operation  arg    AND
+        ...    No Operation  arg1  arg2
+>>>>>>> b7e44f1... Fix RenameKeywords incorrectly renaming the keywords with dots/underscores followed by space
 
 Continuation indent
 --------------------
