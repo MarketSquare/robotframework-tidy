@@ -321,7 +321,7 @@ class AlignKeywordsTestsSection(Transformer):
         tokens, comments = separate_comments(line)
         if len(tokens) < 2:  # only happens with weird encoding, better to skip
             return None
-        aligned = self.align_tokens(tokens[:-2], indent)
+        aligned = self.align_tokens(tokens[:-2], indent, self.handle_too_long)
         last_token = strip_extra_whitespace(tokens[-2])
         aligned.extend([last_token, *join_comments(comments), tokens[-1]])
         return aligned
