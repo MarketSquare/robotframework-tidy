@@ -91,3 +91,15 @@ class TestAlignTestCasesSection(TransformerAcceptanceTest):
 
     def test_compact_overflow_bug(self):
         self.compare(source="compact_overflow_bug.robot", config=":widths=24,28,20:handle_too_long=compact_overflow")
+
+    def test_dynamic_compact_overflow(self):
+        self.compare(
+            source="dynamic_compact_overflow.robot",
+            config=":widths=24,28,20:handle_too_long=compact_overflow:skip_keyword_call=Log",
+        )
+
+    def test_dynamic_compact_overflow_limit_1(self):
+        self.compare(
+            source="dynamic_compact_overflow_limit_1.robot",
+            config=":widths=24,28,20:handle_too_long=compact_overflow:skip_keyword_call=Log:compact_overflow_limit=1",
+        )

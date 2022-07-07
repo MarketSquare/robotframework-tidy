@@ -86,6 +86,7 @@ class TestCli:
             "widths",
             "alignment_type",
             "handle_too_long",
+            "compact_overflow_limit",
             "skip_documentation",
         ]
         # skip_documentation is overridden in transformer - the order is different because of that

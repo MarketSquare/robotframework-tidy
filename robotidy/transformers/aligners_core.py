@@ -40,6 +40,7 @@ class AlignKeywordsTestsSection(Transformer):
         widths: str,
         alignment_type: str,
         handle_too_long: str,
+        compact_overflow_limit: int = 2,
         skip: Skip = None,
     ):
         super().__init__(skip)
@@ -47,6 +48,7 @@ class AlignKeywordsTestsSection(Transformer):
         self.indent = 1
         self.handle_too_long = self.parse_handle_too_long(handle_too_long)
         self.fixed_alignment = self.parse_alignment_type(alignment_type)
+        self.compact_overflow_limit = compact_overflow_limit
         self.split_too_long = False
         # column widths map - 0: 40, 1: 30
         if widths:
@@ -324,18 +326,20 @@ class AlignKeywordsTestsSection(Transformer):
         aligned.extend([last_token, *join_comments(comments), tokens[-1]])
         return aligned
 
+    def too_many_misaligned_cols(self, misaligned_cols, prev_overflow_len, tokens, index):
+        return misaligned_cols >= self.compact_overflow_limit and prev_overflow_len and index < len(tokens) - 1
+
     def align_tokens(self, tokens, indent):
-        prev_overflow_len = 0
-        last_assign = 0
-        separator = self.formatting_config.space_count
+        prev_overflow_len, last_assign, misaligned_cols = 0, 0, 0
+        min_separator = self.formatting_config.space_count
         column = 0
         aligned = [indent]
         for index, token in enumerate(tokens):
             aligned.append(token)
             width = self.get_width(column)
             if self.skip.return_values and token.type == Token.ASSIGN:
-                width -= len(token.value) + separator + last_assign
-                last_assign = len(token.value) + separator
+                width -= len(token.value) + min_separator + last_assign
+                last_assign = len(token.value) + min_separator
                 if width > 0:
                     prev_overflow_len = -width
                 while width <= 0:
@@ -343,28 +347,47 @@ class AlignKeywordsTestsSection(Transformer):
                     column += 1
                     width += self.get_width(column, override_default_zero=True)
                     prev_overflow_len = self.get_width(column, override_default_zero=True) - width
-                aligned.append(Token(Token.SEPARATOR, separator * " "))
+                aligned.append(Token(Token.SEPARATOR, min_separator * " "))
                 continue
             if width == 0:
-                separator_len = round_to_four(len(token.value) + separator) - len(token.value)
+                separator_len = round_to_four(len(token.value) + min_separator) - len(token.value)
             else:
                 separator_len = width - len(token.value) - prev_overflow_len
-                if separator_len < separator:
+                if separator_len >= min_separator:
+                    prev_overflow_len = 0
+                    misaligned_cols = 0
+                else:
                     if self.handle_too_long == "ignore_line":
-                        return align_fixed(tokens, separator, indent)
+                        return align_fixed(tokens, min_separator, indent)
                     if self.handle_too_long == "ignore_rest":
-                        return aligned + align_fixed(tokens[index + 1 :], separator)
+                        return aligned + align_fixed(tokens[index + 1 :], min_separator)
                     if self.handle_too_long == "compact_overflow":
-                        required_width = len(token.value) + separator + prev_overflow_len
-                        separator_len = separator
+                        required_width = len(token.value) + min_separator + prev_overflow_len
+                        separator_len = min_separator
                         prev_overflow_len = required_width - width
+                        misaligned_cols += 1
+                        while prev_overflow_len > width:
+                            column += 1
+                            width = self.get_width(column, override_default_zero=True)
+                            prev_overflow_len -= width
+                            misaligned_cols += 1
+                        if self.too_many_misaligned_cols(misaligned_cols, prev_overflow_len, tokens, index):
+                            # check if next col fits next token with prev_overflow, if not, jump to the next column
+                            next_token = tokens[index + 1]
+                            next_width = self.get_width(column + 1, override_default_zero=True)
+                            required_width = next_width - prev_overflow_len - len(next_token.value)
+                            if required_width < min_separator:
+                                column += 1
+                                separator_len = next_width - prev_overflow_len + min_separator
+                                prev_overflow_len = 0
                     else:  # "overflow"
-                        while round_to_four(len(token.value) + separator) > width:
+                        while round_to_four(len(token.value) + min_separator) > width:
                             column += 1
                             width += self.get_width(column, override_default_zero=True)
                         separator_len = width - len(token.value)
-                else:
-                    prev_overflow_len = 0
+            separator_len = max(
+                min_separator, separator_len
+            )  # extra precautious: separator should never be less than min_sep
             aligned.append(Token(Token.SEPARATOR, separator_len * " "))
             column += 1 + (separator_len == width)
         return aligned

@@ -46,10 +46,11 @@ class AlignTestCasesSection(AlignKeywordsTestsSection):
         widths: str = "",
         alignment_type: str = "fixed",
         handle_too_long: str = "overflow",
+        compact_overflow_limit: int = 2,
         skip_documentation: str = "True",  # noqa - override skip_documentation from Skip
         skip: Skip = None,
     ):
-        super().__init__(widths, alignment_type, handle_too_long, skip)
+        super().__init__(widths, alignment_type, handle_too_long, compact_overflow_limit, skip)
 
     def visit_File(self, node):  # noqa
         if is_suite_templated(node):
