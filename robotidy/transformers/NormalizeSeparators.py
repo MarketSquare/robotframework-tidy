@@ -1,9 +1,10 @@
 from robot.api.parsing import KeywordCall, Token
 
 try:
-    from robot.api.parsing import InlineIfHeader
+    from robot.api.parsing import InlineIfHeader, ReturnStatement
 except ImportError:
     InlineIfHeader = None
+    ReturnStatement = None
 
 from robotidy.disablers import Skip, skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
@@ -137,7 +138,9 @@ class NormalizeSeparators(Transformer):
         return self.visit_Statement(keyword)
 
     def is_keyword_inside_inline_if(self, node):
-        return self.is_inline and isinstance(node, KeywordCall)
+        return self.is_inline and (
+            isinstance(node, KeywordCall) or ReturnStatement and isinstance(node, ReturnStatement)
+        )
 
     @skip_if_disabled
     def visit_Statement(self, statement):  # noqa
