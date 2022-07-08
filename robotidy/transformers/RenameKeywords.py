@@ -84,7 +84,7 @@ class RenameKeywords(ModelTransformer):
         values = []
         split_names = token.value.split(".")
         for index, value in enumerate(split_names, start=1):
-            if self.ignore_library and index != len(split_names):
+            if self.is_keyword_call(type_of_name) and self.ignore_library and index != len(split_names):
                 values.append(value)
                 continue
             if self.replace_pattern is not None:
@@ -97,6 +97,10 @@ class RenameKeywords(ModelTransformer):
             values.append(value)
         token.value = ".".join(values)
         return node
+
+    @staticmethod
+    def is_keyword_call(type_of_name):
+        return type_of_name == Token.KEYWORD
 
     def visit_KeywordName(self, node):  # noqa
         return self.rename_node(node, Token.KEYWORD_NAME)
