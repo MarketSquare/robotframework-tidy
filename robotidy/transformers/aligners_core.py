@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import List, Tuple
 
 from robot.api.parsing import ElseHeader, ElseIfHeader, ModelVisitor, Token
 from robot.parsing.model import Statement
@@ -11,7 +12,9 @@ except ImportError:
 from robotidy.disablers import Skip, skip_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 from robotidy.transformers import Transformer
-from robotidy.utils import is_blank_multiline, round_to_four, tokens_by_lines
+from robotidy.utils import is_blank_multiline, round_to_four
+
+WHITESPACE_TOKENS = frozenset({Token.SEPARATOR, Token.EOS})
 
 
 class AlignKeywordsTestsSection(Transformer):
@@ -229,21 +232,53 @@ class AlignKeywordsTestsSection(Transformer):
             return node
         if self.skip.keyword_call(node):
             return node
-        return self.align_node(node, check_length=self.split_too_long)
+        return self.align_node(node, check_length=self.split_too_long, possible_assign=True)
 
-    def align_node(self, node, check_length):
-        lines = list(tokens_by_lines(node))
+    def should_skip_return_values(self, line, possible_assign):
+        return possible_assign and self.skip.return_values and any(token.type == Token.ASSIGN for token in line)
+
+    def align_node(self, node, check_length: bool, possible_assign: bool = False):
         indent = Token(Token.SEPARATOR, self.indent * self.formatting_config.indent)
         aligned_lines = []
-        for line in lines:
-            aligned_line = self.align_line(line, indent)
+        for line in node.lines:
+            assign, tokens, skip_width = self.split_assign(line, possible_assign)
+            aligned_line = self.align_line(tokens, skip_width)
             if aligned_line is None:
-                return node
+                aligned_lines.extend(line)
+                continue
+            aligned_line = [indent] + assign + aligned_line
             if check_length and self.is_line_too_long(aligned_line):
                 split_node = self.split_too_long_node(node)
                 return self.align_node(split_node, check_length=False)
             aligned_lines.extend(aligned_line)
         return Statement.from_tokens(aligned_lines)
+
+    def split_assign(self, line: List, possible_assign: bool) -> Tuple[List, List, int]:
+        """
+        This method returns return values together with their separators in case
+        we don't want to align them.
+
+        Returns:
+            A tuple, containing:
+            - return values,
+            - remaining tokens,
+            - widths of the return values (used to determine next alignment column)
+        """
+        if not self.should_skip_return_values(line, possible_assign):
+            return [], get_data_tokens(line), 0
+        assign = []
+        assign_found = False
+        for index, token in enumerate(line[1:], start=1):
+            if token.type == Token.ASSIGN:
+                assign_found = True
+            elif assign_found and token.type not in (Token.SEPARATOR, Token.ASSIGN):
+                skip_width = sum(len(token.value) for token in assign[:-1])
+                return (
+                    assign[:-1],
+                    get_data_tokens(line[index:]),
+                    skip_width,
+                )
+            assign.append(token)
 
     @skip_if_disabled
     def visit_Tags(self, node):  # noqa
@@ -289,7 +324,7 @@ class AlignKeywordsTestsSection(Transformer):
             return node
         return self.align_node(node, check_length=False)
 
-    def align_line(self, line, indent):
+    def align_line(self, line: List, skip_width: int):
         """
         Align single line of the node.
 
@@ -317,38 +352,43 @@ class AlignKeywordsTestsSection(Transformer):
         """
         if is_blank_multiline(line):  # ...\n edge case
             line[-1].value = line[-1].value.lstrip(" \t")  # normalize eol from '  \n' to '\n'
-            return [indent] + line
+            return line
         tokens, comments = separate_comments(line)
         if len(tokens) < 2:  # only happens with weird encoding, better to skip
             return None
-        aligned = self.align_tokens(tokens[:-2], indent, self.handle_too_long)
+        # skip_tokens, tokens = self.skip_return_values_if_needed(tokens)
+        aligned = self.align_tokens(tokens[:-2], skip_width)
         last_token = strip_extra_whitespace(tokens[-2])
         aligned.extend([last_token, *join_comments(comments), tokens[-1]])
         return aligned
 
-    def too_many_misaligned_cols(self, misaligned_cols, prev_overflow_len, tokens, index):
+    def too_many_misaligned_cols(self, misaligned_cols: int, prev_overflow_len: int, tokens: List, index: int):
         return misaligned_cols >= self.compact_overflow_limit and prev_overflow_len and index < len(tokens) - 1
 
-    def align_tokens(self, tokens, indent):
+    def find_starting_column(self, skip_width: int):
+        """
+        If we're skipping values at the beginning of the line,
+        we need to find next column for remaining tokens.
+        """
+        column = 0
+        while skip_width > 0:
+            width = self.get_width(column, override_default_zero=True)
+            skip_width -= width
+            column += 1
+        return column, abs(skip_width)
+
+    def align_tokens(self, tokens: List, skip_width: int):
         prev_overflow_len, last_assign, misaligned_cols = 0, 0, 0
         min_separator = self.formatting_config.space_count
-        column = 0
-        aligned = [indent]
+        aligned = []
+        if skip_width == 0:
+            column = 0
+        else:
+            column, skip_width = self.find_starting_column(skip_width)
+            aligned.append(get_separator(skip_width))
         for index, token in enumerate(tokens):
             aligned.append(token)
             width = self.get_width(column)
-            if self.skip.return_values and token.type == Token.ASSIGN:
-                width -= len(token.value) + min_separator + last_assign
-                last_assign = len(token.value) + min_separator
-                if width > 0:
-                    prev_overflow_len = -width
-                while width <= 0:
-                    # change column if assigns overflow
-                    column += 1
-                    width += self.get_width(column, override_default_zero=True)
-                    prev_overflow_len = self.get_width(column, override_default_zero=True) - width
-                aligned.append(Token(Token.SEPARATOR, min_separator * " "))
-                continue
             if width == 0:
                 separator_len = round_to_four(len(token.value) + min_separator) - len(token.value)
             else:
@@ -358,9 +398,9 @@ class AlignKeywordsTestsSection(Transformer):
                     misaligned_cols = 0
                 else:
                     if self.handle_too_long == "ignore_line":
-                        return align_fixed(tokens, min_separator, indent)
+                        return align_fixed(tokens, min_separator)
                     if self.handle_too_long == "ignore_rest":
-                        return aligned + align_fixed(tokens[index + 1 :], min_separator)
+                        return aligned + align_fixed(tokens[index + 1 :], min_separator, start_sep=True)
                     if self.handle_too_long == "compact_overflow":
                         required_width = len(token.value) + min_separator + prev_overflow_len
                         separator_len = min_separator
@@ -388,7 +428,7 @@ class AlignKeywordsTestsSection(Transformer):
             separator_len = max(
                 min_separator, separator_len
             )  # extra precautious: separator should never be less than min_sep
-            aligned.append(Token(Token.SEPARATOR, separator_len * " "))
+            aligned.append(get_separator(separator_len))
             column += 1 + (separator_len == width)
         return aligned
 
@@ -426,17 +466,17 @@ def separate_comments(tokens):
 
 def join_comments(comments):
     tokens = []
-    separator = Token(Token.SEPARATOR, "  ")
+    separator = get_separator(2)
     for token in comments:
         tokens.append(separator)
         tokens.append(token)
     return tokens
 
 
-def align_fixed(tokens, separator, indent=None):
-    """Align tokens with fixed spacing and optional indent."""
-    sep_token = Token(Token.SEPARATOR, separator * " ")
-    aligned = [indent if indent else sep_token]
+def align_fixed(tokens, sep_len, start_sep=False):
+    """Align tokens with fixed spacing."""
+    sep_token = get_separator(sep_len)
+    aligned = [sep_token] if start_sep else []
     for token in tokens:
         aligned.append(token)
         aligned.append(sep_token)
@@ -445,6 +485,14 @@ def align_fixed(tokens, separator, indent=None):
 
 def get_line_length(tokens):
     return sum(len(token.value) for token in tokens)
+
+
+def get_data_tokens(tokens):
+    return [token for token in tokens if token.type not in WHITESPACE_TOKENS]
+
+
+def get_separator(sep_len: int) -> Token:
+    return Token(Token.SEPARATOR, sep_len * " ")
 
 
 class ColumnWidthCounter(ModelVisitor):
