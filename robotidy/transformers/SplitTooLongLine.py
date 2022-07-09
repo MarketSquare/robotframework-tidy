@@ -15,7 +15,7 @@ CONTINUATION = Token(Token.CONTINUATION)
 class SplitTooLongLine(Transformer):
     """
     Split too long lines.
-    If any line in keyword call exceeds given length limit (120 by default) it will be
+    If any line in the keyword call or variable exceeds given length limit (120 by default) it will be
     split:
 
     ```robotframework
@@ -48,14 +48,22 @@ class SplitTooLongLine(Transformer):
     robotidy --configure SplitTooLongLine:line_length:140 src.robot
     ```
 
-    Using ``split_on_every_arg`` flag (``True`` by default), you can force the formatter to fill arguments in one line
-    until character limit:
+    ``split_on_every_arg`` and ``split_on_every_value`` flags (``True`` by default) controls whether arguments
+    and values are split or fills the line until character limit:
 
     ```robotframework
     *** Test Cases ***
-    Test
+    Test with default split_on_every_arg
+        # ${arg1} fits under limit, so it stays in the line
         Keyword With Longer Name    ${arg1}
         ...    ${arg2}    ${arg3}
+
+    Test with split_on_every_arg = False
+        # arguments are split
+        Keyword With Longer Name
+        ...    ${arg1}
+        ...    ${arg2}
+        ...    ${arg3}
     ```
 
     Supports global formatting params: ``spacecount``, ``separator``, ``--startline`` and ``--endline``.

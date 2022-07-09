@@ -8,18 +8,28 @@ Split too long lines.
 .. |TRANSFORMERNAME| replace:: SplitTooLongLine
 .. include:: enabled_hint.txt
 
-If any line in keyword call exceeds given length limit (120 by default) it will be
+If any line in the keyword call or variable exceeds given length limit (120 by default) it will be
 split:
 
 .. tabs::
 
     .. code-tab:: robotframework Before
 
+        *** Variables ***
+        @{LIST}    value    value2    value3  # let's assume that value2 is at 120 char
+
         *** Keywords ***
         Keyword
             Keyword With Longer Name    ${arg1}    ${arg2}    ${arg3}  # let's assume that arg2 is at 120 char
 
     .. code-tab:: robotframework After
+
+        *** Variables ***
+        # let's assume that value2 is at 120 char
+        @{LIST}
+        ...    value
+        ...    value2
+        ...    value3
 
         *** Keywords ***
         Keyword
@@ -62,6 +72,28 @@ until character limit::
             # let's assume that arg2 is at 120 char
             Keyword With Longer Name    ${arg1}
             ...    ${arg2}    ${arg3}
+
+Split values on every line
+--------------------------
+Using ``split_on_every_value`` flag (``True`` by default), you can force the formatter to fill values in one line
+until character limit::
+
+    robotidy --configure SplitTooLongLine:split_on_every_value=False src
+
+.. tabs::
+
+    .. code-tab:: robotframework Before
+
+        *** Variables ***
+        # let's assume character limit is at age=12
+        &{USER_PROFILE}    name=John Doe    age=12     hobby=coding
+
+    .. code-tab:: robotframework After
+
+        *** Variables ***
+        # let's assume character limit is at age=12
+        &{USER_PROFILE}    name=John Doe    age=12
+        ...    hobby=coding
 
 Assignments
 ------------
