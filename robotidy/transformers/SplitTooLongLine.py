@@ -1,10 +1,10 @@
-from robot.api.parsing import ModelTransformer, Token
+from robot.api.parsing import Comment, Token
 
 try:
     from robot.api.parsing import InlineIfHeader
 except ImportError:
     InlineIfHeader = None
-from robotidy.disablers import skip_section_if_disabled
+from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.transformers import Transformer
 from robotidy.utils import ROBOT_VERSION
 
@@ -15,7 +15,7 @@ CONTINUATION = Token(Token.CONTINUATION)
 class SplitTooLongLine(Transformer):
     """
     Split too long lines.
-    If any line in keyword call exceeds given length limit (120 by default) it will be
+    If any line in the keyword call or variable exceeds given length limit (120 by default) it will be
     split:
 
     ```robotframework
@@ -48,23 +48,34 @@ class SplitTooLongLine(Transformer):
     robotidy --configure SplitTooLongLine:line_length:140 src.robot
     ```
 
-    Using ``split_on_every_arg`` flag (``True`` by default), you can force the formatter to fill arguments in one line
-    until character limit:
+    ``split_on_every_arg`` and ``split_on_every_value`` flags (``True`` by default) controls whether arguments
+    and values are split or fills the line until character limit:
 
     ```robotframework
     *** Test Cases ***
-    Test
+    Test with default split_on_every_arg
+        # ${arg1} fits under limit, so it stays in the line
         Keyword With Longer Name    ${arg1}
         ...    ${arg2}    ${arg3}
+
+    Test with split_on_every_arg = False
+        # arguments are split
+        Keyword With Longer Name
+        ...    ${arg1}
+        ...    ${arg2}
+        ...    ${arg3}
     ```
 
     Supports global formatting params: ``spacecount``, ``separator``, ``--startline`` and ``--endline``.
     """
 
-    def __init__(self, line_length: int = None, split_on_every_arg: bool = True):
+    IGNORED_WHITESPACE = {Token.EOL, Token.CONTINUATION}
+
+    def __init__(self, line_length: int = None, split_on_every_arg: bool = True, split_on_every_value: bool = True):
         super().__init__()
         self._line_length = line_length
         self.split_on_every_arg = split_on_every_arg
+        self.split_on_every_value = split_on_every_value
 
     @property
     def line_length(self):
@@ -85,14 +96,25 @@ class SplitTooLongLine(Transformer):
     def is_inline(node):
         return ROBOT_VERSION.major > 4 and isinstance(node.header, InlineIfHeader)
 
-    def visit_KeywordCall(self, node):  # noqa
+    def should_transform_node(self, node):
         if all(line[-1].end_col_offset < self.line_length for line in node.lines):
-            return node
+            return False
         if not len(node.data_tokens) > 1:  # nothing to split anyway
+            return False
+        return True
+
+    def visit_KeywordCall(self, node):  # noqa
+        if not self.should_transform_node(node):
             return node
         if self.disablers.is_node_disabled(node, full_match=False):
             return node
         return self.split_keyword_call(node)
+
+    @skip_if_disabled
+    def visit_Variable(self, node):  # noqa
+        if not self.should_transform_node(node):
+            return node
+        return self.split_variable_def(node)
 
     @staticmethod
     def join_on_separator(tokens, separator):
@@ -112,12 +134,60 @@ class SplitTooLongLine(Transformer):
             yield EOL
             first = False
 
+    def split_tokens(self, tokens, line, split_on, indent=None):
+        separator = Token(Token.SEPARATOR, self.formatting_config.separator)
+        cont_indent = Token(Token.SEPARATOR, self.formatting_config.continuation_indent)
+        split_tokens, comments = [], []
+        # Comments with separators inside them are split into
+        # [COMMENT, SEPARATOR, COMMENT] tokens in the AST, so in order to preserve the
+        # original comment, we need a lookback on the separator tokens.
+        last_separator = None
+        for token in tokens:
+            if token.type in self.IGNORED_WHITESPACE:
+                continue
+            if token.type == Token.SEPARATOR:
+                last_separator = token
+            elif token.type == Token.COMMENT:
+                # AST splits comments with separators, e.g.
+                #
+                # "# Comment     rest" -> ["# Comment", "     ", "rest"].
+                #
+                # Notice the third value not starting with a hash - that's what this
+                # condition is about:
+                if comments and not token.value.startswith("#"):
+                    comments[-1].value += last_separator.value + token.value
+                else:
+                    comments.append(token)
+            elif token.type == Token.ARGUMENT:
+                if token.value == "":
+                    token.value = "${EMPTY}"
+                if split_on or not self.col_fit_in_line(line + [separator, token]):
+                    line.append(EOL)
+                    split_tokens.extend(line)
+                    if indent:
+                        line = [indent, CONTINUATION, cont_indent, token]
+                    else:
+                        line = [CONTINUATION, cont_indent, token]
+                else:
+                    line.extend([separator, token])
+        split_tokens.extend(line)
+        split_tokens.append(EOL)
+        return split_tokens, comments
+
+    def split_variable_def(self, node):
+        line = [node.data_tokens[0]]
+        tokens, comments = self.split_tokens(node.tokens, line, self.split_on_every_value)
+        comments = [Comment([comment, EOL]) for comment in comments]
+        node.tokens = tokens
+        return (*comments, node)
+
     def split_keyword_call(self, node):
         separator = Token(Token.SEPARATOR, self.formatting_config.separator)
         cont_indent = Token(Token.SEPARATOR, self.formatting_config.continuation_indent)
         indent = node.tokens[0]
 
         keyword = node.get_token(Token.KEYWORD)
+        # check if assign tokens needs to be split too
         line = [indent, *self.join_on_separator(node.get_tokens(Token.ASSIGN), separator), keyword]
         if not self.col_fit_in_line(line):
             head = [
@@ -131,46 +201,15 @@ class SplitTooLongLine(Transformer):
         else:
             head = []
 
-        comments = []
+        tokens, comments = self.split_tokens(
+            node.tokens[node.tokens.index(keyword) + 1 :], line, self.split_on_every_arg, indent
+        )
+        head.extend(tokens)
+        comment_tokens = []
+        for comment in comments:
+            comment_tokens.extend([indent, comment, EOL])
 
-        # Comments with separators inside them are split into
-        # [COMMENT, SEPARATOR, COMMENT] tokens in the AST, so in order to preserve the
-        # original comment, we need a lookback on the separator tokens.
-        last_separator = None
-
-        rest = node.tokens[node.tokens.index(keyword) + 1 :]
-        for token in rest:
-            if token.type == Token.SEPARATOR:
-                last_separator = token
-            elif token.type in {Token.EOL, Token.CONTINUATION}:
-                continue
-            elif token.type == Token.COMMENT:
-                # AST splits comments with separators, e.g.
-                #
-                # "# Comment     rest" -> ["# Comment", "     ", "rest"].
-                #
-                # Notice the third value not starting with a hash - that's what this
-                # condition is about:
-                if not str(token).startswith("#"):
-                    # -2 because -1 is the EOL
-                    comments[-2].value += last_separator.value + token.value
-                else:
-                    comments += [indent, token, EOL]
-            elif token.type == Token.ARGUMENT:
-                if token.value == "":
-                    token.value = "${EMPTY}"
-                if self.split_on_every_arg or not self.col_fit_in_line(line + [separator, token]):
-                    line.append(EOL)
-                    head += line
-                    line = [indent, CONTINUATION, cont_indent, token]
-                else:
-                    line += [separator, token]
-
-        # last line
-        line.append(EOL)
-        head += line
-
-        node.tokens = comments + head
+        node.tokens = comment_tokens + head
         return node
 
     def col_fit_in_line(self, tokens):

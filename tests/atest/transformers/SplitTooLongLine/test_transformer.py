@@ -66,3 +66,17 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
             config=":line_length=80:split_on_every_arg=True -s 2 --continuation-indent 4 --indent 2",
             target_version=5,
         )
+
+    def test_variables_split(self):
+        self.compare(
+            source="variables.robot",
+            expected="variables_split_on_every_value.robot",
+            config=":line_length=80:split_on_every_value=True",
+        )
+
+    def test_variables_feed(self):
+        self.compare(
+            source="variables.robot",
+            expected="variables_feed.robot",
+            config=":line_length=80:split_on_every_value=False",
+        )

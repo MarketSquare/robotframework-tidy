@@ -105,11 +105,31 @@ IndentNestedKeywords - AND handling
 
 ::
 
-*** Keywords ***
-    Keyword
-        Run Keywords
-        ...    No Operation  arg    AND
-        ...    No Operation  arg1  arg2
+    *** Keywords ***
+        Keyword
+            Run Keywords
+            ...    No Operation  arg    AND
+            ...    No Operation  arg1  arg2
+
+Split too long values
+----------------------
+Now ``SplitTooLongLine`` transformer will split not only too long lines in the keyword calls, but also in the variables.
+
+Example output::
+
+    *** Variables ***
+    ${VARIABLE}    value  # fits under limit, left untouched
+    @{LIST}
+    ...    multiple
+    ...    values
+    ...    that
+    ...    would
+    ...    not fit in one line
+    @{LIST2}    short    list
+
+By default too long lines are split to multiple lines, one value per line.
+You can change this behaviour to put multiple values in one line till the character limit
+with ``split_on_every_value`` flag (default ``False``).
 
 Continuation indent
 --------------------
