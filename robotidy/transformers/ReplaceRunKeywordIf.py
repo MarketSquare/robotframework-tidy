@@ -6,7 +6,7 @@ from robotidy.utils import after_last_dot, normalize_name
 
 
 def insert_separators(indent, tokens, separator):
-    yield Token(Token.SEPARATOR, indent + separator)
+    yield Token(Token.SEPARATOR, indent)
     for token in tokens[:-1]:
         yield token
         yield Token(Token.SEPARATOR, separator)
@@ -142,7 +142,7 @@ class ReplaceRunKeywordIf(Transformer):
                     ]
                 )
                 args = branch[1:]
-            keywords = self.create_keywords(args, assign, separator.value)
+            keywords = self.create_keywords(args, assign, separator.value + self.formatting_config.indent)
             if_block = If(header=header, body=keywords, orelse=prev_if)
             prev_if = if_block
         prev_if.end = end

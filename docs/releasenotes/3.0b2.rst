@@ -171,6 +171,7 @@ Fixes
 - default values for some options in help message are now formatted correctly (`#337 <https://github.com/MarketSquare/robotframework-tidy/issues/337>`_)
 - ``RETURN`` statements in inline IFs are now intended correctly (`#349 <https://github.com/MarketSquare/robotframework-tidy/issues/349>`_)
 - ``RenameKeywords`` should now correctly rename keywords with dots/underscores followed by space (`#344 <https://github.com/MarketSquare/robotframework-tidy/issues/344>`_)
+- ``ReplaceRunKeywordIf`` uses now ``--indent`` parameter for keywords indentation (`#356 <https://github.com/MarketSquare/robotframework-tidy/issues/344>`_)
 
 Other
 -----
