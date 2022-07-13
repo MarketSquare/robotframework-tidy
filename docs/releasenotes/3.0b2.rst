@@ -165,6 +165,24 @@ Test case
     ...    value
     ...    value2  value3  value4
 
+Keywords inside run keywords and settings
+------------------------------------------
+Previously ``RenameKeywords`` transformer could only reach keywords and keyword calls. Now it should also rename
+keywords inside settings and run keywords (`#312 <https://github.com/MarketSquare/robotframework-tidy/issues/312>`_)::
+
+    *** Settings ***
+    Suite Setup    this will be renamed
+
+    *** Test Cases ***
+    Test case
+        Keyword Call
+        [Teardown]    i will be renamed
+
+    *** Keywords ***
+    Keyword
+        Run Keyword If  ${condition}  log  ${1}  # log will be renamed to Log
+
+
 Fixes
 -----
 - documentation now properly states that ``NormalizeTags`` is the default transformer (`#335 <https://github.com/MarketSquare/robotframework-tidy/issues/335>`_)
