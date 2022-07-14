@@ -148,6 +148,39 @@ See example (for ``fixed`` alignment type and default width ``24``):
             Multi                   ${arg}
             ...                     ${arg}
 
+Compact overflow
+-----------------
+Compact overflow tries to fit too long tokens between the alignment columns.
+This behaviour is controlled with ``compact_overflow_limit = 2`` parameter. If more than configured limit columns are
+misaligned in a row, the ``overflow`` mode is used instead of ``compact_overflow``.
+This behaviour helps in avoiding the situation, where ``compact_overflow`` misalign whole line if most of the tokens
+does not fit in the column.
+
+Below example was run with config::
+
+    robotidy -c AlignKeywordsSection:enabled=True:handle_too_long=compact_overflow:widths=24,28,20 src.robot
+
+.. tabs::
+
+    .. code-tab:: robotframework Before
+
+        *** Test Cases ***
+        Test case
+            # compact overflow will be used as we only "misalign" two columns in a row
+            LäVa_VastaanottotapahtumatTarkista    ${VASTAANOTTO}    ${TILAUS}    ${OSTOTILAUS}    ${LÄHETYS}    ${TILAUSPVM}
+
+            # more than two columns are misaligned - using "overflow" instead
+            LäVa_VastaanottotapahtumatTarkista    ${VASTAANOTTO_LONGER}    ${TILAUS_OCC}    ${OSTOTILAUS}    ${LÄHETYS}    ${TILAUSPVM}
+
+    .. code-tab:: robotframework After
+
+        *** Test Cases ***
+        Test case
+            # compact overflow will be used as we only "misalign" two columns in a row
+            LäVa_VastaanottotapahtumatTarkista    ${VASTAANOTTO}    ${TILAUS}       ${OSTOTILAUS}       ${LÄHETYS}          ${TILAUSPVM}
+
+            # more than two columns are misaligned - using "overflow" instead
+            LäVa_VastaanottotapahtumatTarkista    ${VASTAANOTTO_LONGER}             ${TILAUS_OCC}       ${OSTOTILAUS}       ${LÄHETYS}          ${TILAUSPVM}
 
 Alignment of the indented blocks
 --------------------------------

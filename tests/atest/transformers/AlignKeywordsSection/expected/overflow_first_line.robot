@@ -8,7 +8,7 @@ compact_overflow issue case
     ...                     lähde=${LÄHDE}              hinta_yks=${HINTA_YKSI}    hinta_rivi=${HINTA_RIVI}
 
     RaAn_RaporttiTarkista_REP98
-    ...                     70 Procurement              RPOR LOG Ostoa odottavat rivit (REP98).xdo    HTML    ${LUONTIYKSIKKÖ}
+    ...                     70 Procurement              RPOR LOG Ostoa odottavat rivit (REP98).xdo    HTML          ${LUONTIYKSIKKÖ}
     ...                     ${LIIKEYKSIKKÖ}             ${TOIMITTAJA}       ${TOIMITTAJAN_TOIMIPAIKKA}    ${ASIAKASTYYPPI}    ${NIMIKETYYPPI}
 
 compact_overflow OK working case
