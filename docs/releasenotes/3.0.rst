@@ -1,4 +1,4 @@
-Robotidy 3.0 beta 1
+Robotidy 3.0
 =========================================
 
 Major release of the Robotidy that brings long awaited align keywords and test cases transformers. This release also
@@ -20,6 +20,7 @@ Backward incompatible changes
   is more consistent.
 - ``indent_and`` parameter in ``IndentNestedKeywords`` transformers changed type from boolean to string.
   See `IndentNestedKeywords - AND handling`_ section for more details (`#319 <https://github.com/MarketSquare/robotframework-tidy/issues/319>`_).
+- ``SplitTooLongLine`` now also splits too long variables
 
 AlignKeywordsSection & AlignTestCasesSection transformers
 ----------------------------------------------------------
@@ -209,5 +210,5 @@ reporting bugs or providing the feedback on early versions:
 
 - `@tkopra <https://github.com/tkopra>`__ for helping in design and test of
   AlignKeywordsSection & AlignTestCasesSection transformers
-- `@Reddriver <https://github.com/Reddriver>`__ for reporting bugs and retesting the fixes
+- `@Reddriver <https://github.com/Reddriver>`__, `@levlist <https://github.com/levlist>`__, `@MoreFamed <https://github.com/MoreFamed>`__, `@Zeckie <https://github.com/Zeckie>`__ for reporting the bugs and retesting the fixes
 - `@mnojek <https://github.com/mnojek>`__ for code reviews
