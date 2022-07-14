@@ -94,3 +94,9 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
 
     def test_error_node(self):
         self.compare(source="error_node.robot", not_modified=True, target_version=5)
+
+    def test_skip_return_values(self):
+        self.compare(
+            source="skip_return_values.robot",
+            config=":widths=24,28,20:handle_too_long=compact_overflow:skip_return_values=True",
+        )

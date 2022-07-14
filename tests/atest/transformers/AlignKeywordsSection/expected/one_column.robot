@@ -20,6 +20,7 @@ Misaligned
 Misaligned with empty
     Keyword
     ...                     misaligned
+
     ...                     arg
 
 Edge Cases
