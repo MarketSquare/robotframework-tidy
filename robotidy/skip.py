@@ -23,18 +23,6 @@ def validate_regex(value: str) -> Optional[Pattern]:
         raise ValueError(f"'{value}' is not a valid regular expression.") from None
 
 
-def join_optional_list_with_global(local: Optional[str], global_list: List):
-    if local is None:
-        return [elem for elem in global_list]
-    return parse_csv(local) + global_list
-
-
-def join_optional_flag_with_global(local: Optional[str], global_flag: bool):
-    if local is None:
-        return global_flag
-    return str_to_bool(local)
-
-
 class SkipConfig:
     """Skip configuration (global and for each transformer)."""
 
