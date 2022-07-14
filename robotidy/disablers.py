@@ -13,10 +13,10 @@ def skip_if_disabled(func):
     """
 
     @functools.wraps(func)
-    def wrapper(self, node, *args):
+    def wrapper(self, node, *args, **kwargs):
         if self.disablers.is_node_disabled(node):
             return node
-        return func(self, node, *args)
+        return func(self, node, *args, **kwargs)
 
     return wrapper
 
@@ -28,12 +28,12 @@ def skip_section_if_disabled(func):
     """
 
     @functools.wraps(func)
-    def wrapper(self, node, *args):
+    def wrapper(self, node, *args, **kwargs):
         if self.disablers.is_node_disabled(node):
             return node
         if self.disablers.is_header_disabled(node.lineno):
             return node
-        return func(self, node, *args)
+        return func(self, node, *args, **kwargs)
 
     return wrapper
 

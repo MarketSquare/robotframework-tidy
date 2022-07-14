@@ -4,6 +4,7 @@ from robotidy.disablers import skip_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 from robotidy.skip import Skip
 from robotidy.transformers import Transformer
+from robotidy.transformers.run_keywords import get_run_keywords
 from robotidy.utils import (
     collect_comments_from_tokens,
     get_new_line,
@@ -14,15 +15,6 @@ from robotidy.utils import (
     split_on_token_type,
     split_on_token_value,
 )
-
-
-class RunKeywordVariant:
-    def __init__(self, libname, name, resolve=1, branches=None, split_on_and=False):
-        self.libname = normalize_name(libname)
-        self.name = normalize_name(name)
-        self.resolve = resolve
-        self.branches = branches
-        self.split_on_and = split_on_and
 
 
 class IndentNestedKeywords(Transformer):
@@ -58,36 +50,13 @@ class IndentNestedKeywords(Transformer):
     """
 
     ENABLED = False
-    RUN_KW = [
-        RunKeywordVariant("BuiltIn", "Run Keyword"),
-        RunKeywordVariant("BuiltIn", "Run Keyword And Continue On Failure"),
-        RunKeywordVariant("BuiltIn", "Run Keyword And Expect Error", resolve=2),
-        RunKeywordVariant("BuiltIn", "Run Keyword And Ignore Error"),
-        RunKeywordVariant("BuiltIn", "Run Keyword And Return"),
-        RunKeywordVariant("BuiltIn", "Run Keyword And Return If", resolve=2),
-        RunKeywordVariant("BuiltIn", "Run Keyword And Return Status"),
-        RunKeywordVariant("BuiltIn", "Run Keyword And Warn On Failure"),
-        RunKeywordVariant("BuiltIn", "Run Keyword If", resolve=2, branches=["ELSE IF", "ELSE"]),
-        RunKeywordVariant("BuiltIn", "Run Keyword If All Tests Passed"),
-        RunKeywordVariant("BuiltIn", "Run Keyword If Any Tests Failed"),
-        RunKeywordVariant("BuiltIn", "Run Keyword If Test Failed"),
-        RunKeywordVariant("BuiltIn", "Run Keyword If Test Passed"),
-        RunKeywordVariant("BuiltIn", "Run Keyword If Timeout Occurred"),
-        RunKeywordVariant("BuiltIn", "Run Keyword Unless", resolve=2),
-        RunKeywordVariant("BuiltIn", "Run Keywords", split_on_and=True),
-        RunKeywordVariant("BuiltIn", "Repeat Keyword", resolve=2),
-        RunKeywordVariant("BuiltIn", "Wait Until Keyword Succeeds", resolve=3),
-    ]
     HANDLES_SKIP = frozenset({"skip_settings"})
 
     def __init__(self, indent_and: str = "split", skip: Skip = None):
         super().__init__(skip=skip)
         self.indent_and = indent_and
         self.validate_indent_and()
-        self.run_keywords = dict()
-        for run_kw in self.RUN_KW:
-            self.run_keywords[run_kw.name] = run_kw
-            self.run_keywords[f"{run_kw.libname}.{run_kw.name}"] = run_kw
+        self.run_keywords = get_run_keywords()
 
     def validate_indent_and(self):
         modes = {"keep_in_line", "split", "split_and_indent"}
