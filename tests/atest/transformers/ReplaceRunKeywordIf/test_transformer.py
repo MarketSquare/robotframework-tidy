@@ -25,3 +25,6 @@ class TestReplaceRunKeywordIf(TransformerAcceptanceTest):
 
     def test_disablers(self):
         self.compare(source="disablers.robot", not_modified=True)
+
+    def test_configure_whitespace(self):
+        self.compare(source="configure_whitespace.robot", config=" --spacecount 2 --indent 4")
