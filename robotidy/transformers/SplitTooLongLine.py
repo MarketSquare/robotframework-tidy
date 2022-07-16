@@ -99,9 +99,15 @@ class SplitTooLongLine(Transformer):
     def should_transform_node(self, node):
         if all(line[-1].end_col_offset < self.line_length for line in node.lines):
             return False
-        if not len(node.data_tokens) > 1:  # nothing to split anyway
-            return False
-        return True
+        # find if any line contains more than one data tokens - so we have something to split
+        for line in node.lines:
+            count = 0
+            for token in line:
+                if token.type not in Token.NON_DATA_TOKENS:
+                    count += 1
+                if count > 1:
+                    return True
+        return False
 
     def visit_KeywordCall(self, node):  # noqa
         if not self.should_transform_node(node):
