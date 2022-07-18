@@ -1,3 +1,5 @@
+import re
+
 from robot.api.parsing import Comment, Token
 
 try:
@@ -76,6 +78,9 @@ class SplitTooLongLine(Transformer):
         self._line_length = line_length
         self.split_on_every_arg = split_on_every_arg
         self.split_on_every_value = split_on_every_value
+        self.robocop_disabler_pattern = re.compile(
+            r"(# )+(noqa|robocop: ?(?P<disabler>disable|enable)=?(?P<rules>[\w\-,]*))"
+        )
 
     @property
     def line_length(self):
@@ -97,7 +102,7 @@ class SplitTooLongLine(Transformer):
         return ROBOT_VERSION.major > 4 and isinstance(node.header, InlineIfHeader)
 
     def should_transform_node(self, node):
-        if all(line[-1].end_col_offset < self.line_length for line in node.lines):
+        if not self.any_line_too_long(node):
             return False
         # find if any line contains more than one data tokens - so we have something to split
         for line in node.lines:
@@ -107,6 +112,15 @@ class SplitTooLongLine(Transformer):
                     count += 1
                 if count > 1:
                     return True
+        return False
+
+    def any_line_too_long(self, node):
+        for line in node.lines:
+            line = "".join(token.value for token in line)
+            line = self.robocop_disabler_pattern.sub("", line)
+            line = line.rstrip().expandtabs(4)
+            if len(line) >= self.line_length:
+                return True
         return False
 
     def visit_KeywordCall(self, node):  # noqa
