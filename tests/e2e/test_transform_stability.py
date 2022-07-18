@@ -12,10 +12,7 @@ from robotidy.utils import ROBOT_VERSION
 
 RERUN_NEEDED = {
     "AddMissingEnd": {"test": 2},
-    "AlignKeywordsSection": {
-        "blocks_rf5": 2,
-        "non_ascii_spaces": 2,
-    },
+    "AlignKeywordsSection": {"blocks_rf5": 2, "non_ascii_spaces": 2},
     "AlignSettingsSection": {"blank_line_doc": 2},
     "AlignTemplatedTestCases": {"with_settings": 2},
     "AlignTestCasesSection": {
