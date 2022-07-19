@@ -240,7 +240,15 @@ def can_run_in_robot_version(transformer, overwritten, target_version):
     return False
 
 
-def load_transformers(allowed_transformers, config, target_version, skip=None, allow_disabled=False, force_order=False):
+def load_transformers(
+    allowed_transformers,
+    config,
+    target_version,
+    skip=None,
+    allow_disabled=False,
+    force_order=False,
+    allow_version_mismatch=True,
+):
     """Dynamically load all classes from this file with attribute `name` defined in allowed_transformers"""
     loaded_transformers = []
     allowed_mapped = {name: args for name, args in allowed_transformers} if allowed_transformers else {}
@@ -257,7 +265,7 @@ def load_transformers(allowed_transformers, config, target_version, skip=None, a
                     overwritten = name in allowed_mapped or args.get("enabled", False)
                     if can_run_in_robot_version(imported_class, overwritten=overwritten, target_version=target_version):
                         loaded_transformers.append(imported_class)
-                    elif allow_disabled:
+                    elif allow_version_mismatch and allow_disabled:
                         setattr(imported_class, "ENABLED", False)
                         loaded_transformers.append(imported_class)
     for name in allowed_mapped:

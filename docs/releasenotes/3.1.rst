@@ -1,0 +1,12 @@
+Robotidy 3.1
+=========================================
+
+Fixes
+------
+- Improved stability of the Robotidy output. Now it should provide the code that does not
+  change after several reruns (`#360 <https://github.com/MarketSquare/robotframework-tidy/issues/360>`_)
+
+Other
+------
+- Added end to end tests to Robotidy. It should help with improving stability of the tool and catch some of the
+  bugs earlier (previously transformers were tested mostly in the isolation) (`#361 <https://github.com/MarketSquare/robotframework-tidy/issues/361>`_)

@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+From Robotidy 3.0 see release notes in ``docs/releasenote`` directory.
 
 ### Other
 - Robotidy transformers now inherits from ``Transformer`` core class (instead of ``ModelTransformer``). 

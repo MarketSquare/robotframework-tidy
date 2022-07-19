@@ -45,7 +45,7 @@ jobs:
         pip install .[dev]
     - name: Run unit tests with coverage
       run:
-        coverage run -m pytest
+        coverage run -m pytest --e2e
     - name: Codecov
       uses: codecov/codecov-action@v1.0.11
       with:
