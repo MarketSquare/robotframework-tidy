@@ -10,6 +10,10 @@ from robotidy.cli import cli
 from robotidy.transformers import load_transformers
 from robotidy.utils import ROBOT_VERSION
 
+RERUN_NEEDED_4 = {
+    "RenameKeywords": {"run_keywords": 2, "disablers": 2},
+    "ReplaceReturns": {"replace_returns_disablers": 2},
+}
 RERUN_NEEDED = {
     "AddMissingEnd": {"test": 2},
     "AlignKeywordsSection": {"blocks_rf5": 2, "non_ascii_spaces": 2},
@@ -45,6 +49,7 @@ RERUN_NEEDED = {
     "SmartSortKeywords": {"multiple_sections": 2, "sort_input": 2},
     "SplitTooLongLine": {"continuation_indent": 2, "disablers": 2, "tests": 2},
 }
+SKIP_TESTS_4 = {"ReplaceReturns": {"test"}}
 SKIP_TESTS = {"ReplaceRunKeywordIf": {"invalid_data"}, "SplitTooLongLine": {"variables"}}
 
 
@@ -106,6 +111,8 @@ def should_be_skip(path: Path) -> bool:
     if is_e2e_only(path):
         return False
     transformer, test_name = get_test_attributes_from_path(path)
+    if ROBOT_VERSION.major == 4 and transformer in SKIP_TESTS_4:
+        return test_name in SKIP_TESTS_4[transformer]
     if transformer not in SKIP_TESTS:
         return False
     return test_name in SKIP_TESTS[transformer]
@@ -121,9 +128,11 @@ def reruns_needed(path: Path) -> int:
     if is_e2e_only(path):
         return 1
     transformer, test_name = get_test_attributes_from_path(path)
-    if transformer not in RERUN_NEEDED:
-        return 1
-    return RERUN_NEEDED[transformer].get(test_name, 1)
+    if ROBOT_VERSION.major == 4 and transformer in RERUN_NEEDED_4:
+        return RERUN_NEEDED_4[transformer].get(test_name, 1)
+    if transformer in RERUN_NEEDED:
+        return RERUN_NEEDED[transformer].get(test_name, 1)
+    return 1
 
 
 def gen_test_data():
