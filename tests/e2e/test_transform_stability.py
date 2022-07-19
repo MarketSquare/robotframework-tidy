@@ -77,7 +77,9 @@ def get_enable_disabled_config() -> List[str]:
     def is_transformer_disabled(transformer):
         return not getattr(transformer, "ENABLED", True)
 
-    transformers = load_transformers(None, {}, allow_disabled=True, target_version=ROBOT_VERSION.major)
+    transformers = load_transformers(
+        None, {}, allow_disabled=True, target_version=ROBOT_VERSION.major, allow_version_mismatch=False
+    )
     config = []
     for transformer in transformers:
         if not is_transformer_disabled(transformer):
