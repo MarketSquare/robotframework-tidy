@@ -19,11 +19,10 @@ from robot.utils.robotio import file_writer
 from robot.version import VERSION as RF_VERSION
 
 ROBOT_VERSION = version.parse(RF_VERSION)
-ROBOT_WITH_LANG = version.parse("6.0")
 
 
 def rf_supports_lang():
-    return ROBOT_VERSION >= ROBOT_WITH_LANG
+    return ROBOT_VERSION.major >= 6
 
 
 class TargetVersion(Enum):

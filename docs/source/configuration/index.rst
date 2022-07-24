@@ -43,6 +43,7 @@ Robot Framework version::
 
 It will disable all transformers that require Robot Framework greater than <target-version> to run (even if you have Robot Framework greater than <target-version> installed).
 
+.. _language_support:
 .. rubric:: Language support
 
 Robot Framework 6.0 added support for Robot settings and headers translation.

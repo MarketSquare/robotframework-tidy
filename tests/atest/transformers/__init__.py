@@ -19,7 +19,7 @@ VERSION_MATRIX = {
 
 def display_file_diff(expected, actual):
     print("\nExpected file after transforming does not match actual")
-    with open(expected) as f, open(actual) as f2:
+    with open(expected, encoding="utf-8") as f, open(actual, encoding="utf-8") as f2:
         expected_lines = f.readlines()
         actual_lines = f2.readlines()
     lines = [

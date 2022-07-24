@@ -54,6 +54,7 @@ TRANSFORMERS = [
     "ReplaceReturns",
     "ReplaceBreakContinue",
     "InlineIf",
+    "Translate",
 ]
 
 
@@ -111,6 +112,7 @@ class TransformerContainer:
 class Transformer(ModelTransformer):
     def __init__(self, skip: Optional[Skip] = None):
         self.formatting_config = None  # to make lint happy (we're injecting the configs)
+        self.languages = None
         self.transformers: Dict = dict()
         self.disablers = None
         self.skip = skip
