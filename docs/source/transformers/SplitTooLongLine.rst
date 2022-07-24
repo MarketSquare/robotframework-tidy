@@ -124,4 +124,12 @@ Assignments will be split to multi lines if they don't fit together with Keyword
             ...    ${arg1}
             ...    ${arg2}
 
-Supports global formatting params: ``spacecount``, ``--startline`` and ``--endline``.
+Skip formatting
+----------------
+It is possible to use the following arguments to skip formatting of the code:
+
+- :ref:`skip keyword call`
+- :ref:`skip keyword call pattern`
+
+It is also possible to use disablers (:ref:`disablers`) but ``skip`` option
+makes it easier to skip all instances of given type of the code.

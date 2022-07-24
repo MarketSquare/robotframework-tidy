@@ -10,6 +10,7 @@ Following transformers provide support for skip option:
 - :ref:`AlignKeywordsSection`
 - :ref:`AlignTestCasesSection`
 - :ref:`NormalizeSeparators`
+- :ref:`SplitTooLongLine`
 
 To see what types are possible to skip, see ``Skip formatting`` sections in each transformer documentation.
 
