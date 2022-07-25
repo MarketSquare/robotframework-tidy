@@ -1,5 +1,13 @@
-Robotidy 3.1
+Robotidy 3.1.0
 =========================================
+
+You can install the latest available version by running::
+
+    pip install --pre --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==3.1.0
 
 Tool consistency fixes
 ---------------------
