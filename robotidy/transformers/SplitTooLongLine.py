@@ -7,6 +7,7 @@ try:
 except ImportError:
     InlineIfHeader = None
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
+from robotidy.skip import Skip
 from robotidy.transformers import Transformer
 from robotidy.utils import ROBOT_VERSION
 
@@ -72,9 +73,16 @@ class SplitTooLongLine(Transformer):
     """
 
     IGNORED_WHITESPACE = {Token.EOL, Token.CONTINUATION}
+    HANDLES_SKIP = frozenset({"skip_keyword_call", "skip_keyword_call_pattern"})
 
-    def __init__(self, line_length: int = None, split_on_every_arg: bool = True, split_on_every_value: bool = True):
-        super().__init__()
+    def __init__(
+        self,
+        line_length: int = None,
+        split_on_every_arg: bool = True,
+        split_on_every_value: bool = True,
+        skip: Skip = None,
+    ):
+        super().__init__(skip)
         self._line_length = line_length
         self.split_on_every_arg = split_on_every_arg
         self.split_on_every_value = split_on_every_value
@@ -124,6 +132,8 @@ class SplitTooLongLine(Transformer):
         return False
 
     def visit_KeywordCall(self, node):  # noqa
+        if self.skip.keyword_call(node):
+            return node
         if not self.should_transform_node(node):
             return node
         if self.disablers.is_node_disabled(node, full_match=False):

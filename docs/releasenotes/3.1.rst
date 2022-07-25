@@ -1,12 +1,21 @@
 Robotidy 3.1
 =========================================
 
-Fixes
-------
-- Improved stability of the Robotidy output. Now it should provide the code that does not
-  change after several reruns (`#360 <https://github.com/MarketSquare/robotframework-tidy/issues/360>`_)
+Tool consistency fixes
+---------------------
+Improved stability of the Robotidy output. Now it should provide the code that does not
+change after several reruns (`#360 <https://github.com/MarketSquare/robotframework-tidy/issues/360>`_)
 
-Other
-------
-- Added end to end tests to Robotidy. It should help with improving stability of the tool and catch some of the
+Skip handling
+--------------
+Added skip handling to ``SplitTooLongLine`` transformer. Now it is possible to skip keyword calls by name or pattern.
+For example, with following configuration::
+
+    robotidy -c SplitTooLongLine:skip_keyword_call=Catenate src
+
+All instances of the "Catenate" keyword call will not be formatted by ``SplitTooLongLine``.
+
+End to end tests
+-------------------
+Added end to end tests to Robotidy. It should help with improving stability of the tool and catch some of the
   bugs earlier (previously transformers were tested mostly in the isolation) (`#361 <https://github.com/MarketSquare/robotframework-tidy/issues/361>`_)
