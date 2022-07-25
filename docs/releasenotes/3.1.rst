@@ -3,7 +3,7 @@ Robotidy 3.1
 
 Tool consistency fixes
 ---------------------
-Improved stability of the Robotidy output. Now it should provide the code that does not
+Improved consistency of the Robotidy output. Now it should provide the code that does not
 change after several reruns (`#360 <https://github.com/MarketSquare/robotframework-tidy/issues/360>`_)
 
 Skip handling
@@ -18,4 +18,8 @@ All instances of the "Catenate" keyword call will not be formatted by ``SplitToo
 End to end tests
 -------------------
 Added end to end tests to Robotidy. It should help with improving stability of the tool and catch some of the
-  bugs earlier (previously transformers were tested mostly in the isolation) (`#361 <https://github.com/MarketSquare/robotframework-tidy/issues/361>`_)
+bugs earlier (previously transformers were tested mostly in the isolation) (`#361 <https://github.com/MarketSquare/robotframework-tidy/issues/361>`_).
+
+Acknowledgements
+-----------------
+- `@admorgan <https://github.com/admorgan>`__ for raising an issue regarding consistency of the Robotidy output
