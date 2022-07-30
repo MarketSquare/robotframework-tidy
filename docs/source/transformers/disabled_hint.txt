@@ -1,9 +1,13 @@
-|TRANSFORMERNAME| is not included in default transformers, that's why you need to call it with ``--transform`` explicitly:
+.. dropdown:: Enabling the transformer
 
-.. parsed-literal::
-    robotidy --transform |TRANSFORMERNAME| src
+    |TRANSFORMERNAME| is not included in default transformers, that's why you need to call it with ``--transform`` explicitly:
 
-Or configure ``enabled`` parameter:
+    .. parsed-literal::
 
-.. parsed-literal::
-    robotidy --configure |TRANSFORMERNAME|:enabled=True
+        robotidy --transform |TRANSFORMERNAME| src
+
+    Or configure ``enabled`` parameter:
+
+    .. parsed-literal::
+
+        robotidy --configure |TRANSFORMERNAME|:enabled=True

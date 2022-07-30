@@ -98,7 +98,7 @@ until character limit::
             # let's assume character limit is at age=12
             &{USER_PROFILE}    name=John Doe    age=12     hobby=coding
 
-     .. tab-item:: After
+    .. tab-item:: After
 
         .. code:: robotframework
 

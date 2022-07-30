@@ -1,4 +1,13 @@
-|TRANSFORMERNAME| is included in the default transformers but it can be also run separately with:
+.. dropdown:: Transformer configuration
 
-.. parsed-literal::
-   robotidy --transform |TRANSFORMERNAME| src
+    |TRANSFORMERNAME| is included in the default transformers, but it can be also run separately with:
+
+    .. parsed-literal::
+
+       robotidy --transform |TRANSFORMERNAME| src
+
+    You can also disable |TRANSFORMERNAME|:
+
+    .. parsed-literal::
+
+       robotidy --configure |TRANSFORMERNAME|:enabled=False src
