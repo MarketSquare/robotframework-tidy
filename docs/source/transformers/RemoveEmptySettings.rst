@@ -8,42 +8,46 @@ Remove empty settings.
 .. |TRANSFORMERNAME| replace:: RemoveEmptySettings
 .. include:: enabled_hint.txt
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Settings ***
-        Documentation
-        Suite Setup
-        Metadata
-        Metadata    doc=1
-        Test Setup
-        Test Teardown    Teardown Keyword
-        Test Template
-        Test Timeout
-        Force Tags
-        Default Tags
-        Library
-        Resource
-        Variables
+        .. code:: robotframework
 
-        *** Test Cases ***
-        Test
-            [Setup]
-            [Template]    #  comment    and    comment
-            [Tags]    tag
-            Keyword
+            *** Settings ***
+            Documentation
+            Suite Setup
+            Metadata
+            Metadata    doc=1
+            Test Setup
+            Test Teardown    Teardown Keyword
+            Test Template
+            Test Timeout
+            Force Tags
+            Default Tags
+            Library
+            Resource
+            Variables
 
-    .. code-tab:: robotframework After
+            *** Test Cases ***
+            Test
+                [Setup]
+                [Template]    #  comment    and    comment
+                [Tags]    tag
+                Keyword
 
-        *** Settings ***
-        Metadata    doc=1
-        Test Teardown    Teardown Keyword
+    .. tab-item:: After
 
-        *** Test Cases ***
-        Test
-            [Tags]    tag
-            Keyword
+        .. code:: robotframework
+
+            *** Settings ***
+            Metadata    doc=1
+            Test Teardown    Teardown Keyword
+
+            *** Test Cases ***
+            Test
+                [Tags]    tag
+                Keyword
 
 You can configure which settings are affected by parameter ``work_mode``. Possible values:
 
@@ -57,69 +61,77 @@ parameter value to ``False``::
 
     robotidy --configure RemoveEmptySettings:more_explicit=False src
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Settings ***
-        Test Timeout  1min
-        Force Tags
+        .. code:: robotframework
 
-        *** Test Case ***
-        Test
-            [Documentation]    Empty timeout means no timeout even when Test Timeout has been used.
-            [Timeout]
-            No timeout
+            *** Settings ***
+            Test Timeout  1min
+            Force Tags
 
-    .. code-tab:: robotframework After (default)
+            *** Test Case ***
+            Test
+                [Documentation]    Empty timeout means no timeout even when Test Timeout has been used.
+                [Timeout]
+                No timeout
 
-        *** Settings ***
-        Test Timeout  1min
+    .. tab-item:: more_explicit=True (default)
 
-        *** Test Case ***
-        Test
-            [Documentation]    Empty timeout means no timeout even when Test Timeout has been used.
-            [Timeout]    NONE
-            No timeout
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After ``more_explicit`` = False
+            *** Settings ***
+            Test Timeout  1min
 
-        *** Settings ***
-        Test Timeout  1min
+            *** Test Case ***
+            Test
+                [Documentation]    Empty timeout means no timeout even when Test Timeout has been used.
+                [Timeout]    NONE
+                No timeout
 
-        *** Test Case ***
-        Test
-            [Documentation]    Empty timeout means no timeout even when Test Timeout has been used.
-            [Timeout]
-            No timeout
+    .. tab-item:: more_explicit=False
+
+        .. code:: robotframework
+
+            *** Settings ***
+            Test Timeout  1min
+
+            *** Test Case ***
+            Test
+                [Documentation]    Empty timeout means no timeout even when Test Timeout has been used.
+                [Timeout]
+                No timeout
 
 If you want to remove all empty settings even if they are overwriting suite settings (like in above example) then
 set ``work_mode`` to ``always``::
 
     robotidy --configure RemoveEmptySettings:work_mode=always src
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Settings ***
-        Test Timeout  1min
-        Force Tags
+        .. code:: robotframework
 
-        *** Test Case ***
-        Test
-            [Documentation]    Empty timeout means no timeout even when Test Timeout has been used.
-            [Timeout]
-            No timeout
+            *** Settings ***
+            Test Timeout  1min
+            Force Tags
 
-    .. code-tab:: robotframework After
+            *** Test Case ***
+            Test
+                [Documentation]    Empty timeout means no timeout even when Test Timeout has been used.
+                [Timeout]
+                No timeout
 
-        *** Settings ***
-        Test Timeout  1min
+    .. tab-item:: After
 
-        *** Test Case ***
-        Test
-            [Documentation]    Empty timeout means no timeout even when Test Timeout has been used.
-            No timeout
+        .. code:: robotframework
 
-Supports global formatting params: ``--startline`` and ``--endline``.
+            *** Settings ***
+            Test Timeout  1min
+
+            *** Test Case ***
+            Test
+                [Documentation]    Empty timeout means no timeout even when Test Timeout has been used.
+                No timeout

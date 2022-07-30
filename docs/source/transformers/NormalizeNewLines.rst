@@ -18,202 +18,224 @@ Ensure that there is exactly:
 
 Removes empty lines after section (and before any data) and appends 1 empty line at the end of file.
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        This data is ignored at runtime but should be preserved by Tidy.
-        *** Variables ***
-        # standalone      comment
-        ${VALID}          Value
-        # standalone
+        .. code:: robotframework
 
-        *** Test Cases ***
+            This data is ignored at runtime but should be preserved by Tidy.
+            *** Variables ***
+            # standalone      comment
+            ${VALID}          Value
+            # standalone
+
+            *** Test Cases ***
 
 
-        Test
-            [Documentation]    This is a documentation
-            ...    in two lines
-            Some Lines
-            No Operation
-            [Teardown]    1 minute    args
+            Test
+                [Documentation]    This is a documentation
+                ...    in two lines
+                Some Lines
+                No Operation
+                [Teardown]    1 minute    args
 
-        Test Without Arg
-        Mid Test
-            My Step 1    args    args 2    args 3    args 4    args 5    args 6
-            ...    args 7    args 8    args 9    # step 1 comment
+            Test Without Arg
+            Mid Test
+                My Step 1    args    args 2    args 3    args 4    args 5    args 6
+                ...    args 7    args 8    args 9    # step 1 comment
 
-        *** Keywords ***
-        Keyword
-            No Operation
-        Other Keyword
-        Another Keyword
-            There
-            Are
-            More
-        *** Settings ***
-        Library  library.py
+            *** Keywords ***
+            Keyword
+                No Operation
+            Other Keyword
+            Another Keyword
+                There
+                Are
+                More
+            *** Settings ***
+            Library  library.py
 
-    .. code-tab:: robotframework After
+    .. tab-item:: After
 
-        This data is ignored at runtime but should be preserved by Tidy.
+        .. code:: robotframework
 
-        *** Variables ***
-        # standalone      comment
-        ${VALID}          Value
-        # standalone
+            This data is ignored at runtime but should be preserved by Tidy.
 
-        *** Test Cases ***
-        Test
-            [Documentation]    This is a documentation
-            ...    in two lines
-            Some Lines
-            No Operation
-            [Teardown]    1 minute    args
+            *** Variables ***
+            # standalone      comment
+            ${VALID}          Value
+            # standalone
 
-        Test Without Arg
+            *** Test Cases ***
+            Test
+                [Documentation]    This is a documentation
+                ...    in two lines
+                Some Lines
+                No Operation
+                [Teardown]    1 minute    args
 
-        Mid Test
-            My Step 1    args    args 2    args 3    args 4    args 5    args 6
-            ...    args 7    args 8    args 9    # step 1 comment
+            Test Without Arg
 
-        *** Keywords ***
-        Keyword
-            No Operation
+            Mid Test
+                My Step 1    args    args 2    args 3    args 4    args 5    args 6
+                ...    args 7    args 8    args 9    # step 1 comment
 
-        Other Keyword
+            *** Keywords ***
+            Keyword
+                No Operation
 
-        Another Keyword
-            There
-            Are
-            More
+            Other Keyword
 
-        *** Settings ***
-        Library  library.py
+            Another Keyword
+                There
+                Are
+                More
+
+            *** Settings ***
+            Library  library.py
 
 Parameters ``section_lines``, ``test_case_lines`` and ``keyword_lines`` can be configured to other values::
 
     robotidy --configure NormalizeNewLines:section_lines=3 src
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Settings ***
-        Library  Collections
+        .. code:: robotframework
 
-        *** Keywords ***
-        Keyword
-            Log  stuff
+            *** Settings ***
+            Library  Collections
 
-    .. code-tab:: robotframework After
+            *** Keywords ***
+            Keyword
+                Log  stuff
 
-        *** Settings ***
-        Library  Collections
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Settings ***
+            Library  Collections
 
 
 
-        *** Keywords ***
-        Keyword
-            Log  stuff
+            *** Keywords ***
+            Keyword
+                Log  stuff
 
 
 Consecutive empty lines inside settings, variables, keywords and test cases are also removed
 (configurable via ``consecutive_lines = 1``).
 
-.. tabs::
-    .. code-tab:: robotframework Before
+.. tab-set::
 
-        *** Settings ***
+    .. tab-item:: Before
 
-        Resource    resource.robot
+        .. code:: robotframework
 
+            *** Settings ***
 
-        Default Tags    tag
-
-        Documentation    doc
+            Resource    resource.robot
 
 
+            Default Tags    tag
+
+            Documentation    doc
 
 
-        *** Test Cases ***
-        Test Capitalized
 
-            Pass Execution
 
-    .. code-tab:: robotframework After
+            *** Test Cases ***
+            Test Capitalized
 
-        *** Settings ***
-        Resource    resource.robot
+                Pass Execution
 
-        Default Tags    tag
+    .. tab-item:: After
 
-        Documentation    doc
+        .. code:: robotframework
 
-        *** Test Cases ***
-        Test Capitalized
-            Pass Execution
+            *** Settings ***
+            Resource    resource.robot
+
+            Default Tags    tag
+
+            Documentation    doc
+
+            *** Test Cases ***
+            Test Capitalized
+                Pass Execution
 
 If set to 0 all empty lines will be removed::
 
     robotidy --configure NormalizeNewLines:consecutive_lines=0 src
 
-.. tabs::
-    .. code-tab:: robotframework Before
+.. tab-set::
 
-        *** Settings ***
+    .. tab-item:: Before
 
-        Resource    resource.robot
+        .. code:: robotframework
 
+            *** Settings ***
 
-        Default Tags    tag
-
-        Documentation    doc
+            Resource    resource.robot
 
 
+            Default Tags    tag
+
+            Documentation    doc
 
 
-        *** Test Cases ***
-        Test Capitalized
 
-            Pass Execution
 
-    .. code-tab:: robotframework After
+            *** Test Cases ***
+            Test Capitalized
 
-        *** Settings ***
-        Resource    resource.robot
-        Default Tags    tag
-        Documentation    doc
+                Pass Execution
 
-        *** Test Cases ***
-        Test Capitalized
-            Pass Execution
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Settings ***
+            Resource    resource.robot
+            Default Tags    tag
+            Documentation    doc
+
+            *** Test Cases ***
+            Test Capitalized
+                Pass Execution
 
 If the suite contains Test Template tests will not be separated by empty lines unless ``separate_templated_tests``
 is set to True.
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework ``separate_templated_tests=False`` (default)
+    .. tab-item:: separate_templated_tests=False (default)
 
-        *** Settings ***
-        Test Template    Template For Tests In This Suite
+        .. code:: robotframework
 
-        *** Test Cases ***
-        Test    arg1   arg2
-        Test Without Arg
-        Mid Test
-            My Step 1    args    args 2    args 3
+            *** Settings ***
+            Test Template    Template For Tests In This Suite
 
-    .. code-tab:: robotframework ``separate_templated_tests=True``
+            *** Test Cases ***
+            Test    arg1   arg2
+            Test Without Arg
+            Mid Test
+                My Step 1    args    args 2    args 3
 
-        *** Settings ***
-        Test Template    Template For Tests In This Suite
+    .. tab-item:: separate_templated_tests=True
 
-        *** Test Cases ***
-        Test    arg1   arg2
+        .. code:: robotframework
 
-        Test Without Arg
+            *** Settings ***
+            Test Template    Template For Tests In This Suite
 
-        Mid Test
-            My Step 1    args    args 2    args 3
+            *** Test Cases ***
+            Test    arg1   arg2
+
+            Test Without Arg
+
+            Mid Test
+                My Step 1    args    args 2    args 3

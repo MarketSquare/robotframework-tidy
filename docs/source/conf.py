@@ -14,7 +14,7 @@ release = __version__
 version = __version__
 master_doc = "index"
 
-extensions = ["sphinx_tabs.tabs", "sphinx_copybutton"]
+extensions = ["sphinx_copybutton", "sphinx_design"]
 
 templates_path = ["_templates"]
 

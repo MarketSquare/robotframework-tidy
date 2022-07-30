@@ -12,42 +12,48 @@ Replace return statements (such as ``[Return]`` setting or ``Return From Keyword
 
 This transformer replace ``[Return]`` statement with ``RETURN``:
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Keywords ***
-        Keyword
-            Sub Keyword
-            [Return]    ${value}
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            *** Keywords ***
+            Keyword
+                Sub Keyword
+                [Return]    ${value}
 
-        *** Keywords ***
-        Keyword
-            Sub Keyword
-            RETURN    ${value}
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+                Sub Keyword
+                RETURN    ${value}
 
 It also does replace ``Return From Keyword`` and ``Return From Keyword If``:
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Keywords ***
-        Keyword
-            Return From Keyword If    $condition    ${value}
-            Sub Keyword
-            Return From Keyword    ${other_value}
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            *** Keywords ***
+            Keyword
+                Return From Keyword If    $condition    ${value}
+                Sub Keyword
+                Return From Keyword    ${other_value}
 
-        *** Keywords ***
-        Keyword
-            IF    $condition
-                RETURN    ${value}
-            END
-            Sub Keyword
-            RETURN    ${other_value}
+    .. tab-item:: After
 
-Supports global formatting params: ``--startline`` and ``--endline``.
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+                IF    $condition
+                    RETURN    ${value}
+                END
+                Sub Keyword
+                RETURN    ${other_value}

@@ -12,57 +12,64 @@ For non-templated test cases use ``AlignTestCasesSection`` transformer.
 
 Examples:
 
-.. tabs::
+.. tab-set::
 
-   .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Settings ***
-        Test Template    Templated Keyword
+        .. code:: robotframework
 
-        *** Test Cases ***    baz    qux
-        # some comment
-        test1    hi    hello
-        test2 long test name    asdfasdf    asdsdfgsdfg
+            *** Settings ***
+            Test Template    Templated Keyword
 
-   .. code-tab:: robotframework After
+            *** Test Cases ***    baz    qux
+            # some comment
+            test1    hi    hello
+            test2 long test name    asdfasdf    asdsdfgsdfg
 
-        *** Settings ***
-        Test Template    Templated Keyword
+    .. tab-item:: After
 
-        *** Test Cases ***      baz         qux
-        # some comment
-        test1                   hi          hello
-        test2 long test name    asdfasdf    asdsdfgsdfg
-                                bar1        bar2
+        .. code:: robotframework
 
-.. tabs::
+            *** Settings ***
+            Test Template    Templated Keyword
 
-   .. code-tab:: robotframework Before
+            *** Test Cases ***      baz         qux
+            # some comment
+            test1                   hi          hello
+            test2 long test name    asdfasdf    asdsdfgsdfg
+                                    bar1        bar2
 
-        *** Settings ***
-        Test Template    Dummy
+.. tab-set::
 
-        *** Test Cases ***
-        Test1    ARG1
-            [Tags]    sanity
-            [Documentation]  Validate Test1
-        Test2    ARG2
-            [Tags]    smoke
-            [Documentation]  Validate Test2
+    .. tab-item:: Before
 
-   .. code-tab:: robotframework After
+        .. code:: robotframework
 
+            *** Settings ***
+            Test Template    Dummy
 
-        *** Settings ***
-        Test Template    Dummy
+            *** Test Cases ***
+            Test1    ARG1
+                [Tags]    sanity
+                [Documentation]  Validate Test1
+            Test2    ARG2
+                [Tags]    smoke
+                [Documentation]  Validate Test2
 
-        *** Test Cases ***
-        Test1     ARG1
-                  [Tags]              sanity
-                  [Documentation]     Validate Test1
-        Test2     ARG2
-                  [Tags]              smoke
-                  [Documentation]     Validate Test2
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Settings ***
+            Test Template    Dummy
+
+            *** Test Cases ***
+            Test1     ARG1
+                      [Tags]              sanity
+                      [Documentation]     Validate Test1
+            Test2     ARG2
+                      [Tags]              smoke
+                      [Documentation]     Validate Test2
 
 Align only test case section with named headers
 ------------------------------------------------
@@ -78,22 +85,24 @@ It's possible to set fixed minimal width of column. To configure it use ``min_wi
 
 This configuration respects ``up_to_column`` parameter.
 
-.. tabs::
+.. tab-set::
 
-   .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Test Cases ***    baz    qux
-        # some comment
-        test1    hi    hello
-        test2 long test name    asdfasdf    asdsdfgsdfg
-            bar1  bar2
+        .. code:: robotframework
 
-   .. code-tab:: robotframework After
+            *** Test Cases ***    baz    qux
+            # some comment
+            test1    hi    hello
+            test2 long test name    asdfasdf    asdsdfgsdfg
+                bar1  bar2
 
-        *** Test Cases ***            baz                           qux
-        # some comment
-        test1                         hi                            hello
-        test2 long test name          asdfasdf                      asdsdfgsdfg
-                                      bar1                          bar2
+    .. tab-item:: After
 
-Supports global formatting params: ``--startline``, ``--endline``.
+        .. code:: robotframework
+
+            *** Test Cases ***            baz                           qux
+            # some comment
+            test1                         hi                            hello
+            test2 long test name          asdfasdf                      asdsdfgsdfg
+                                          bar1                          bar2

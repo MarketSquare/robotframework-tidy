@@ -60,7 +60,7 @@ setup(
         "doc": [
             "sphinx",
             "furo",
-            "sphinx-tabs==3.3.1",
+            "sphinx-design",
             "sphinx-copybutton==0.3.3",
         ],
     },

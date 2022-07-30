@@ -14,41 +14,45 @@ Default behaviour is autodetect for assignments from Keyword Calls and removing 
 
 In this code most common is no equal sign at all. It should remove ``=`` signs from all lines:
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Variables ***
-        ${var} =  ${1}
-        @{list}  a
-        ...  b
-        ...  c
+        .. code:: robotframework
 
-        ${variable}=  10
+            *** Variables ***
+            ${var} =  ${1}
+            @{list}  a
+            ...  b
+            ...  c
 
-
-        *** Keywords ***
-        Keyword
-            ${var}  Keyword1
-            ${var}   Keyword2
-            ${var}=    Keyword
-
-    .. code-tab:: robotframework After
-
-        *** Variables ***
-        ${var}  ${1}
-        @{list}  a
-        ...  b
-        ...  c
-
-        ${variable}  10
+            ${variable}=  10
 
 
-        *** Keywords ***
-        Keyword
-            ${var}  Keyword1
-            ${var}   Keyword2
-            ${var}    Keyword
+            *** Keywords ***
+            Keyword
+                ${var}  Keyword1
+                ${var}   Keyword2
+                ${var}=    Keyword
+
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Variables ***
+            ${var}  ${1}
+            @{list}  a
+            ...  b
+            ...  c
+
+            ${variable}  10
+
+
+            *** Keywords ***
+            Keyword
+                ${var}  Keyword1
+                ${var}   Keyword2
+                ${var}    Keyword
 
 You can configure that behaviour to automatically add desired equal sign with ``equal_sign_type``
 (default ``autodetect``) and ``equal_sign_type_variables`` (default ``remove``) parameters.
@@ -56,38 +60,42 @@ You can configure that behaviour to automatically add desired equal sign with ``
 
     robotidy -c NormalizeAssignments:equal_sign_type=space_and_equal_sign -c NormalizeAssignments:equal_sign_type_variables=autodetect src
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Variables ***
-        ${var}=  ${1}
-        @{list}  a
-        ...  b
-        ...  c
+        .. code:: robotframework
 
-        ${variable}=  10
+            *** Variables ***
+            ${var}=  ${1}
+            @{list}  a
+            ...  b
+            ...  c
 
-
-        *** Keywords ***
-        Keyword
-            ${var}  Keyword1
-            ${var}   Keyword2
-            ${var}=    Keyword
-
-    .. code-tab:: robotframework After
-
-        *** Variables ***
-        ${var}=  ${1}
-        @{list}=  a
-        ...  b
-        ...  c
-
-        ${variable}=  10
+            ${variable}=  10
 
 
-        *** Keywords ***
-        Keyword
-            ${var} =  Keyword1
-            ${var} =   Keyword2
-            ${var} =    Keyword
+            *** Keywords ***
+            Keyword
+                ${var}  Keyword1
+                ${var}   Keyword2
+                ${var}=    Keyword
+
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Variables ***
+            ${var}=  ${1}
+            @{list}=  a
+            ...  b
+            ...  c
+
+            ${variable}=  10
+
+
+            *** Keywords ***
+            Keyword
+                ${var} =  Keyword1
+                ${var} =   Keyword2
+                ${var} =    Keyword

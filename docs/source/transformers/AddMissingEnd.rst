@@ -3,38 +3,40 @@
 AddMissingEnd
 ================================
 
-Add missing END token to FOR loops and IF statements.
+Add missing ``END`` token to FOR loops and IF statements.
 
 .. |TRANSFORMERNAME| replace:: AddMissingEnd
 .. include:: enabled_hint.txt
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Test Cases ***
-        Test
-            FOR    ${x}    IN    foo    bar
-                Log    ${x}
-            IF    ${condition}
-                Log    ${x}
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test
+                FOR    ${x}    IN    foo    bar
+                    Log    ${x}
                 IF    ${condition}
-                    Log    ${y}
-            Keyword
+                    Log    ${x}
+                    IF    ${condition}
+                        Log    ${y}
+                Keyword
 
-    .. code-tab:: robotframework After
+    .. tab-item:: After
 
-        *** Test Cases ***
-        Test
-            FOR    ${x}    IN    foo    bar
-                Log    ${x}
-            END
-            IF    ${condition}
-                Log    ${x}
-                IF    ${condition}
-                    Log    ${y}
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test
+                FOR    ${x}    IN    foo    bar
+                    Log    ${x}
                 END
-            END
-            Keyword
-
-AddMissingEnd transformer supports global formatting params: ``--startline`` and ``--endline``.
+                IF    ${condition}
+                    Log    ${x}
+                    IF    ${condition}
+                        Log    ${y}
+                    END
+                END
+                Keyword

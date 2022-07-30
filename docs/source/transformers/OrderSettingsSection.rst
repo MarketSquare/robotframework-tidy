@@ -23,101 +23,109 @@ Settings are ordered inside group. Default order can be modified through followi
 - ``imports_order = preserved`` (default - see :ref:`imports-order` section to how configure it)
 - ``settings_order = suite_setup,suite_teardown,test_setup,test_teardown,test_timeout,test_template``
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Settings ***
-        Metadata  value  param
+        .. code:: robotframework
 
-        Force Tags  tag
-        ...  tag
+            *** Settings ***
+            Metadata  value  param
 
-        Documentation  doc  # this is comment
-        ...  another line
-        Test Timeout  1min
+            Force Tags  tag
+            ...  tag
 
-        # I want to be keep together with Test Setup
+            Documentation  doc  # this is comment
+            ...  another line
+            Test Timeout  1min
 
-        Test Setup  Keyword
+            # I want to be keep together with Test Setup
+
+            Test Setup  Keyword
 
 
-        Suite Setup  Keyword
-        Default Tags  1
-        Suite Teardown  Keyword2
+            Suite Setup  Keyword
+            Default Tags  1
+            Suite Teardown  Keyword2
 
-        Variables   variables.py
-        Library  Stuff
-        Library  Collections
-        Resource    robot.resource
-        Library  stuff.py  WITH NAME  alias
+            Variables   variables.py
+            Library  Stuff
+            Library  Collections
+            Resource    robot.resource
+            Library  stuff.py  WITH NAME  alias
 
-    .. code-tab:: robotframework After
+    .. tab-item:: After
 
-        *** Settings ***
-        Documentation  doc  # this is comment
-        ...  another line
-        Metadata  value  param
+        .. code:: robotframework
 
-        Variables   variables.py
-        Library  Stuff
-        Library  Collections
-        Resource    robot.resource
-        Library  stuff.py  WITH NAME  alias
+            *** Settings ***
+            Documentation  doc  # this is comment
+            ...  another line
+            Metadata  value  param
 
-        Suite Setup  Keyword
-        Suite Teardown  Keyword2
-        # I want to be keep together with Test Setup
-        Test Setup  Keyword
-        Test Timeout  1min
+            Variables   variables.py
+            Library  Stuff
+            Library  Collections
+            Resource    robot.resource
+            Library  stuff.py  WITH NAME  alias
 
-        Force Tags  tag
-        ...  tag
-        Default Tags  1
+            Suite Setup  Keyword
+            Suite Teardown  Keyword2
+            # I want to be keep together with Test Setup
+            Test Setup  Keyword
+            Test Timeout  1min
+
+            Force Tags  tag
+            ...  tag
+            Default Tags  1
 
 Using the same example with non default group order we will move tags from end to beginning of the section::
 
     robotidy --configure OrderSettingsSection:group_order=tags,documentation,imports,settings src
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Settings ***
-        Metadata  value  param
+        .. code:: robotframework
 
-        Force Tags  tag
-        ...  tag
+            *** Settings ***
+            Metadata  value  param
 
-        Documentation  doc  # this is comment
-        ...  another line
-        Test Timeout  1min
+            Force Tags  tag
+            ...  tag
 
-        # I want to be keep together with Test Setup
+            Documentation  doc  # this is comment
+            ...  another line
+            Test Timeout  1min
 
-        Test Setup  Keyword
+            # I want to be keep together with Test Setup
+
+            Test Setup  Keyword
 
 
-        Suite Setup  Keyword
-        Default Tags  1
-        Suite Teardown  Keyword2
+            Suite Setup  Keyword
+            Default Tags  1
+            Suite Teardown  Keyword2
 
-    .. code-tab:: robotframework After
+    .. tab-item:: After
 
-        *** Settings ***
-        Force Tags  tag
-        ...  tag
-        Default Tags  1
+        .. code:: robotframework
 
-        Documentation  doc  # this is comment
-        ...  another line
-        Metadata  value  param
+            *** Settings ***
+            Force Tags  tag
+            ...  tag
+            Default Tags  1
 
-        Suite Setup  Keyword
-        Suite Teardown  Keyword2
-        # I want to be keep together with Test Setup
-        Test Setup  Keyword
-        Test Timeout  1min
+            Documentation  doc  # this is comment
+            ...  another line
+            Metadata  value  param
+
+            Suite Setup  Keyword
+            Suite Teardown  Keyword2
+            # I want to be keep together with Test Setup
+            Test Setup  Keyword
+            Test Timeout  1min
 
 Settings order
 ---------------
@@ -125,21 +133,25 @@ Order of settings inside common group can also be changed::
 
     robotidy --configure OrderSettingsSection:settings_order=suite_teardown,suite_setup,test_setup,test_teardown,test_timeout,test_template src
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Default order
+    .. tab-item:: Default order
 
-        *** Settings ***
-        Suite Setup    Suite Setup Keyword
-        Suite Teardown    Suite Teardown Keyword
-        Test Timeout    1min
+        .. code:: robotframework
 
-    .. code-tab:: robotframework Configured order
+            *** Settings ***
+            Suite Setup    Suite Setup Keyword
+            Suite Teardown    Suite Teardown Keyword
+            Test Timeout    1min
 
-        *** Settings ***
-        Suite Teardown    Suite Teardown Keyword
-        Suite Setup    Suite Setup Keyword
-        Test Timeout    1min
+    .. tab-item:: Configured order
+
+        .. code:: robotframework
+
+            *** Settings ***
+            Suite Teardown    Suite Teardown Keyword
+            Suite Setup    Suite Setup Keyword
+            Test Timeout    1min
 
 Preserve order
 --------------
@@ -163,29 +175,33 @@ Builtin library imports are moved to the top and sorted alphabetically.
 
 Example:
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Settings ***
-        Suite Teardown  Keyword2
+        .. code:: robotframework
 
-        Variables   variables.py
-        Library  Stuff
-        Library  Collections
-        Resource    robot.resource
-        Library   ABC
+            *** Settings ***
+            Suite Teardown  Keyword2
 
-    .. code-tab:: robotframework After
+            Variables   variables.py
+            Library  Stuff
+            Library  Collections
+            Resource    robot.resource
+            Library   ABC
 
-        *** Settings ***
-        Library  Collections
-        Library  Stuff
-        Library   ABC
-        Resource    robot.resource
-        Variables   variables.py
+    .. tab-item:: After
 
-        Suite Teardown  Keyword2
+        .. code:: robotframework
+
+            *** Settings ***
+            Library  Collections
+            Library  Stuff
+            Library   ABC
+            Resource    robot.resource
+            Variables   variables.py
+
+            Suite Teardown  Keyword2
 
 Removing settings
 ------------------
@@ -200,68 +216,80 @@ Group of settings are separated by ``new_lines_between_groups = 1`` new lines. I
 
     robotidy --configure OrderSettingsSection:new_lines_between_groups=2 src
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Settings ***
-        Library  Collections
-        Default Tags    tag
-        Documentation  doc  # this is comment
-        ...  another line
-        Metadata  value  param
+        .. code:: robotframework
 
-    .. code-tab:: robotframework Default separator
+            *** Settings ***
+            Library  Collections
+            Default Tags    tag
+            Documentation  doc  # this is comment
+            ...  another line
+            Metadata  value  param
 
-        *** Settings ***
-        Documentation  doc  # this is comment
-        ...  another line
-        Metadata  value  param
+    .. tab-item:: Default separator
 
-        Library  Collections
+        .. code:: robotframework
 
-        Default Tags    tag
+            *** Settings ***
+            Documentation  doc  # this is comment
+            ...  another line
+            Metadata  value  param
 
-    .. code-tab:: robotframework 0
+            Library  Collections
 
-        *** Settings ***
-        Documentation  doc  # this is comment
-        ...  another line
-        Metadata  value  param
-        Library  Collections
-        Default Tags    tag
+            Default Tags    tag
 
-    .. code-tab:: robotframework 2
+    .. tab-item:: 0
 
-        *** Settings ***
-        Documentation  doc  # this is comment
-        ...  another line
-        Metadata  value  param
+        .. code:: robotframework
+
+            *** Settings ***
+            Documentation  doc  # this is comment
+            ...  another line
+            Metadata  value  param
+            Library  Collections
+            Default Tags    tag
+
+    .. tab-item:: 2
+
+        .. code:: robotframework
+
+            *** Settings ***
+            Documentation  doc  # this is comment
+            ...  another line
+            Metadata  value  param
 
 
-        Library  Collections
+            Library  Collections
 
 
-        Default Tags    tag
+            Default Tags    tag
 
 If you're not preserving the default order of libraries they will be grouped into built in libraries and custom libraries.
 Parsing errors (such as Resources instead of Resource, duplicated settings) are moved to the end of section.
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Settings ***
-        Test Templating  Template  # parsing error
-        Library  Stuff
-        Resource    robot.resource
-        Library  Dialogs  # built in library
+        .. code:: none
 
-    .. code-tab:: robotframework After
+            *** Settings ***
+            Test Templating  Template  # parsing error
+            Library  Stuff
+            Resource    robot.resource
+            Library  Dialogs  # built in library
 
-        *** Settings ***
-        Library  Dialogs  # built in library
-        Library  Stuff
-        Resource    robot.resource
+    .. tab-item:: After
 
-        Test Templating  Template  # parsing error
+        .. code:: none
+
+            *** Settings ***
+            Library  Dialogs  # built in library
+            Library  Stuff
+            Resource    robot.resource
+
+            Test Templating  Template  # parsing error

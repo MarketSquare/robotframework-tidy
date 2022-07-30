@@ -10,89 +10,93 @@ Merge duplicated sections and order them.
 
 Default order is: Comments > Settings > Variables > Test Cases > Keywords.
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        # this is comment section
-        *** Keywords ***
-        Keyword
-            No Operation
+        .. code:: robotframework
 
-        *** Test Cases ***
-        Test 1
-            Log  1
+            # this is comment section
+            *** Keywords ***
+            Keyword
+                No Operation
 
-        Test 2
-            Log  2
+            *** Test Cases ***
+            Test 1
+                Log  1
 
-        *** Settings ***
-        Library  somelib.py
-        Test Template    Template
+            Test 2
+                Log  2
 
-
-        *** Keyword ***
-        Keyword2
-            Log  2
-            FOR  ${i}  IN RANGE  10
-                Log  ${i}
-            END
-
-        *** Test Cases ***
-        Test 3
-            Log  3
+            *** Settings ***
+            Library  somelib.py
+            Test Template    Template
 
 
-        *** Variables ***  this should be left  alone
-        ${var}  1
-        @{var2}  1
-        ...  2
+            *** Keyword ***
+            Keyword2
+                Log  2
+                FOR  ${i}  IN RANGE  10
+                    Log  ${i}
+                END
+
+            *** Test Cases ***
+            Test 3
+                Log  3
 
 
-        *** settings***
-        Task Timeout  4min
-
-        Force Tags  sometag  othertag
-
-    .. code-tab:: robotframework After
-
-        *** Comments ***
-
-        # this is comment section
-        *** Settings ***
-        Library  somelib.py
-        Test Template    Template
+            *** Variables ***  this should be left  alone
+            ${var}  1
+            @{var2}  1
+            ...  2
 
 
-        Task Timeout  4min
+            *** settings***
+            Task Timeout  4min
 
-        Force Tags  sometag  othertag
-        *** Variables ***  this should be left  alone
-        ${var}  1
-        @{var2}  1
-        ...  2
+            Force Tags  sometag  othertag
 
+    .. tab-item:: After
 
-        *** Test Cases ***
-        Test 1
-            Log  1
+        .. code:: robotframework
 
-        Test 2
-            Log  2
+            *** Comments ***
 
-        Test 3
-            Log  3
+            # this is comment section
+            *** Settings ***
+            Library  somelib.py
+            Test Template    Template
 
 
-        *** Keywords ***
-        Keyword
-            No Operation
+            Task Timeout  4min
 
-        Keyword2
-            Log  2
-            FOR  ${i}  IN RANGE  10
-                Log  ${i}
-            END
+            Force Tags  sometag  othertag
+            *** Variables ***  this should be left  alone
+            ${var}  1
+            @{var2}  1
+            ...  2
+
+
+            *** Test Cases ***
+            Test 1
+                Log  1
+
+            Test 2
+                Log  2
+
+            Test 3
+                Log  3
+
+
+            *** Keywords ***
+            Keyword
+                No Operation
+
+            Keyword2
+                Log  2
+                FOR  ${i}  IN RANGE  10
+                    Log  ${i}
+                END
 
 Custom order
 -------------
@@ -113,21 +117,26 @@ name will be taken from first encountered section).
 Any data before first section is treated as comment in Robot Framework. This transformer add ``*** Comments ***``
 section for such lines:
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        i am comment
-        # robocop: disable
-        *** Settings ***
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            i am comment
+            # robocop: disable
+            *** Settings ***
 
-        *** Comments ***
-        i am comment
-        # robocop: disable
-        *** Settings ***
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Comments ***
+            i am comment
+            # robocop: disable
+            *** Settings ***
 
 You can disable this behaviour by setting ``create_comment_section`` to False::
 
     robotidy --configure MergeAndOrderSections:create_comment_section=False src
+
