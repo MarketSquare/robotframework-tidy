@@ -25,8 +25,7 @@ click.rich_click.STYLE_METAVAR = "bold white"
 click.rich_click.STYLE_OPTION_DEFAULT = "grey37"
 click.rich_click.STYLE_OPTIONS_PANEL_BORDER = "grey66"
 click.rich_click.STYLE_USAGE = "magenta"
-click.rich_click.OPTION_GROUPS = {
-    "robotidy": [
+CLI_OPTIONS_LIST = [
         {
             "name": "Run only selected transformers",
             "options": ["--transform"],
@@ -62,7 +61,10 @@ click.rich_click.OPTION_GROUPS = {
             "name": "Other",
             "options": ["--target-version", "--verbose", "--color", "--output", "--version", "--help"],
         },
-    ],
+    ]
+click.rich_click.OPTION_GROUPS = {
+    "robotidy": CLI_OPTIONS_LIST,
+    "python -m robotidy": CLI_OPTIONS_LIST,
 }
 
 

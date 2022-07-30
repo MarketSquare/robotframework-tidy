@@ -1,0 +1,15 @@
+Robotidy 3.1.0
+=========================================
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==3.2.0
+
+Fixed help output for different entrypoints
+----------------------------------------
+If the pip fails to install ``robotidy`` entry point (usually due to missing admin permissions) it needs
+to be called with ``python -m robotidy``. Our help didn't print properly when calling the Robotidy in such a way.
