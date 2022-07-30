@@ -29,7 +29,7 @@ This parameter can be also used to run non default transformer together with def
 
         robotidy --list
 
-The basic syntax for supplying parameters is ``TRANSFORMER_NAME:param=value``. You can chain multiple parameters using '``:``'::
+The basic syntax for supplying parameters is ``TRANSFORMER_NAME:param=value``. You can chain multiple parameters using ``:``::
 
     robotidy --configure TRANSFORMER_NAME:param=value:param=value2 src
 
@@ -44,6 +44,6 @@ If you want to achieve the output closest to the output from old robot.tidy use 
         "MergeAndOrderSections: order = settings,variables,testcases,keywords,comments",
         "OrderSettings: keyword_before = arguments,documentation,tags,timeout",
         "OrderSettingsSection: new_lines_between_groups = 0",
-        "AlignSettingsSection: min_width = 18"
-        "AlignVariablesSection": min_width = 18"
+        "AlignSettingsSection: min_width = 18",
+        "AlignVariablesSection: min_width = 18"
     ]
