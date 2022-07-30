@@ -37,8 +37,6 @@ class RemoveEmptySettings(Transformer):
     ```
 
     You can disable that behavior by changing ``more_explicit`` parameter value to ``False``.
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     def __init__(self, work_mode: str = "overwrite_ok", more_explicit: bool = True):

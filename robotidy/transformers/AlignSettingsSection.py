@@ -58,8 +58,7 @@ class AlignSettingsSection(Transformer):
 
     To disable it configure ``argument_indent`` with ``0``.
 
-    Supports global formatting params: ``--startline``, ``--endline`` and ``--spacecount``
-    (for columns with fixed length).
+    Supports global formatting param ``--spacecount`` (for columns with fixed length).
     """
 
     TOKENS_WITH_KEYWORDS = {

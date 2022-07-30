@@ -69,7 +69,7 @@ class SplitTooLongLine(Transformer):
         ...    ${arg3}
     ```
 
-    Supports global formatting params: ``spacecount``, ``separator``, ``--startline`` and ``--endline``.
+    Supports global formatting params: ``spacecount`` and ``separator``.
     """
 
     IGNORED_WHITESPACE = {Token.EOL, Token.CONTINUATION}

@@ -45,8 +45,6 @@ class ReplaceBreakContinue(Transformer):
             END
         END
     ```
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     MIN_VERSION = 5

@@ -35,8 +35,6 @@ class NormalizeSettingName(ModelTransformer):
         [Arguments]    ${arg}
         [Documentation]   Setup Keyword
     ```
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     def __init__(self):

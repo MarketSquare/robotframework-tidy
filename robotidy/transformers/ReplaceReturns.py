@@ -47,8 +47,6 @@ class ReplaceReturns(Transformer):
     Keyword 2
         RETURN    ${arg}
     ```
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     MIN_VERSION = 5

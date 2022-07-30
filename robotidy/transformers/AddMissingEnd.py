@@ -31,8 +31,6 @@ class AddMissingEnd(Transformer):
             Log    ${x}
         END
     ```
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     def __init__(self):

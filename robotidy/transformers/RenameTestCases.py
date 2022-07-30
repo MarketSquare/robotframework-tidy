@@ -57,8 +57,6 @@ class RenameTestCases(Transformer):
     Compare XML With Json
         No Operation
     ```
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
     ENABLED = False
 

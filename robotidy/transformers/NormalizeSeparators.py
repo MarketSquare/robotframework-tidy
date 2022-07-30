@@ -22,8 +22,6 @@ class NormalizeSeparators(Transformer):
     ``sections = comments,settings,variables,keywords,testcases`` param.
 
     To not format documentation configure ``skip_documentation`` to ``True``.
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     HANDLES_SKIP = frozenset({"skip_documentation", "skip_keyword_call", "skip_keyword_call_pattern"})

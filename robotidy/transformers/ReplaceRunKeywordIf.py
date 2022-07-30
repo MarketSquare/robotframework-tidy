@@ -81,8 +81,6 @@ class ReplaceRunKeywordIf(Transformer):
             Keyword2
         END
     ```
-
-    Supports global formatting params: ``--spacecount``, ``--separator``, ``--startline`` and ``--endline``.
     """
 
     def __init__(self):

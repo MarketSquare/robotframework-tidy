@@ -31,8 +31,6 @@ class NormalizeSectionHeaderName(ModelTransformer):
     ```robotframework
     *** SETTINGS ***
     ```
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     def __init__(self, uppercase: bool = False):

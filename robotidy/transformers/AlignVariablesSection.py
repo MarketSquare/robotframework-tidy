@@ -42,8 +42,6 @@ class AlignVariablesSection(Transformer):
     ```
 
     To align all columns set ``up_to_column`` to 0.
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     def __init__(self, up_to_column: int = 2, skip_types: str = "", min_width: int = None):

@@ -47,8 +47,6 @@ class RenameKeywords(ModelTransformer):
 
     Use `ignore_library = True` parameter to control if the library name part (Library.Keyword) of keyword call
     should be renamed.
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     ENABLED = False

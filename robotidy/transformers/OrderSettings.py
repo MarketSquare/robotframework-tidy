@@ -51,8 +51,6 @@ class OrderSettings(Transformer):
         robotidy --configure OrderSettings:keyword_before=:keyword_after=
 
     It will order only test cases because all setting names for keywords are missing.
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     def __init__(

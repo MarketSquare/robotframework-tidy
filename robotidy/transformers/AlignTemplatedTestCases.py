@@ -46,8 +46,6 @@ class AlignTemplatedTestCases(Transformer):
     ```
 
     For non-templated test cases use ``AlignTestCasesSection`` transformer.
-
-    Supports global formatting params: ``--startline``, ``--endline``.
     """
 
     ENABLED = False
