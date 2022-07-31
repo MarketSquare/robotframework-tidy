@@ -1,4 +1,4 @@
-Robotidy 3.1.0
+Robotidy 3.2.0
 =========================================
 
 You can install the latest available version by running::
@@ -32,6 +32,9 @@ Fixes
   Our help didn't print properly when calling the Robotidy in such a way.
 
 * Fixed fatal exception when running robotidy with only ``NormalizeSeparator`` enabled on FOR loop without closing END (`#390 <https://github.com/MarketSquare/robotframework-tidy/issues/390>`_).
+
+* Renamed invalid short name of ``--target-version`` from ``-t`` (which was duplicate of ``--transform`` short option)
+  to ``--tv`` (`#375 <https://github.com/MarketSquare/robotframework-tidy/issues/375>`_.
 
 Acknowledgements
 -----------------

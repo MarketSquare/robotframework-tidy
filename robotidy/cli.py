@@ -26,42 +26,42 @@ click.rich_click.STYLE_OPTION_DEFAULT = "grey37"
 click.rich_click.STYLE_OPTIONS_PANEL_BORDER = "grey66"
 click.rich_click.STYLE_USAGE = "magenta"
 CLI_OPTIONS_LIST = [
-        {
-            "name": "Run only selected transformers",
-            "options": ["--transform"],
-        },
-        {
-            "name": "Work modes",
-            "options": ["--overwrite", "--diff", "--check", "--force-order"],
-        },
-        {
-            "name": "Documentation",
-            "options": ["--list", "--desc"],
-        },
-        {
-            "name": "Configuration",
-            "options": ["--configure", "--config"],
-        },
-        {
-            "name": "Global formatting settings",
-            "options": [
-                "--spacecount",
-                "--indent",
-                "--continuation-indent",
-                "--line-length",
-                "--lineseparator",
-                "--separator",
-                "--startline",
-                "--endline",
-            ],
-        },
-        {"name": "File exclusion", "options": ["--exclude", "--extend-exclude", "--skip-gitignore"]},
-        skip.option_group,
-        {
-            "name": "Other",
-            "options": ["--target-version", "--verbose", "--color", "--output", "--version", "--help"],
-        },
-    ]
+    {
+        "name": "Run only selected transformers",
+        "options": ["--transform"],
+    },
+    {
+        "name": "Work modes",
+        "options": ["--overwrite", "--diff", "--check", "--force-order"],
+    },
+    {
+        "name": "Documentation",
+        "options": ["--list", "--desc"],
+    },
+    {
+        "name": "Configuration",
+        "options": ["--configure", "--config"],
+    },
+    {
+        "name": "Global formatting settings",
+        "options": [
+            "--spacecount",
+            "--indent",
+            "--continuation-indent",
+            "--line-length",
+            "--lineseparator",
+            "--separator",
+            "--startline",
+            "--endline",
+        ],
+    },
+    {"name": "File exclusion", "options": ["--exclude", "--extend-exclude", "--skip-gitignore"]},
+    skip.option_group,
+    {
+        "name": "Other",
+        "options": ["--target-version", "--verbose", "--color", "--output", "--version", "--help"],
+    },
+]
 click.rich_click.OPTION_GROUPS = {
     "robotidy": CLI_OPTIONS_LIST,
     "python -m robotidy": CLI_OPTIONS_LIST,
@@ -385,7 +385,7 @@ def print_transformers_list(target_version: int):
 )
 @click.option(
     "--target-version",
-    "-t",
+    "-tv",
     type=click.Choice([v.name.lower() for v in TargetVersion], case_sensitive=False),
     callback=validate_target_version,
     help="Only enable transformers supported in set target version",
