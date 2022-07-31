@@ -1,6 +1,6 @@
 from typing import Iterable
 
-from robot.api.parsing import ModelTransformer, Token
+from robot.api.parsing import Token
 
 try:
     from robot.api.parsing import Break, Continue

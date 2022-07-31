@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from robot.api.parsing import Comment, EmptyLine, LibraryImport, ModelTransformer, Token
+from robot.api.parsing import Comment, EmptyLine, LibraryImport, Token
 from robot.libraries import STDLIBS
 
 from robotidy.disablers import skip_section_if_disabled

@@ -1,4 +1,4 @@
-from robot.api.parsing import Comment, CommentSection, EmptyLine, ModelTransformer
+from robot.api.parsing import Comment, CommentSection, EmptyLine
 
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.transformers import Transformer

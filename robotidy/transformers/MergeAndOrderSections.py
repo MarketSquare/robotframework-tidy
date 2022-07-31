@@ -1,4 +1,4 @@
-from robot.api.parsing import EmptyLine, ModelTransformer, SectionHeader, Token
+from robot.api.parsing import EmptyLine, SectionHeader, Token
 from robot.parsing.model.statements import Statement
 
 from robotidy.exceptions import InvalidParameterValueError
@@ -10,7 +10,7 @@ except ImportError:
 from robotidy.transformers import Transformer
 
 
-class MergeAndOrderSections(ModelTransformer):
+class MergeAndOrderSections(Transformer):
     """
     Merge duplicated sections and order them.
 
@@ -51,6 +51,7 @@ class MergeAndOrderSections(ModelTransformer):
     """
 
     def __init__(self, order: str = "", create_comment_section: bool = True):
+        super().__init__()
         self.sections_order = self.parse_order(order)
         self.create_comment_section = create_comment_section
 

@@ -1,4 +1,4 @@
-from robot.api.parsing import DefaultTags, ForceTags, ModelTransformer, Tags, Token
+from robot.api.parsing import DefaultTags, ForceTags, Tags, Token
 
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError

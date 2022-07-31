@@ -1,4 +1,4 @@
-from robot.api.parsing import Comment, EmptyLine, End, ModelTransformer, Token
+from robot.api.parsing import Comment, EmptyLine, End, Token
 
 try:
     from robot.api.parsing import InlineIfHeader

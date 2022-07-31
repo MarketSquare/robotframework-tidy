@@ -3,8 +3,6 @@ import re
 
 from robot.api.parsing import Comment, ModelVisitor, Token
 
-from robotidy.skip import Skip, SkipConfig
-
 
 def skip_if_disabled(func):
     """

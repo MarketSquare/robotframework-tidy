@@ -1,6 +1,6 @@
 from itertools import chain
 
-from robot.api.parsing import Comment, ElseHeader, ElseIfHeader, End, If, IfHeader, KeywordCall, ModelTransformer, Token
+from robot.api.parsing import Comment, ElseHeader, ElseIfHeader, End, If, IfHeader, KeywordCall, Token
 
 try:
     from robot.api.parsing import Break, Continue, InlineIfHeader, ReturnStatement

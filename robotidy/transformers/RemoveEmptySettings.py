@@ -1,6 +1,6 @@
 import ast
 
-from robot.api.parsing import ModelTransformer, Token
+from robot.api.parsing import Token
 
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError

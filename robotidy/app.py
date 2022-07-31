@@ -1,9 +1,7 @@
 import os
 import sys
-from collections import defaultdict
 from difflib import unified_diff
-from pathlib import Path
-from typing import Dict, List, Optional, Pattern, Tuple
+from typing import Optional, Pattern, Tuple
 
 try:
     import rich_click as click

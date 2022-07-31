@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from robot.api.parsing import ModelTransformer, Token
+from robot.api.parsing import Token
 from robot.parsing.model import Statement
 
 from robotidy.disablers import skip_section_if_disabled

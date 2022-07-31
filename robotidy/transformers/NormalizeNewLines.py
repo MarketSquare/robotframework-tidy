@@ -1,13 +1,13 @@
 from typing import Optional
 
-from robot.api.parsing import EmptyLine, ModelTransformer, Token
+from robot.api.parsing import EmptyLine, Token
 
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.transformers import Transformer
 from robotidy.utils import is_suite_templated
 
 
-class NormalizeNewLines(ModelTransformer):
+class NormalizeNewLines(Transformer):
     """
     Normalize new lines.
 
@@ -35,6 +35,7 @@ class NormalizeNewLines(ModelTransformer):
         separate_templated_tests: bool = False,
         consecutive_lines: int = 1,
     ):
+        super().__init__()
         self.test_case_lines = test_case_lines
         self.keyword_lines = keyword_lines if keyword_lines is not None else test_case_lines
         self.section_lines = section_lines

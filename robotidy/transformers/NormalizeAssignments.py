@@ -2,7 +2,7 @@ import ast
 import re
 from collections import Counter
 
-from robot.api.parsing import ModelTransformer, Token, Variable
+from robot.api.parsing import Token, Variable
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError

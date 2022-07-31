@@ -378,7 +378,7 @@ class AlignKeywordsTestsSection(Transformer):
         return column, abs(skip_width)
 
     def align_tokens(self, tokens: List, skip_width: int):
-        prev_overflow_len, last_assign, misaligned_cols = 0, 0, 0
+        prev_overflow_len, misaligned_cols = 0, 0
         min_separator = self.formatting_config.space_count
         aligned = []
         if skip_width == 0:

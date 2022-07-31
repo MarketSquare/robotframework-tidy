@@ -1,10 +1,10 @@
-from robot.api.parsing import ModelTransformer, Token
+from robot.api.parsing import Token
 
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.transformers import Transformer
 
 
-class NormalizeSectionHeaderName(ModelTransformer):
+class NormalizeSectionHeaderName(Transformer):
     """
     Normalize section headers names.
     Robot Framework is quite flexible with the section header naming. Following lines are equal:
@@ -34,6 +34,7 @@ class NormalizeSectionHeaderName(ModelTransformer):
     """
 
     def __init__(self, uppercase: bool = False):
+        super().__init__()
         self.uppercase = uppercase
 
     @skip_section_if_disabled
