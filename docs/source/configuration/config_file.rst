@@ -45,8 +45,8 @@ Source paths can be configured via ``src`` parameter. If the path does not exist
 
     [tool.robotidy]
     src = [
-        test.robot
-        directory
+        "test.robot",
+        "directory"
     ]
 
 Transformers with multiple parameters can be configured in one line (each param delimited by ``:``) or in separate lines:
@@ -55,7 +55,7 @@ Transformers with multiple parameters can be configured in one line (each param 
 
     [tool.robotidy]
     configure = [
-        "OrderSettings:keyword_before=documentation,tags,timeout,arguments:keyword_after=return"
+        "OrderSettings:keyword_before=documentation,tags,timeout,arguments:keyword_after=return",
         "OrderSettingsSection:group_order=documentation,imports,settings,tags",
         "OrderSettingsSection:imports_order=library,resource,variables"
     ]
