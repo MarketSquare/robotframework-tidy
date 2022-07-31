@@ -58,8 +58,8 @@ setup(
             "pre-commit",
         ],
         "doc": [
-            "sphinx_rtd_theme",
             "sphinx",
+            "furo",
             "sphinx-tabs==3.3.1",
             "sphinx-copybutton==0.3.3",
         ],
