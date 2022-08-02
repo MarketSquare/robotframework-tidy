@@ -9,8 +9,9 @@ try:
 except ImportError:
     InlineIfHeader, TryHeader = None, None
 
-from robotidy.disablers import Skip, skip_if_disabled
+from robotidy.disablers import skip_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.skip import Skip
 from robotidy.transformers import Transformer
 from robotidy.utils import is_blank_multiline, round_to_four
 

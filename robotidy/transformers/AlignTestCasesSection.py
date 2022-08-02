@@ -3,7 +3,8 @@ try:
 except ImportError:
     InlineIfHeader, TryHeader = None, None
 
-from robotidy.disablers import Skip, skip_if_disabled
+from robotidy.disablers import skip_if_disabled
+from robotidy.skip import Skip
 from robotidy.transformers.aligners_core import AlignKeywordsTestsSection
 from robotidy.utils import is_suite_templated
 

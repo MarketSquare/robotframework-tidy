@@ -2,7 +2,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from robotidy.disablers import SkipConfig
+from robotidy.skip import SkipConfig
 from robotidy.transformers import load_transformers
 from robotidy.utils import ROBOT_VERSION
 

@@ -5,7 +5,7 @@ import pytest
 
 from robotidy.app import Robotidy
 from robotidy.config import Config, FormattingConfig
-from robotidy.disablers import SkipConfig
+from robotidy.skip import SkipConfig
 from robotidy.utils import ROBOT_VERSION, decorate_diff_with_color, split_args_from_name_or_path
 
 

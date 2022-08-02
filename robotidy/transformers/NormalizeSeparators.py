@@ -6,8 +6,9 @@ except ImportError:
     InlineIfHeader = None
     ReturnStatement = None
 
-from robotidy.disablers import Skip, skip_if_disabled, skip_section_if_disabled
+from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.skip import Skip
 from robotidy.transformers import Transformer
 
 
