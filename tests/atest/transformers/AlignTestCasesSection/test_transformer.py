@@ -103,3 +103,13 @@ class TestAlignTestCasesSection(TransformerAcceptanceTest):
             source="dynamic_compact_overflow_limit_1.robot",
             config=":widths=24,28,20:handle_too_long=compact_overflow:skip_keyword_call=Log:compact_overflow_limit=1",
         )
+
+    def test_skip_return_values_overflow(self):
+        """From https://github.com/MarketSquare/robotframework-tidy/issues/386"""
+        self.compare(
+            source="skip_return_values_overflow.robot",
+            config=":widths=24,28,20:"
+            "handle_too_long=compact_overflow:"
+            "compact_overflow_limit=1:"
+            "skip_return_values=True",
+        )
