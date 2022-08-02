@@ -52,7 +52,6 @@ setup(
             "coverage",
             "invoke",
             "jinja2",
-            "pylama_pylint",
             "pylama",
             "pytest",
             "pre-commit",
