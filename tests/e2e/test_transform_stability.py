@@ -27,6 +27,7 @@ RERUN_NEEDED = {
         "non_ascii_spaces": 2,
         "skip_keywords": 2,
         "overflow_first_line": 2,
+        "skip_return_values_overflow": 2,
     },
     "IndentNestedKeywords": {"run_keyword": 2},
     "InlineIf": {
