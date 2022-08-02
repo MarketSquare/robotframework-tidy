@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from robotidy.disablers import Skip, SkipConfig
+from robotidy.skip import Skip, SkipConfig
 
 
 class TestSkip:

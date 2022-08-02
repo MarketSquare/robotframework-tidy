@@ -1,7 +1,7 @@
 import re
 from typing import Optional
 
-from robot.api.parsing import ModelTransformer, Token
+from robot.api.parsing import Token
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
@@ -57,8 +57,6 @@ class RenameTestCases(Transformer):
     Compare XML With Json
         No Operation
     ```
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
     ENABLED = False
 

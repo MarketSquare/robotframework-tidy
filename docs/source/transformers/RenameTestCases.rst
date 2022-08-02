@@ -16,19 +16,23 @@ to set a replacement value. This configuration::
 
 replaces all occurrences of given pattern with string 'foo':
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Test Cases ***
-        test ABC-123
-            No Operation
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            *** Test Cases ***
+            test ABC-123
+                No Operation
 
-        *** Test Cases ***
-        Test foo
-            No Operation
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test foo
+                No Operation
 
 Capitalize each word
 ------------------------
@@ -36,18 +40,20 @@ If you set ``capitalize_each_word`` to ``True`` it will capitalize each word in 
 
      robotidy --transform RenameTestCases -c RenameTestCases:capitalize_each_word=True
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Test Cases ***
-        compare XML with json
-            No Operation
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            *** Test Cases ***
+            compare XML with json
+                No Operation
 
-        *** Test Cases ***
-        Compare XML With Json
-            No Operation
+    .. tab-item:: After
 
-Supports global formatting params: ``--startline`` and ``--endline``.
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Compare XML With Json
+                No Operation

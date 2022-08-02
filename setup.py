@@ -52,7 +52,7 @@ setup(
             "coverage",
             "invoke",
             "jinja2",
-            "pylama_pylint",
+            "pyflakes==2.4.*",  #  FIXME https://github.com/klen/pylama/issues/224
             "pylama",
             "pytest",
             "pre-commit",
@@ -60,7 +60,7 @@ setup(
         "doc": [
             "sphinx",
             "furo",
-            "sphinx-tabs==3.3.1",
+            "sphinx-design",
             "sphinx-copybutton==0.3.3",
         ],
     },

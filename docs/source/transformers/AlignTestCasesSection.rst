@@ -5,9 +5,8 @@ AlignTestCasesSection
 Align ``*** Test Cases ***`` section to columns.
 
 
-.. |TRANSFORMERNAME| replace:: _AlignTestCasesSection
-.. include:: enabled_hint.txt
-
+.. |TRANSFORMERNAME| replace:: AlignTestCasesSection
+.. include:: disabled_hint.txt
 
 Align keyword calls and settings into columns with predefined width in non-templated test cases.
 There are two possible alignment types (configurable via ``alignment_type``):
@@ -26,34 +25,40 @@ configured width (but no longer).
 
 See examples of the alignment types:
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Test Cases ***
-        Test case
-            ${short}    Short Keyword    short arg
-            ${other_val}    Short Keyword
-            ...    arg
-            ...    value
+        .. code:: robotframework
 
-    .. code-tab:: robotframework ``fixed`` (default)
+            *** Test Cases ***
+            Test case
+                ${short}    Short Keyword    short arg
+                ${other_val}    Short Keyword
+                ...    arg
+                ...    value
 
-        *** Test Cases ***
-        Test case
-            ${short}                Short Keyword           short arg
-            ${other_val}            Short Keyword
-            ...                     arg
-            ...                     value
+    .. tab-item:: fixed (default)
 
-    .. code-tab:: robotframework ``auto``
+        .. code:: robotframework
 
-        *** Test Cases ***
-        Test case
-            ${short}        Short Keyword       short arg
-            ${other_val}    Short Keyword
-            ...             arg
-            ...             value
+            *** Test Cases ***
+            Test case
+                ${short}                Short Keyword           short arg
+                ${other_val}            Short Keyword
+                ...                     arg
+                ...                     value
+
+    .. tab-item:: auto
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test case
+                ${short}        Short Keyword       short arg
+                ${other_val}    Short Keyword
+                ...             arg
+                ...             value
 
 The ``auto`` alignment often leads to more compact code. But ``fixed`` setting offers more stability - adding new,
 slightly longer variable or keyword call will not change alignment of the other lines.
@@ -91,62 +96,72 @@ via ``handle_too_long`` parameter):
 
 See example (for ``fixed`` alignment type and default width ``24``):
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Test Cases ***
-        Test case
-            # keyword call Looo.. does not fit default column width (24)
-            ${assign}    Looooooooonger Keyword Name    ${argument}    last
-            Short    Short    Short    Short
-            Single
-            Multi    ${arg}
-            ...    ${arg}
+        .. code:: robotframework
 
-    .. code-tab:: robotframework ``overflow`` (default)
+            *** Test Cases ***
+            Test case
+                # keyword call Looo.. does not fit default column width (24)
+                ${assign}    Looooooooonger Keyword Name    ${argument}    last
+                Short    Short    Short    Short
+                Single
+                Multi    ${arg}
+                ...    ${arg}
 
-        *** Test Cases ***
-        Test case
-            # we are "overflowing" to the next column - taking 24 * 2 = 48 width
-            ${assign}               Looooooooonger Keyword Name                     ${argument}             Short
-            Short                   Short                   Short                   Short
-            Single
-            Multi                   ${arg}
-            ...                     ${arg}
+    .. tab-item:: overflow (default)
 
-    .. code-tab:: robotframework compact_overflow
+        .. code:: robotframework
 
-        *** Test Cases ***
-        Test case
-            # ${argument} is fit between columns, and next argument ("last") is aligned correctly
-            ${assign}               Looooooooonger Keyword Name    ${argument}      last
-            Short                   Short                   Short                   Short
-            Single
-            Multi                   ${arg}
-            ...                     ${arg}
+            *** Test Cases ***
+            Test case
+                # we are "overflowing" to the next column - taking 24 * 2 = 48 width
+                ${assign}               Looooooooonger Keyword Name                     ${argument}             Short
+                Short                   Short                   Short                   Short
+                Single
+                Multi                   ${arg}
+                ...                     ${arg}
 
-    .. code-tab:: robotframework ignore_rest
+    .. tab-item:: compact_overflow
 
-        *** Test Cases ***
-        Test case
-            # tokens after too long token are not aligned
-            ${assign}               Looooooooonger Keyword Name    ${argument}    Short
-            Short                   Short                   Short                   Short
-            Single
-            Multi                   ${arg}
-            ...                     ${arg}
+        .. code:: robotframework
 
-    .. code-tab:: robotframework ignore_line
+            *** Test Cases ***
+            Test case
+                # ${argument} is fit between columns, and next argument ("last") is aligned correctly
+                ${assign}               Looooooooonger Keyword Name    ${argument}      last
+                Short                   Short                   Short                   Short
+                Single
+                Multi                   ${arg}
+                ...                     ${arg}
 
-        *** Test Cases ***
-        Test case
-            # the wole line containing too long token is ignored
-            ${assign}    Looooooooonger Keyword Name    ${argument}    Short
-            Short                   Short                   Short                   Short
-            Single
-            Multi                   ${arg}
-            ...                     ${arg}
+    .. tab-item:: ignore_rest
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test case
+                # tokens after too long token are not aligned
+                ${assign}               Looooooooonger Keyword Name    ${argument}    Short
+                Short                   Short                   Short                   Short
+                Single
+                Multi                   ${arg}
+                ...                     ${arg}
+
+    .. tab-item:: ignore_line
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test case
+                # the wole line containing too long token is ignored
+                ${assign}    Looooooooonger Keyword Name    ${argument}    Short
+                Short                   Short                   Short                   Short
+                Single
+                Multi                   ${arg}
+                ...                     ${arg}
 
 Compact overflow
 -----------------
@@ -160,65 +175,73 @@ Below example was run with config::
 
     robotidy -c AlignKeywordsSection:enabled=True:handle_too_long=compact_overflow:widths=24,28,20 src.robot
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Test Cases ***
-        Test case
-            # compact overflow will be used as we only "misalign" two columns in a row
-            LäVa_VastaanottotapahtumatTarkista    ${VASTAANOTTO}    ${TILAUS}    ${OSTOTILAUS}    ${LÄHETYS}    ${TILAUSPVM}
+        .. code:: robotframework
 
-            # more than two columns are misaligned - using "overflow" instead
-            LäVa_VastaanottotapahtumatTarkista    ${VASTAANOTTO_LONGER}    ${TILAUS_OCC}    ${OSTOTILAUS}    ${LÄHETYS}    ${TILAUSPVM}
+            *** Test Cases ***
+            Test case
+                # compact overflow will be used as we only "misalign" two columns in a row
+                LäVa_VastaanottotapahtumatTarkista    ${VASTAANOTTO}    ${TILAUS}    ${OSTOTILAUS}    ${LÄHETYS}    ${TILAUSPVM}
 
-    .. code-tab:: robotframework After
+                # more than two columns are misaligned - using "overflow" instead
+                LäVa_VastaanottotapahtumatTarkista    ${VASTAANOTTO_LONGER}    ${TILAUS_OCC}    ${OSTOTILAUS}    ${LÄHETYS}    ${TILAUSPVM}
 
-        *** Test Cases ***
-        Test case
-            # compact overflow will be used as we only "misalign" two columns in a row
-            LäVa_VastaanottotapahtumatTarkista    ${VASTAANOTTO}    ${TILAUS}       ${OSTOTILAUS}       ${LÄHETYS}          ${TILAUSPVM}
+    .. tab-item:: After
 
-            # more than two columns are misaligned - using "overflow" instead
-            LäVa_VastaanottotapahtumatTarkista    ${VASTAANOTTO_LONGER}             ${TILAUS_OCC}       ${OSTOTILAUS}       ${LÄHETYS}          ${TILAUSPVM}
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test case
+                # compact overflow will be used as we only "misalign" two columns in a row
+                LäVa_VastaanottotapahtumatTarkista    ${VASTAANOTTO}    ${TILAUS}       ${OSTOTILAUS}       ${LÄHETYS}          ${TILAUSPVM}
+
+                # more than two columns are misaligned - using "overflow" instead
+                LäVa_VastaanottotapahtumatTarkista    ${VASTAANOTTO_LONGER}             ${TILAUS_OCC}       ${OSTOTILAUS}       ${LÄHETYS}          ${TILAUSPVM}
 
 Alignment of the indented blocks
 --------------------------------
 Indented blocks (``FOR``, ``IF``, ``WHILE``, ``TRY..EXCEPT..``) are aligned independently.
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Test Cases ***
-        Test case
-            ${assign}    Keyword
-            FOR  ${var}  IN  1  2  3
-               ${variable}    Keyword    ${var}
-               Another Keyword
-               FOR  ${var2}  IN  1  2  3
-                   Short   1   2
-                   ${assign}    Longer Keyword
-                   ...    ${multiline}    ${arg}
-               END
-            END
-           Keyword Call    ${value}  # aligned together with keyword call before FOR loop
+        .. code:: robotframework
 
-    .. code-tab:: robotframework Before
-
-        *** Test Cases ***
-        Test case
-            ${assign}               Keyword
-            FOR    ${var}    IN    1    2    3
-                ${variable}             Keyword                 ${var}
-                Another Keyword
-                FOR    ${var2}    IN    1    2    3
-                    Short                   1                       2
-                    ${assign}               Longer Keyword
-                    ...                     ${multiline}            ${arg}
+            *** Test Cases ***
+            Test case
+                ${assign}    Keyword
+                FOR  ${var}  IN  1  2  3
+                   ${variable}    Keyword    ${var}
+                   Another Keyword
+                   FOR  ${var2}  IN  1  2  3
+                       Short   1   2
+                       ${assign}    Longer Keyword
+                       ...    ${multiline}    ${arg}
+                   END
                 END
-            END
-            Keyword Call            ${value}  # aligned together with keyword call before FOR loop
+               Keyword Call    ${value}  # aligned together with keyword call before FOR loop
+
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test case
+                ${assign}               Keyword
+                FOR    ${var}    IN    1    2    3
+                    ${variable}             Keyword                 ${var}
+                    Another Keyword
+                    FOR    ${var2}    IN    1    2    3
+                        Short                   1                       2
+                        ${assign}               Longer Keyword
+                        ...                     ${multiline}            ${arg}
+                    END
+                END
+                Keyword Call            ${value}  # aligned together with keyword call before FOR loop
 
 Currently, inline IFs are ignored. Block headers (``FOR ${var} IN @{LIST}`` or ``IF  $condition``) are not aligned.
 
@@ -236,38 +259,42 @@ Using this configuration (``SplitTooLongLine`` is enabled by default)::
 
 will result in the following transformation:
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Test Cases ***
-        Test case
-            # fits now but it will not fit after the alignment
-            Keyword    argument1    argument2    argument3    argument4
+        .. code:: robotframework
 
-            # does not fit before the alignment
-            Longer Keyword Name That Could Happen    argument value with sentence that goes over
+            *** Test Cases ***
+            Test case
+                # fits now but it will not fit after the alignment
+                Keyword    argument1    argument2    argument3    argument4
 
-            # fits, will not be split
-            Keyword    argument
+                # does not fit before the alignment
+                Longer Keyword Name That Could Happen    argument value with sentence that goes over
 
-    .. code-tab:: robotframework After
+                # fits, will not be split
+                Keyword    argument
 
-        *** Test Cases ***
-        Test case
-            # fits now but it will not fit after the alignment
-            Keyword
-            ...           argument1
-            ...           argument2
-            ...           argument3
-            ...           argument4
+    .. tab-item:: After
 
-            # does not fit before the alignment
-            Longer Keyword Name That Could Happen
-            ...           argument value with sentence that goes over
+        .. code:: robotframework
 
-            # fits, will be aligned but not split
-            Keyword       argument
+            *** Test Cases ***
+            Test case
+                # fits now but it will not fit after the alignment
+                Keyword
+                ...           argument1
+                ...           argument2
+                ...           argument3
+                ...           argument4
+
+                # does not fit before the alignment
+                Longer Keyword Name That Could Happen
+                ...           argument value with sentence that goes over
+
+                # fits, will be aligned but not split
+                Keyword       argument
 
 
 Skip formatting

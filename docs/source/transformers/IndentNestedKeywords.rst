@@ -9,26 +9,30 @@ Format indentation inside run keywords variants such as ``Run Keywords`` or ``Ru
 
 Keywords inside run keywords variants are detected and whitespace is formatted to outline them.
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Test Cases ***
-        Test
-            Run Keyword    Run Keyword If    ${True}    Run keywords   Log    foo    AND    Log    bar    ELSE    Log    baz
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            *** Test Cases ***
+            Test
+                Run Keyword    Run Keyword If    ${True}    Run keywords   Log    foo    AND    Log    bar    ELSE    Log    baz
 
-        *** Test Cases ***
-        Test
-            Run Keyword
-            ...    Run Keyword If    ${True}
-            ...        Run keywords
-            ...            Log    foo
-            ...            AND
-            ...            Log    bar
-            ...    ELSE
-            ...        Log    baz
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test
+                Run Keyword
+                ...    Run Keyword If    ${True}
+                ...        Run keywords
+                ...            Log    foo
+                ...            AND
+                ...            Log    bar
+                ...    ELSE
+                ...        Log    baz
 
 Handle AND inside Run Keywords
 -------------------------------
@@ -40,37 +44,43 @@ You can configure it using ``indent_and``::
 
 Following values are available:
 
- - ``indent_and=split`` splits ``AND`` to new line,
- - ``indent_and=split_and_indent`` splits ``AND`` and additionally indents the keywords,
- - ``indent_and=keep_in_line`` keeps ``AND`` next to the previous keyword.
+- ``indent_and=split`` splits ``AND`` to new line,
+- ``indent_and=split_and_indent`` splits ``AND`` and additionally indents the keywords,
+- ``indent_and=keep_in_line`` keeps ``AND`` next to the previous keyword.
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework indent_and=split (default)
+    .. tab-item:: indent_and=split (default)
 
-        *** Test Cases ***
-        Test
-            Run keywords
-            ...    Log    foo
-            ...    AND
-            ...    Log    bar
+        .. code:: robotframework
 
-    .. code-tab:: robotframework indent_and=split_and_indent
+            *** Test Cases ***
+            Test
+                Run keywords
+                ...    Log    foo
+                ...    AND
+                ...    Log    bar
 
-        *** Test Cases ***
-        Test
-            Run keywords
-            ...        Log    foo
-            ...    AND
-            ...        Log    bar
+    .. tab-item:: indent_and=split_and_indent
 
-    .. code-tab:: robotframework indent_and=keep_in_line
+        .. code:: robotframework
 
-        *** Test Cases ***
-        Test
-            Run keywords
-            ...    Log    foo    AND
-            ...    Log    bar
+            *** Test Cases ***
+            Test
+                Run keywords
+                ...        Log    foo
+                ...    AND
+                ...        Log    bar
+
+    .. tab-item:: indent_and=keep_in_line
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test
+                Run keywords
+                ...    Log    foo    AND
+                ...    Log    bar
 
 
 Skip formatting settings

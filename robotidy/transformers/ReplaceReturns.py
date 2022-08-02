@@ -1,4 +1,4 @@
-from robot.api.parsing import Comment, EmptyLine, ModelTransformer, Token
+from robot.api.parsing import Comment, EmptyLine
 
 try:
     from robot.api.parsing import ReturnStatement
@@ -8,7 +8,6 @@ except ImportError:
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.transformers import Transformer
 from robotidy.utils import (
-    ROBOT_VERSION,
     after_last_dot,
     create_statement_from_tokens,
     normalize_name,
@@ -47,8 +46,6 @@ class ReplaceReturns(Transformer):
     Keyword 2
         RETURN    ${arg}
     ```
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     MIN_VERSION = 5

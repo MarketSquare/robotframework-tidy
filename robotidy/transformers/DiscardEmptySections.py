@@ -1,4 +1,4 @@
-from robot.api.parsing import Comment, CommentSection, EmptyLine, ModelTransformer
+from robot.api.parsing import Comment, CommentSection, EmptyLine
 
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.transformers import Transformer
@@ -14,8 +14,6 @@ class DiscardEmptySections(Transformer):
     *** Variables ***
     # this section will be removed with ``alow_only_comments`` parameter set to False
     ```
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     def __init__(self, allow_only_comments: bool = True):

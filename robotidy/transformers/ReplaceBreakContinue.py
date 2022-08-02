@@ -1,6 +1,6 @@
 from typing import Iterable
 
-from robot.api.parsing import ModelTransformer, Token
+from robot.api.parsing import Token
 
 try:
     from robot.api.parsing import Break, Continue
@@ -45,8 +45,6 @@ class ReplaceBreakContinue(Transformer):
             END
         END
     ```
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     MIN_VERSION = 5

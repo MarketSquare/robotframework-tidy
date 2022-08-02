@@ -1,4 +1,4 @@
-from robot.api.parsing import Comment, EmptyLine, ModelTransformer, Token
+from robot.api.parsing import Comment, EmptyLine, Token
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
@@ -51,8 +51,6 @@ class OrderSettings(Transformer):
         robotidy --configure OrderSettings:keyword_before=:keyword_after=
 
     It will order only test cases because all setting names for keywords are missing.
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     def __init__(
@@ -85,7 +83,8 @@ class OrderSettings(Transformer):
                 self.__class__.__name__,
                 "order",
                 order,
-                f"Custom order should be provided in comma separated list with valid setting names:\n{sorted(name_map.keys())}",
+                f"Custom order should be provided in comma separated list "
+                f"with valid setting names:\n{sorted(name_map.keys())}",
             )
 
     def parse_order(self, keyword_before, keyword_after, test_before, test_after):

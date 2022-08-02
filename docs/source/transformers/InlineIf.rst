@@ -14,27 +14,31 @@ It will only replace IF block if it can fit in one line shorter than ``line_leng
 
 Simple IF blocks that will be replaced by inline IF:
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Keywords ***
-        Keyword
-            IF    $condition1
-                Keyword    argument
-            ELSE IF    $condition2
-                Keyword    argument2
-            END
-            IF    $condition2
-                RETURN
-            END
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            *** Keywords ***
+            Keyword
+                IF    $condition1
+                    Keyword    argument
+                ELSE IF    $condition2
+                    Keyword    argument2
+                END
+                IF    $condition2
+                    RETURN
+                END
 
-        *** Keywords ***
-        Keyword
-            IF    $condition1    Keyword    argument    ELSE IF    $condition2    Keyword    argument2
-            IF    $condition2    RETURN
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+                IF    $condition1    Keyword    argument    ELSE IF    $condition2    Keyword    argument2
+                IF    $condition2    RETURN
 
 Assignments
 ------------
@@ -42,88 +46,96 @@ Assignments are also supported as long all ELSE and ELSE IF branches have matchi
 branch. ELSE branch is required because without it assignment variable would be overwritten with ``None`` without
 your consent:
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Keywords ***
-        Keyword
-        # assignment variable but missing ELSE
-        IF    $condition
-            ${var}    Keyword
-        END
-        # assignment variables and ELSE branch
-        IF    $condition
-            ${var}    ${var2}    Keyword
-        ELSE
-            ${var}    ${var2}    Keyword 2
-        END
-        # assignment variable and ELSE branch but variable name does not match
-        IF    $condition
-            ${var}    Keyword
-        ELSE
-            ${other_var}    Keyword 2
-        END
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            *** Keywords ***
+            Keyword
+            # assignment variable but missing ELSE
+            IF    $condition
+                ${var}    Keyword
+            END
+            # assignment variables and ELSE branch
+            IF    $condition
+                ${var}    ${var2}    Keyword
+            ELSE
+                ${var}    ${var2}    Keyword 2
+            END
+            # assignment variable and ELSE branch but variable name does not match
+            IF    $condition
+                ${var}    Keyword
+            ELSE
+                ${other_var}    Keyword 2
+            END
 
-        *** Keywords ***
-        Keyword
-        # assignment variable but missing ELSE
-        IF    $condition
-            ${var}    Keyword
-        END
-        # assignment variables and ELSE branch
-        ${var}    ${var2}    IF    $condition    Keyword    ELSE    Keyword 2
-        # assignment variable and ELSE branch but variable name does not match
-        IF    $condition
-            ${var}    Keyword
-        ELSE
-            ${other_var}    Keyword 2
-        END
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+            # assignment variable but missing ELSE
+            IF    $condition
+                ${var}    Keyword
+            END
+            # assignment variables and ELSE branch
+            ${var}    ${var2}    IF    $condition    Keyword    ELSE    Keyword 2
+            # assignment variable and ELSE branch but variable name does not match
+            IF    $condition
+                ${var}    Keyword
+            ELSE
+                ${other_var}    Keyword 2
+            END
 
 Line length
 ------------
 Inline IF will be only used if resulting IF will be shorter than ``line_length`` parameter (default value is ``80``).
 Multi statements IF blocks are also skipped:
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Keywords ***
-        Keyword
-            FOR    ${var}    IN    @{array}
-                # Infline IF would not fit under --line-length
-                IF    $condition == "some value"
-                    Longer Keyword That Will Not Fit In One Line    ${argument}    ${argument2}
-                ELIF    $condition == "other value"
-                    Longer Keyword That Will Not Fit In One Line    ${argument3}    ${argument4}
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+                FOR    ${var}    IN    @{array}
+                    # Infline IF would not fit under --line-length
+                    IF    $condition == "some value"
+                        Longer Keyword That Will Not Fit In One Line    ${argument}    ${argument2}
+                    ELIF    $condition == "other value"
+                        Longer Keyword That Will Not Fit In One Line    ${argument3}    ${argument4}
+                    END
                 END
-            END
-            # multi statements inside IF
-            IF    $condition
-                Keyword
-                Other Keyword
-            END
-
-    .. code-tab:: robotframework After
-
-        *** Keywords ***
-        Keyword
-            FOR    ${var}    IN    @{array}
-                # Infline IF would not fit under --line-length
-                IF    $condition == "some value"
-                    Longer Keyword That Will Not Fit In One Line    ${argument}    ${argument2}
-                ELIF    $condition == "other value"
-                    Longer Keyword That Will Not Fit In One Line    ${argument3}    ${argument4}
+                # multi statements inside IF
+                IF    $condition
+                    Keyword
+                    Other Keyword
                 END
-            END
-            # multi statements inside IF
-            IF    $condition
-                Keyword
-                Other Keyword
-            END
+
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+                FOR    ${var}    IN    @{array}
+                    # Infline IF would not fit under --line-length
+                    IF    $condition == "some value"
+                        Longer Keyword That Will Not Fit In One Line    ${argument}    ${argument2}
+                    ELIF    $condition == "other value"
+                        Longer Keyword That Will Not Fit In One Line    ${argument3}    ${argument4}
+                    END
+                END
+                # multi statements inside IF
+                IF    $condition
+                    Keyword
+                    Other Keyword
+                END
 
 ``line_length`` parameter is configurable. Note that ``line_length`` is different than global ``--line-length`` (used
 in other transformers such as SplitTooLongLine)::
@@ -137,29 +149,31 @@ Too long inline IF
 ------------------
 Too long inline IFs (over ``line_length`` character limit) will be replaced with normal IF block:
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Keywords ***
-        Keyword
-            ${var}    ${var2}    IF    $condition != $condition2    Longer Keyword Name    ${argument}    values    ELSE IF    $condition2    Short Keyword    ${arg}  # comment
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            *** Keywords ***
+            Keyword
+                ${var}    ${var2}    IF    $condition != $condition2    Longer Keyword Name    ${argument}    values    ELSE IF    $condition2    Short Keyword    ${arg}  # comment
 
-        *** Keywords ***
-        Keyword
-            # comment
-            IF    $condition != $condition2
-                ${var}    ${var2}    Longer Keyword Name    ${argument}    values
-            ELSE IF    $condition2
-                ${var}    ${var2}    Short Keyword    ${arg}
-            ELSE
-                ${var}    ${var2}    Set Variable    ${None}    ${None}    # ELSE branch added to replicate missing ELSE in inline if
-            END
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+                # comment
+                IF    $condition != $condition2
+                    ${var}    ${var2}    Longer Keyword Name    ${argument}    values
+                ELSE IF    $condition2
+                    ${var}    ${var2}    Short Keyword    ${arg}
+                ELSE
+                    ${var}    ${var2}    Set Variable    ${None}    ${None}    # ELSE branch added to replicate missing ELSE in inline if
+                END
 
 Since in above example ``${var}`` and ``${var2}`` variables were used in assignment `Robotidy` added missing ``ELSE`` branch
-to set variable values to ``None`` if no other condition matches. If there is ``ELSE`` branch or there is no assignments
-in transformed inline IF `Robotidy` will not add it.
-
-Supports global formatting params: ``--startline`` and ``--endline``.
+to set variable values to ``None`` if no other condition matches. If there is ``ELSE`` branch, or there is no assignments
+in transformed inline IF, `Robotidy` will not add it.

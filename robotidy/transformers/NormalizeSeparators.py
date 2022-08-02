@@ -6,8 +6,9 @@ except ImportError:
     InlineIfHeader = None
     ReturnStatement = None
 
-from robotidy.disablers import Skip, skip_if_disabled, skip_section_if_disabled
+from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.skip import Skip
 from robotidy.transformers import Transformer
 
 
@@ -22,8 +23,6 @@ class NormalizeSeparators(Transformer):
     ``sections = comments,settings,variables,keywords,testcases`` param.
 
     To not format documentation configure ``skip_documentation`` to ``True``.
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     HANDLES_SKIP = frozenset({"skip_documentation", "skip_keyword_call", "skip_keyword_call_pattern"})

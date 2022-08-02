@@ -1,4 +1,4 @@
-from robot.api.parsing import Comment, EmptyLine, End, ModelTransformer, Token
+from robot.api.parsing import Comment, EmptyLine, End, Token
 
 try:
     from robot.api.parsing import InlineIfHeader
@@ -31,8 +31,6 @@ class AddMissingEnd(Transformer):
             Log    ${x}
         END
     ```
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     def __init__(self):

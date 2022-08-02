@@ -8,48 +8,52 @@ Remove empty sections.
 .. |TRANSFORMERNAME| replace:: DiscardEmptySections
 .. include:: enabled_hint.txt
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Settings ***
+        .. code:: robotframework
 
-
-        *** Test Cases ***
-        Test
-            [Documentation]  doc
-            [Tags]  sometag
-            Pass
-            Keyword
-            One More
+            *** Settings ***
 
 
-        *** Keywords ***
-        # This section is not considered empty.
+            *** Test Cases ***
+            Test
+                [Documentation]  doc
+                [Tags]  sometag
+                Pass
+                Keyword
+                One More
 
 
-        *** Variables ***
-
-        *** Comments ***
-        robocop: disable=all
-
-    .. code-tab:: robotframework After
-
-        *** Test Cases ***
-        Test
-            [Documentation]  doc
-            [Tags]  sometag
-            Pass
-            Keyword
-            One More
+            *** Keywords ***
+            # This section is not considered empty.
 
 
-        *** Keywords ***
-        # This section is not considered empty.
+            *** Variables ***
+
+            *** Comments ***
+            robocop: disable=all
+
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test
+                [Documentation]  doc
+                [Tags]  sometag
+                Pass
+                Keyword
+                One More
 
 
-        *** Comments ***
-        robocop: disable=all
+            *** Keywords ***
+            # This section is not considered empty.
+
+
+            *** Comments ***
+            robocop: disable=all
 
 
 Remove sections only with comments
@@ -60,36 +64,37 @@ section with only comments is always considered as non-empty::
 
     robotidy --configure DiscardEmptySection:allow_only_comments=True
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework ``allow_only_comments=True`` (default)
+    .. tab-item:: alloow_only_comments=True (default)
 
-        *** Test Cases ***
-        Test
-            [Documentation]  doc
-            [Tags]  sometag
-            Pass
-            Keyword
-            One More
+        .. code:: robotframework
 
-        *** Keywords ***
-        # This section is considered to be empty.
+            *** Test Cases ***
+            Test
+                [Documentation]  doc
+                [Tags]  sometag
+                Pass
+                Keyword
+                One More
 
-        *** Comments ***
-        # robocop: disable=all
+            *** Keywords ***
+            # This section is considered to be empty.
 
-    .. code-tab:: robotframework ``allow_only_comments=False``
+            *** Comments ***
+            # robocop: disable=all
 
-        *** Test Cases ***
-        Test
-            [Documentation]  doc
-            [Tags]  sometag
-            Pass
-            Keyword
-            One More
+    .. tab-item:: alloow_only_comments=False
 
-        *** Comments ***
-        # robocop: disable=all
+        .. code:: robotframework
 
+            *** Test Cases ***
+            Test
+                [Documentation]  doc
+                [Tags]  sometag
+                Pass
+                Keyword
+                One More
 
-Supports global formatting params: ``--startline`` and ``--endline``.
+            *** Comments ***
+            # robocop: disable=all

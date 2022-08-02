@@ -21,8 +21,8 @@ from robot.api.parsing import ModelTransformer
 from robot.errors import DataError
 from robot.utils.importer import Importer
 
-from robotidy.disablers import Skip, SkipConfig
 from robotidy.exceptions import ImportTransformerError, InvalidParameterError, InvalidParameterFormatError
+from robotidy.skip import Skip, SkipConfig
 from robotidy.utils import ROBOT_VERSION, RecommendationFinder
 
 TRANSFORMERS = [

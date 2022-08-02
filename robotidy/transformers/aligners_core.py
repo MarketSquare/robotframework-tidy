@@ -9,8 +9,9 @@ try:
 except ImportError:
     InlineIfHeader, TryHeader = None, None
 
-from robotidy.disablers import Skip, skip_if_disabled
+from robotidy.disablers import skip_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.skip import Skip
 from robotidy.transformers import Transformer
 from robotidy.utils import is_blank_multiline, round_to_four
 
@@ -378,7 +379,7 @@ class AlignKeywordsTestsSection(Transformer):
         return column, abs(skip_width)
 
     def align_tokens(self, tokens: List, skip_width: int):
-        prev_overflow_len, last_assign, misaligned_cols = 0, 0, 0
+        prev_overflow_len, misaligned_cols = 0, 0
         min_separator = self.formatting_config.space_count
         aligned = []
         if skip_width == 0:

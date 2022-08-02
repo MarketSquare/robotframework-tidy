@@ -1,11 +1,11 @@
-from robot.api.parsing import ModelTransformer, Token
+from robot.api.parsing import Token
 from robot.utils.normalizing import normalize_whitespace
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.transformers import Transformer
 
 
-class NormalizeSettingName(ModelTransformer):
+class NormalizeSettingName(Transformer):
     """
     Normalize setting name.
     Ensure that setting names are title case without leading or trailing whitespace. For example from:
@@ -35,8 +35,6 @@ class NormalizeSettingName(ModelTransformer):
         [Arguments]    ${arg}
         [Documentation]   Setup Keyword
     ```
-
-    Supports global formatting params: ``--startline`` and ``--endline``.
     """
 
     def __init__(self):

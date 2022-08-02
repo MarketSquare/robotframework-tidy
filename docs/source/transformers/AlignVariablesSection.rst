@@ -8,23 +8,27 @@ Align variables in ``*** Variables ***`` section to columns.
 .. |TRANSFORMERNAME| replace:: AlignVariablesSection
 .. include:: enabled_hint.txt
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Variables ***
-        ${VAR}  1
-        ${LONGER_NAME}  2
-        &{MULTILINE}  a=b
-        ...  b=c
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            *** Variables ***
+            ${VAR}  1
+            ${LONGER_NAME}  2
+            &{MULTILINE}  a=b
+            ...  b=c
 
-        *** Variables ***
-        ${VAR}          1
-        ${LONGER_NAME}  2
-        &{MULTILINE}    a=b
-        ...             b=c
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Variables ***
+            ${VAR}          1
+            ${LONGER_NAME}  2
+            &{MULTILINE}    a=b
+            ...             b=c
 
 Align up to columns
 -------------------
@@ -33,41 +37,49 @@ will use fixed length separator length ``--spacecount``. By default only first t
 
 Example of how AlignVariablesSection transformer behaves with default configuration and multiple columns:
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Variables ***
-        ${VARIABLE 1}  10  # comment
-        @{LIST}  a  b  c  d
-        ${LONGER_NAME_THAT_GOES_AND_GOES}    longer value that goes and goes
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            *** Variables ***
+            ${VARIABLE 1}  10  # comment
+            @{LIST}  a  b  c  d
+            ${LONGER_NAME_THAT_GOES_AND_GOES}    longer value that goes and goes
 
-        *** Variables ***
-        ${VARIABLE 1}                           10    # comment
-        @{LIST}                                 a    b    c    d
-        ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Variables ***
+            ${VARIABLE 1}                           10    # comment
+            @{LIST}                                 a    b    c    d
+            ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
 
 You can configure it to align three columns::
 
     robotidy --configure AlignVariablesSection:up_to_column=3 src
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Variables ***
-        ${VARIABLE 1}  10  # comment
-        @{LIST}  a  b  c  d
-        ${LONGER_NAME_THAT_GOES_AND_GOES}    longer value that goes and goes
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            *** Variables ***
+            ${VARIABLE 1}  10  # comment
+            @{LIST}  a  b  c  d
+            ${LONGER_NAME_THAT_GOES_AND_GOES}    longer value that goes and goes
 
-        *** Variables ***
-        ${VARIABLE 1}                           10                                  # comment
-        @{LIST}                                 a                                   b    c    d
-        ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Variables ***
+            ${VARIABLE 1}                           10                                  # comment
+            @{LIST}                                 a                                   b    c    d
+            ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
 
 To align all columns set ``up_to_column`` to 0.
 
@@ -83,29 +95,33 @@ You can configure types to skip using ``skip_types`` parameter::
 
 Using above configuration code will be aligned in following way:
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Variables ***
-        ${VARIABLE 1}  10  # comment
-        @{LIST}  a
-        ...    b
-        ...    c
-        ...    d
-        ${LONGER_NAME_THAT_GOES_AND_GOES}    longer value that goes and goes
-        &{SOME_DICT}    key=value  key2=value
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            *** Variables ***
+            ${VARIABLE 1}  10  # comment
+            @{LIST}  a
+            ...    b
+            ...    c
+            ...    d
+            ${LONGER_NAME_THAT_GOES_AND_GOES}    longer value that goes and goes
+            &{SOME_DICT}    key=value  key2=value
 
-        *** Variables ***
-        ${VARIABLE 1}                           10    # comment
-        @{LIST}  a
-        ...    b
-        ...    c
-        ...    d
-        ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
-        &{SOME_DICT}    key=value  key2=value
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Variables ***
+            ${VARIABLE 1}                           10    # comment
+            @{LIST}  a
+            ...    b
+            ...    c
+            ...    d
+            ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
+            &{SOME_DICT}    key=value  key2=value
 
 
 Fixed width of column
@@ -116,33 +132,37 @@ It's possible to set fixed minimal width of column. To configure it use ``min_wi
 
 This configuration respects ``up_to_column`` parameter:
 
-.. tabs::
+.. tab-set::
 
-   .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Variables ***
-        # some comment
+        .. code:: robotframework
 
-        ${VARIABLE 1}    10    # comment
-        @{LIST}                                 a    b    c    d
-        ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
+            *** Variables ***
+            # some comment
 
-        &{MULTILINE}    a=b
-        ...     b=c
-        ...     d=1
+            ${VARIABLE 1}    10    # comment
+            @{LIST}                                 a    b    c    d
+            ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
 
-   .. code-tab:: robotframework After
+            &{MULTILINE}    a=b
+            ...     b=c
+            ...     d=1
 
-        *** Variables ***
-        # some comment
+    .. tab-item:: After
 
-        ${VARIABLE 1}       10    # comment
-        @{LIST}             a    b    c    d
-        ${LONGER_NAME_THAT_GOES_AND_GOES}    longer value that goes and goes
+        .. code:: robotframework
 
-        &{MULTILINE}        a=b
-        ...                 b=c
-        ...                 d=1
+            *** Variables ***
+            # some comment
+
+            ${VARIABLE 1}       10    # comment
+            @{LIST}             a    b    c    d
+            ${LONGER_NAME_THAT_GOES_AND_GOES}    longer value that goes and goes
+
+            &{MULTILINE}        a=b
+            ...                 b=c
+            ...                 d=1
 
 Select lines to align
 -------------------------
@@ -150,46 +170,50 @@ AlignVariablesSection does also support global formatting params ``startline`` a
 
     robotidy --startline 5 --endline 17 --configure AlignVariablesSection:up_to_column=3 src
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Settings ***
-        Documentation    This is doc
+        .. code:: robotframework
 
-
-        *** Variables ***
-        # some comment
-
-        ${VARIABLE 1}  10  # comment
-        @{LIST}  a  b  c  d
-        ${LONGER_NAME_THAT_GOES_AND_GOES}    longer value that goes and goes
-
-                   &{MULTILINE}  a=b
-        ...  b=c
-        ...         d=1
-
-        *** Keywords ***
-        Keyword
-            Keyword Call
-
-    .. code-tab:: robotframework After
-
-        *** Settings ***
-        Documentation    This is doc
+            *** Settings ***
+            Documentation    This is doc
 
 
-        *** Variables ***
-        # some comment
+            *** Variables ***
+            # some comment
 
-        ${VARIABLE 1}  10  # comment
-        @{LIST}  a  b  c  d
-        ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
+            ${VARIABLE 1}  10  # comment
+            @{LIST}  a  b  c  d
+            ${LONGER_NAME_THAT_GOES_AND_GOES}    longer value that goes and goes
 
-        &{MULTILINE}                            a=b
-        ...                                     b=c
-        ...                                     d=1
+                       &{MULTILINE}  a=b
+            ...  b=c
+            ...         d=1
 
-        *** Keywords ***
-        Keyword
-            Keyword Call
+            *** Keywords ***
+            Keyword
+                Keyword Call
+
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Settings ***
+            Documentation    This is doc
+
+
+            *** Variables ***
+            # some comment
+
+            ${VARIABLE 1}  10  # comment
+            @{LIST}  a  b  c  d
+            ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
+
+            &{MULTILINE}                            a=b
+            ...                                     b=c
+            ...                                     d=1
+
+            *** Keywords ***
+            Keyword
+                Keyword Call

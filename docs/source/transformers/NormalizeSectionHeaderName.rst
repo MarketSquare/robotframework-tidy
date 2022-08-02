@@ -27,14 +27,16 @@ It is possible to upper case section header names by passing ``uppercase=True`` 
 
     robotidy --configure NormalizeSectionHeaderName:uppercase=True src
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        * setting *
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            * setting *
 
-        *** SETTINGS ***
+    .. tab-item:: After
 
-Supports global formatting params: ``--startline`` and ``--endline``.
+        .. code:: robotframework
+
+            *** SETTINGS ***

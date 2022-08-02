@@ -19,25 +19,31 @@ By default library name in keyword name is ignored. Anything before the last dot
 Use `ignore_library = True` parameter to control if the library name part (Library.Keyword) of keyword call
 should be renamed.
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Keywords ***
-        Keyword
-            library_name.keyword
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After (default)
+            *** Keywords ***
+            Keyword
+                library_name.keyword
 
-        *** Keywords ***
-        Keyword
-            library_name.Keyword
+    .. tab-item:: ignore_library = True
 
-    .. code-tab:: robotframework After (``ignore_library=False``)
+        .. code:: robotframework
 
-        *** Keywords ***
-        Keyword
-            Library Name.Keyword
+            *** Keywords ***
+            Keyword
+                library_name.Keyword
+
+    .. tab-item:: ignore_library = False
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+                Library Name.Keyword
 
 Replace pattern
 ---------------
@@ -48,20 +54,22 @@ to set replacement value. This configuration (underscores are used instead of sp
 
 replaces all occurrences of name ``Rename Me``` (case insensitive thanks to ``(?i)`` flag) to ``New Shining Name``:
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Keywords ***
-        rename Me
-           Keyword Call
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            *** Keywords ***
+            rename Me
+               Keyword Call
 
-        *** Keywords ***
-        New Shining Name
-            Keyword Call
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            New Shining Name
+                Keyword Call
 
 This feature makes this transformer convenient tool for renaming your keywords across Robot Framework project.
-
-Supports global formatting params: ``--startline`` and ``--endline``.

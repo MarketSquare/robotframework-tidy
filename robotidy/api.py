@@ -6,8 +6,9 @@ from typing import Optional
 from robotidy.app import Robotidy
 from robotidy.cli import TransformType, find_and_read_config, validate_regex
 from robotidy.config import Config, FormattingConfig
-from robotidy.disablers import RegisterDisablers, SkipConfig
+from robotidy.disablers import RegisterDisablers
 from robotidy.files import DEFAULT_EXCLUDES
+from robotidy.skip import SkipConfig
 from robotidy.utils import ROBOT_VERSION
 
 

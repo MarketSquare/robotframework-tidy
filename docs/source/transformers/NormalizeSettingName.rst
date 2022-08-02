@@ -10,30 +10,32 @@ Normalize setting name.
 
 Ensure that setting names are title case without leading or trailing whitespace.
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Settings ***
-        library    library.py
-        test template    Template
-        FORCE taGS    tag1
+        .. code:: robotframework
 
-        *** Keywords ***
-        Keyword
-            [arguments]    ${arg}
-            [SETUP]   Setup Keyword
+            *** Settings ***
+            library    library.py
+            test template    Template
+            FORCE taGS    tag1
 
-    .. code-tab:: robotframework After
+            *** Keywords ***
+            Keyword
+                [arguments]    ${arg}
+                [TEARDOWN]   Teardown Keyword
 
-        *** Settings ***
-        Library    library.py
-        Test Template    Template
-        Force Tags    tag1
+    .. tab-item:: After
 
-        *** Keywords ***
-        Keyword
-            [Arguments]    ${arg}
-            [Setup]   Setup Keyword
+        .. code:: robotframework
 
-Supports global formatting params: ``--startline`` and ``--endline``.
+            *** Settings ***
+            Library    library.py
+            Test Template    Template
+            Force Tags    tag1
+
+            *** Keywords ***
+            Keyword
+                [Arguments]    ${arg}
+                [Teardown]   Teardown Keyword

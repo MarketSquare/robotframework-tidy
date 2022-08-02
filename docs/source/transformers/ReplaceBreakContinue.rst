@@ -13,60 +13,66 @@ Replace ``Continue For Loop`` and ``Exit For Loop`` keyword variants with ``CONT
 It will replace ``Continue For Loop`` and ``Exit For Loop`` keywords with ``CONTINUE`` and ``BREAK`` respectively:
 
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Test Cases ***
-        Test
-            WHILE    $flag
-                Continue For Loop
-            END
-            FOR    ${var}    IN    abc
-                Exit For Loop
-            END
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
+            *** Test Cases ***
+            Test
+                WHILE    $flag
+                    Continue For Loop
+                END
+                FOR    ${var}    IN    abc
+                    Exit For Loop
+                END
 
-        *** Test Cases ***
-        Test
-            WHILE    $flag
-                CONTINUE
-            END
-            FOR    ${var}    IN    abc
-                BREAK
-            END
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test
+                WHILE    $flag
+                    CONTINUE
+                END
+                FOR    ${var}    IN    abc
+                    BREAK
+                END
 
 Conditional variants are also handled. Shorter IFs can be also formatted to inline ``IF`` with :ref:`InlineIf` transformer:
 
-.. tabs::
+.. tab-set::
 
-    .. code-tab:: robotframework Before
+    .. tab-item:: Before
 
-        *** Test Cases ***
-        Test
-            WHILE    $flag
-                Continue For Loop If    $condition
-            END
-            FOR    ${var}    IN    abc
-                Exit For Loop If    $condition
-            END
+        .. code:: robotframework
 
-    .. code-tab:: robotframework After
-
-        *** Test Cases ***
-        Test
-            WHILE    $flag
-                IF    $condition
-                    CONTINUE
+            *** Test Cases ***
+            Test
+                WHILE    $flag
+                    Continue For Loop If    $condition
                 END
-            END
-            FOR    ${var}    IN    abc
-                IF    $condition
-                    BREAK
+                FOR    ${var}    IN    abc
+                    Exit For Loop If    $condition
                 END
-            END
+
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test
+                WHILE    $flag
+                    IF    $condition
+                        CONTINUE
+                    END
+                END
+                FOR    ${var}    IN    abc
+                    IF    $condition
+                        BREAK
+                    END
+                END
 
 ``Continue For Loop`` and ``Exit For Loop`` along with conditional variants outside of the loop are ignored.
-
-Supports global formatting params: ``--startline`` and ``--endline``.
