@@ -104,7 +104,7 @@ def assert_class_accepts_arguments(transformer, args, spec):
 
 def resolve_argument_names(argument_names, handles_skip):
     """Get transformer argument names with resolved skip parameters."""
-    new_args = ["enable"]
+    new_args = ["enabled"]
     if "skip" not in argument_names:
         return new_args + argument_names
     new_args.extend([arg for arg in argument_names if arg != "skip"])
