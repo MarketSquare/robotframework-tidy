@@ -99,9 +99,8 @@ To align all columns set ``up_to_column`` to 0.
 
 Extra indent for keyword arguments
 -----------------------------------
-Arguments inside keywords in Suite Setup, Suite Teardown, Test Setup and Test Teardown are indented by additional
-``argument_indent`` (default ``4``) spaces. You can configure the indent or disable it by setting ``argument_indent``
-to 0.
+Arguments in multiline settings are indented by additional ``argument_indent`` (default ``4``) spaces.
+You can configure the indent or disable it by setting ``argument_indent`` to 0.
 
 .. tab-set::
 
@@ -137,6 +136,31 @@ to 0.
             ...                 user=${USERNAME}
             ...                 password=${PASSWORD}
             Suite Teardown      Close Session
+
+``WITH NAME`` arguments are not indented:
+
+.. tab-set::
+
+    .. tab-item:: Before
+
+        .. code:: robotframework
+
+            *** Settings ***
+            Library             SeleniumLibrary
+            ...                 timeout=${TIMEOUT}
+            ...                 implicit_wait=${TIMEOUT}
+            ...                 run_on_failure=Capture Page Screenshot
+            ...                 WITH NAME    Selenium
+
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            Library             SeleniumLibrary
+            ...                     timeout=${TIMEOUT}
+            ...                     implicit_wait=${TIMEOUT}
+            ...                     run_on_failure=Capture Page Screenshot
+            ...                 WITH NAME    Selenium
 
 Fixed width of column
 -------------------------
