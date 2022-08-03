@@ -378,15 +378,24 @@ class AlignKeywordsTestsSection(Transformer):
             column += 1
         return column, abs(skip_width)
 
-    def align_tokens(self, tokens: List, skip_width: int):
-        prev_overflow_len, misaligned_cols = 0, 0
-        min_separator = self.formatting_config.space_count
-        aligned = []
+    def get_start_column_and_aligned(self, skip_width: int, min_separator: int):
+        """
+        In case we are skipping return tokens alignment, calculate starting column and create leading separator.
+        """
         if skip_width == 0:
-            column = 0
+            return 0, 0, []
+        column, skip_width = self.find_starting_column(skip_width)
+        if skip_width < min_separator:
+            prev_overflow_len = min_separator - skip_width
+            skip_width = min_separator
         else:
-            column, skip_width = self.find_starting_column(skip_width)
-            aligned.append(get_separator(skip_width))
+            prev_overflow_len = 0
+        return column, prev_overflow_len, [get_separator(skip_width)]
+
+    def align_tokens(self, tokens: List, skip_width: int):
+        last_assign, misaligned_cols = 0, 0
+        min_separator = self.formatting_config.space_count
+        column, prev_overflow_len, aligned = self.get_start_column_and_aligned(skip_width, min_separator)
         for index, token in enumerate(tokens):
             aligned.append(token)
             width = self.get_width(column)
