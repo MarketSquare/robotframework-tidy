@@ -73,7 +73,7 @@ class TestCli:
         expected_output = (
             "Error: DiscardEmptySections: Failed to import. "
             "Verify if correct name or configuration was provided. "
-            "This transformer accepts following arguments:\n    enable\n    allow_only_comments\n"
+            "This transformer accepts following arguments:\n    enabled\n    allow_only_comments\n"
         )
 
         args = "--transform DiscardEmptySections:invalid=True -".split()
@@ -82,7 +82,7 @@ class TestCli:
 
     def test_not_existing_configurable_skip(self):
         expected_args = [
-            "enable",
+            "enabled",
             "widths",
             "alignment_type",
             "handle_too_long",
@@ -126,16 +126,6 @@ class TestCli:
             "Argument 'up_to_column' got value '1a' that cannot be converted to integer.\n"
         )
         args = "--transform AlignVariablesSection:up_to_column=1a -".split()
-        result = run_tidy(args, exit_code=1)
-        assert result.output == expected_output
-
-    def test_transform_without_args(self):
-        expected_output = (
-            "Error: AddMissingEnd: Failed to import. "
-            "Verify if correct name or configuration was provided. "
-            "This transformer does not accept arguments but they were provided.\n"
-        )
-        args = "--transform AddMissingEnd:made_up=value -".split()
         result = run_tidy(args, exit_code=1)
         assert result.output == expected_output
 

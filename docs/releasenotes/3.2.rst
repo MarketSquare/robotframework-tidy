@@ -33,6 +33,8 @@ Fixes
 
 * Fixed fatal exception when running robotidy with only ``NormalizeSeparator`` enabled on FOR loop without closing END (`#390 <https://github.com/MarketSquare/robotframework-tidy/issues/390>`_).
 
+* Robotidy will now properly print warning if user make a typo in ``enabled`` parameter (`#368 <https://github.com/MarketSquare/robotframework-tidy/issues/368>`_)
+
 Acknowledgements
 -----------------
 - `@glueologist <https://github.com/glueologist>`__ for raising several issues regarding our
