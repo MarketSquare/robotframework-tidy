@@ -198,7 +198,7 @@ Ignored sections
 You can decide which sections should be transformed by configuring
 ``sections = comments,settings,variables,keywords,testcases`` param::
 
-    robotidy --configure NormalizeSeparators:section=variables src
+    robotidy --configure NormalizeSeparators:sections=variables src
 
 .. tab-set::
 
