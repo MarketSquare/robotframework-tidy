@@ -47,7 +47,7 @@ It will disable all transformers that require Robot Framework greater than <targ
 
 .. rubric:: Disablers
 
-You can disable formatting in Robot Framework statement or in span of lines using ``# robocop: off`` marker.
+You can disable formatting in Robot Framework statement or in span of lines using ``# robotidy: off`` marker.
 
 To skip the formatting for one statement:
 
