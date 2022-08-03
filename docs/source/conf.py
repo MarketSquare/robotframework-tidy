@@ -22,8 +22,9 @@ exclude_patterns = []
 
 html_theme = "furo"
 html_title = f"Robotidy {release}"
-html_logo = "_static/robotidy_logo_small.png"
 html_theme_options = {
+    "light_logo": "robotidy_logo_small.png",
+    "dark_logo": "robotidy_logo_small_dark.png",
     "footer_icons": [
         {
             "name": "GitHub",
