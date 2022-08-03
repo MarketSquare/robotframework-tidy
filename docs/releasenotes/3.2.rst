@@ -9,7 +9,31 @@ or to install exactly this version::
 
     pip install robotframework-tidy==3.2.0
 
-Fixed help output for different entrypoints
+Documentation
+----------------
+Several fixes and changes to our documentation (thanks to `@glueologist <https://github.com/glueologist>`__ feedback).
+
+Our theme changed from `alabster` to `furo`. Thanks for that it will be consistent across our other tools (like Robocop),
+it's bit prettier (night mode!) and more customizable.
+
+Related issues and PRs:
+
+ - `#367 <https://github.com/MarketSquare/robotframework-tidy/issues/367>`_
+ - `#369 <https://github.com/MarketSquare/robotframework-tidy/issues/369>`_
+ - `#371 <https://github.com/MarketSquare/robotframework-tidy/issues/371>`_
+ - `#372 <https://github.com/MarketSquare/robotframework-tidy/issues/372>`_
+ - `#373 <https://github.com/MarketSquare/robotframework-tidy/issues/373>`_
+ - `#378 <https://github.com/MarketSquare/robotframework-tidy/issues/378>`_
+
+Fixes
 ----------------------------------------
-If the pip fails to install ``robotidy`` entry point (usually due to missing admin permissions) it needs
-to be called with ``python -m robotidy``. Our help didn't print properly when calling the Robotidy in such a way.
+* Fixed help output for different entrypoints. If the pip fails to install ``robotidy`` entry point
+  (usually due to missing admin permissions) it needs to be called with ``python -m robotidy``.
+  Our help didn't print properly when calling the Robotidy in such a way.
+
+* Fixed fatal exception when running robotidy with only ``NormalizeSeparator`` enabled on FOR loop without closing END (`#390 <https://github.com/MarketSquare/robotframework-tidy/issues/390>`_).
+
+Acknowledgements
+-----------------
+- `@glueologist <https://github.com/glueologist>`__ for raising several issues regarding our
+   documentation and transformers
