@@ -73,3 +73,6 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
             expected="test_skip_keyword.robot",
             config=":skip_keyword_call_pattern=(?i)should\sbe\sequal",
         )
+
+    def test_file_with_pipes_bug390(self):
+        self.compare(source="bug390.robot")

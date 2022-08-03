@@ -143,6 +143,8 @@ class NormalizeSeparators(Transformer):
 
     @skip_if_disabled
     def visit_Statement(self, statement):  # noqa
+        if statement is None:
+            return None
         has_pipes = statement.tokens[0].value.startswith("|")
         return self._handle_spaces(statement, has_pipes)
 
