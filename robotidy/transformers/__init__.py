@@ -97,14 +97,9 @@ def split_args_to_class_and_skip(args):
     return filtered_args, skip_args
 
 
-def assert_class_accepts_arguments(transformer, args, spec):
-    if args and not spec.argument_names:
-        raise InvalidParameterError(transformer, " This transformer does not accept arguments but they were provided.")
-
-
 def resolve_argument_names(argument_names, handles_skip):
     """Get transformer argument names with resolved skip parameters."""
-    new_args = ["enable"]
+    new_args = ["enabled"]
     if "skip" not in argument_names:
         return new_args + argument_names
     new_args.extend([arg for arg in argument_names if arg != "skip"])
@@ -122,7 +117,7 @@ def assert_handled_arguments(transformer, args, spec, handles_skip):
         if arg not in argument_names:
             similar_finder = RecommendationFinder()
             similar = similar_finder.find_similar(arg, argument_names)
-            if not similar:
+            if not similar and argument_names:
                 arg_names = "\n    " + "\n    ".join(argument_names)
                 similar = f" This transformer accepts following arguments:{arg_names}"
             raise InvalidParameterError(transformer, similar) from None
@@ -163,7 +158,6 @@ def resolve_args(transformer, spec, args, global_skip, handles_skip):
     "skip" parameter the Skip class will be also added to class arguments.
     """
     args, skip_args = split_args_to_class_and_skip(args)
-    assert_class_accepts_arguments(transformer, args, spec)
     assert_handled_arguments(transformer, args, spec, handles_skip)
     try:
         positional, named = spec.resolve(args)
