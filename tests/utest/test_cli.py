@@ -58,14 +58,15 @@ class TestCli:
         result = run_tidy(args, exit_code=1)
         assert expected_output == result.output
 
-    def test_not_existing_configurable_similar(self):
+    @pytest.mark.parametrize("option_name", ["-t", "--transform"])
+    def test_not_existing_configurable_similar(self, option_name):
         expected_output = (
             "Error: DiscardEmptySections: Failed to import. "
             "Verify if correct name or configuration was provided. Did you mean:\n"
             "    allow_only_comments\n"
         )
 
-        args = "--transform DiscardEmptySections:allow_only_commentss=True -".split()
+        args = f"{option_name} DiscardEmptySections:allow_only_commentss=True -".split()
         result = run_tidy(args, exit_code=1)
         assert result.output == expected_output
 
@@ -425,17 +426,23 @@ class TestCli:
     def test_invalid_target_version(self, mocked_version, target_version):
         mocked_version.major = 5
         result = run_tidy(f"--target-version {target_version} .".split(), exit_code=2)
-        error = result.output
+        error = self.normalize_cli_error(result.output)
+        assert f"Invalid value for '--target-version' / '-tv':" in error
+
+    def normalize_cli_error(self, error):
         error = error.replace("│", "").replace("\n", "")
-        assert f"Invalid value for '--target-version' / '-t':" in error
+        error = " ".join(error.split())
+        return error
 
     @patch("robotidy.cli.ROBOT_VERSION")
-    def test_too_recent_target_version(self, mocked_version):
+    @pytest.mark.parametrize("option_name", ["-tv", "--target-version"])
+    def test_too_recent_target_version(self, mocked_version, option_name):
         target_version = 5
         mocked_version.major = 4
-        result = run_tidy(f"--target-version rf{target_version} .".split(), exit_code=2)
-        # Split into parts due to rich click putting errors into boxes
-        assert "Invalid value for '--target-version' / '-t':" in result.output
-        assert "Target Robot Framework version" in result.output
-        assert f"({target_version})" in result.output
-        assert "should not be higher than installed version" in result.output
+        result = run_tidy(f"{option_name} rf{target_version} .".split(), exit_code=2)
+        error = self.normalize_cli_error(result.output)
+        assert (
+            "Invalid value for '--target-version' / '-tv': "
+            f"Target Robot Framework version ({target_version}) "
+            "should not be higher than installed version (" in error
+        )

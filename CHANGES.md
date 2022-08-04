@@ -111,7 +111,7 @@ Tidied out and colorized the console output of the Robotidy such as help message
 
 Previously the only option to disable formatting in part of the file was to use cumbersome 
 ``--startline`` and ``--endline`` markers. This release brings new feature - comment disablers. 
-You can disable formatting in Robot Framework statement or in span of lines using ``# robocop: off`` marker.
+You can disable formatting in Robot Framework statement or in span of lines using ``# robotidy: off`` marker.
 
 To skip the formatting for one statement:
 
@@ -185,12 +185,12 @@ Not Formatted
   ```
   robotidy --target-version rf4 .
   ```
-  It will disable all transformers that require Robot Framework greater than <target-version> to run (even if you have Robot Framework greater than <target-version> installed). ([#253](https://github.com/MarketSquare/robotframework-robocop/issues/253))
+  It will disable all transformers that require Robot Framework greater than <target-version> to run (even if you have Robot Framework greater than <target-version> installed). ([#253](https://github.com/MarketSquare/robotframework-tidy/issues/253))
   
 ## 2.1.1
 
 ### Fixes
-- ``*** Tasks ***`` will no longer be renamed to ``*** Test Cases ***`` by NormalizeSectionHeaderName ([#279](https://github.com/MarketSquare/robotframework-robocop/issues/279)).
+- ``*** Tasks ***`` will no longer be renamed to ``*** Test Cases ***`` by NormalizeSectionHeaderName ([#279](https://github.com/MarketSquare/robotframework-tidy/issues/279)).
 
 ## 2.1
 
