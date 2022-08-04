@@ -22,7 +22,7 @@ class TestLoadTransformers:
         transformers_2 = load_transformers(
             [(transf, []) for transf in order_2], {}, skip=skip_config, target_version=ROBOT_VERSION.major
         )
-        assert all(t1.__class__.__name__ == t2.__class__.__name__ for t1, t2 in zip(transformers_1, transformers_2))
+        assert all(t1.name == t2.name for t1, t2 in zip(transformers_1, transformers_2))
 
     def test_transformer_force_order(self, skip_config):
         # default_order = ['NormalizeSeparators', 'OrderSettings']
@@ -34,17 +34,17 @@ class TestLoadTransformers:
             force_order=True,
             target_version=ROBOT_VERSION.major,
         )
-        assert all(t1.__class__.__name__ == t2 for t1, t2 in zip(transformers, custom_order))
+        assert all(t1.name == t2 for t1, t2 in zip(transformers, custom_order))
 
     def test_disabled_transformer(self, skip_config):
         transformers = load_transformers(None, {}, skip=skip_config, target_version=ROBOT_VERSION.major)
-        assert all(transformer.__class__.__name__ != "SmartSortKeywords" for transformer in transformers)
+        assert all(transformer.name != "SmartSortKeywords" for transformer in transformers)
 
     def test_enable_disable_transformer(self, skip_config):
         transformers = load_transformers(
             [("SmartSortKeywords", [])], {}, skip=skip_config, target_version=ROBOT_VERSION.major
         )
-        assert transformers[0].__class__.__name__ == "SmartSortKeywords"
+        assert transformers[0].name == "SmartSortKeywords"
 
     def test_configure_transformer(self, skip_config):
         transformers = load_transformers(
@@ -53,8 +53,8 @@ class TestLoadTransformers:
         transformers_not_configured = load_transformers(None, {}, skip=skip_config, target_version=ROBOT_VERSION.major)
         assert len(transformers) == len(transformers_not_configured)
         for transformer in transformers:
-            if transformer.__class__.__name__ == "AlignVariablesSection":
-                assert transformer.up_to_column + 1 == 4
+            if transformer.name == "AlignVariablesSection":
+                assert transformer.instance.up_to_column + 1 == 4
 
     def test_configure_transformer_overwrite(self, skip_config):
         transformers = load_transformers(
@@ -63,7 +63,7 @@ class TestLoadTransformers:
             skip=skip_config,
             target_version=ROBOT_VERSION.major,
         )
-        assert transformers[0].up_to_column + 1 == 4
+        assert transformers[0].instance.up_to_column + 1 == 4
 
     @pytest.mark.parametrize("force_order", [True, False])
     @pytest.mark.parametrize("allow_disabled", [True, False])
@@ -139,9 +139,9 @@ class TestLoadTransformers:
             target_version=ROBOT_VERSION.major,
         )
         if present:
-            assert any(transformer.__class__.__name__ == test_for for transformer in loaded_transformers)
+            assert any(transformer.name == test_for for transformer in loaded_transformers)
         else:
-            assert all(transformer.__class__.__name__ != test_for for transformer in loaded_transformers)
+            assert all(transformer.name != test_for for transformer in loaded_transformers)
 
     @pytest.mark.parametrize("target_version", [4, 5, None])
     @pytest.mark.parametrize("version", [4, 5])
@@ -179,7 +179,7 @@ class TestLoadTransformers:
         mocked_version = Mock(major=version)
         with patch("robotidy.transformers.ROBOT_VERSION", mocked_version):
             transformers = load_transformers(transform, config, skip=skip_config, target_version=target_version)
-        transformers_names = sorted([transformer.__class__.__name__ for transformer in transformers])
+        transformers_names = sorted([transformer.name for transformer in transformers])
         if expected_transformers == ["all_default"]:
             only_5_found = any(
                 name in {"InlineIf", "ReplaceBreakContinue", "ReplaceReturns"} for name in transformers_names

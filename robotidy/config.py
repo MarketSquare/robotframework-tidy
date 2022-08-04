@@ -81,14 +81,23 @@ class Config:
         self.output = output
         self.color = color
         transformers_config = self.convert_configure(transformers_config)
-        self.transformers = load_transformers(
-            transformers, transformers_config, force_order=force_order, target_version=target_version, skip=skip
+        self.transformers = self.get_transformers_instances(
+            transformers, transformers_config, force_order, target_version, skip
         )
         transformer_map = {transformer.__class__.__name__: transformer for transformer in self.transformers}
         for transformer in self.transformers:
             # inject global settings TODO: handle it better
             setattr(transformer, "formatting_config", self.formatting)
             setattr(transformer, "transformers", transformer_map)
+
+    @staticmethod
+    def get_transformers_instances(transformers, transformers_config, force_order, target_version, skip):
+        return [
+            transformer.instance
+            for transformer in load_transformers(
+                transformers, transformers_config, force_order=force_order, target_version=target_version, skip=skip
+            )
+        ]
 
     @staticmethod
     def convert_configure(configure: List[Tuple[str, List]]) -> Dict[str, List]:
