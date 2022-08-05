@@ -49,6 +49,8 @@ Source paths can be configured via ``src`` parameter. If the path does not exist
         "directory"
     ]
 
+Multiline configuration
+------------------------
 Transformers with multiple parameters can be configured in one line (each param delimited by ``:``) or in separate lines:
 
   .. code-block:: toml
@@ -60,6 +62,35 @@ Transformers with multiple parameters can be configured in one line (each param 
         "OrderSettingsSection:imports_order=library,resource,variables"
     ]
 
+Multiline configuration is only possible with ``configure`` option. ``transform`` option overrides previous
+configuration. In the following configuration only last ``OrderSettings`` configuration will be used:
+
+  .. code-block:: toml
+
+    [tool.robotidy]
+
+    transform = [
+        "OrderSettings:test_before=tags, setup,  teardown, documentation:test_after=", # will be ignored
+        "OrderSettings:keyword_before=tags, teardown, documentation, arguments:keyword_after="
+    ]
+
+If you want to use ``transform`` and provide configuration for multiple parameters you can either chain
+parameters with ``:`` or use ``configure``:
+
+  .. code-block:: toml
+
+    [tool.robotidy]
+
+    transform = [
+        "OrderSettings"
+    ]
+    configure = [
+        "OrderSettings:test_before=tags, setup,  teardown, documentation:test_after=",
+        "OrderSettings:keyword_before=tags, teardown, documentation, arguments:keyword_after="
+    ]
+
+Ignored whitespace
+-------------------
 Transformer configuration can contain spaces for better readability:
 
   .. code-block:: toml
