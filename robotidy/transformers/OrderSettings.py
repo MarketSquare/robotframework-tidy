@@ -1,8 +1,29 @@
 from robot.api.parsing import Comment, EmptyLine, Token
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
-from robotidy.exceptions import InvalidParameterValueError
+from robotidy.exceptions import InvalidParameterValueError, RobotidyConfigError
 from robotidy.transformers import Transformer
+
+
+class InvalidSettingsOrderError(InvalidParameterValueError):
+    def __init__(self, transformer, param_name, param_value, valid_values):
+        valid_names = ",".join(sorted(valid_values.keys()))
+        msg = f"Custom order should be provided in comma separated list with valid setting names: {valid_names}"
+        super().__init__(transformer, param_name, param_value, msg)
+
+
+class DuplicateInSettingsOrderError(InvalidParameterValueError):
+    def __init__(self, transformer, param_name, param_value):
+        provided_order = ",".join(param.lower() for param in param_value)
+        msg = "Custom order cannot contain duplicated setting names."
+        super().__init__(transformer, param_name, provided_order, msg)
+
+
+class SettingInBothOrdersError(RobotidyConfigError):
+    def __init__(self, transformer, first_order, second_order, duplicates):
+        names = ",".join(setting.lower() for setting in duplicates)
+        msg = f"{transformer}: Invalid '{first_order}' and '{second_order}' order values. Following setting names exists in both orders: {names}"
+        super().__init__(msg)
 
 
 class OrderSettings(Transformer):
@@ -53,81 +74,67 @@ class OrderSettings(Transformer):
     It will order only test cases because all setting names for keywords are missing.
     """
 
+    KEYWORD_SETTINGS = {
+        "documentation": Token.DOCUMENTATION,
+        "tags": Token.TAGS,
+        "timeout": Token.TIMEOUT,
+        "arguments": Token.ARGUMENTS,
+        "return": Token.RETURN,
+        "teardown": Token.TEARDOWN,
+    }
+    TEST_SETTINGS = {
+        "documentation": Token.DOCUMENTATION,
+        "tags": Token.TAGS,
+        "timeout": Token.TIMEOUT,
+        "template": Token.TEMPLATE,
+        "setup": Token.SETUP,
+        "teardown": Token.TEARDOWN,
+    }
+
     def __init__(
         self,
-        keyword_before: str = None,
-        keyword_after: str = None,
-        test_before: str = None,
-        test_after: str = None,
+        keyword_before: str = "documentation,tags,timeout,arguments",
+        keyword_after: str = "teardown,return",
+        test_before: str = "documentation,tags,template,timeout,setup",
+        test_after: str = "teardown",
     ):
         super().__init__()
-        (
-            self.keyword_before,
-            self.keyword_after,
-            self.test_before,
-            self.test_after,
-        ) = self.parse_order(keyword_before, keyword_after, test_before, test_after)
-        self.keyword_settings = {*self.keyword_before, *self.keyword_after}
-        self.test_settings = {*self.test_before, *self.test_after}
+        self.keyword_before = self.get_order(keyword_before, "keyword_before", self.KEYWORD_SETTINGS)
+        self.keyword_after = self.get_order(keyword_after, "keyword_after", self.KEYWORD_SETTINGS)
+        self.test_before = self.get_order(test_before, "test_before", self.TEST_SETTINGS)
+        self.test_after = self.get_order(test_after, "test_after", self.TEST_SETTINGS)
+        self.all_keyword_settings = {*self.keyword_before, *self.keyword_after}
+        self.all_test_settings = {*self.test_before, *self.test_after}
+        self.assert_no_duplicates_in_orders()
 
-    def get_order(self, order, default, name_map):
-        if order is None:
-            return default
+    def get_order(self, order, param_name, name_map):
         if not order:
             return []
         parts = order.lower().split(",")
         try:
             return [name_map[part] for part in parts]
         except KeyError:
-            raise InvalidParameterValueError(
-                self.__class__.__name__,
-                "order",
-                order,
-                f"Custom order should be provided in comma separated list "
-                f"with valid setting names:\n{sorted(name_map.keys())}",
-            )
+            raise InvalidSettingsOrderError(self.__class__.__name__, param_name, order, name_map)
 
-    def parse_order(self, keyword_before, keyword_after, test_before, test_after):
-        keyword_order_before = (
-            Token.DOCUMENTATION,
-            Token.TAGS,
-            Token.TIMEOUT,
-            Token.ARGUMENTS,
-        )
-        keyword_order_after = (
-            Token.TEARDOWN,
-            Token.RETURN,
-        )
-        testcase_order_before = (
-            Token.DOCUMENTATION,
-            Token.TAGS,
-            Token.TEMPLATE,
-            Token.TIMEOUT,
-            Token.SETUP,
-        )
-        testcase_order_after = (Token.TEARDOWN,)
-        keyword_map = {
-            "documentation": Token.DOCUMENTATION,
-            "tags": Token.TAGS,
-            "timeout": Token.TIMEOUT,
-            "arguments": Token.ARGUMENTS,
-            "return": Token.RETURN,
-            "teardown": Token.TEARDOWN,
+    def assert_no_duplicates_in_orders(self):
+        """Checks if settings are not duplicated in after/before section and in the same section itself."""
+        orders = {
+            "keyword_before": set(self.keyword_before),
+            "keyword_after": set(self.keyword_after),
+            "test_before": set(self.test_before),
+            "test_after": set(self.test_after),
         }
-        test_map = {
-            "documentation": Token.DOCUMENTATION,
-            "tags": Token.TAGS,
-            "timeout": Token.TIMEOUT,
-            "template": Token.TEMPLATE,
-            "setup": Token.SETUP,
-            "teardown": Token.TEARDOWN,
-        }
-        return (
-            self.get_order(keyword_before, keyword_order_before, keyword_map),
-            self.get_order(keyword_after, keyword_order_after, keyword_map),
-            self.get_order(test_before, testcase_order_before, test_map),
-            self.get_order(test_after, testcase_order_after, test_map),
-        )
+        # check if there is no duplicate in single order, ie test_after=setup,setup
+        for name, order_set in orders.items():
+            if len(self.__dict__[name]) != len(order_set):
+                raise DuplicateInSettingsOrderError(self.__class__.__name__, name, self.__dict__[name])
+        # check if there is no duplicate in opposite orders, ie test_before=tags test_after=tags
+        shared_keyword = orders["keyword_before"].intersection(orders["keyword_after"])
+        shared_test = orders["test_before"].intersection(orders["test_after"])
+        if shared_keyword:
+            raise SettingInBothOrdersError(self.__class__.__name__, "keyword_before", "keyword_after", shared_keyword)
+        if shared_test:
+            raise SettingInBothOrdersError(self.__class__.__name__, "test_before", "test_after", shared_test)
 
     @skip_section_if_disabled
     def visit_Section(self, node):  # noqa
@@ -135,11 +142,11 @@ class OrderSettings(Transformer):
 
     @skip_if_disabled
     def visit_Keyword(self, node):  # noqa
-        return self.order_settings(node, self.keyword_settings, self.keyword_before, self.keyword_after)
+        return self.order_settings(node, self.all_keyword_settings, self.keyword_before, self.keyword_after)
 
     @skip_if_disabled
     def visit_TestCase(self, node):  # noqa
-        return self.order_settings(node, self.test_settings, self.test_before, self.test_after)
+        return self.order_settings(node, self.all_test_settings, self.test_before, self.test_after)
 
     def order_settings(self, node, setting_types, before, after):
         if not node.body:

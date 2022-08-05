@@ -56,6 +56,28 @@ Now it also works for ``Library`` and ``Variables`` settings (`#380 <https://git
     ...                     run_on_failure=Capture Page Screenshot
     ...                 WITH NAME    Selenium
 
+OrderSettings order assertions
+-------------------------------
+When configuring custom order for ``OrderSettings`` it was possible to provide invalid order that
+would break the source code (`#381 <https://github.com/MarketSquare/robotframework-tidy/issues/381>`_).
+For example setting name could be duplicated in the order.
+Now there are several changes that make it less likely.
+
+An error will be raised when:
+
+- the order contains repeated setting name (such as ``tags,documentation,tags``)
+- the setting name is duplicated in both before/after orders (such as ``keyword_before=arguments`` and ``keyword_after=arguments``)
+
+The latter part is important if you configured only before/after order in Robotidy < 3.2.
+This configuration::
+
+    robotidy OrderSettings:test_after=setup
+
+Will raise an error because by default `setup` is part of `test_before` order. You need to configure both orders
+to avoid it::
+
+    robotidy OrderSettings:test_after=setup:test_before=documentation,tags,template,timeout,teardown
+
 Fixes
 ----------------------------------------
 * Fixed help output for different entrypoints. If the pip fails to install ``robotidy`` entry point
