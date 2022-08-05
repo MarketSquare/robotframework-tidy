@@ -11,12 +11,15 @@ or to install exactly this version::
 
 Documentation
 ----------------
-Several fixes and changes to our documentation (thanks to `@glueologist <https://github.com/glueologist>`__ feedback).
 
-Our theme changed from `alabster` to `furo`. Thanks for that it will be consistent across our other tools (like Robocop),
-it's a bit prettier (night mode!) and more customizable.
+* Several fixes and changes to our documentation (thanks to `@glueologist <https://github.com/glueologist>`__ feedback).
+* Our theme changed from `alabster` to `furo`. Thanks for that it will be consistent across our other tools (like Robocop),
+  it's a bit prettier (night mode!) and more customizable.
+* Transformer parameters and their default values are now listed transformer short docs
+  (invoked via ``--desc name``) (`#377 <https://github.com/MarketSquare/robotframework-tidy/issues/377>`_).
+* Transformers in the ``--list`` and ``-desc all`` command outputs are now listed in the order they are run by default
 
-Related issues and PRs:
+Other related issues and PRs:
 
  - `#367 <https://github.com/MarketSquare/robotframework-tidy/issues/367>`_
  - `#369 <https://github.com/MarketSquare/robotframework-tidy/issues/369>`_

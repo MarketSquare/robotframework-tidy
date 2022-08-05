@@ -88,10 +88,9 @@ def get_enable_disabled_config() -> List[str]:
     )
     config = []
     for transformer in transformers:
-        if not is_transformer_disabled(transformer):
+        if not is_transformer_disabled(transformer.instance):
             continue
-        name = transformer.__class__.__name__
-        config.extend(["--configure", f"{name}:enabled=True"])
+        config.extend(["--configure", f"{transformer.name}:enabled=True"])
     return config
 
 

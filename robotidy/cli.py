@@ -148,23 +148,21 @@ def validate_regex(value: Optional[str]) -> Optional[Pattern]:
         raise click.BadParameter("Not a valid regular expression")
 
 
-def print_transformer_docs(name, transformer):
+def print_transformer_docs(transformer):
     from rich.markdown import Markdown
 
-    documentation = f"## Transformer {name}\n" + textwrap.dedent(transformer.__doc__)
-    documentation += f"\nSee <https://robotidy.readthedocs.io/en/latest/transformers/{name}.html> for more examples."
-    md = Markdown(documentation, code_theme="native", inline_code_lexer="robotframework")
+    md = Markdown(str(transformer), code_theme="native", inline_code_lexer="robotframework")
     console.print(md)
 
 
 def print_description(name: str, target_version: int):
     transformers = load_transformers(None, {}, allow_disabled=True, target_version=target_version)
-    transformer_by_names = {transformer.__class__.__name__: transformer for transformer in transformers}
+    transformer_by_names = {transformer.name: transformer for transformer in transformers}
     if name == "all":
-        for tr_name, transformer in transformer_by_names.items():
-            print_transformer_docs(tr_name, transformer)
+        for transformer in transformers:
+            print_transformer_docs(transformer)
     elif name in transformer_by_names:
-        print_transformer_docs(name, transformer_by_names[name])
+        print_transformer_docs(transformer_by_names[name])
     else:
         rec_finder = RecommendationFinder()
         similar = rec_finder.find_similar(name, transformer_by_names.keys())
@@ -180,13 +178,11 @@ def print_transformers_list(target_version: int):
     table.add_column("Name", justify="left", no_wrap=True)
     table.add_column("Enabled by default")
     transformers = load_transformers(None, {}, allow_disabled=True, target_version=target_version)
-    transformer_names = []
     for transformer in transformers:
-        enabled = "[bold magenta]No" if not getattr(transformer, "ENABLED", True) else "Yes"
-        transformer_names.append([transformer.__class__.__name__, enabled])
-    for name, enabled in sorted(transformer_names):
-        table.add_row(name, enabled)
+        decorated_enable = "Yes" if transformer.enabled_by_default else "[bold magenta]No"
+        table.add_row(transformer.name, decorated_enable)
     console.print(table)
+    console.print("Transformers are listed in the order they are run by default.")
     console.print(
         "To see detailed docs run:\n"
         "    [bold]robotidy --desc [bold magenta]transformer_name[/][/]\n"
