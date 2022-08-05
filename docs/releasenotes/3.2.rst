@@ -31,6 +31,30 @@ Other related issues and PRs:
  - `#389 <https://github.com/MarketSquare/robotframework-tidy/issues/389>`_
  - `#393 <https://github.com/MarketSquare/robotframework-tidy/issues/393>`_
 
+Argument indents in *** Settings ***
+-------------------------------------
+When ``AlignSettingsSection`` aligns multiline settings with arguments, it indents arguments:
+
+::
+
+    *** Settings ***
+    Suite Setup         Start Session
+    ...                     host=${IPADDRESS}
+    ...                     user=${USERNAME}
+    ...                     password=${PASSWORD}
+
+So far it only applied to ``Suite Setup``, ``Suite Teardown``, ``Test Setup`` and ``Test Teardown`` settings.
+Now it also works for ``Library`` and ``Variables`` settings (`#380 <https://github.com/MarketSquare/robotframework-tidy/issues/380>`_)::
+
+    *** Settings ***
+    Library             CustomLibrary
+    ...                     first_arg    second_arg
+    Library             SeleniumLibrary
+    ...                     timeout=${TIMEOUT}
+    ...                     implicit_wait=${TIMEOUT}
+    ...                     run_on_failure=Capture Page Screenshot
+    ...                 WITH NAME    Selenium
+
 Fixes
 ----------------------------------------
 * Fixed help output for different entrypoints. If the pip fails to install ``robotidy`` entry point

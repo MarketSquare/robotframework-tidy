@@ -61,11 +61,13 @@ class AlignSettingsSection(Transformer):
     Supports global formatting param ``--spacecount`` (for columns with fixed length).
     """
 
-    TOKENS_WITH_KEYWORDS = {
+    TOKENS_WITH_ARGUMENTS = {
         Token.SUITE_SETUP,
         Token.SUITE_TEARDOWN,
         Token.TEST_SETUP,
         Token.TEST_TEARDOWN,
+        Token.LIBRARY,
+        Token.VARIABLES,
     }
 
     def __init__(self, up_to_column: int = 2, argument_indent: int = 4, min_width: int = None):
@@ -91,24 +93,33 @@ class AlignSettingsSection(Transformer):
         node.body = self.align_rows(statements, look_up)
         return node
 
+    def should_indent_arguments(self, statement):
+        statement_type = statement[0][0].type
+        is_library = statement_type == Token.LIBRARY
+        if is_library:
+            return is_library, True
+        return is_library, statement_type in self.TOKENS_WITH_ARGUMENTS
+
     def align_rows(self, statements, look_up):
         aligned_statements = []
         for st in statements:
             if not isinstance(st, list):
                 aligned_statements.append(st)
                 continue
-            keyword_statement = st[0][0].type in self.TOKENS_WITH_KEYWORDS
+            is_library, indent_args = self.should_indent_arguments(st)
             aligned_statement = []
             for line in st:
                 if is_blank_multiline(line):
                     line[-1].value = line[-1].value.lstrip(" \t")  # normalize eol from '  \n' to '\n'
                     aligned_statement.extend(line)
                     continue
-                keyword_arg = keyword_statement and line[0].type == Token.CONTINUATION
+                indent_arg = indent_args and line[0].type == Token.CONTINUATION
+                if indent_arg and is_library:
+                    indent_arg = all(token.type != Token.WITH_NAME for token in line)
                 up_to = self.up_to_column if self.up_to_column != -1 else len(line) - 2
                 for index, token in enumerate(line[:-2]):
                     aligned_statement.append(token)
-                    separator = self.calc_separator(index, up_to, keyword_arg, token, look_up)
+                    separator = self.calc_separator(index, up_to, indent_arg, token, look_up)
                     aligned_statement.append(Token(Token.SEPARATOR, separator))
                 last_token = line[-2]
                 # remove leading whitespace before token
@@ -118,12 +129,12 @@ class AlignSettingsSection(Transformer):
             aligned_statements.append(Statement.from_tokens(aligned_statement))
         return aligned_statements
 
-    def calc_separator(self, index, up_to, keyword_arg, token, look_up):
+    def calc_separator(self, index, up_to, indent_arg, token, look_up):
         if index < up_to:
             if self.min_width:
                 return max(self.min_width - len(token.value), self.formatting_config.space_count) * " "
-            arg_indent = self.argument_indent if keyword_arg else 0
-            if keyword_arg and index != 0:
+            arg_indent = self.argument_indent if indent_arg else 0
+            if indent_arg and index != 0:
                 return (
                     max(
                         (look_up[index] - len(token.value) - arg_indent + 4),

@@ -69,3 +69,6 @@ class TestAlignSettingsSection(TransformerAcceptanceTest):
 
     def test_disablers(self):
         self.compare(source="test_disablers.robot")
+
+    def test_argument_indents(self):
+        self.compare(source="argument_indents.robot")
