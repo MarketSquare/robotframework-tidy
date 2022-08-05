@@ -204,3 +204,29 @@ class TestLoadTransformers:
             expected_output = "".join(expected_output)
             output = capsys.readouterr()
             assert output.out == expected_output
+
+    @pytest.mark.parametrize(
+        "transform, warn_on",
+        [
+            (["OrderTags"], []),  # not duplicated
+            (["OrderTags", "OrderTags"], ["OrderTags"]),
+            (["OrderTags", "NormalizeSeparators", "OrderTags"], ["OrderTags"]),
+            (
+                ["OrderTags", "NormalizeSeparators", "OrderTags", "NormalizeSeparators"],
+                ["OrderTags", "NormalizeSeparators"],
+            ),
+            (["SplitTooLongLine"] * 3, ["SplitTooLongLine"]),  # warn only once
+        ],
+    )
+    def test_duplicated_name_in_transform(self, transform, warn_on, capsys):
+        transformers = [(name, []) for name in transform]
+        load_transformers(transformers, {}, target_version=ROBOT_VERSION.major)
+        expected_output = "".join(
+            [
+                f"Duplicated transformer '{name}' in the transform option. "
+                f"It will be run only once with the configuration from the last transform.\n"
+                for name in warn_on
+            ]
+        )
+        output = capsys.readouterr()
+        assert output.out == expected_output
