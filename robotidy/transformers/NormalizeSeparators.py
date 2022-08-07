@@ -25,7 +25,9 @@ class NormalizeSeparators(Transformer):
     To not format documentation configure ``skip_documentation`` to ``True``.
     """
 
-    HANDLES_SKIP = frozenset({"skip_documentation", "skip_keyword_call", "skip_keyword_call_pattern"})
+    HANDLES_SKIP = frozenset(
+        {"skip_documentation", "skip_keyword_call", "skip_keyword_call_pattern", "skip_comments", "skip_block_comments"}
+    )
 
     def __init__(self, sections: str = None, skip: Skip = None):
         super().__init__(skip=skip)
@@ -135,6 +137,11 @@ class NormalizeSeparators(Transformer):
         if self.skip.keyword_call(keyword):
             return keyword
         return self.visit_Statement(keyword)
+
+    def visit_Comment(self, node):  # noqa
+        if self.skip.comment(node):
+            return node
+        return self.visit_Statement(node)
 
     def is_keyword_inside_inline_if(self, node):
         return self.is_inline and (

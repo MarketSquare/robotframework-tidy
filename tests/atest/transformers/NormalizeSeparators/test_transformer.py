@@ -76,3 +76,13 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
 
     def test_file_with_pipes_bug390(self):
         self.compare(source="bug390.robot")
+
+    @pytest.mark.parametrize(
+        "config", [":skip_comments=True:skip_block_comments=True", ":skip_comments=True", ":skip_block_comments=True"]
+    )
+    def test_comments(self, config):
+        if "skip_comments" in config:
+            expected = "comments_skip_comments.robot"
+        else:
+            expected = "comments_skip_block_comments.robot"
+        self.compare(source="comments.robot", expected=expected, config=config, target_version=5)

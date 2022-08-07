@@ -399,6 +399,7 @@ def print_transformers_list(target_version: int):
 @skip.template_option
 @skip.return_option
 @skip.tags_option
+@skip.block_comments_option
 @click.version_option(version=__version__, prog_name="robotidy")
 @click.pass_context
 @catch_exceptions
@@ -441,6 +442,7 @@ def cli(
     skip_template: bool,
     skip_return: bool,
     skip_tags: bool,
+    skip_block_comments: bool,
 ):
     """
     Robotidy is a tool for formatting Robot Framework source code.
@@ -485,6 +487,7 @@ def cli(
         timeout=skip_timeout,
         return_statement=skip_return,
         tags=skip_tags,
+        block_comments=skip_block_comments,
     )
 
     formatting = FormattingConfig(

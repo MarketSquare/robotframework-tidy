@@ -2,6 +2,7 @@ import re
 from typing import List, Optional, Pattern
 
 import click
+from robot.api import Token
 
 from robotidy.utils import normalize_name
 
@@ -41,6 +42,8 @@ class SkipConfig:
             "skip_template",
             "skip_return_statement",
             "skip_tags",
+            "skip_comments",
+            "skip_block_comments",
         }
     )
 
@@ -58,6 +61,8 @@ class SkipConfig:
         template: bool = False,
         return_statement: bool = False,
         tags: bool = False,
+        comments: bool = False,
+        block_comments: bool = False,
     ):
         self.documentation = documentation
         self.return_values = return_values
@@ -71,6 +76,8 @@ class SkipConfig:
         self.template = template
         self.return_statement = return_statement
         self.tags = tags
+        self.comments = comments
+        self.block_comments = block_comments
 
     def update_with_str_config(self, **kwargs):
         for name, value in kwargs.items():
@@ -92,6 +99,8 @@ class Skip:
     def __init__(self, skip_config: SkipConfig):
         self.return_values = skip_config.return_values
         self.documentation = skip_config.documentation
+        self.comments = skip_config.comments
+        self.block_comments = skip_config.block_comments
         self.keyword_call_names = {normalize_name(name) for name in skip_config.keyword_call}
         self.keyword_call_pattern = {validate_regex(pattern) for pattern in skip_config.keyword_call_pattern}
         self.any_keword_call = self.check_any_keyword_call()
@@ -126,6 +135,13 @@ class Skip:
         if "settings" in self.skip_settings:
             return True
         return name.lower() in self.skip_settings
+
+    def comment(self, comment):
+        if self.comments:
+            return True
+        if not self.block_comments:
+            return False
+        return comment.tokens and comment.tokens[0].type == Token.COMMENT
 
 
 documentation_option = click.option(
@@ -186,6 +202,8 @@ tags_option = click.option(
     is_flag=True,
     help="Skip formatting of tags",
 )
+comments_option = click.option("--skip-comments", is_flag=True, help="Skip formatting of comments")
+block_comments_option = click.option("--skip-block-comments", is_flag=True, help="Skip formatting of block comments")
 option_group = {
     "name": "Skip formatting",
     "options": [
@@ -201,5 +219,7 @@ option_group = {
         "--skip-template",
         "--skip-return",
         "--skip-tags",
+        "--skip-comments",
+        "--skip-block-comments",
     ],
 }
