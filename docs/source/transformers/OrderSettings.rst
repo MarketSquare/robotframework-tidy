@@ -92,3 +92,14 @@ Not all settings names need to be passed to given parameter. Missing setting nam
     robotidy --configure OrderSettings:keyword_before=:keyword_after=
 
 It will order only test cases because all setting names for keywords are missing.
+
+Setting name cannot be present in both before/after parts. For example ``keyword_before=tags:keyword_after=tags``
+configuration is invalid because ``tags`` cannot be ordered both before and after. It is important if you are
+overwriting default order - in most cases you need to overwrite both before/after parts.
+This configuration is invalid because teardown is by default part of the ``test_after``::
+
+    robotidy --configure OrderSettings:test_before=teardown
+
+We need to overwrite both orders::
+
+    robotidy --configure OrderSettings:test_before=teardown:test_after=

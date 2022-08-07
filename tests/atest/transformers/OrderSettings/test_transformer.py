@@ -48,11 +48,37 @@ class TestOrderSettings(TransformerAcceptanceTest):
             exit_code=1,
         )
         expected_output = (
-            f"Error: {self.TRANSFORMER_NAME}: Invalid 'order' parameter value: 'tags,invalid'."
-            f" Custom order should be provided in comma separated list with valid setting names:\n"
-            f"['arguments', 'documentation', 'return', 'tags', 'teardown', 'timeout']\n"
+            f"Error: {self.TRANSFORMER_NAME}: Invalid 'keyword_after' parameter value: 'tags,invalid'."
+            f" Custom order should be provided in comma separated list with valid setting names: "
+            f"arguments,documentation,return,tags,teardown,timeout\n"
         )
-        assert expected_output == result.output
+        assert result.output == expected_output
 
     def test_disablers(self):
         self.compare(source="disablers.robot", not_modified=True)
+
+    def test_custom_order_setting_twice_in_one(self):
+        config = "test_after=teardown,teardown"
+        result = self.run_tidy(
+            args=f"--transform {self.TRANSFORMER_NAME}:{config}".split(),
+            source="test.robot",
+            exit_code=1,
+        )
+        expected_output = (
+            f"Error: {self.TRANSFORMER_NAME}: Invalid 'test_after' parameter value: 'teardown,teardown'. "
+            "Custom order cannot contain duplicated setting names.\n"
+        )
+        assert result.output == expected_output
+
+    def test_custom_order_setting_twice_in_after_before(self):
+        config = "keyword_before=documentation,arguments:keyword_after=teardown,documentation"
+        result = self.run_tidy(
+            args=f"--transform {self.TRANSFORMER_NAME}:{config}".split(),
+            source="test.robot",
+            exit_code=1,
+        )
+        expected_output = (
+            f"Error: {self.TRANSFORMER_NAME}: Invalid 'keyword_before' and 'keyword_after' order values. "
+            f"Following setting names exists in both orders: documentation\n"
+        )
+        assert result.output == expected_output

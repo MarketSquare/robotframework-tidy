@@ -6,12 +6,7 @@ try:
 except ImportError:
     import click
 
-from robotidy.exceptions import (
-    ImportTransformerError,
-    InvalidParameterError,
-    InvalidParameterFormatError,
-    InvalidParameterValueError,
-)
+from robotidy.exceptions import RobotidyConfigError
 
 
 def catch_exceptions(func):
@@ -25,12 +20,7 @@ def catch_exceptions(func):
             return functools.partial(catch_exceptions)
         try:
             return func(*args, **kwargs)
-        except (
-            InvalidParameterValueError,
-            InvalidParameterError,
-            InvalidParameterFormatError,
-            ImportTransformerError,
-        ) as err:
+        except (RobotidyConfigError) as err:
             print(f"Error: {err}")
             sys.exit(1)
         except (click.exceptions.ClickException, click.exceptions.Exit):
