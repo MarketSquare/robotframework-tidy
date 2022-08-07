@@ -66,6 +66,10 @@ Fixes
 * Renamed invalid short name of ``--target-version`` from ``-t`` (which was duplicate of ``--transform`` short option)
   to ``--tv`` (`#375 <https://github.com/MarketSquare/robotframework-tidy/issues/375>`_.
 
+Other
+--------
+* Warn if the Robotidy configuration contains duplicated names in ``--transform`` option (`#383 <https://github.com/MarketSquare/robotframework-tidy/issues/383>`_)
+
 Acknowledgements
 -----------------
 - `@glueologist <https://github.com/glueologist>`__ for raising several issues regarding our

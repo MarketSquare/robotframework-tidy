@@ -276,6 +276,24 @@ def can_run_in_robot_version(transformer, overwritten, target_version):
     return False
 
 
+def assert_not_duplicated_transform(allowed_mapped, allowed_transformers):
+    """
+    Warns if user provides duplicated transformer names in --transform option.
+    """
+    if not allowed_mapped or len(allowed_mapped) == len(allowed_transformers):
+        return
+    transformers, reported = set(), set()
+    for name, _ in allowed_transformers:
+        if name in transformers and name not in reported:
+            reported.add(name)
+            click.echo(
+                f"Duplicated transformer '{name}' in the transform option. "
+                f"It will be run only once with the configuration from the last transform."
+            )
+        else:
+            transformers.add(name)
+
+
 def load_transformers(
     allowed_transformers,
     config,
@@ -288,6 +306,7 @@ def load_transformers(
     """Dynamically load all classes from this file with attribute `name` defined in allowed_transformers"""
     loaded_transformers = []
     allowed_mapped = {name: args for name, args in allowed_transformers} if allowed_transformers else {}
+    assert_not_duplicated_transform(allowed_mapped, allowed_transformers)
     validate_config(config, allowed_mapped)
     if not force_order:
         for name in TRANSFORMERS:
