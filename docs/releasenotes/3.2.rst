@@ -86,7 +86,8 @@ Fixes
 * Fixed fatal exception when running robotidy with only ``NormalizeSeparator`` enabled on FOR loop without closing END (`#390 <https://github.com/MarketSquare/robotframework-tidy/issues/390>`_).
 * Robotidy will now properly print warning if user make a typo in ``enabled`` parameter (`#368 <https://github.com/MarketSquare/robotframework-tidy/issues/368>`_)
 * Renamed invalid short name of ``--target-version`` from ``-t`` (which was duplicate of ``--transform`` short option)
-  to ``--tv`` (`#375 <https://github.com/MarketSquare/robotframework-tidy/issues/375>`_.
+  to ``--tv`` (`#375 <https://github.com/MarketSquare/robotframework-tidy/issues/375>`_).
+* Templated test cases using pipe separator should now be aligned on the first run (`#374 <https://github.com/MarketSquare/robotframework-tidy/issues/374>`_)
 
 Other
 --------
