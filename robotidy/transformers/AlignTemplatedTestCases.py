@@ -84,7 +84,7 @@ class AlignTemplatedTestCases(Transformer):
     @skip_if_disabled
     def visit_Statement(self, statement):  # noqa
         if statement.type == Token.TESTCASE_NAME:
-            self.test_name_len = len(statement.tokens[0].value)
+            self.test_name_len = len(statement.data_tokens[0].value) if statement.data_tokens else 0
             self.name_line = statement.lineno
         elif statement.type == Token.TESTCASE_HEADER:
             self.align_header(statement)
