@@ -58,6 +58,7 @@ TRANSFORMERS = [
     "ReplaceBreakContinue",
     "InlineIf",
     "Translate",
+    "GenerateDocumentation",
 ]
 
 

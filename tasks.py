@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from invoke import task
-from jinja2 import Template
+from jinja2 import from jinja2 import Template
 
 
 @task

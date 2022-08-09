@@ -1,0 +1,48 @@
+*** Keywords ***
+Single Argument
+    [Arguments]    ${var}
+
+Two Arguments
+    [Arguments]    ${var}    ${var2}
+
+No Arguments
+    Log    ${EMPTY}
+
+Empty Arguments
+    [Arguments]
+
+Return
+    RETURN    ${var}
+
+Return in block
+    IF    $condition
+        FOR    ${var}    IN RANGE    10
+            IF    $var    RETURN    ${other_value}    ${multiple}
+        END
+    END
+
+[Return]
+     Step
+     [Return]    ${var}
+
+Double [Return]
+     Step
+     [Return]    ${var}
+     IF    $var
+     [Return]    ${var}
+     ...    $[var2}
+     END
+
+One Required And One With Default
+    [Arguments]    ${required}    ${optional}=default
+    Log    Required: ${required}
+    Log    Optional: ${optional}
+
+Default Based On Earlier Argument
+    [Arguments]    ${a}    ${b}=${a}    ${c}=${a} and ${b}
+    Should Be Equal    ${a}    ${b}
+    Should Be Equal    ${c}    ${a} and ${b}
+
+Existing documentation
+    [Documentation]    Overwrite if needed.
+    Step
