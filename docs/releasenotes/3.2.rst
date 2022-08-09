@@ -32,7 +32,7 @@ Other related issues and PRs:
  - `#389 <https://github.com/MarketSquare/robotframework-tidy/issues/389>`_
  - `#393 <https://github.com/MarketSquare/robotframework-tidy/issues/393>`_
 
-Argument indents in *** Settings ***
+Argument indents in ``*** Settings ***``
 -------------------------------------
 When ``AlignSettingsSection`` aligns multiline settings with arguments, it indents arguments:
 
@@ -116,6 +116,6 @@ Other
 
 Acknowledgements
 -----------------
-- `@glueologist <https://github.com/glueologist>`__ for raising several issues regarding our
+- `@glueologist <https://github.com/glueologist>`_ for raising several issues regarding our
    documentation and transformers
--  `@tkopra <https://github.com/tkopra>`__ for ongoing feedback for align transformers
+-  `@tkopra <https://github.com/tkopra>`_ for ongoing feedback for align transformers
