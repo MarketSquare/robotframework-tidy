@@ -56,6 +56,27 @@ Now it also works for ``Library`` and ``Variables`` settings (`#380 <https://git
     ...                     run_on_failure=Capture Page Screenshot
     ...                 WITH NAME    Selenium
 
+Skip comments formatting in NormalizeSeparators
+------------------------------------------------
+It is now possible to skip formatting of comments or block comments in ``NormalizeSeparators``
+transformer (`#403 <https://github.com/MarketSquare/robotframework-tidy/issues/403>`_).
+Following configuration::
+
+    robotidy --configure NormalizeSeparators:skip_comments=True
+
+Will skip formatting whitespace in this code::
+
+    *** Test Cases
+    Test
+        Simple Asserts
+        # comment    that   will  be skip
+
+    # block comment that is also not formatted  #
+    #                                           #
+
+``skip_comments`` skip formatting of all standalone comments (including block comments). ``skip_block_comments``
+skip only formatting of block comments - comments that starts from the beginning of the line.
+
 OrderSettings order assertions
 -------------------------------
 When configuring custom order for ``OrderSettings`` it was possible to provide invalid order that

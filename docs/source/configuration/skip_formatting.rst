@@ -129,6 +129,7 @@ Both options are configurable using configuration file (:ref:`config-file`).
     configure = [
         "AlignKeywordsSection : skip_keyword_call_pattern = first,secondname"
     ]
+
 .. _skip settings:
 
 Skip settings
@@ -178,4 +179,43 @@ Skip formatting of selected settings:
     configure = [
         "AlignTestCasesSection : skip_setup = False"
         "AlignKeywordsSection : skip_arguments = True"
+    ]
+
+.. _skip comments:
+
+Skip comments and block comments
+---------------------------------
+Flag that disables formatting of the comments and block comments. Example usage::
+
+    robotidy -c NormalizeSeparators:skip_comments=True src
+
+It is possible to use global flag to skip formatting for every transformer that supports it::
+
+    robotidy --skip-comments src
+
+The comment is considered any standalone comment. Comments that start from column 0 are considered to be
+block comments:
+
+.. code-block:: robotframework
+
+    *** Keywords ***
+    # block comment
+    Keyword
+        [Documentation]    doc
+        # standalone comment
+        Log   Logging statement
+
+    # block comment    with extra spaces
+    #            that will be not formatted
+
+Configuration file
+~~~~~~~~~~~~~~~~~~~~
+Both options are configurable using configuration file (:ref:`config-file`).
+
+.. code-block:: toml
+
+    [tool.robotidy]
+    skip-comments = true
+    configure = [
+        "NormalizeSeparators : skip_block_comments = False"
     ]
