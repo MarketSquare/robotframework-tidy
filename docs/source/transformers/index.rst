@@ -16,6 +16,7 @@ To see list of all transformers currently implemented in `robotidy` run::
 
     robotidy --list
 
+Transformers are sorted in the order they are run by default.
 To see description of the transformer run::
 
     robotidy --desc TRANSFORMER_NAME
@@ -37,7 +38,9 @@ or::
    robotidy --transform SplitTooLongLine --transform ReplaceRunKeywordIf src
 
 It will transform files according to internal order (in this example ``ReplaceRunKeywordIf`` is before
-``SplitTooLongLine``). If you want to transform files using different transformer order you need to run transformers separately::
+``SplitTooLongLine``). To see order of the transformers run ``robotidy --list``.
+
+If you want to transform files using different transformer order you need to run transformers separately::
 
    robotidy --transform SplitTooLongLine src
    robotidy --transform ReplaceRunKeywordIf src
@@ -48,3 +51,8 @@ You can also add ``--force-order`` flag to use order provided in cli::
 
 External transformers are used last. If you want to change this behaviour (for example run your custom transformer
 before default ones) you need to use ``--force-order`` flag.
+
+.. rubric:: Pipe handling
+
+Not all transformers can handle pipe syntax. If you encounter any issues with pipe separators, run
+``NormalizeSeparators`` transformer to replace pipes with spaces.
