@@ -39,6 +39,7 @@ def app():
         force_order=False,
         target_version=ROBOT_VERSION.major,
         color=True,
+        language=None,
     )
     return Robotidy(
         config=config,

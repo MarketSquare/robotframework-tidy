@@ -59,7 +59,7 @@ CLI_OPTIONS_LIST = [
     skip.option_group,
     {
         "name": "Other",
-        "options": ["--target-version", "--verbose", "--color", "--output", "--version", "--help"],
+        "options": ["--target-version", "--language", "--verbose", "--color", "--output", "--version", "--help"],
     },
 ]
 click.rich_click.OPTION_GROUPS = {
@@ -146,6 +146,12 @@ def validate_regex(value: Optional[str]) -> Optional[Pattern]:
         return re.compile(value) if value is not None else None
     except re.error:
         raise click.BadParameter("Not a valid regular expression")
+
+
+def csv_list_type(ctx: click.Context, param: Union[click.Option, click.Parameter], value: Optional[str]) -> List[str]:
+    if not value:
+        return []
+    return value.split(",")
 
 
 def print_transformer_docs(transformer):
@@ -387,6 +393,13 @@ def print_transformers_list(target_version: int):
     help="Only enable transformers supported in set target version",
     show_default="installed Robot Framework version",
 )
+@click.option(
+    "--language",
+    "--lang",
+    callback=csv_list_type,
+    help="Parse Robot Framework files using additional languages.",
+    show_default="en",
+)
 @skip.documentation_option
 @skip.return_values_option
 @skip.keyword_call_option
@@ -430,6 +443,7 @@ def cli(
     output: Optional[Path],
     force_order: bool,
     target_version: int,
+    language: Optional[List[str]],
     skip_documentation: bool,
     skip_return_values: bool,
     skip_keyword_call: List[str],
@@ -517,6 +531,7 @@ def cli(
         force_order=force_order,
         target_version=target_version,
         color=color,
+        language=language,
     )
     tidy = Robotidy(config=config)
     status = tidy.transform_files()

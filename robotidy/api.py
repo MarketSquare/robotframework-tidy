@@ -72,6 +72,7 @@ def get_robotidy(src: str, output: Optional[str], **kwargs):
     exclude = validate_regex(exclude if exclude is not None else DEFAULT_EXCLUDES)
     extend_exclude = validate_regex(extend_exclude)
     global_skip = get_skip_config(config)
+    language = config.get("language", None)
     configuration = Config(
         transformers=transformers,
         transformers_config=configurations,
@@ -89,6 +90,7 @@ def get_robotidy(src: str, output: Optional[str], **kwargs):
         force_order=False,
         target_version=ROBOT_VERSION.major,
         color=False,
+        language=language,
     )
     return Robotidy(config=configuration)
 
