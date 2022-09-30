@@ -14,5 +14,18 @@ Translation updates
 With the Robot Framework 6.0 there is option to use translated markers in the Robot files.
 To support this option we updated several of our transformers and added language support in the tool.
 
-* Update NormalizeSectionHeaderName transformer to work with translated headers
-* Do not merge comment section with language: <lang> shebang with other comment sections
+File language can be defined either by using language header::
+
+    language: de
+
+    *** Einstellungen ***
+    Bibliothek      String
+
+Or by using ``--language / --lang`` option::
+
+    robotidy --language pl test.robot
+
+English language is supported by default.
+
+* Updated NormalizeSectionHeaderName transformer to work with translated headers
+* Updated MergeAndOrderSections to not merge language: <lang> header with other comment sections

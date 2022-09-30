@@ -43,6 +43,36 @@ Robot Framework version::
 
 It will disable all transformers that require Robot Framework greater than <target-version> to run (even if you have Robot Framework greater than <target-version> installed).
 
+.. rubric:: Language support
+
+Robot Framework 6.0 added support for Robot settings and headers translation.
+Robotidy recognizes language markers in the file but needs to be configured if you have translated file without language marker.
+You can supply language code or name in the configuration using ``--language / --lang`` option::
+
+    robotidy --lang fi
+
+Support multiple languages by providing language code/name in comma separated list::
+
+    robotidy --lang fi,pt
+
+``pyproject.toml`` file accepts ``language`` array::
+
+    [tool.robotidy]
+    language = [
+        "pt",
+        "fi"
+    ]
+
+Language header in the file is supported by default::
+
+    language: pl
+
+    *** Zmienne ***
+    ${VAR}   1
+
+
+Custom language file is currently not supported.
+
 .. _disablers:
 
 .. rubric:: Disablers
