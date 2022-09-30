@@ -15,3 +15,4 @@ With the Robot Framework 6.0 there is option to use translated markers in the Ro
 To support this option we updated several of our transformers and added language support in the tool.
 
 * Update NormalizeSectionHeaderName transformer to work with translated headers
+* Do not merge comment section with language: <lang> shebang with other comment sections
