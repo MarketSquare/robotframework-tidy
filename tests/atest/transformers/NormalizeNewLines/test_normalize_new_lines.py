@@ -59,3 +59,9 @@ class TestNormalizeNewLines(TransformerAcceptanceTest):
 
     def test_remove_empty_multiline(self):
         self.compare(source="multiline.robot")
+
+    def test_language_header(self):
+        self.compare(source="language_header_0empty.robot", target_version=6)
+        self.compare(source="language_header_2empty.robot", target_version=6)
+        self.compare(source="language_header_5empty.robot", expected="language_header_2empty.robot", target_version=6)
+        self.compare(source="language_header_and_comments.robot", target_version=6)

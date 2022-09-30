@@ -16,3 +16,4 @@ To support this option we updated several of our transformers and added language
 
 * Update NormalizeSectionHeaderName transformer to work with translated headers
 * Do not merge comment section with language: <lang> shebang with other comment sections
+* Sections with only language: <lang> marker and less than ``section_lines`` empty lines will be not transformed by NormalizeNewLines
