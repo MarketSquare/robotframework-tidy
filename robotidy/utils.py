@@ -21,6 +21,7 @@ ROBOT_VERSION = version.parse(RF_VERSION)
 class TargetVersion(Enum):
     RF4 = 4
     RF5 = 5
+    RF6 = 6
 
 
 class StatementLinesCollector(ModelVisitor):
