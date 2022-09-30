@@ -1,3 +1,5 @@
+import string
+
 from robot.api.parsing import Token
 
 from robotidy.disablers import skip_section_if_disabled
@@ -33,6 +35,8 @@ class NormalizeSectionHeaderName(Transformer):
     ```
     """
 
+    EN_SINGULAR_HEADERS = {"comment", "setting", "variable", "task", "test case", "keyword"}
+
     def __init__(self, uppercase: bool = False):
         super().__init__()
         self.uppercase = uppercase
@@ -42,18 +46,17 @@ class NormalizeSectionHeaderName(Transformer):
         return self.generic_visit(node)
 
     def visit_SectionHeader(self, node):  # noqa
-        if node.name and "task" in node.name.lower():
-            name = "*** Tasks ***"
-        else:
-            name = {
-                Token.SETTING_HEADER: "*** Settings ***",
-                Token.VARIABLE_HEADER: "*** Variables ***",
-                Token.TESTCASE_HEADER: "*** Test Cases ***",
-                Token.KEYWORD_HEADER: "*** Keywords ***",
-                Token.COMMENT_HEADER: "*** Comments ***",
-            }[node.type]
+        if not node.name:
+            return node
+        # only normalize, and if found in english ones then add plural
+        header_name = node.data_tokens[0].value
+        header_name = header_name.replace("*", "").strip()
+        if header_name.lower() in self.EN_SINGULAR_HEADERS:
+            header_name += "s"
         if self.uppercase:
-            name = name.upper()
+            header_name = header_name.upper()
+        else:
+            header_name = string.capwords(header_name)
         # we only modify header token value in order to preserver optional data driven testing column names
-        node.data_tokens[0].value = name
+        node.data_tokens[0].value = f"*** {header_name} ***"
         return node

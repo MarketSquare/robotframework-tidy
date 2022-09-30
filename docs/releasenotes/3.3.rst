@@ -8,3 +8,10 @@ You can install the latest available version by running::
 or to install exactly this version::
 
     pip install robotframework-tidy==3.3.0
+
+Translation updates
+--------------------
+With the Robot Framework 6.0 there is option to use translated markers in the Robot files.
+To support this option we updated several of our transformers and added language support in the tool.
+
+* Update NormalizeSectionHeaderName transformer to work with translated headers
