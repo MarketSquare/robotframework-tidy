@@ -73,3 +73,6 @@ class TestMergeAndOrderSections(TransformerAcceptanceTest):
 
     def test_disablers(self):
         self.compare(source="disablers.robot")
+
+    def test_translated(self):
+        self.compare(source="translated.robot", target_version=6)
