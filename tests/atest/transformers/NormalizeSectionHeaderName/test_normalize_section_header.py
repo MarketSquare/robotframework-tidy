@@ -21,3 +21,6 @@ class TestNormalizeSectionHeaderName(TransformerAcceptanceTest):
 
     def test_disablers(self):
         self.compare(source="disablers.robot", not_modified=True)
+
+    def test_translated(self):
+        self.compare(source="translated.robot", target_version=6)
