@@ -242,9 +242,10 @@ is set to True.
 
 Language header
 ----------------
-Files that begins with language marker are handled differently.
-If the section contains only language marker and no more than ``section_lines``, it will be not transformed.
-Following examples will not be formatted since number of empty lines is lower or equal to default ``section_lines``:
+Files that begin with the language marker are handled differently.
+If the section contains only language marker and no more empty lines than the value of ``section_lines``,
+it will be not transformed.
+The following examples will not be formatted since the number of empty lines is lower or equal to default value of ``section_lines``:
 
 .. tab-set::
 
