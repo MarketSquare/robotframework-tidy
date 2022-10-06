@@ -17,3 +17,20 @@ To support this option we updated several of our transformers and added language
 * Update NormalizeSectionHeaderName transformer to work with translated headers
 * Do not merge comment section with language: <lang> shebang with other comment sections
 * Sections with only language: <lang> marker and less than ``section_lines`` empty lines will be not transformed by NormalizeNewLines
+
+File language can be defined either by using language header::
+
+    language: de
+
+    *** Einstellungen ***
+    Bibliothek      String
+
+Or by using ``--language / --lang`` option::
+
+    robotidy --language pl test.robot
+
+English language is supported by default.
+
+* Updated NormalizeSectionHeaderName transformer to work with translated headers
+* Updated MergeAndOrderSections to not merge language: <lang> header with other comment sections
+

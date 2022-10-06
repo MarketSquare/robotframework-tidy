@@ -82,3 +82,6 @@ class TestOrderSettings(TransformerAcceptanceTest):
             f"Following setting names exists in both orders: documentation\n"
         )
         assert result.output == expected_output
+
+    def test_translated(self):
+        self.compare(source="translated.robot", target_version=6)

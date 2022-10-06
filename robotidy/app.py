@@ -15,7 +15,13 @@ from robot.errors import DataError
 
 from robotidy.config import Config
 from robotidy.disablers import RegisterDisablers
-from robotidy.utils import ModelWriter, StatementLinesCollector, decorate_diff_with_color, escape_rich_markup
+from robotidy.utils import (
+    ModelWriter,
+    StatementLinesCollector,
+    decorate_diff_with_color,
+    escape_rich_markup,
+    rf_supports_lang,
+)
 
 try:
     from robotidy.rich_console import console
@@ -26,6 +32,11 @@ except ImportError:  # Fails on vendored-in LSP plugin
 class Robotidy:
     def __init__(self, config: Config):
         self.config = config
+
+    def get_model(self, source):
+        if rf_supports_lang():
+            return get_model(source, lang=self.config.language)
+        return get_model(source)
 
     def transform_files(self):
         changed_files = 0
@@ -40,7 +51,7 @@ class Robotidy:
                     source = self.load_from_stdin()
                 elif self.config.verbose:
                     click.echo(f"Transforming {source} file")
-                model = get_model(source)
+                model = self.get_model(source)
                 disabler_finder.visit(model)
                 if disabler_finder.file_disabled:
                     continue

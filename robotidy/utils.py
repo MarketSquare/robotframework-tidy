@@ -16,11 +16,17 @@ from robot.utils.robotio import file_writer
 from robot.version import VERSION as RF_VERSION
 
 ROBOT_VERSION = version.parse(RF_VERSION)
+ROBOT_WITH_LANG = version.parse("6.0")
+
+
+def rf_supports_lang():
+    return ROBOT_VERSION >= ROBOT_WITH_LANG
 
 
 class TargetVersion(Enum):
     RF4 = 4
     RF5 = 5
+    RF6 = 6
 
 
 class StatementLinesCollector(ModelVisitor):
