@@ -3,13 +3,8 @@ Methods for transforming Robot Framework ast model programmatically.
 """
 from typing import Optional
 
-from robotidy.app import Robotidy
-from robotidy.cli import TransformType, find_and_read_config, validate_regex
+from robotidy import app, disablers, files, skip, transformers, utils
 from robotidy.config import Config, FormattingConfig
-from robotidy.disablers import RegisterDisablers
-from robotidy.files import DEFAULT_EXCLUDES
-from robotidy.skip import SkipConfig
-from robotidy.utils import ROBOT_VERSION
 
 
 def get_skip_config(config):
@@ -25,7 +20,7 @@ def get_skip_config(config):
     skip_timeout = config.get("skip_timeout", False)
     skip_return = config.get("skip_return", False)
     skip_tags = config.get("skip_tags", False)
-    return SkipConfig(
+    return skip.SkipConfig(
         documentation=skip_documentation,
         return_values=skip_return_values,
         keyword_call=skip_keyword_call,
@@ -61,20 +56,20 @@ def get_formatting_config(config, kwargs):
 def get_robotidy(src: str, output: Optional[str], **kwargs):
     # TODO Refactor - Config should be read in one place both for API and CLI
     # TODO Remove kwargs usage - other SDKs are not using this feature
-    config = find_and_read_config((src,))
+    config = files.find_and_read_config((src,))
     config = {k: str(v) if not isinstance(v, (list, dict)) else v for k, v in config.items()}
-    converter = TransformType()
-    transformers = [converter.convert(tr, None, None) for tr in config.get("transform", ())]
+    converter = transformers.TransformType()
+    transformer_list = [converter.convert(tr, None, None) for tr in config.get("transform", ())]
     configurations = [converter.convert(c, None, None) for c in config.get("configure", ())]
     formatting_config = get_formatting_config(config, kwargs)
     exclude = config.get("exclude", None)
     extend_exclude = config.get("extend_exclude", None)
-    exclude = validate_regex(exclude if exclude is not None else DEFAULT_EXCLUDES)
-    extend_exclude = validate_regex(extend_exclude)
+    exclude = utils.validate_regex(exclude if exclude is not None else files.DEFAULT_EXCLUDES)
+    extend_exclude = utils.validate_regex(extend_exclude)
     global_skip = get_skip_config(config)
     language = config.get("language", None)
     configuration = Config(
-        transformers=transformers,
+        transformers=transformer_list,
         transformers_config=configurations,
         skip=global_skip,
         src=(),
@@ -88,11 +83,11 @@ def get_robotidy(src: str, output: Optional[str], **kwargs):
         check=False,
         output=output,
         force_order=False,
-        target_version=ROBOT_VERSION.major,
+        target_version=utils.ROBOT_VERSION.major,
         color=False,
         language=language,
     )
-    return Robotidy(config=configuration)
+    return app.Robotidy(config=configuration)
 
 
 def transform_model(model, root_dir: str, output: Optional[str] = None, **kwargs) -> Optional[str]:
@@ -106,7 +101,7 @@ def transform_model(model, root_dir: str, output: Optional[str] = None, **kwargs
     :return: The transformed model converted to string or None if no transformation took place.
     """
     robotidy_class = get_robotidy(root_dir, output, **kwargs)
-    disabler_finder = RegisterDisablers(
+    disabler_finder = disablers.RegisterDisablers(
         robotidy_class.config.formatting.start_line, robotidy_class.config.formatting.end_line
     )
     disabler_finder.visit(model)

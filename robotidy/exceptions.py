@@ -24,3 +24,9 @@ class InvalidParameterFormatError(RobotidyConfigError):
 
 class ImportTransformerError(RobotidyConfigError):
     pass
+
+
+class MissingOptionalRichDependencyError(RobotidyConfigError):
+    def __init__(self):
+        msg = "It looks like you have rich module uninstalled. Install it to be able to use robotidy in the cli mode."
+        super().__init__(msg)
