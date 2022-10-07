@@ -29,3 +29,4 @@ English language is supported by default.
 
 * Updated NormalizeSectionHeaderName transformer to work with translated headers
 * Updated MergeAndOrderSections to not merge language: <lang> header with other comment sections
+* Sections with only language: <lang> marker and less than ``section_lines`` empty lines will be not transformed by NormalizeNewLines

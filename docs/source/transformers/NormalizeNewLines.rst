@@ -239,3 +239,72 @@ is set to True.
 
             Mid Test
                 My Step 1    args    args 2    args 3
+
+Language header
+----------------
+Files that begin with the language marker are handled differently.
+If the section contains only language marker and no more empty lines than the value of ``section_lines``,
+it will be not transformed.
+The following examples will not be formatted since the number of empty lines is lower or equal to default value of ``section_lines``:
+
+.. tab-set::
+
+    .. tab-item:: File with language marker and 0 empty lines
+
+        .. code:: robotframework
+
+            language: pl
+            *** Ustawienia ***
+
+    .. tab-item:: File with language marker and 2 empty lines
+
+        .. code:: robotframework
+
+            language: pl
+
+
+            *** Ustawienia ***
+
+Section will be formatted if it contains more empty lines than ``section_lines`` or has statements other than
+language marker:
+
+.. tab-set::
+
+    .. tab-item:: File with language marker and 3 empty lines
+
+        .. code:: robotframework
+
+            language: pl
+
+
+
+            *** Ustawienia ***
+
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            language: pl
+
+
+            *** Ustawienia ***
+
+.. tab-set::
+
+    .. tab-item:: File with language marker and extra comments
+
+        .. code:: robotframework
+
+            language: pl
+            This file contains polish tests.
+            *** Ustawienia ***
+
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            language: pl
+            This file contains polish tests.
+
+
+            *** Ustawienia ***

@@ -1,6 +1,11 @@
 from typing import Optional
 
-from robot.api.parsing import EmptyLine, Token
+from robot.api.parsing import CommentSection, EmptyLine, Token
+
+try:
+    from robot.api.parsing import Config  # from RF 6.0
+except ImportError:
+    Config = None
 
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.transformers import Transformer
@@ -51,13 +56,36 @@ class NormalizeNewLines(Transformer):
         self.last_section = node.sections[-1] if node.sections else None
         return self.generic_visit(node)
 
+    def should_be_trimmed(self, node):
+        """
+        Check whether given section should have empty lines trimmed.
+        Section should not be trimmed if it contains only language marker and there is no more than allowed section empty lines
+        """
+        if not isinstance(node, CommentSection) or not Config:
+            return True
+        language_marker_only = False
+        empty_lines = 0
+        for statement in node.body:
+            if isinstance(statement, Config):
+                language_marker_only = True
+            elif isinstance(statement, EmptyLine):
+                empty_lines += 1
+                if empty_lines > self.section_lines:
+                    return True
+            else:
+                return True
+        return not language_marker_only
+
     @skip_section_if_disabled
     def visit_Section(self, node):  # noqa
-        self.trim_empty_lines(node)
-        empty_line = EmptyLine.from_params()
+        should_be_trimmed = self.should_be_trimmed(node)
+        if should_be_trimmed:
+            self.trim_empty_lines(node)
         if node is self.last_section:
             return self.generic_visit(node)
-        node.body.extend([empty_line] * self.section_lines)
+        if should_be_trimmed:
+            empty_line = EmptyLine.from_params()
+            node.body.extend([empty_line] * self.section_lines)
         return self.generic_visit(node)
 
     def visit_TestCaseSection(self, node):  # noqa
