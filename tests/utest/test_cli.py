@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, Mock, patch
 import pytest
 from click import FileError, NoSuchOption
 
+from robotidy import skip
 from robotidy.api import Robotidy
 from robotidy.cli import read_config, validate_regex
 from robotidy.files import DEFAULT_EXCLUDES, find_project_root, get_paths, read_pyproject_config
@@ -446,3 +447,15 @@ class TestCli:
             f"Target Robot Framework version ({target_version}) "
             "should not be higher than installed version (" in error
         )
+
+    def test_skip_options(self, tmp_path):
+        alternate_names = {"--skip-return-statement": "--skip-return"}
+        with_values = {"--skip-keyword-call-pattern", "--skip-keyword-call"}
+        option_names = []
+        for skip_option in skip.SkipConfig.HANDLES:
+            option = f"--{skip_option.replace('_', '-')}"
+            option = alternate_names.get(option, option)
+            option_names.append(option)
+            if option in with_values:
+                option_names.append("empty")
+        run_tidy([*option_names, str(tmp_path)])

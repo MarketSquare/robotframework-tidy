@@ -400,6 +400,7 @@ def print_transformers_list(target_version: int):
     help="Parse Robot Framework files using additional languages.",
     show_default="en",
 )
+@skip.comments_option
 @skip.documentation_option
 @skip.return_values_option
 @skip.keyword_call_option
@@ -444,6 +445,7 @@ def cli(
     force_order: bool,
     target_version: int,
     language: Optional[List[str]],
+    skip_comments: bool,
     skip_documentation: bool,
     skip_return_values: bool,
     skip_keyword_call: List[str],
@@ -501,6 +503,7 @@ def cli(
         timeout=skip_timeout,
         return_statement=skip_return,
         tags=skip_tags,
+        comments=skip_comments,
         block_comments=skip_block_comments,
     )
 
