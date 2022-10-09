@@ -24,7 +24,7 @@ from robot.utils.importer import Importer
 
 from robotidy.exceptions import ImportTransformerError, InvalidParameterError, InvalidParameterFormatError
 from robotidy.skip import Skip, SkipConfig
-from robotidy.utils import ROBOT_VERSION, RecommendationFinder
+from robotidy.utils import ROBOT_VERSION, RecommendationFinder, split_args_from_name_or_path
 
 TRANSFORMERS = [
     "AddMissingEnd",
@@ -58,6 +58,14 @@ TRANSFORMERS = [
 
 
 IMPORTER = Importer()
+
+
+class TransformType(click.ParamType):
+    name = "transform"
+
+    def convert(self, value, param, ctx):
+        name, args = split_args_from_name_or_path(value.replace(" ", ""))
+        return name, args
 
 
 class TransformerParameter:

@@ -6,7 +6,7 @@ try:
 except ImportError:
     import click
 
-from robotidy.exceptions import RobotidyConfigError
+from robotidy import exceptions
 
 
 def catch_exceptions(func):
@@ -20,7 +20,7 @@ def catch_exceptions(func):
             return functools.partial(catch_exceptions)
         try:
             return func(*args, **kwargs)
-        except (RobotidyConfigError) as err:
+        except exceptions.RobotidyConfigError as err:
             print(f"Error: {err}")
             sys.exit(1)
         except (click.exceptions.ClickException, click.exceptions.Exit):
@@ -32,5 +32,16 @@ def catch_exceptions(func):
             )
             err.args = (err.args[0] + message,) + err.args[1:]
             raise err
+
+    return wrapper
+
+
+def optional_rich(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except ImportError:
+            raise exceptions.MissingOptionalRichDependencyError()
 
     return wrapper
