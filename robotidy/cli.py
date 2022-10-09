@@ -1,30 +1,23 @@
 import os
 import re
 import sys
-import textwrap
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Pattern, Tuple, Union
 
-import rich_click as click
+try:
+    import rich_click as click
 
-from robotidy import skip
-from robotidy.app import Robotidy
+    RICH_PRESENT = True
+except ImportError:  # Fails on vendored-in LSP plugin
+    import click
+
+    RICH_PRESENT = False
+
+from robotidy import app, decorators, exceptions, files, skip, utils, version
 from robotidy.config import Config, FormattingConfig
-from robotidy.decorators import catch_exceptions
-from robotidy.files import DEFAULT_EXCLUDES, find_and_read_config, read_pyproject_config
 from robotidy.rich_console import console
-from robotidy.transformers import load_transformers
-from robotidy.utils import ROBOT_VERSION, RecommendationFinder, TargetVersion, split_args_from_name_or_path
-from robotidy.version import __version__
+from robotidy.transformers import TransformType, load_transformers
 
-click.rich_click.USE_RICH_MARKUP = True
-click.rich_click.USE_MARKDOWN = True
-click.rich_click.STYLE_OPTION = "bold sky_blue3"
-click.rich_click.STYLE_SWITCH = "bold sky_blue3"
-click.rich_click.STYLE_METAVAR = "bold white"
-click.rich_click.STYLE_OPTION_DEFAULT = "grey37"
-click.rich_click.STYLE_OPTIONS_PANEL_BORDER = "grey66"
-click.rich_click.STYLE_USAGE = "magenta"
 CLI_OPTIONS_LIST = [
     {
         "name": "Run only selected transformers",
@@ -62,21 +55,23 @@ CLI_OPTIONS_LIST = [
         "options": ["--target-version", "--language", "--verbose", "--color", "--output", "--version", "--help"],
     },
 ]
-click.rich_click.OPTION_GROUPS = {
-    "robotidy": CLI_OPTIONS_LIST,
-    "python -m robotidy": CLI_OPTIONS_LIST,
-}
+
+if RICH_PRESENT:
+    click.rich_click.USE_RICH_MARKUP = True
+    click.rich_click.USE_MARKDOWN = True
+    click.rich_click.STYLE_OPTION = "bold sky_blue3"
+    click.rich_click.STYLE_SWITCH = "bold sky_blue3"
+    click.rich_click.STYLE_METAVAR = "bold white"
+    click.rich_click.STYLE_OPTION_DEFAULT = "grey37"
+    click.rich_click.STYLE_OPTIONS_PANEL_BORDER = "grey66"
+    click.rich_click.STYLE_USAGE = "magenta"
+    click.rich_click.OPTION_GROUPS = {
+        "robotidy": CLI_OPTIONS_LIST,
+        "python -m robotidy": CLI_OPTIONS_LIST,
+    }
 
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
-
-
-class TransformType(click.ParamType):
-    name = "transform"
-
-    def convert(self, value, param, ctx):
-        name, args = split_args_from_name_or_path(value.replace(" ", ""))
-        return name, args
 
 
 def parse_opt(opt):
@@ -91,7 +86,7 @@ def validate_config_options(params, config):
     allowed = {parse_opt(opt) for param in params for opt in param.opts}
     for conf in config:
         if conf not in allowed:
-            rec_finder = RecommendationFinder()
+            rec_finder = utils.RecommendationFinder()
             similar = rec_finder.find(conf, list(allowed))
             raise click.NoSuchOption(conf, possibilities=similar)
 
@@ -99,9 +94,9 @@ def validate_config_options(params, config):
 def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]) -> Optional[str]:
     # if --config was not used, try to find pyproject.toml or robotidy.toml file
     if value:
-        config = read_pyproject_config(value)
+        config = files.read_pyproject_config(value)
     else:
-        config = find_and_read_config(ctx.params["src"] or (str(Path(".").resolve()),))
+        config = files.find_and_read_config(ctx.params["src"] or (str(Path(".").resolve()),))
     if not config:
         return
     # Sanitize the values to be Click friendly. For more information please see:
@@ -123,7 +118,7 @@ def validate_regex_callback(
     param: click.Parameter,
     value: Optional[str],
 ) -> Optional[Pattern]:
-    return validate_regex(value)
+    return utils.validate_regex(value)
 
 
 def validate_target_version(
@@ -132,20 +127,14 @@ def validate_target_version(
     value: Optional[str],
 ) -> Optional[int]:
     if value is None:
-        return ROBOT_VERSION.major
-    version = TargetVersion[value.upper()].value
-    if version > ROBOT_VERSION.major:
+        return utils.ROBOT_VERSION.major
+    version = utils.TargetVersion[value.upper()].value
+    if version > utils.ROBOT_VERSION.major:
         raise click.BadParameter(
-            f"Target Robot Framework version ({version}) should not be higher than installed version ({ROBOT_VERSION})."
+            f"Target Robot Framework version ({version}) should not be higher than "
+            f"installed version ({utils.ROBOT_VERSION})."
         )
     return version
-
-
-def validate_regex(value: Optional[str]) -> Optional[Pattern]:
-    try:
-        return re.compile(value) if value is not None else None
-    except re.error:
-        raise click.BadParameter("Not a valid regular expression")
 
 
 def csv_list_type(ctx: click.Context, param: Union[click.Option, click.Parameter], value: Optional[str]) -> List[str]:
@@ -161,6 +150,7 @@ def print_transformer_docs(transformer):
     console.print(md)
 
 
+@decorators.optional_rich
 def print_description(name: str, target_version: int):
     transformers = load_transformers(None, {}, allow_disabled=True, target_version=target_version)
     transformer_by_names = {transformer.name: transformer for transformer in transformers}
@@ -170,13 +160,14 @@ def print_description(name: str, target_version: int):
     elif name in transformer_by_names:
         print_transformer_docs(transformer_by_names[name])
     else:
-        rec_finder = RecommendationFinder()
+        rec_finder = utils.RecommendationFinder()
         similar = rec_finder.find_similar(name, transformer_by_names.keys())
         click.echo(f"Transformer with the name '{name}' does not exist.{similar}")
         return 1
     return 0
 
 
+@decorators.optional_rich
 def print_transformers_list(target_version: int):
     from rich.table import Table
 
@@ -232,7 +223,7 @@ def print_transformers_list(target_version: int):
         " excluded on recursive searches. An empty value means no paths are excluded."
         " Use forward slashes for directories on all platforms."
     ),
-    show_default=f"{DEFAULT_EXCLUDES}",
+    show_default=f"{files.DEFAULT_EXCLUDES}",
 )
 @click.option(
     "--extend-exclude",
@@ -388,7 +379,7 @@ def print_transformers_list(target_version: int):
 @click.option(
     "--target-version",
     "-tv",
-    type=click.Choice([v.name.lower() for v in TargetVersion], case_sensitive=False),
+    type=click.Choice([v.name.lower() for v in utils.TargetVersion], case_sensitive=False),
     callback=validate_target_version,
     help="Only enable transformers supported in set target version",
     show_default="installed Robot Framework version",
@@ -414,9 +405,9 @@ def print_transformers_list(target_version: int):
 @skip.return_option
 @skip.tags_option
 @skip.block_comments_option
-@click.version_option(version=__version__, prog_name="robotidy")
+@click.version_option(version=version.__version__, prog_name="robotidy")
 @click.pass_context
-@catch_exceptions
+@decorators.catch_exceptions
 def cli(
     ctx: click.Context,
     transform: List[Tuple[str, List]],
@@ -478,7 +469,7 @@ def cli(
             sys.exit(1)
 
     if exclude is None:
-        exclude = re.compile(DEFAULT_EXCLUDES)
+        exclude = re.compile(files.DEFAULT_EXCLUDES)
 
     if config and verbose:
         click.echo(f"Loaded {config} configuration file")
@@ -536,6 +527,6 @@ def cli(
         color=color,
         language=language,
     )
-    tidy = Robotidy(config=config)
+    tidy = app.Robotidy(config=config)
     status = tidy.transform_files()
     sys.exit(status)

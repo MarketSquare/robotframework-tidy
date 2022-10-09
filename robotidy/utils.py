@@ -1,8 +1,11 @@
 import ast
 import difflib
 import os
+import re
 from enum import Enum
-from typing import Iterable, List
+from typing import Iterable, List, Optional, Pattern
+
+import click
 
 try:
     from rich.markup import escape
@@ -44,6 +47,13 @@ class StatementLinesCollector(ModelVisitor):
 
     def __eq__(self, other):
         return other.text == self.text
+
+
+def validate_regex(value: Optional[str]) -> Optional[Pattern]:
+    try:
+        return re.compile(value) if value is not None else None
+    except re.error:
+        raise click.BadParameter("Not a valid regular expression")
 
 
 def decorate_diff_with_color(contents: List[str]) -> List[str]:

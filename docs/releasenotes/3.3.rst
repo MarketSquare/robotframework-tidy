@@ -34,3 +34,7 @@ English language is supported by default.
 Fixes
 ------
 * Add missing ``--skip-comments`` option (#418)
+
+Other
+-----
+* Reorganized our imports to better support optional rich dependency (#419)
