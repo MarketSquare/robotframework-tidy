@@ -31,6 +31,10 @@ English language is supported by default.
 * Updated MergeAndOrderSections to not merge language: <lang> header with other comment sections
 * Sections with only language: <lang> marker and less than ``section_lines`` empty lines will be not transformed by NormalizeNewLines
 
+Fixes
+------
+* Add missing ``--skip-comments`` option (#418)
+
 Other
 -----
 * Reorganized our imports to better support optional rich dependency (#419)
