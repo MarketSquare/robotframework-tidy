@@ -49,19 +49,21 @@ class TestNormalizeNewLines(TransformerAcceptanceTest):
 
     @pytest.mark.parametrize("trailing_lines", [0, 1, 2])
     def test_inline_if(self, trailing_lines):
-        self.compare(source=f"inline_if_{trailing_lines}_lines.robot", expected="inline_if.robot", target_version=5)
+        self.compare(source=f"inline_if_{trailing_lines}_lines.robot", expected="inline_if.robot", target_version=">=5")
 
     def test_disablers(self):
         self.compare(source="disablers.robot", not_modified=True)
 
     def test_blocks(self):
-        self.compare(source="blocks.robot", target_version=5)
+        self.compare(source="blocks.robot", target_version=">=5")
 
     def test_remove_empty_multiline(self):
         self.compare(source="multiline.robot")
 
     def test_language_header(self):
-        self.compare(source="language_header_0empty.robot", target_version=6)
-        self.compare(source="language_header_2empty.robot", target_version=6)
-        self.compare(source="language_header_5empty.robot", expected="language_header_2empty.robot", target_version=6)
-        self.compare(source="language_header_and_comments.robot", target_version=6)
+        self.compare(source="language_header_0empty.robot", target_version=">=6")
+        self.compare(source="language_header_2empty.robot", target_version=">=6")
+        self.compare(
+            source="language_header_5empty.robot", expected="language_header_2empty.robot", target_version=">=6"
+        )
+        self.compare(source="language_header_and_comments.robot", target_version=">=6")
