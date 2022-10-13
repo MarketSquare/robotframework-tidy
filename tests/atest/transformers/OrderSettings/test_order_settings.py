@@ -84,4 +84,4 @@ class TestOrderSettings(TransformerAcceptanceTest):
         assert result.output == expected_output
 
     def test_translated(self):
-        self.compare(source="translated.robot", target_version=6)
+        self.compare(source="translated.robot", target_version=">=6")

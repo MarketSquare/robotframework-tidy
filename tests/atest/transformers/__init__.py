@@ -5,6 +5,7 @@ from typing import List, Optional
 
 import pytest
 from click.testing import CliRunner
+from packaging.specifiers import SpecifierSet
 from rich.console import Console
 
 from robotidy.cli import cli
@@ -43,7 +44,7 @@ class TransformerAcceptanceTest:
         not_modified: bool = False,
         expected: Optional[str] = None,
         config: str = "",
-        target_version: Optional[int] = None,
+        target_version: Optional[str] = None,
     ):
         """
         Compare actual (source) and expected files. If expected filename is not provided it's assumed to be the same
@@ -52,7 +53,7 @@ class TransformerAcceptanceTest:
         Use not_modified flag if the content of the file shouldn't be modified by transformer.
         """
         if not self.enabled_in_version(target_version):
-            pytest.skip(f"Test enabled only for RF {target_version}.0")
+            pytest.skip(f"Test enabled only for RF {target_version}")
         if expected is None:
             expected = source
         self.run_tidy(
@@ -91,8 +92,8 @@ class TransformerAcceptanceTest:
             display_file_diff(expected, actual)
             pytest.fail(f"File {actual_name} is not same as expected")
 
-    def enabled_in_version(self, target_version: Optional[int]) -> bool:
-        if target_version and ROBOT_VERSION.major != target_version:
+    def enabled_in_version(self, target_version: Optional[str]) -> bool:
+        if target_version and ROBOT_VERSION not in SpecifierSet(target_version, prereleases=True):
             return False
         if self.TRANSFORMER_NAME in VERSION_MATRIX:
             return ROBOT_VERSION.major >= VERSION_MATRIX[self.TRANSFORMER_NAME]

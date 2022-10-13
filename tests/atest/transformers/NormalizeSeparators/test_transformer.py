@@ -41,7 +41,7 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
         assert expected_output == result.output
 
     def test_rf5_syntax(self):
-        self.compare(source="rf5_syntax.robot", target_version=5)
+        self.compare(source="rf5_syntax.robot", target_version=">=5")
 
     def test_disablers(self):
         self.compare(source="disablers.robot", not_modified=True)
@@ -64,7 +64,7 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
             expected=f"inline_if_{indent}indent_{spaces}spaces.robot",
             config=f" --spacecount {spaces} --indent {indent}",
             not_modified=not_modified,
-            target_version=5,
+            target_version=">=5",
         )
 
     def test_skip_keyword_call(self):
@@ -85,4 +85,4 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
             expected = "comments_skip_comments.robot"
         else:
             expected = "comments_skip_block_comments.robot"
-        self.compare(source="comments.robot", expected=expected, config=config, target_version=5)
+        self.compare(source="comments.robot", expected=expected, config=config, target_version=">=5")
