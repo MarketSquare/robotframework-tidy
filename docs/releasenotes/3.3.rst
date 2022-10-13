@@ -33,7 +33,8 @@ English language is supported by default.
 
 Fixes
 ------
-* Add missing ``--skip-comments`` option (#418)
+* Added missing ``--skip-comments`` option (#418)
+* ``CONTINUE`` and ``BREAK`` statements in inline IFs are now intended correctly (#422)
 
 Other
 -----

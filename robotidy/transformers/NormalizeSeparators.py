@@ -144,9 +144,7 @@ class NormalizeSeparators(Transformer):
         return self.visit_Statement(node)
 
     def is_keyword_inside_inline_if(self, node):
-        return self.is_inline and (
-            isinstance(node, KeywordCall) or ReturnStatement and isinstance(node, ReturnStatement)
-        )
+        return self.is_inline and not isinstance(node, InlineIfHeader)
 
     @skip_if_disabled
     def visit_Statement(self, statement):  # noqa
