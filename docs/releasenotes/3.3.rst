@@ -39,3 +39,4 @@ Fixes
 Other
 -----
 * Reorganized our imports to better support optional rich dependency (#419)
+* Replaced packaging dependency with internal version handling, which makes our installer lighter
