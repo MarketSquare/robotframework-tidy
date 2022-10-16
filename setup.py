@@ -42,7 +42,6 @@ setup(
         "robotframework>=4.0",
         "click>=7.1.2",
         "colorama>=0.4.3",
-        "packaging>=21.0",
         "pathspec>=0.9.0,<0.10.0",
         "tomli>=2.0.0",
         "rich_click==1.4",
@@ -52,6 +51,7 @@ setup(
             "coverage",
             "invoke",
             "jinja2",
+            "packaging>=21.0",
             "pyflakes==2.4.*",  #  FIXME https://github.com/klen/pylama/issues/224
             "pylama",
             "pytest",

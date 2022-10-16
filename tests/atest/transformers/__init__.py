@@ -5,17 +5,20 @@ from typing import List, Optional
 
 import pytest
 from click.testing import CliRunner
+from packaging import version
 from packaging.specifiers import SpecifierSet
 from rich.console import Console
+from robot.version import VERSION as RF_VERSION
 
 from robotidy.cli import cli
-from robotidy.utils import ROBOT_VERSION, decorate_diff_with_color
+from robotidy.utils import decorate_diff_with_color
 
 VERSION_MATRIX = {
     "ReplaceReturns": 5,
     "InlineIf": 5,
     "ReplaceBreakContinue": 5,
 }
+ROBOT_VERSION = version.parse(RF_VERSION)
 
 
 def display_file_diff(expected, actual):
