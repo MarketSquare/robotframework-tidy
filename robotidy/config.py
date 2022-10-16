@@ -3,6 +3,11 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Optional, Pattern, Tuple
 
+try:
+    from robot.api import Languages  # RF 6.0
+except ImportError:
+    Languages = None
+
 from robotidy.files import get_paths
 from robotidy.transformers import load_transformers
 
@@ -81,7 +86,7 @@ class Config:
         self.check = check
         self.output = output
         self.color = color
-        self.language = language
+        self.language = self.get_languages(language)
         transformers_config = self.convert_configure(transformers_config)
         self.transformers = self.get_transformers_instances(
             transformers, transformers_config, force_order, target_version, skip
@@ -91,6 +96,7 @@ class Config:
             # inject global settings TODO: handle it better
             setattr(transformer, "formatting_config", self.formatting)
             setattr(transformer, "transformers", transformer_map)
+            setattr(transformer, "languages", self.language)
 
     @staticmethod
     def get_transformers_instances(transformers, transformers_config, force_order, target_version, skip):
@@ -107,3 +113,9 @@ class Config:
         for transformer, args in configure:
             config_map[transformer].extend(args)
         return config_map
+
+    @staticmethod
+    def get_languages(lang):
+        if Languages is None:
+            return None
+        return Languages(lang)
