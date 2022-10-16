@@ -3,6 +3,7 @@ import difflib
 import os
 import re
 from enum import Enum
+from functools import total_ordering
 from typing import Iterable, List, Optional, Pattern
 
 import click
@@ -12,13 +13,42 @@ try:
 except ImportError:  # Fails on vendored-in LSP plugin
     escape = None
 
-from packaging import version
 from robot.api.parsing import Comment, End, If, IfHeader, ModelVisitor, Token
 from robot.parsing.model import Statement
 from robot.utils.robotio import file_writer
 from robot.version import VERSION as RF_VERSION
 
-ROBOT_VERSION = version.parse(RF_VERSION)
+
+@total_ordering
+class Version:
+    def __init__(self, major: int, minor: int, fix: int):
+        self.major = major
+        self.minor = minor
+        self.fix = fix
+
+    @classmethod
+    def parse(cls, raw_version):
+        version = re.search(r"(?P<major>[0-9]+)\.(?P<minor>[0-9]+)\.?(?P<fix>[0-9]+)*", raw_version)
+        major = int(version.group("major"))
+        minor = int(version.group("minor")) if version.group("minor") is not None else 0
+        fix = int(version.group("fix")) if version.group("fix") is not None else 0
+        return cls(major, minor, fix)
+
+    def __eq__(self, other):
+        return self.major == other.major and self.minor == other.minor and self.fix == other.fix
+
+    def __lt__(self, other):
+        if self.major != other.major:
+            return self.major < other.major
+        if self.minor != other.minor:
+            return self.minor < other.minor
+        return self.fix < other.fix
+
+    def __str__(self):
+        return f"{self.major}.{self.minor}.{self.fix}"
+
+
+ROBOT_VERSION = Version.parse(RF_VERSION)
 
 
 def rf_supports_lang():

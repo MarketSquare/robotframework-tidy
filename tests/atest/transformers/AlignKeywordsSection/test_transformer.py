@@ -18,13 +18,13 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
         self.compare(source="blocks.robot", expected="blocks_auto_0.robot", config=":alignment_type=auto:widths=0")
 
     def test_blocks_rf5(self):
-        self.compare(source="blocks_rf5.robot", target_version=5)
+        self.compare(source="blocks_rf5.robot", target_version=">=5")
 
     def test_one_column(self):
         self.compare(source="one_column.robot")
 
     def test_invalid(self):
-        self.compare(source="non_ascii_spaces.robot", target_version=5)
+        self.compare(source="non_ascii_spaces.robot", target_version=">=5")
 
     @pytest.mark.parametrize(
         "widths",
@@ -93,7 +93,7 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
         self.compare(source="too_long_line.robot", config=" --transform SplitTooLongLine")
 
     def test_error_node(self):
-        self.compare(source="error_node.robot", not_modified=True, target_version=5)
+        self.compare(source="error_node.robot", not_modified=True, target_version=">=5")
 
     def test_skip_return_values(self):
         self.compare(

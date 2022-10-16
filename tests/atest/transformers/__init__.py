@@ -5,16 +5,20 @@ from typing import List, Optional
 
 import pytest
 from click.testing import CliRunner
+from packaging import version
+from packaging.specifiers import SpecifierSet
 from rich.console import Console
+from robot.version import VERSION as RF_VERSION
 
 from robotidy.cli import cli
-from robotidy.utils import ROBOT_VERSION, decorate_diff_with_color
+from robotidy.utils import decorate_diff_with_color
 
 VERSION_MATRIX = {
     "ReplaceReturns": 5,
     "InlineIf": 5,
     "ReplaceBreakContinue": 5,
 }
+ROBOT_VERSION = version.parse(RF_VERSION)
 
 
 def display_file_diff(expected, actual):
@@ -43,7 +47,7 @@ class TransformerAcceptanceTest:
         not_modified: bool = False,
         expected: Optional[str] = None,
         config: str = "",
-        target_version: Optional[int] = None,
+        target_version: Optional[str] = None,
     ):
         """
         Compare actual (source) and expected files. If expected filename is not provided it's assumed to be the same
@@ -52,7 +56,7 @@ class TransformerAcceptanceTest:
         Use not_modified flag if the content of the file shouldn't be modified by transformer.
         """
         if not self.enabled_in_version(target_version):
-            pytest.skip(f"Test enabled only for RF {target_version}.0")
+            pytest.skip(f"Test enabled only for RF {target_version}")
         if expected is None:
             expected = source
         self.run_tidy(
@@ -91,8 +95,8 @@ class TransformerAcceptanceTest:
             display_file_diff(expected, actual)
             pytest.fail(f"File {actual_name} is not same as expected")
 
-    def enabled_in_version(self, target_version: Optional[int]) -> bool:
-        if target_version and ROBOT_VERSION.major != target_version:
+    def enabled_in_version(self, target_version: Optional[str]) -> bool:
+        if target_version and ROBOT_VERSION not in SpecifierSet(target_version, prereleases=True):
             return False
         if self.TRANSFORMER_NAME in VERSION_MATRIX:
             return ROBOT_VERSION.major >= VERSION_MATRIX[self.TRANSFORMER_NAME]

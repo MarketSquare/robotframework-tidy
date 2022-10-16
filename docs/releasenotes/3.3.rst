@@ -42,8 +42,10 @@ See the full documentation `here <https://robotidy.readthedocs.io/en/stable/tran
 
 Fixes
 ------
-* Add missing ``--skip-comments`` option (#418)
+* Added missing ``--skip-comments`` option (#418)
+* ``CONTINUE`` and ``BREAK`` statements in inline IFs are now intended correctly (#422)
 
 Other
 -----
 * Reorganized our imports to better support optional rich dependency (#419)
+* Replaced packaging dependency with internal version handling, which makes our installer lighter
