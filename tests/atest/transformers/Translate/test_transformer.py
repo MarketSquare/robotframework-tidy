@@ -1,5 +1,7 @@
 import pytest
 
+from robotidy.utils import ROBOT_VERSION
+
 from .. import TransformerAcceptanceTest
 
 
@@ -41,6 +43,8 @@ class TestTranslate(TransformerAcceptanceTest):
         )
 
     def test_bdd_alternative_invalid(self):
+        if ROBOT_VERSION.major < 6:
+            pytest.skip("Test enabled only for RF 6.0+")
         result = self.run_tidy(
             args=f"--transform {self.TRANSFORMER_NAME}:translate_bdd=True:language=pl:but_alternative=chyba"
             f" --language pl".split(),
@@ -75,4 +79,9 @@ class TestTranslate(TransformerAcceptanceTest):
             config=config,
             source="add_lang_header/no_lang_header.robot",
             expected="add_lang_header/no_lang_header.robot",
+        )
+        self.compare(
+            config=":add_language_header=True",
+            source="add_lang_header/en_header.robot",
+            expected="add_lang_header/en_header.robot",
         )

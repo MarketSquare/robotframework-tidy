@@ -26,7 +26,7 @@ def unit(session, robot_version):
 
 @nox.session(python=DEFAULT_PYTHON_VERSION)
 def coverage(session):
-    install_dev_deps(session, "stable5")
+    install_dev_deps(session, "stable6")
     session.install("coverage")
     session.run("coverage", "run", "-m", "pytest")
     session.run("coverage", "html")

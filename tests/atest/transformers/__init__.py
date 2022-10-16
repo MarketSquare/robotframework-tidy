@@ -13,11 +13,7 @@ from robot.version import VERSION as RF_VERSION
 from robotidy.cli import cli
 from robotidy.utils import decorate_diff_with_color
 
-VERSION_MATRIX = {
-    "ReplaceReturns": 5,
-    "InlineIf": 5,
-    "ReplaceBreakContinue": 5,
-}
+VERSION_MATRIX = {"ReplaceReturns": 5, "InlineIf": 5, "ReplaceBreakContinue": 5, "Translate": 6}
 ROBOT_VERSION = version.parse(RF_VERSION)
 
 
