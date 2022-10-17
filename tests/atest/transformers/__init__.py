@@ -13,17 +13,13 @@ from robot.version import VERSION as RF_VERSION
 from robotidy.cli import cli
 from robotidy.utils import decorate_diff_with_color
 
-VERSION_MATRIX = {
-    "ReplaceReturns": 5,
-    "InlineIf": 5,
-    "ReplaceBreakContinue": 5,
-}
+VERSION_MATRIX = {"ReplaceReturns": 5, "InlineIf": 5, "ReplaceBreakContinue": 5, "Translate": 6}
 ROBOT_VERSION = version.parse(RF_VERSION)
 
 
 def display_file_diff(expected, actual):
     print("\nExpected file after transforming does not match actual")
-    with open(expected) as f, open(actual) as f2:
+    with open(expected, encoding="utf-8") as f, open(actual, encoding="utf-8") as f2:
         expected_lines = f.readlines()
         actual_lines = f2.readlines()
     lines = [

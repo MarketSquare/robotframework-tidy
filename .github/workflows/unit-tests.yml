@@ -28,7 +28,7 @@ jobs:
             rf-version: 'stable5'
           - os: 'ubuntu-latest'
             python-version: '3.10'
-            rf-version: 'stable5'
+            rf-version: 'stable6'
     runs-on: ${{ matrix.os }}
 
     steps:

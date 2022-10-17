@@ -36,12 +36,12 @@ RERUN_NEEDED = {
         "test": 2,
         "test_disablers": 2,
     },
-    "MergeAndOrderSections": {"parsing_error": 2},
+    "MergeAndOrderSections": {"parsing_error": 2, "translated": 2},
     "NormalizeNewLines": {"tests": 2},
     "NormalizeSeparators": {"disablers": 2, "pipes": 2},
-    "NormalizeSettingName": {"disablers": 2},
+    "NormalizeSettingName": {"disablers": 2, "translated": 2},
     "NormalizeTags": {"disablers": 2},
-    "OrderSettings": {"test": 2},
+    "OrderSettings": {"test": 2, "translated": 2},
     "RemoveEmptySettings": {"empty": 2, "disablers": 2, "overwritten": 2},
     "RenameKeywords": {"disablers": 2},
     "ReplaceBreakContinue": {"test": 2},
@@ -49,6 +49,7 @@ RERUN_NEEDED = {
     "ReplaceRunKeywordIf": {"configure_whitespace": 2, "disablers": 3, "set_variable_workaround": 2, "tests": 2},
     "SmartSortKeywords": {"multiple_sections": 2, "sort_input": 2},
     "SplitTooLongLine": {"continuation_indent": 2, "disablers": 2, "tests": 2},
+    "Translate": {"pl_language_header": 2},
 }
 SKIP_TESTS_4 = {"ReplaceReturns": {"test"}}
 SKIP_TESTS = {"ReplaceRunKeywordIf": {"invalid_data"}, "SplitTooLongLine": {"variables"}}

@@ -27,9 +27,18 @@ Or by using ``--language / --lang`` option::
 
 English language is supported by default.
 
+* New Translate transformer for translating Robot Framework files
 * Updated NormalizeSectionHeaderName transformer to work with translated headers
 * Updated MergeAndOrderSections to not merge language: <lang> header with other comment sections
 * Sections with only language: <lang> marker and less than ``section_lines`` empty lines will be not transformed by NormalizeNewLines
+
+Translate transformer
+----------------------
+
+Added new non-default transformer for translating Robot Framework files. It is possible to automatically convert your
+Robot Framework files to use other supported language.
+
+See the full documentation `here <https://robotidy.readthedocs.io/en/stable/transformers/Translate.html>`_.
 
 Fixes
 ------
