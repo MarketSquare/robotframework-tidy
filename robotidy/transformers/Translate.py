@@ -125,7 +125,7 @@ class Translate(Transformer):
         """
         Adds or replaces language headers in transformed files.
         If the file already contains language header it will be replaced.
-        If destination language is english it will be removed.
+        If the destination language is English, it will be removed.
         """
         if not self.add_language_header or not node.sections:
             return node
@@ -157,7 +157,7 @@ class Translate(Transformer):
         Example of keyword name with BDD keyword:
             Given I Open Main Page
         Source keyword call can be written in any language - that's why we need to translate first word of the keyword
-        to english then to destination language.
+        to English then to destination language.
         """
         if not self.translate_bdd or not node.keyword:
             return node
