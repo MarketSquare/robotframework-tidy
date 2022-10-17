@@ -1,4 +1,4 @@
-Robotidy 3.3.0
+Robotidy 3.3
 =========================================
 
 You can install the latest available version by running::
@@ -7,7 +7,7 @@ You can install the latest available version by running::
 
 or to install exactly this version::
 
-    pip install robotframework-tidy==3.3.0
+    pip install robotframework-tidy==3.3
 
 Translation updates
 --------------------
