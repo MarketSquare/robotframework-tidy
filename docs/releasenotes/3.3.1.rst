@@ -1,0 +1,30 @@
+Robotidy 3.3.1
+=========================================
+Fix release for RenameKeyword variable matching improvements.
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==3.3.1
+
+
+Do not rename variables in RenameKeyword (#417)
+------------------------------------------------
+Variables were also renamed in ``RenameKeyword`` transformer.
+Following code:
+
+```
+Login With '${user.id}'
+```
+
+was transformed to:
+
+```
+Login With '${user.Id}'
+```
+
+To fix this issue we redesigned keyword name matching in the transformer.
+Now it should properly escape all variables (and also possible indices).

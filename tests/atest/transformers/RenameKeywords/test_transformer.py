@@ -58,3 +58,12 @@ class TestRenameKeywords(TransformerAcceptanceTest):
 
     def test_run_keywords(self):
         self.compare(source="run_keywords.robot")
+
+    def test_embedded_variables(self):
+        self.compare(source="embedded_variables.robot")
+
+    def test_embedded_with_pattern(self):
+        self.compare(
+            config=":replace_pattern=(?i)rename\s?with\s.+variable$:replace_to=New_Name_${keyword}_And_${var}",
+            source="library_embedded_var_pattern.robot",
+        )
