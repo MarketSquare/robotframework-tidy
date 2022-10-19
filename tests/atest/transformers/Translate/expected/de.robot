@@ -4,7 +4,7 @@ Dokumentation    This is doc
 
 Suitenachbereitung    Keyword
 
-Aufgaben Marker    tag
+Aufgabenmarker    tag
 
 
 *** Variablen ***
