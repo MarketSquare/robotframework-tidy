@@ -83,11 +83,11 @@ class Translate(Transformer):
         if self._bdd_mapping is None:
             self._bdd_mapping = {}
             for language in self.languages:
-                self._bdd_mapping.update({name.title(): "But" for name in language.but_prefix})
-                self._bdd_mapping.update({name.title(): "Given" for name in language.given_prefix})
-                self._bdd_mapping.update({name.title(): "And" for name in language.and_prefix})
-                self._bdd_mapping.update({name.title(): "Then" for name in language.then_prefix})
-                self._bdd_mapping.update({name.title(): "When" for name in language.when_prefix})
+                self._bdd_mapping.update({name.title(): "But" for name in language.but_prefixes})
+                self._bdd_mapping.update({name.title(): "Given" for name in language.given_prefixes})
+                self._bdd_mapping.update({name.title(): "And" for name in language.and_prefixes})
+                self._bdd_mapping.update({name.title(): "Then" for name in language.then_prefixes})
+                self._bdd_mapping.update({name.title(): "When" for name in language.when_prefixes})
         return self._bdd_mapping
 
     def get_bdd_keyword(self, container: Set, alternative: Optional[str], param_name: str) -> str:
@@ -114,11 +114,11 @@ class Translate(Transformer):
         if not self.translate_bdd:
             return {}
         return {
-            "But": self.get_bdd_keyword(self.language.but_prefix, but_alternative, "but_alternative"),
-            "Given": self.get_bdd_keyword(self.language.given_prefix, given_alternative, "given_alternative"),
-            "And": self.get_bdd_keyword(self.language.and_prefix, and_alternative, "and_alternative"),
-            "Then": self.get_bdd_keyword(self.language.then_prefix, then_alternative, "then_alternative"),
-            "When": self.get_bdd_keyword(self.language.when_prefix, when_alternative, "when_alternative"),
+            "But": self.get_bdd_keyword(self.language.but_prefixes, but_alternative, "but_alternative"),
+            "Given": self.get_bdd_keyword(self.language.given_prefixes, given_alternative, "given_alternative"),
+            "And": self.get_bdd_keyword(self.language.and_prefixes, and_alternative, "and_alternative"),
+            "Then": self.get_bdd_keyword(self.language.then_prefixes, then_alternative, "then_alternative"),
+            "When": self.get_bdd_keyword(self.language.when_prefixes, when_alternative, "when_alternative"),
         }
 
     def add_replace_language_header(self, node):

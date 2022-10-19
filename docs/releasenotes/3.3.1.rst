@@ -1,6 +1,6 @@
 Robotidy 3.3.1
 =========================================
-Fix release for RenameKeyword variable matching improvements.
+Fix release for breaking changes in RF 6.0 language API and RenameKeyword variable matching improvements.
 
 You can install the latest available version by running::
 
@@ -10,6 +10,11 @@ or to install exactly this version::
 
     pip install robotframework-tidy==3.3.1
 
+Fix Translate BDD keywords
+---------------------------
+Final release of the Robot Framework 6.0 modified the language API.
+This change will breaks the Robotidy with RF 6.0 when using ``Translate`` transformer with
+`translate_bdd`` set to ``True``. This release fixes it.
 
 Do not rename variables in RenameKeyword (#417)
 ------------------------------------------------
