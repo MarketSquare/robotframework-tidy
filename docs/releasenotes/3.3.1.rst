@@ -19,17 +19,13 @@ This change will breaks the Robotidy with RF 6.0 when using ``Translate`` transf
 Do not rename variables in RenameKeyword (#417)
 ------------------------------------------------
 Variables were also renamed in ``RenameKeyword`` transformer.
-Following code:
+Following code::
 
-```
-Login With '${user.id}'
-```
+    Login With '${user.id}'
 
-was transformed to:
+was transformed to::
 
-```
-Login With '${user.Id}'
-```
+    Login With '${user.Id}'
 
 To fix this issue we redesigned keyword name matching in the transformer.
 Now it should properly escape all variables (and also possible indices).
