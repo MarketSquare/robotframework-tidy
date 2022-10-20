@@ -8,3 +8,9 @@ Variable With Square Brackets
 
 Invalid Syntax
     Not Closed ${var
+
+Multiple In A Row
+    Verstuur RTR ${project} ${operatie} ${opdracht}
+
+Empty Space After Last Variable
+    Embedded ${variable} And Space

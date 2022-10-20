@@ -1,0 +1,15 @@
+Robotidy 3.3.2
+=========================================
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==3.3.2
+
+Fixes
+------
+
+- ``RenameKeywords`` shall now insert only one space between two embedded variables in keyword names (#433)

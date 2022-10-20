@@ -102,26 +102,26 @@ class RenameKeywords(ModelTransformer):
         for prefix, match, remaining in VariableIterator(value, ignore_errors=True):
             var_found = True
             # rename strips whitespace, so we need to preserve it if needed
-            trailing_space = " " if prefix.endswith(" ") else ""
-            remaining_space = " " if remaining.startswith(" ") else ""
-            parts.extend([self.rename_part(prefix, is_keyword_call), trailing_space, match, remaining_space])
+            if not prefix.strip():
+                parts.extend([" ", match])
+            else:
+                leading_space = " " if prefix.startswith(" ") else ""
+                trailing_space = " " if prefix.endswith(" ") else ""
+                parts.extend([leading_space, self.rename_part(prefix, is_keyword_call), trailing_space, match])
         if var_found:
+            if remaining.startswith(" "):
+                parts.append(" ")
             parts.append(self.rename_part(remaining, is_keyword_call))
-            new_name = "".join(parts)
-        else:
-            new_name = self.rename_part(value, is_keyword_call)
-        return new_name
+            return "".join(parts)
+        return self.rename_part(value, is_keyword_call)
 
     def rename_part(self, part: str, is_keyword_call: bool):
-        values = []
-        split_names = part.split(".")
-        for index, value in enumerate(split_names, start=1):
-            if is_keyword_call and self.ignore_library and index != len(split_names):
-                values.append(value)
-                continue
-            value = self.remove_underscores_and_capitalize(value)
-            values.append(value)
-        return ".".join(values)
+        if is_keyword_call and self.ignore_library:
+            lib_name, *kw_name = part.rsplit(".", maxsplit=1)
+            if not kw_name:
+                return self.remove_underscores_and_capitalize(part)
+            return f"{lib_name}.{self.remove_underscores_and_capitalize(kw_name[0])}"
+        return ".".join([self.remove_underscores_and_capitalize(name_part) for name_part in part.split(".")])
 
     def remove_underscores_and_capitalize(self, value: str):
         if self.remove_underscores:
