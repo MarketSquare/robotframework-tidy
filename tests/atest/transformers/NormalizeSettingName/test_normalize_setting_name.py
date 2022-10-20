@@ -19,3 +19,6 @@ class TestNormalizeSettingName(TransformerAcceptanceTest):
 
     def test_translated(self):
         self.compare(source="translated.robot", target_version=">=6")
+
+    def test_rf6_syntax(self):
+        self.compare(source="rf6.robot", target_version=">=6")

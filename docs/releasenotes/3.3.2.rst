@@ -1,5 +1,6 @@
 Robotidy 3.3.2
 =========================================
+Fix release addressing issues in ``RenameKeywords`` and ``NormalizeTags`` transformers.
 
 You can install the latest available version by running::
 
@@ -13,3 +14,4 @@ Fixes
 ------
 
 - ``RenameKeywords`` shall now insert only one space between two embedded variables in keyword names (#433)
+- ``NormalizeTags`` will now preserve ``Test Tags`` and do not rename it to ``Force Tags`` (#432)
