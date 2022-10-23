@@ -14,6 +14,7 @@ RERUN_NEEDED_4 = {
     "RenameKeywords": {"run_keywords": 2, "disablers": 2},
     "ReplaceReturns": {"replace_returns_disablers": 2},
 }
+# Transformer_name: {"name of test file from atest": "reruns until stable"}
 RERUN_NEEDED = {
     "AddMissingEnd": {"test": 2},
     "AlignKeywordsSection": {"blocks_rf5": 2, "non_ascii_spaces": 2},
@@ -36,12 +37,13 @@ RERUN_NEEDED = {
         "test": 2,
         "test_disablers": 2,
     },
-    "MergeAndOrderSections": {"parsing_error": 2, "translated": 2},
+    "MergeAndOrderSections": {"disablers": 2, "parsing_error": 2, "translated": 2},
     "NormalizeNewLines": {"tests": 2},
-    "NormalizeSeparators": {"disablers": 2, "pipes": 2},
+    "NormalizeSeparators": {"continuation_indent": 2, "test": 2, "disablers": 2, "pipes": 2},
     "NormalizeSettingName": {"disablers": 2, "translated": 2},
     "NormalizeTags": {"disablers": 2},
     "OrderSettings": {"test": 2, "translated": 2},
+    "OrderSettingsSection": {"test": 2},
     "RemoveEmptySettings": {"empty": 2, "disablers": 2, "overwritten": 2},
     "RenameKeywords": {"disablers": 2},
     "ReplaceBreakContinue": {"test": 2},

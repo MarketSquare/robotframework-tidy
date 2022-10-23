@@ -55,22 +55,24 @@ class NormalizeTags(Transformer):
     def normalize_tags(self, node, tag_class, indent=False):
         if self.disablers.is_node_disabled(node, full_match=False):
             return node
+        separator = Token(Token.SEPARATOR, self.formatting_config.separator)
+        setting_name = node.data_tokens[0]
         tags = [tag.value for tag in node.data_tokens[1:]]
         if self.normalize_case:
             tags = self.convert_case(tags)
         tags = self.remove_duplicates(tags)
         comments = node.get_tokens(Token.COMMENT)
         if indent:
-            tag_node = tag_class.from_params(
-                tags,
-                indent=self.formatting_config.indent,
-                separator=self.formatting_config.separator,
-            )
+            tokens = [Token(Token.SEPARATOR, self.formatting_config.indent), setting_name]
         else:
-            tag_node = tag_class.from_params(tags, separator=self.formatting_config.separator)
+            tokens = [setting_name]
+        for tag in tags:
+            tokens.extend([separator, Token(Token.ARGUMENT, tag)])
         if comments:
-            tag_node.tokens = tag_node.tokens[:-1] + tuple(self.join_tokens(comments)) + (tag_node.tokens[-1],)
-        return tag_node
+            tokens.extend(self.join_tokens(comments))
+        tokens.append(Token(Token.EOL))
+        node.tokens = tuple(tokens)
+        return node
 
     def convert_case(self, tags):
         return [self.case_function(item) for item in tags]
@@ -81,7 +83,7 @@ class NormalizeTags(Transformer):
 
     def join_tokens(self, tokens):
         joined_tokens = []
+        separator = Token(Token.SEPARATOR, self.formatting_config.separator)
         for token in tokens:
-            joined_tokens.append(Token(Token.SEPARATOR, self.formatting_config.separator))
-            joined_tokens.append(token)
+            joined_tokens.extend([separator, token])
         return joined_tokens

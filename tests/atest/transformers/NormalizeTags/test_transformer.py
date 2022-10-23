@@ -48,3 +48,6 @@ class TestNormalizeTags(TransformerAcceptanceTest):
             expected=f"spacing_{indent}indent_{spaces}spaces.robot",
             config=f" --spacecount {spaces} --indent {indent}",
         )
+
+    def test_rf6(self):
+        self.compare(source="rf6.robot", target_version=">=6", not_modified=True)
