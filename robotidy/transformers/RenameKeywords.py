@@ -114,7 +114,7 @@ class RenameKeywords(ModelTransformer):
             if remaining.startswith(" "):
                 parts.append(" ")
             parts.append(self.rename_part(remaining, is_keyword_call))
-            return "".join(parts)
+            return "".join(parts).strip()
         return self.rename_part(value, is_keyword_call)
 
     def rename_part(self, part: str, is_keyword_call: bool):
