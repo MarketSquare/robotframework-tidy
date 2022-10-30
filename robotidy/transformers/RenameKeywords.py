@@ -99,10 +99,12 @@ class RenameKeywords(ModelTransformer):
         var_found = False
         parts = []
         new_name, remaining = "", ""
+        if value.strip() == "${keyword}":
+            print()
         for prefix, match, remaining in VariableIterator(value, ignore_errors=True):
             var_found = True
             # rename strips whitespace, so we need to preserve it if needed
-            if not prefix.strip():
+            if not prefix.strip() and parts:
                 parts.extend([" ", match])
             else:
                 leading_space = " " if prefix.startswith(" ") else ""

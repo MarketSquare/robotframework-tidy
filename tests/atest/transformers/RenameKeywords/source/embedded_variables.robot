@@ -14,3 +14,10 @@ Multiple In A Row
 
 Empty Space After Last Variable
     Embedded ${variable} And Space
+
+Embedded Last
+    Embedded ${variable}
+    Embedded ${variable}    ${argument}
+
+Run Keyword
+    Run Keywords     ${keyword}
