@@ -56,17 +56,18 @@ class SplitTooLongLine(Transformer):
 
     ```robotframework
     *** Test Cases ***
-    Test with default split_on_every_arg
-        # ${arg1} fits under limit, so it stays in the line
-        Keyword With Longer Name    ${arg1}
-        ...    ${arg2}    ${arg3}
-
-    Test with split_on_every_arg = False
+    Test with split_on_every_arg = True (default)
         # arguments are split
         Keyword With Longer Name
         ...    ${arg1}
         ...    ${arg2}
         ...    ${arg3}
+
+    Test with split_on_every_arg = False
+        # ${arg1} fits under limit, so it stays in the line
+        Keyword With Longer Name    ${arg1}
+        ...    ${arg2}    ${arg3}
+
     ```
 
     Supports global formatting params: ``spacecount`` and ``separator``.

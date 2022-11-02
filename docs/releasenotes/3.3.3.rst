@@ -1,0 +1,16 @@
+Robotidy 3.3.3
+=========================================
+Fix release addressing invalid handling of run keywords in ``RenameKeywords`` transformer.
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==3.3.3
+
+Fixes
+------
+
+- ``RenameKeywords`` now does not insert extra space before variable used for keyword name in Run Keyword variant (#439)
