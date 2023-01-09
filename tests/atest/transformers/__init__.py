@@ -44,6 +44,7 @@ class TransformerAcceptanceTest:
         expected: Optional[str] = None,
         config: str = "",
         target_version: Optional[str] = None,
+        run_all: bool = False,
     ):
         """
         Compare actual (source) and expected files. If expected filename is not provided it's assumed to be the same
@@ -55,9 +56,11 @@ class TransformerAcceptanceTest:
             pytest.skip(f"Test enabled only for RF {target_version}")
         if expected is None:
             expected = source
-        self.run_tidy(
-            args=f"--transform {self.TRANSFORMER_NAME}{config}".split(), source=source, not_modified=not_modified
-        )
+        if run_all:
+            run_cmd = config
+        else:
+            run_cmd = f"--transform {self.TRANSFORMER_NAME}{config}"
+        self.run_tidy(args=run_cmd.split(), source=source, not_modified=not_modified)
         if not not_modified:
             self.compare_file(source, expected)
 
