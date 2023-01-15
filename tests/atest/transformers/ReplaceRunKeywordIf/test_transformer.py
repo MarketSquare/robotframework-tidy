@@ -28,3 +28,6 @@ class TestReplaceRunKeywordIf(TransformerAcceptanceTest):
 
     def test_configure_whitespace(self):
         self.compare(source="configure_whitespace.robot", config=" --spacecount 2 --indent 4")
+
+    def test_keyword_name_in_variable(self):
+        self.compare(source="keyword_name_in_var.robot")
