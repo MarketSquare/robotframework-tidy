@@ -1,7 +1,7 @@
 *** Test Cases ***
 No condition and keyword with arg
     IF    Keyword
-        ${arg}
+        Run Keyword    ${arg}
     END
 
 No condition and keyword without arg

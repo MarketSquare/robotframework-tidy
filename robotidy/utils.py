@@ -425,3 +425,7 @@ def get_new_line(indent=None):
     if indent:
         return [Token(Token.EOL), indent, Token(Token.CONTINUATION)]
     return [Token(Token.EOL), Token(Token.CONTINUATION)]
+
+
+def is_var(value: str):
+    return len(value) > 3 and value.startswith("${") and value.endswith("}")
