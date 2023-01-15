@@ -14,4 +14,5 @@ Fixes
 ------
 
 - ``RenameKeywords`` now does not insert extra space before variable used for keyword name in Run Keyword variant (#439)
+- The alignment of ``[Tags]`` should be now properly handled when using ``AlignTemplatedTestCases`` transformer (#443)
 - Add ``Run Keyword`` if ``Replace Run Keyword If`` contains variable instead of keyword name (#446)
