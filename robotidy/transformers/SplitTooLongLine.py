@@ -9,7 +9,8 @@ except ImportError:
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.skip import Skip
 from robotidy.transformers import Transformer
-from robotidy.utils import ROBOT_VERSION
+from robotidy.transformers.run_keywords import get_run_keywords
+from robotidy.utils import ROBOT_VERSION, normalize_name
 
 EOL = Token(Token.EOL)
 CONTINUATION = Token(Token.CONTINUATION)
@@ -90,10 +91,22 @@ class SplitTooLongLine(Transformer):
         self.robocop_disabler_pattern = re.compile(
             r"(# )+(noqa|robocop: ?(?P<disabler>disable|enable)=?(?P<rules>[\w\-,]*))"
         )
+        self.run_keywords = get_run_keywords()
 
     @property
     def line_length(self):
         return self.formatting_config.line_length if self._line_length is None else self._line_length
+
+    def is_run_keyword(self, kw_name):
+        """
+        Skip formatting if the keyword is already handled by IndentNestedKeywords transformer.
+
+        Special indentation is preserved thanks for this.
+        """
+        if "IndentNestedKeywords" not in self.transformers:
+            return False
+        kw_norm = normalize_name(kw_name)
+        return kw_norm in self.run_keywords
 
     @skip_section_if_disabled
     def visit_Section(self, node):  # noqa
@@ -138,6 +151,8 @@ class SplitTooLongLine(Transformer):
         if not self.should_transform_node(node):
             return node
         if self.disablers.is_node_disabled(node, full_match=False):
+            return node
+        if self.is_run_keyword(node.keyword):
             return node
         return self.split_keyword_call(node)
 

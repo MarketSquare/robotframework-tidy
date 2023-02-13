@@ -30,3 +30,6 @@ class TestIndentNestedKeywords(TransformerAcceptanceTest):
 
     def test_skip_settings(self):
         self.compare(source="settings.robot", not_modified=True, config=":skip_settings=True")
+
+    def test_too_long_line(self):
+        self.compare(source="too_long_line.robot", config=" --transform SplitTooLongLine")
