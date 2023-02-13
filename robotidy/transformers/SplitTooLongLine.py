@@ -138,7 +138,10 @@ class SplitTooLongLine(Transformer):
 
     def any_line_too_long(self, node):
         for line in node.lines:
-            line = "".join(token.value for token in line)
+            if self.skip.comments:  # TODO: ignore whitespace before comment
+                line = "".join(token.value for token in line if token.type != Token.COMMENT)
+            else:
+                line = "".join(token.value for token in line)
             line = self.robocop_disabler_pattern.sub("", line)
             line = line.rstrip().expandtabs(4)
             if len(line) >= self.line_length:
