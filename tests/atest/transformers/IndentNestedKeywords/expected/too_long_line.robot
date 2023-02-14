@@ -83,4 +83,3 @@ Settings
     ...        ${addingTheSecondArgumentMakesThisLineTooLong}
     ...    AND
     ...    Log    1
-

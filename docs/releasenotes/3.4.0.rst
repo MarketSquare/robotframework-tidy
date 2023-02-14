@@ -53,3 +53,13 @@ Now indents in run keywords are preserved and too long lines are split properly:
         ...        Element Should Contain    ${myVeryLongDefinitionOfAnElement}
         ...            ${addingTheSecondArgumentMakesThisLineTooLong}
 
+
+Too long lines in settings (#455)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+So far ``SplitTooLongLine`` only split the lines in the keyword calls and variables. This update extend the transformer
+to also split too long lines in tags (``Default Tags``, ``Force Tags``, ``[Tags]``) and arguments (``[Arguments]``).
+Support for the other setting will be added in the next releases.
+
+It is possible to configure how arguments in settings will be split using ``split_on_every_setting_arg`` parameter.
+Read more `in the documentation<https://robotidy.readthedocs.io/en/stable/transformers/SplitTooLongLine.html#split-settings-arguments-on-every-line>`_.

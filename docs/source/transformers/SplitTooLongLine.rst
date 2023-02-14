@@ -8,8 +8,7 @@ Split too long lines.
 .. |TRANSFORMERNAME| replace:: SplitTooLongLine
 .. include:: enabled_hint.txt
 
-If any line in the keyword call or variable exceeds given length limit (120 by default) it will be
-split:
+If line exceeds given length limit (120 by default) it will be split:
 
 .. tab-set::
 
@@ -43,6 +42,12 @@ split:
                 ...    ${arg2}
                 ...    ${arg3}
 
+Missing functionality
+----------------------
+``SplitTooLongLine`` does not support splitting all Robot Framework types. Currently it will only work on too
+long keyword calls, variables and selected settings (tags and arguments). Missing types will be covered in the future
+updates.
+
 Allowed line length
 --------------------
 
@@ -56,8 +61,8 @@ Or using dedicated for this transformer parameter ``line_length``::
 
 Split argument on every line
 ----------------------------
-Using ``split_on_every_arg`` flag (``True`` by default), you can force the formatter to fill arguments in one line
-until character limit::
+Using ``split_on_every_arg`` flag (``True`` by default), you can force the formatter to fill keyword arguments
+in one line until character limit::
 
     robotidy --configure SplitTooLongLine:split_on_every_arg=False src
 
@@ -107,6 +112,46 @@ until character limit::
             &{USER_PROFILE}    name=John Doe    age=12
             ...    hobby=coding
 
+Split settings arguments on every line
+---------------------------------------
+Using ``split_on_every_setting_arg`` flag (``True`` by default), you can force the formatter to fill settings arguments
+in one line until character limit::
+
+    robotidy --configure SplitTooLongLine:split_on_every_setting_arg=False src
+
+.. tab-set::
+
+    .. tab-item:: Before
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Arguments
+                [Arguments]    ${short}    ${veryLongAndJavaLikeArgumentThatWillGoOverAllowedLength}    ${veryLongAndJavaLikeArgumentThatWillGoOverAllowedLength}
+                Step
+
+    .. tab-item:: After (default)
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Arguments
+                [Arguments]
+                ...    ${short}
+                ...    ${veryLongAndJavaLikeArgumentThatWillGoOverAllowedLength}
+                ...    ${veryLongAndJavaLikeArgumentThatWillGoOverAllowedLength}
+                Step
+
+    .. tab-item:: After (split_on_every_setting_arg set to False)
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Arguments
+                [Arguments]    ${short}    ${veryLongAndJavaLikeArgumentThatWillGoOverAllowedLength}
+                ...    ${veryLongAndJavaLikeArgumentThatWillGoOverAllowedLength}
+                Step
+
 Assignments
 ------------
 Assignments will be split to multi lines if they don't fit together with Keyword in one line:
@@ -146,6 +191,7 @@ It is possible to use the following arguments to skip formatting of the code:
 
 - :ref:`skip keyword call`
 - :ref:`skip keyword call pattern`
+- :ref:`skip settings`
 
 It is also possible to use disablers (:ref:`disablers`) but ``skip`` option
 makes it easier to skip all instances of given type of the code.

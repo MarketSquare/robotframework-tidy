@@ -19,8 +19,7 @@ CONTINUATION = Token(Token.CONTINUATION)
 class SplitTooLongLine(Transformer):
     """
     Split too long lines.
-    If any line in the keyword call or variable exceeds given length limit (120 by default) it will be
-    split:
+    If line exceeds given length limit (120 by default) it will be split:
 
     ```robotframework
     *** Keywords ***
@@ -52,8 +51,8 @@ class SplitTooLongLine(Transformer):
     robotidy --configure SplitTooLongLine:line_length:140 src.robot
     ```
 
-    ``split_on_every_arg`` and ``split_on_every_value`` flags (``True`` by default) controls whether arguments
-    and values are split or fills the line until character limit:
+    ``split_on_every_arg``, `split_on_every_value`` and ``split_on_every_setting_arg`` flags (``True`` by default)
+    controls whether arguments and values are split or fills the line until character limit:
 
     ```robotframework
     *** Test Cases ***
@@ -82,12 +81,14 @@ class SplitTooLongLine(Transformer):
         line_length: int = None,
         split_on_every_arg: bool = True,
         split_on_every_value: bool = True,
+        split_on_every_setting_arg: bool = True,
         skip: Skip = None,
     ):
         super().__init__(skip)
         self._line_length = line_length
         self.split_on_every_arg = split_on_every_arg
         self.split_on_every_value = split_on_every_value
+        self.split_on_every_setting_arg = split_on_every_setting_arg
         self.robocop_disabler_pattern = re.compile(
             r"(# )+(noqa|robocop: ?(?P<disabler>disable|enable)=?(?P<rules>[\w\-,]*))"
         )
@@ -138,7 +139,7 @@ class SplitTooLongLine(Transformer):
 
     def any_line_too_long(self, node):
         for line in node.lines:
-            if self.skip.comments:  # TODO: ignore whitespace before comment
+            if self.skip.comments:
                 line = "".join(token.value for token in line if token.type != Token.COMMENT)
             else:
                 line = "".join(token.value for token in line)
@@ -164,6 +165,46 @@ class SplitTooLongLine(Transformer):
         if not self.should_transform_node(node):
             return node
         return self.split_variable_def(node)
+
+    @skip_if_disabled
+    def visit_Tags(self, node):  # noqa
+        if self.skip.setting("tags"):  # TODO test
+            return node
+        return self.split_setting_with_args(node, settings_section=False)
+
+    @skip_if_disabled
+    def visit_Arguments(self, node):  # noqa
+        if self.skip.setting("arguments"):
+            return node
+        return self.split_setting_with_args(node, settings_section=False)
+
+    @skip_if_disabled
+    def visit_ForceTags(self, node):  # noqa
+        if self.skip.setting("tags"):
+            return node
+        return self.split_setting_with_args(node, settings_section=True)
+
+    visit_DefaultTags = visit_TestTags = visit_ForceTags
+
+    def split_setting_with_args(self, node, settings_section):
+        if not self.should_transform_node(node):
+            return node
+        if self.disablers.is_node_disabled(node, full_match=False):
+            return node
+        if settings_section:
+            indent = 0
+            token_index = 1
+        else:
+            indent = node.tokens[0]
+            token_index = 2
+        line = list(node.tokens[:token_index])
+        tokens, comments = self.split_tokens(node.tokens, line, self.split_on_every_setting_arg, indent)
+        if indent:
+            comments = [Comment([indent, comment, EOL]) for comment in comments]
+        else:
+            comments = [Comment([comment, EOL]) for comment in comments]
+        node.tokens = tokens
+        return (node, *comments)
 
     @staticmethod
     def join_on_separator(tokens, separator):

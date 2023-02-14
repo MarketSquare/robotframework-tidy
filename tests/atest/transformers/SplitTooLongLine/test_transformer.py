@@ -104,3 +104,22 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
             expected="comments_skip_comments.robot",
             config=":split_on_every_value=False --transform AlignVariablesSection --skip-comments",
         )
+
+    def test_split_settings(self):
+        self.compare(
+            source="settings.robot", expected="settings_on_every_arg.robot", config=":split_on_every_setting_arg=True"
+        )
+
+    def test_split_settings_feed_until_line_length(self):
+        self.compare(
+            source="settings.robot",
+            expected="settings_until_line_length.robot",
+            config=":split_on_every_setting_arg=False",
+        )
+
+    def test_split_settings_feed_until_line_length_skip_comments(self):
+        self.compare(
+            source="settings.robot",
+            expected="settings_until_line_length_skip_comments.robot",
+            config=":split_on_every_setting_arg=False:skip_comments=True",
+        )
