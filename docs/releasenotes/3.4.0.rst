@@ -1,0 +1,55 @@
+Robotidy 3.4.0
+=========================================
+
+Several fixes and improvements in ``SplitTooLongLine`` transformer and other transformers.
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==3.4.0
+
+``SplitTooLongLine`` changes
+------------------------------
+
+Too long lines in run keywords (#451)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``SplitTooLongLine`` will not split too long line in run keywords (such as ``Run Keyword If`` or
+``Wait Until Keyword Succeeds``) if ``IndentNestedKeywords`` is enabled. The too long lines will be split by
+``IndentNestedKeywords`` instead.
+
+Following code::
+
+    *** Keywords ***
+    Run keyword with too long lines
+        Wait Until Keyword Succeeds    30 sec    1 sec    Run Keywords    Reload Page    AND    Element Should Contain    ${myVeryLongDefinitionOfAnElement}    ${addingTheSecondArgumentMakesThisLineTooLong}
+
+When both ``SplitTooLongLine`` and ``IndentNestedKeywords`` were enabled was transformed to::
+
+    *** Keywords ***
+    Run keyword with too long lines
+        Wait Until Keyword Succeeds
+        ...    30 sec
+        ...    1 sec
+        ...    Run Keywords
+        ...    Reload Page
+        ...    AND
+        ...    Element Should Contain
+        ...    ${myVeryLongDefinitionOfAnElement}
+        ...    ${addingTheSecondArgumentMakesThisLineTooLong}
+
+Before, the formatting from the ``IndentNestedKeywords`` was overwritten by the ``SplitTooLongLine`` formatting.
+Now indents in run keywords are preserved and too long lines are split properly::
+
+    *** Keywords ***
+    Run keyword with too long lines
+        Wait Until Keyword Succeeds    30 sec    1 sec
+        ...    Run Keywords
+        ...        Reload Page
+        ...        AND
+        ...        Element Should Contain    ${myVeryLongDefinitionOfAnElement}
+        ...            ${addingTheSecondArgumentMakesThisLineTooLong}
+

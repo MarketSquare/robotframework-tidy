@@ -429,3 +429,11 @@ def get_new_line(indent=None):
 
 def is_var(value: str):
     return len(value) > 3 and value.startswith("${") and value.endswith("}")
+
+
+def get_line_length(tokens):
+    return sum(len(token.value) for token in tokens)
+
+
+def get_line_length_with_sep(tokens, sep_len: int):
+    return get_line_length(tokens) + ((len(tokens) - 1) * sep_len)
