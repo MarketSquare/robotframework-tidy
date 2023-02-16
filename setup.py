@@ -14,6 +14,8 @@ Programming Language :: Python
 Programming Language :: Python :: 3.7
 Programming Language :: Python :: 3.8
 Programming Language :: Python :: 3.9
+Programming Language :: Python :: 3.10
+Programming Language :: Python :: 3.11
 Framework :: Robot Framework
 Framework :: Robot Framework :: Tool
 Topic :: Software Development :: Testing
