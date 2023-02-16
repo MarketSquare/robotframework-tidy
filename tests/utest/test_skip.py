@@ -77,7 +77,7 @@ class TestSkip:
             assert disable == skip.keyword_call(mock_node)
 
     def test_keyword_call_pattern_invalid(self):
-        invalid_regex = "[0-9]++"
+        invalid_regex = "[0-9++"
         skip_config = SkipConfig(keyword_call_pattern=[invalid_regex])
         msg_error = re.escape(f"'{invalid_regex}' is not a valid regular expression.")
         with pytest.raises(ValueError, match=msg_error):
