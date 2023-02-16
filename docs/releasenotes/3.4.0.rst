@@ -62,3 +62,12 @@ Support for the other setting will be added in the next releases.
 
 It is possible to configure how arguments in settings will be split using ``split_on_every_setting_arg`` parameter.
 Read more `in the documentation<https://robotidy.readthedocs.io/en/stable/transformers/SplitTooLongLine.html#split-settings-arguments-on-every-line>`_.
+
+Support for Python 3.11
+-------------------------
+
+Thanks to the user submission (@KotlinIsland) our CI now supports Python 3.11 and we are sure that Robotidy works
+under it.
+Dropping the support for our minimum supported Python version (3.7) is not planned right now but it can be possible
+in the future. See this `reference<https://endoflife.date/python>`_ to check if your Python version still has
+security support.
