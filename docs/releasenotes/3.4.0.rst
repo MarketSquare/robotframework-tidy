@@ -53,7 +53,6 @@ Now indents in run keywords are preserved and too long lines are split properly:
         ...        Element Should Contain    ${myVeryLongDefinitionOfAnElement}
         ...            ${addingTheSecondArgumentMakesThisLineTooLong}
 
-
 Too long lines in settings (#455)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
