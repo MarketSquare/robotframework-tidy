@@ -63,6 +63,33 @@ Support for the other setting will be added in the next releases.
 It is possible to configure how arguments in settings will be split using ``split_on_every_setting_arg`` parameter.
 Read more `in the documentation<https://robotidy.readthedocs.io/en/stable/transformers/SplitTooLongLine.html#split-settings-arguments-on-every-line>`_.
 
+Comments in the lines
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If your line contains comments it can be recognized as too long. It may lead to producing less readable output, like
+the one below:
+
+From::
+
+    ${VARIABLE_01}                                  a_value    # a short one-liner description for variable that goes over
+
+To::
+
+    # a short one-liner description for variable that goes over
+    ${VARIABLE_01}
+    ...    a_value
+
+The value will be split to the new line even if it does not help readability since comment was moved before the
+variable.
+Now it is possible to ignore comments in ``SplitTooLongLine`` by using skip comment option::
+
+    robotidy -c SplitTooLongLine:skip_comments=True <src>
+    # or global option that skips formatting comments in all transformers
+    robotidy --skip-comments <src>
+
+In the previous code the line will now not be formatted since the line will not be recognized as too long (length of the
+comment is removed from calculated line length).
+
 Support for Python 3.11
 -------------------------
 
