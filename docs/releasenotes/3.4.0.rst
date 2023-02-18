@@ -1,7 +1,8 @@
 Robotidy 3.4.0
 =========================================
 
-Several fixes and improvements in ``SplitTooLongLine`` transformer and other transformers.
+Several fixes and improvements in ``SplitTooLongLine`` transformer and other transformers. It is also now possible to
+filter out ``--list`` output.
 
 You can install the latest available version by running::
 
@@ -90,6 +91,17 @@ Now it is possible to ignore comments in ``SplitTooLongLine`` by using skip comm
 In the previous code the line will now not be formatted since the line will not be recognized as too long (length of the
 comment is removed from calculated line length).
 
+Listing transformers #464
+--------------------------
+
+The output of the ``list`` option can be now filtered by using ``enabled`` or ``disabled`` optional values. Also,
+the configuration is now taken into account when displaying the status of the transformer (previously only default
+status was displayed).
+
+Run ``robotidy --list`` to get list of transformers with the information whether they are enabled or disabled with
+your configuration. If you only want to list enabled transformers, use ``robotidy --list enabled``. For disabled
+transformers use ``robotidy --list disabled``.
+
 Support for Python 3.11
 -------------------------
 
@@ -98,3 +110,8 @@ under it.
 Dropping the support for our minimum supported Python version (3.7) is not planned right now but it can be possible
 in the future. See this `reference<https://endoflife.date/python>`_ to check if your Python version still has
 security support.
+
+Bugs
+-----
+
+- External transformers can be now imported using relative paths (such as ``--transform File.py``) (#466)

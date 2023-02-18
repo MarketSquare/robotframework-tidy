@@ -55,39 +55,82 @@ Listing transformers
 ---------------------
 To see list of transformers included with `Robotidy` use ``--list``::
 
-    robotidy --list
-    To see detailed docs run --desc <transformer_name> or --desc all. Transformers with (disabled) tag
-    are executed only when selected explicitly with --transform or configured with param `enabled=True`.
-    Available transformers:
+    > robotidy --list
+                  Transformers
+    ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┓
+    ┃ Name                       ┃ Enabled ┃
+    ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━┩
+    │ AddMissingEnd              │ Yes     │
+    │ NormalizeSeparators        │ Yes     │
+    │ DiscardEmptySections       │ Yes     │
+    │ MergeAndOrderSections      │ Yes     │
+    │ RemoveEmptySettings        │ Yes     │
+    │ NormalizeAssignments       │ Yes     │
+    │ OrderSettings              │ Yes     │
+    │ OrderSettingsSection       │ Yes     │
+    │ NormalizeTags              │ Yes     │
+    │ OrderTags                  │ No      │
+    │ IndentNestedKeywords       │ No      │
+    │ AlignSettingsSection       │ Yes     │
+    │ AlignVariablesSection      │ Yes     │
+    │ AlignTemplatedTestCases    │ No      │
+    │ AlignTestCasesSection      │ No      │
+    │ AlignKeywordsSection       │ No      │
+    │ NormalizeNewLines          │ Yes     │
+    │ NormalizeSectionHeaderName │ Yes     │
+    │ NormalizeSettingName       │ Yes     │
+    │ ReplaceRunKeywordIf        │ Yes     │
+    │ SplitTooLongLine           │ Yes     │
+    │ SmartSortKeywords          │ No      │
+    │ RenameTestCases            │ No      │
+    │ RenameKeywords             │ No      │
+    │ ReplaceReturns             │ Yes     │
+    │ ReplaceBreakContinue       │ Yes     │
+    │ InlineIf                   │ Yes     │
+    │ Translate                  │ No      │
+    └────────────────────────────┴─────────┘
+    Transformers are listed in the order they are run by default. The status of the transformer will be displayed in different color if it is changed by the configuration.
+    To see detailed docs run:
+        robotidy --desc transformer_name
+    or
+        robotidy --desc all
 
-    AddMissingEnd
-    AlignSettingsSection
-    AlignTestCases (disabled)
-    AlignVariablesSection
-    DiscardEmptySections
-    InlineIf
-    MergeAndOrderSections
-    NormalizeAssignments
-    NormalizeNewLines
-    NormalizeSectionHeaderName
-    NormalizeSeparators
-    NormalizeSettingName
-    NormalizeTags
-    OrderSettings
-    OrderSettingsSection
-    OrderTags (disabled)
-    RemoveEmptySettings
-    RenameKeywords (disabled)
-    RenameTestCases (disabled)
-    ReplaceBreakContinue
-    ReplaceReturns
-    ReplaceRunKeywordIf
-    SmartSortKeywords (disabled)
-    SplitTooLongLine
+    Non-default transformers needs to be selected explicitly with --transform or configured with param `enabled=True`.
+
+Pass optional value ``enabled`` or ``disabled`` to filter our output by the status of the transformer::
+
+    > robotidy --list disabled
+                    Transformers
+    ┏━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┓
+    ┃ Name                    ┃ Enabled ┃
+    ┡━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━┩
+    │ OrderTags               │ No      │
+    │ IndentNestedKeywords    │ No      │
+    │ AlignTemplatedTestCases │ No      │
+    │ AlignTestCasesSection   │ No      │
+    │ AlignKeywordsSection    │ No      │
+    │ SmartSortKeywords       │ No      │
+    │ RenameTestCases         │ No      │
+    │ RenameKeywords          │ No      │
+    │ Translate               │ No      │
+    └─────────────────────────┴─────────┘
+    (...)
+
+The configuration is reflected in the output. For example combining ``--transform`` (which only runs selected
+transformers) and ``enabled`` gives us::
+
+    > robotidy --transform DiscardEmptySections --list enabled
+               Transformers
+    ┏━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━┓
+    ┃ Name                 ┃ Enabled ┃
+    ┡━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━┩
+    │ DiscardEmptySections │ Yes     │
+    └──────────────────────┴─────────┘
+    (...)
 
 You can display short documentation on particular transformer with ``--desc``::
 
-    robotidy --desc DiscardEmptySections
+    > robotidy --desc DiscardEmptySections
     Transformer DiscardEmptySections:
 
         Remove empty sections.

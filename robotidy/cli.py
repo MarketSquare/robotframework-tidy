@@ -137,6 +137,19 @@ def validate_target_version(
     return version
 
 
+def validate_list_optional_value(
+    ctx: click.Context,
+    param: Union[click.Option, click.Parameter],
+    value: Optional[str],
+):
+    if not value:
+        return value
+    allowed = ["all", "enabled", "disabled"]
+    if value not in allowed:
+        raise click.BadParameter(f"Not allowed value. Allowed values are: {', '.join(allowed)}")
+    return value
+
+
 def csv_list_type(ctx: click.Context, param: Union[click.Option, click.Parameter], value: Optional[str]) -> List[str]:
     if not value:
         return []
@@ -167,24 +180,62 @@ def print_description(name: str, target_version: int):
     return 0
 
 
+def _load_external_transformers(
+    transformers: List,
+    transformers_from_config: List[Tuple[str, List]],
+    transformer_config: List[Tuple[str, List]],
+    target_version: int,
+):
+    external = []
+    transformers_names = {transformer.name for transformer in transformers}
+    transformer_config_converted = Config.convert_configure(transformer_config)
+    transformers_from_conf = load_transformers(
+        transformers_from_config, transformer_config_converted, target_version=target_version
+    )
+    for transformer in transformers_from_conf:
+        if transformer.name not in transformers_names:
+            external.append(transformer)
+    return external
+
+
 @decorators.optional_rich
-def print_transformers_list(target_version: int):
+def print_transformers_list(
+    transformers_from_config: List[Tuple[str, List]],
+    transformer_config: List[Tuple[str, List]],
+    config: Config,
+    target_version: int,
+    list_transformers: str,
+):
     from rich.table import Table
 
     table = Table(title="Transformers", header_style="bold red")
     table.add_column("Name", justify="left", no_wrap=True)
-    table.add_column("Enabled by default")
+    table.add_column("Enabled")
     transformers = load_transformers(None, {}, allow_disabled=True, target_version=target_version)
+    transformers.extend(
+        _load_external_transformers(transformers, transformers_from_config, transformer_config, target_version)
+    )
+
     for transformer in transformers:
-        decorated_enable = "Yes" if transformer.enabled_by_default else "[bold magenta]No"
+        enabled = transformer.name in config.transformers_lookup
+        if list_transformers != "all":
+            filter_by = list_transformers == "enabled"
+            if enabled != filter_by:
+                continue
+        decorated_enable = "Yes" if enabled else "No"
+        if enabled != transformer.enabled_by_default:
+            decorated_enable = f"[bold magenta]{decorated_enable}*"
         table.add_row(transformer.name, decorated_enable)
     console.print(table)
-    console.print("Transformers are listed in the order they are run by default.")
+    console.print(
+        "Transformers are listed in the order they are run by default. If the transformer was enabled/disabled by the "
+        "configuration the status will be displayed with extra asterisk (*) and in the [magenta]different[/] color."
+    )
     console.print(
         "To see detailed docs run:\n"
-        "    [bold]robotidy --desc [bold magenta]transformer_name[/][/]\n"
+        "    [bold]robotidy --desc [blue]transformer_name[/][/]\n"
         "or\n"
-        "    [bold]robotidy --desc [bold blue]all[/][/]\n\n"
+        "    [bold]robotidy --desc [blue]all[/][/]\n\n"
         "Non-default transformers needs to be selected explicitly with [bold cyan]--transform[/] or "
         "configured with param `enabled=True`.\n"
     )
@@ -351,9 +402,14 @@ def print_transformers_list(target_version: int):
 @click.option(
     "--list",
     "-l",
+    "list_transformers",
+    callback=validate_list_optional_value,
     is_eager=True,
-    is_flag=True,
-    help="List available transformers and exit.",
+    is_flag=False,
+    default="",
+    flag_value="all",
+    help="List available transformers and exit. "
+    "Pass optional value **enabled** or **disabled** to filter out list by transformer status.",
 )
 @click.option(
     "--desc",
@@ -430,7 +486,7 @@ def cli(
     startline: Optional[int],
     endline: Optional[int],
     line_length: int,
-    list: bool,
+    list_transformers: str,
     desc: Optional[str],
     output: Optional[Path],
     force_order: bool,
@@ -455,13 +511,7 @@ def cli(
     Robotidy is a tool for formatting Robot Framework source code.
     Full documentation available at <https://robotidy.readthedocs.io> .
     """
-    if list:
-        print_transformers_list(target_version)
-        sys.exit(0)
-    if desc is not None:
-        return_code = print_description(desc, target_version)
-        sys.exit(return_code)
-    if not src:
+    if not src and not (list_transformers or desc):
         if ctx.default_map is not None:
             src = ctx.default_map.get("src", None)
         if not src:
@@ -527,6 +577,14 @@ def cli(
         color=color,
         language=language,
     )
+
+    if list_transformers:
+        print_transformers_list(transform, configure, config, target_version, list_transformers)
+        sys.exit(0)
+    if desc is not None:
+        return_code = print_description(desc, target_version)
+        sys.exit(return_code)
+
     tidy = app.Robotidy(config=config)
     status = tidy.transform_files()
     sys.exit(status)
