@@ -42,7 +42,7 @@ setup(
     python_requires=">=3.7",
     install_requires=[
         "robotframework>=4.0",
-        "click>=7.1.2",
+        "click>=8.1.3",
         "colorama>=0.4.3",
         "pathspec>=0.9.0,<0.12.0",
         "tomli>=2.0.0",

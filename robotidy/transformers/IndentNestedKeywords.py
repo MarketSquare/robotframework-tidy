@@ -165,7 +165,7 @@ class IndentNestedKeywords(Transformer):
         """
         Parse indented lines to split too long lines
         """
-        # TODO: Keep things like ELSE IF <condition>, RUn Keyword If <> together no matter what
+        # TODO: Keep things like ELSE IF <condition>, Run Keyword If <> together no matter what
         if "SplitTooLongLine" not in self.transformers:
             return lines
         allowed_length = self.transformers["SplitTooLongLine"].line_length

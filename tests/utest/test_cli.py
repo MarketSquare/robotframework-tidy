@@ -246,6 +246,37 @@ class TestCli:
         elif target_version and target_version == "4":
             assert "│ ReplaceReturns             │ No" in result.output
 
+    @pytest.mark.parametrize("flag", ["--list", "-l"])
+    def test_list_transformers_filter_enabled(self, flag):
+        # --transform X should only have X in output
+        cmd = ["--transform", "RenameKeywords", flag, "enabled"]
+        result = run_tidy(cmd)
+        assert "RenameKeywords" in result.output
+        assert "NormalizeNewLines" not in result.output
+        # -c X, where X is disabled by default should have default, X in output but not the rest
+        cmd = ["--configure", "RenameKeywords:enabled=True", flag, "enabled"]
+        result = run_tidy(cmd)
+        assert "RenameKeywords" in result.output
+        assert "NormalizeNewLines" in result.output
+        assert "SmartSortKeywords" not in result.output
+
+    @pytest.mark.parametrize("flag", ["--list", "-l"])
+    def test_list_transformers_filter_disabled(self, flag):
+        # --transform X should not have X in output, even if it is default transformer
+        cmd = ["--transform", "NormalizeSeparators", flag, "disabled"]
+        result = run_tidy(cmd)
+        assert "NormalizeSeparators" not in result.output
+        assert "NormalizeNewLines" in result.output
+
+    @pytest.mark.parametrize("flag", ["--list", "-l"])
+    def test_list_transformers_invalid_filter_value(self, flag):
+        cmd = [flag, "RenameKeywords"]
+        result = run_tidy(cmd, exit_code=2)
+        error = self.normalize_cli_error(result.output)
+        assert (
+            "Invalid value for '--list' / '-l': Not allowed value. Allowed values are: all, enabled, disabled"
+        ) in error
+
     @pytest.mark.parametrize("flag", ["--desc", "-d"])
     @pytest.mark.parametrize(
         "name, expected_doc",

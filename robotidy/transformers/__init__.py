@@ -9,6 +9,7 @@ If you don't want to run your transformer by default and only when calling robot
 then add ``ENABLED = False`` class attribute inside.
 """
 import copy
+import pathlib
 import textwrap
 from itertools import chain
 from typing import Dict, Optional
@@ -118,8 +119,27 @@ class Transformer(ModelTransformer):
         self.skip = skip
 
 
+def get_transformer_short_name(name):
+    """Removes module path or file extension for better printing the errors."""
+    if name.endswith(".py"):
+        return name.split(".")[-2]
+    return name.split(".")[-1]
+
+
+def get_absolute_path_to_transformer(name, short_name):
+    """
+    If the transformer is not default one, try to get absolute path to transformer to make it easier to import it.
+    """
+    if short_name in TRANSFORMERS:
+        return name
+    if pathlib.Path(name).exists():
+        return pathlib.Path(name).resolve()
+    return name
+
+
 def import_transformer(name, args, skip):
-    short_name = name.split(".")[-1]
+    short_name = get_transformer_short_name(name)
+    name = get_absolute_path_to_transformer(name, short_name)
     try:
         imported_class = IMPORTER.import_class_or_module(name)
         spec = IMPORTER._get_arg_spec(imported_class)
