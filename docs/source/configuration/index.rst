@@ -29,6 +29,18 @@ Robotidy reads and ignores paths from ``.gitignore`` and ``--exclude``. You can 
 
     robotidy --extend-exclude skip_me.robot|some_dir/* .
 
+Note that both ``exclude`` and ``extend-exclude`` options accept regex patterns. Following configuration is not
+array with single `Tests/` path but regex pattern that excludes paths containing any of the character from the `Tests/`
+set::
+
+    [tool.robotidy]
+    exclude = ['Tests/']
+
+To exclude files under `Tests` directory you need to use pattern `Tests/*`::
+
+    [tool.robotidy]
+    exclude = 'Tests/*'
+
 To parse files listed in ``.gitignore`` use ``--skip-gitignore`` flag::
 
     robotidy --skip-gitignore .
@@ -39,7 +51,7 @@ Robotidy can automatically disable transformers that are not supported in target
 Typical usage is when your environment has Robot Framework >5.0 installed but your source code supports only previous
 Robot Framework version::
 
-    robotidy --target-version -rf4 .
+    robotidy --target-version rf4 .
 
 It will disable all transformers that require Robot Framework greater than <target-version> to run (even if you have Robot Framework greater than <target-version> installed).
 
@@ -67,7 +79,7 @@ Support multiple languages by providing language code/name in comma separated li
 Language header in the file is supported by default::
 
     language: pl
-
+ftest
     *** Zmienne ***
     ${VAR}   1
 

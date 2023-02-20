@@ -42,7 +42,7 @@ class AlignTemplatedTestCases(Transformer):
     header names) then configure `only_with_headers` parameter:
 
     ```
-    robotidy -c AlignSettingsSection:only_with_hedaers:True <src>
+    robotidy -c AlignSettingsSection:only_with_headers:True <src>
     ```
 
     For non-templated test cases use ``AlignTestCasesSection`` transformer.

@@ -157,3 +157,16 @@ Transform code from standard input
 Use ``-`` to load code from input::
 
     cat file.robot | robotidy -
+
+Line endings
+----------------
+
+When working on multiple platforms the file can contain different line endings (``CRLF``, ``LF``). By default
+Robotidy will replace all line endings with system native line ending. It may be problematic if you're using
+different platforms. You can force specific line ending or autodetect line ending used in the file and use it by
+configuring ``lineseparator`` option:
+
+- native:  use operating system's native line endings (default)
+- windows: use Windows line endings (CRLF)
+- unix:    use Unix line endings (LF)
+- auto:    maintain existing line endings (uses what's used in the first line of the file)
