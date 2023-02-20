@@ -111,7 +111,8 @@ Dropping the support for our minimum supported Python version (3.7) is not plann
 in the future. See this `reference<https://endoflife.date/python>`_ to check if your Python version still has
 security support.
 
-Bugs
------
+Bugs and misc
+--------------
 
 - External transformers can be now imported using relative paths (such as ``--transform File.py``) (#466)
+- Various fixes and improvements to the documentation (#442, #445, #462)
