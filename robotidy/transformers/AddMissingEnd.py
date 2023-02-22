@@ -33,9 +33,6 @@ class AddMissingEnd(Transformer):
     ```
     """
 
-    def __init__(self):
-        super().__init__()  # workaround for our dynamically imported classes with args from cli/config
-
     def fix_block(self, node, expected_type):
         self.generic_visit(node)
         self.fix_header_name(node, expected_type)

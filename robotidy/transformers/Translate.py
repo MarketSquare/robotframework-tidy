@@ -201,7 +201,7 @@ class Translate(Transformer):
         return self.translate_section_header(node, "comments_header")
 
     @skip_if_disabled
-    def visit_ForceTags(self, node):
+    def visit_ForceTags(self, node):  # noqa
         node_type = node.data_tokens[0].value.title()
         # special handling because it's renamed in 6.0
         if node_type == "Force Tags":

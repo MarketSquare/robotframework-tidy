@@ -93,8 +93,9 @@ class OrderTags(Transformer):
 
     def join_tokens(self, tokens):
         joined_tokens = []
+        separator = Token(Token.SEPARATOR, self.formatting_config.separator)
         for token in tokens:
-            joined_tokens.append(Token(Token.SEPARATOR, self.formatting_config.separator))
+            joined_tokens.append(separator)
             joined_tokens.append(token)
         return joined_tokens
 

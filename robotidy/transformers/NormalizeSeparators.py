@@ -1,4 +1,4 @@
-from robot.api.parsing import KeywordCall, Token
+from robot.api.parsing import Token
 
 try:
     from robot.api.parsing import InlineIfHeader, ReturnStatement
