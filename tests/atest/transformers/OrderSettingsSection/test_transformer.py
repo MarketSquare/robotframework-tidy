@@ -91,3 +91,6 @@ class TestOrderSettingsSection(TransformerAcceptanceTest):
 
     def test_disablers(self):
         self.compare(source="disablers.robot", not_modified=True)
+
+    def test_test_tags(self):
+        self.compare(source="test_tags.robot", target_version=">=6")
