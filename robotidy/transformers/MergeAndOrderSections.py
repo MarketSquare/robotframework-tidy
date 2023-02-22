@@ -73,7 +73,7 @@ class MergeAndOrderSections(Transformer):
         if not order:
             return default_order
         parts = order.lower().split(",")
-        map = {
+        map_names = {
             "comments": Token.COMMENT_HEADER,
             "comment": Token.COMMENT_HEADER,
             "settings": Token.SETTING_HEADER,
@@ -87,7 +87,7 @@ class MergeAndOrderSections(Transformer):
         }
         parsed_order = [self.LANGUAGE_MARKER_SECTION]
         for part in parts:
-            parsed_order.append(map.get(part, None))
+            parsed_order.append(map_names.get(part, None))
         if any(header not in parsed_order for header in default_order):
             raise InvalidParameterValueError(
                 self.__class__.__name__,
@@ -129,7 +129,7 @@ class MergeAndOrderSections(Transformer):
         return new_tokens
 
     def from_last_section(self, node):
-        """Last node use different logic for new line marker. It is not possible to preserve all empty lines but
+        """Last node use different logic for new line marker. It is not possible to preserve all empty lines, but
         we need at least ensure that following code::
 
              *** Test Case ***

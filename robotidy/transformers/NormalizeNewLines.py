@@ -59,7 +59,8 @@ class NormalizeNewLines(Transformer):
     def should_be_trimmed(self, node):
         """
         Check whether given section should have empty lines trimmed.
-        Section should not be trimmed if it contains only language marker and there is no more than allowed section empty lines
+        Section should not be trimmed if it contains only language marker and there is no more than
+        allowed section empty lines.
         """
         if not isinstance(node, CommentSection) or not Config:
             return True
@@ -121,7 +122,7 @@ class NormalizeNewLines(Transformer):
             if cont and all(token.type in self.WHITESPACE_TOKENS for token in line):
                 continue
             if line[-1].type == Token.EOL:
-                line[-1].value = "\n"  # TODO: use global formatting in the future
+                line[-1].value = "\n"
             tokens.extend(line)
         node.tokens = tokens
         return node

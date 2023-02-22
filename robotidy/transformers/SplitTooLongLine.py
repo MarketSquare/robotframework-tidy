@@ -74,7 +74,7 @@ class SplitTooLongLine(Transformer):
     """
 
     IGNORED_WHITESPACE = {Token.EOL, Token.CONTINUATION}
-    HANDLES_SKIP = frozenset({"skip_keyword_call", "skip_keyword_call_pattern"})
+    HANDLES_SKIP = frozenset({"skip_comments", "skip_keyword_call", "skip_keyword_call_pattern"})
 
     def __init__(
         self,

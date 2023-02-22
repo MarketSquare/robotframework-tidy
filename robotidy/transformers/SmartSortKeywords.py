@@ -105,5 +105,4 @@ class SmartSortKeywords(Transformer):
     @staticmethod
     def append_empty_lines(node, empty_lines):
         for kw, lines in zip(node.body, empty_lines):
-            for line in lines:
-                kw.body.append(line)
+            kw.body.extend(lines)
