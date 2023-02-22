@@ -1,0 +1,21 @@
+Robotidy 3.5.0
+=========================================
+
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==3.5.0
+Misc
+-----
+
+- ``OrderSettingsSection`` now allows to order using ``Test Tags``. It worked before but custom order configuration
+  only accepted "force_tags" but now it also accepts "test_tags" alias
+
+Bugs
+-----
+
+- ``Force Tags`` will not be replaced with ``Test Tags`` by ``OrderTags`` transformer (#469)

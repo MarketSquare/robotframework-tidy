@@ -44,15 +44,15 @@ class NormalizeTags(Transformer):
         return self.generic_visit(node)
 
     def visit_Tags(self, node):  # noqa
-        return self.normalize_tags(node, Tags, indent=True)
+        return self.normalize_tags(node, indent=True)
 
     def visit_DefaultTags(self, node):  # noqa
-        return self.normalize_tags(node, DefaultTags)
+        return self.normalize_tags(node)
 
     def visit_ForceTags(self, node):  # noqa
-        return self.normalize_tags(node, ForceTags)
+        return self.normalize_tags(node)
 
-    def normalize_tags(self, node, tag_class, indent=False):
+    def normalize_tags(self, node, indent=False):
         if self.disablers.is_node_disabled(node, full_match=False):
             return node
         separator = Token(Token.SEPARATOR, self.formatting_config.separator)
