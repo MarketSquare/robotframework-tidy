@@ -58,3 +58,15 @@ def _add_transformer_to_internal_list(name):
     lines = data[0] + data[1]
     with open(path, "w") as f:
         f.writelines(lines)
+
+
+@task
+def create_release_docs(ctx, version):
+    root = Path(__file__).parent
+    template_path = root / "utils/release_docs_templates/new_release.template"
+    release_docs_path = root / f"docs/releasenotes/{version}.rst"
+    print(f"Creating '{release_docs_path}' file with initial release notes.")
+    with open(template_path) as fp:
+        doc_template = Template(fp.read()).render(version=version)
+    with open(release_docs_path, "w") as fp:
+        fp.write(doc_template)
