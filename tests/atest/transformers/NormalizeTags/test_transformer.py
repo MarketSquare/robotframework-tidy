@@ -51,3 +51,16 @@ class TestNormalizeTags(TransformerAcceptanceTest):
 
     def test_rf6(self):
         self.compare(source="rf6.robot", target_version=">=6", not_modified=True)
+
+    def test_preserve_format(self):
+        self.compare(
+            source="preserve_format.robot", expected="preserve_format_enabled.robot", config=":preserve_format=True"
+        )
+
+    def test_preserve_format_do_not_normalize_case(self):
+        self.compare(
+            source="preserve_format.robot", config=":preserve_format=True:normalize_case=False", not_modified=True
+        )
+
+    def test_ignore_format(self):
+        self.compare(source="preserve_format.robot", expected="preserve_format_default.robot")

@@ -20,6 +20,15 @@ class NormalizeTags(Transformer):
     ```
     robotidy --transform NormalizeTags:normalize_case=False test.robot
     ```
+
+    NormalizeTags will change the formatting of the tags by removing the duplicates, new lines and moving comments.
+    If you want to preserved formatting set ``preserve_format``:
+
+    ```
+    robotidy --configure NormalizeTags:preserve_format=True test.robot
+    ```
+
+    The duplicates will not be removed with ``preserve_format`` set to ``True``.
     """
 
     CASE_FUNCTIONS = {
@@ -28,10 +37,11 @@ class NormalizeTags(Transformer):
         "titlecase": str.title,
     }
 
-    def __init__(self, case: str = "lowercase", normalize_case: bool = True):
+    def __init__(self, case: str = "lowercase", normalize_case: bool = True, preserve_format: bool = False):
         super().__init__()
         self.case = case.lower()
         self.normalize_case = normalize_case
+        self.preserve_format = preserve_format
         try:
             self.case_function = self.CASE_FUNCTIONS[self.case]
         except KeyError:
@@ -55,6 +65,20 @@ class NormalizeTags(Transformer):
     def normalize_tags(self, node, indent=False):
         if self.disablers.is_node_disabled(node, full_match=False):
             return node
+        if self.preserve_format:
+            return self.normalize_tags_tokens_preserve_formatting(node)
+        return self.normalize_tags_tokens_ignore_formatting(node, indent)
+
+    def normalize_tags_tokens_preserve_formatting(self, node):
+        if not self.normalize_case:
+            return node
+        for token in node.tokens:
+            if token.type != Token.ARGUMENT:
+                continue
+            token.value = self.case_function(token.value)
+        return node
+
+    def normalize_tags_tokens_ignore_formatting(self, node, indent):
         separator = Token(Token.SEPARATOR, self.formatting_config.separator)
         setting_name = node.data_tokens[0]
         tags = [tag.value for tag in node.data_tokens[1:]]

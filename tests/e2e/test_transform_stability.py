@@ -41,7 +41,7 @@ RERUN_NEEDED = {
     "NormalizeNewLines": {"tests": 2, "multiline": 2},
     "NormalizeSeparators": {"continuation_indent": 2, "test": 2, "disablers": 2, "pipes": 2},
     "NormalizeSettingName": {"disablers": 2, "translated": 2, "tests": 2},
-    "NormalizeTags": {"disablers": 2, "duplicates": 2, "tests": 2},
+    "NormalizeTags": {"disablers": 2, "duplicates": 2, "tests": 2, "preserve_format": 2},
     "OrderSettings": {"test": 2, "translated": 2},
     "OrderSettingsSection": {"test": 2},
     "OrderTags": {"tests": 2},
