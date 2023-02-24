@@ -9,6 +9,17 @@ You can install the latest available version by running::
 or to install exactly this version::
 
     pip install robotframework-tidy==3.5.0
+
+Preserve formatting in ``NormalizeTags`` (#472)
+------------------------------------------------
+
+Tags formatting like new lines, separators or comments position was originally lost when using ``NormalizeTags``
+transformer. You can now preserve formatting by using ``preserve_format`` flag::
+
+    robotidy --configure NormalizeTags:preserve_format=True test.robot
+
+The downside is that the duplications will not be removed when ``preserve_format`` is enabled.
+
 Misc
 -----
 

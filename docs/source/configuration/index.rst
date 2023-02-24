@@ -79,7 +79,7 @@ Support multiple languages by providing language code/name in comma separated li
 Language header in the file is supported by default::
 
     language: pl
-ftest
+
     *** Zmienne ***
     ${VAR}   1
 
