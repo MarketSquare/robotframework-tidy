@@ -77,6 +77,7 @@ class Config:
         target_version: int,
         color: bool,
         language: Optional[List[str]],
+        reruns: int,
     ):
         self.sources = get_paths(src, exclude, extend_exclude, skip_gitignore)
         self.formatting = formatting
@@ -86,6 +87,7 @@ class Config:
         self.check = check
         self.output = output
         self.color = color
+        self.reruns = reruns
         self.language = self.get_languages(language)
         transformers_config = self.convert_configure(transformers_config)
         self.transformers = []

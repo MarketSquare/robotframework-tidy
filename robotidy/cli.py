@@ -447,6 +447,13 @@ def print_transformers_list(
     help="Parse Robot Framework files using additional languages.",
     show_default="en",
 )
+@click.option(
+    "--reruns",
+    "-r",
+    type=int,
+    help="Robotidy will rerun the transformations up to reruns times until the code stop changing.",
+    show_default="0",
+)
 @skip.comments_option
 @skip.documentation_option
 @skip.return_values_option
@@ -492,6 +499,7 @@ def cli(
     force_order: bool,
     target_version: int,
     language: Optional[List[str]],
+    reruns: int,
     skip_comments: bool,
     skip_documentation: bool,
     skip_return_values: bool,
@@ -576,6 +584,7 @@ def cli(
         target_version=target_version,
         color=color,
         language=language,
+        reruns=reruns,
     )
 
     if list_transformers:

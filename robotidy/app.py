@@ -1,7 +1,6 @@
 import os
 import sys
 from difflib import unified_diff
-from typing import Optional, Pattern, Tuple
 
 try:
     import rich_click as click
@@ -40,17 +39,18 @@ class Robotidy:
                 elif self.config.verbose:
                     click.echo(f"Transforming {source} file")
                 model = self.get_model(source)
+                model_path = model.source
                 disabler_finder.visit(model)
                 if disabler_finder.file_disabled:
                     continue
-                diff, old_model, new_model = self.transform(model, disabler_finder.disablers)
+                diff, old_model, new_model, model = self.transform_until_stable(model, disabler_finder)
                 if diff:
                     changed_files += 1
-                self.output_diff(model.source, old_model, new_model)
+                self.output_diff(model_path, old_model, new_model)
                 if stdin:
                     self.print_to_stdout(new_model)
                 elif diff:
-                    self.save_model(model.source, model)
+                    self.save_model(model_path, model)
             except DataError:
                 click.echo(
                     f"Failed to decode {source}. Default supported encoding by Robot Framework is UTF-8. Skipping file"
@@ -59,6 +59,18 @@ class Robotidy:
         if not self.config.check or not changed_files:
             return 0
         return 1
+
+    def transform_until_stable(self, model, disabler_finder):
+        diff, old_model, new_model = self.transform(model, disabler_finder.disablers)
+        reruns = self.config.reruns
+        while diff and reruns:
+            model = get_model(new_model.text)
+            disabler_finder.visit(model)
+            new_diff, _, new_model = self.transform(model, disabler_finder.disablers)
+            if not new_diff:
+                break
+            reruns -= 1
+        return diff, old_model, new_model, model
 
     def transform(self, model, disablers):
         old_model = utils.StatementLinesCollector(model)
@@ -78,7 +90,7 @@ class Robotidy:
 
     def save_model(self, source, model):
         if self.config.overwrite:
-            output = self.config.output or model.source
+            output = self.config.output or source
             utils.ModelWriter(output=output, newline=self.get_line_ending(source)).write(model)
 
     def get_line_ending(self, path: str):

@@ -64,6 +64,7 @@ def get_robotidy(src: str, output: Optional[str], **kwargs):
     formatting_config = get_formatting_config(config, kwargs)
     exclude = config.get("exclude", None)
     extend_exclude = config.get("extend_exclude", None)
+    reruns = config.get("reruns", 0)
     exclude = utils.validate_regex(exclude if exclude is not None else files.DEFAULT_EXCLUDES)
     extend_exclude = utils.validate_regex(extend_exclude)
     global_skip = get_skip_config(config)
@@ -86,6 +87,7 @@ def get_robotidy(src: str, output: Optional[str], **kwargs):
         target_version=utils.ROBOT_VERSION.major,
         color=False,
         language=language,
+        reruns=reruns,
     )
     return app.Robotidy(config=configuration)
 

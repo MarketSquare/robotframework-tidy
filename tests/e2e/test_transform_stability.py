@@ -71,8 +71,8 @@ def run_tidy(cmd, enable_disabled: bool):
     return runner.invoke(cli, cmd)
 
 
-def run_with_source(source: Path, enable_disabled: bool):
-    cmd = [str(source)]
+def run_with_source(source: Path, enable_disabled: bool, reruns: int):
+    cmd = ["--reruns", str(reruns), str(source)]
     result = run_tidy(cmd, enable_disabled)
     if result.exit_code != 0:
         raise AssertionError(f"Run failed for {source}")
@@ -178,8 +178,7 @@ def test_stability_of_transformation(tmpdir, test_file, enable_disabled):
     # copy test data to temp directory
     test_data_dst = tmpdir / test_file.name
     shutil.copy(test_file, test_data_dst)
-    for _ in range(reruns):
-        run_with_source(test_data_dst, enable_disabled)
+    run_with_source(test_data_dst, enable_disabled, reruns)
     for _ in range(2):
         # rerun with --check twice to confirm stability
         run_with_source_and_check(test_data_dst, test_file, enable_disabled)
