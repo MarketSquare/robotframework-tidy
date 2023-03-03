@@ -24,6 +24,7 @@ def app():
     )
     config = Config(
         transformers=[],
+        custom_transformers=[],
         transformers_config=[],
         skip=skip_config,
         src=(".",),

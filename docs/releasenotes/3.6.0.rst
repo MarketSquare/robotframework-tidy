@@ -26,8 +26,25 @@ although in vast majority of cases one extra run should suffice (and only in cas
 
 Example usage::
 
-    robotidy --reruns 3 --diff test.robot
+    > robotidy --reruns 3 --diff test.robot
 
 Note that if you enable it, it can double the execution time of Robotidy (if the file was modified, it will be
 transformed again to check if next transformation does not further modify the file). It should be not a problem because
 Robotidy is fast enough but report any issues with this feature.
+
+Load custom transformers together with defaults
+------------------------------------------------
+
+Previously Robotidy only supported importing custom transformers with ``--transform`` option. This option disables
+any other transformer not listed with ``--transform``. That's why if user would run following::
+
+    > robotidy --transform MyCustomClass.py test.robot
+
+It would disable all default transformers and only run MyCustomClass.
+This release introduces new option ``--load-transformer`` which imports custom transformers on top of the default ones::
+
+    > robotidy --load-transformer MyCustomClass.py test.robot
+
+It is also possible to pass transformer configuration either using this option or through ``--configure``::
+
+    > robotidy -c ExtClass1.py:param=value --load-transformer ExtClass2.py:param2=value test.robot

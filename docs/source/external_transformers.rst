@@ -7,8 +7,13 @@ file with class to run external transformers with *robotidy*::
 
     robotidy --transform MyTransformers.YourCustomTransformer src
     robotidy --transform C:\transformers\YourCustomTransformer2.py src
+    robotidy --load-transformer C:\transformers\YourCustomTransformer2.py src
 
 External transformers can be configured in the same way internal transformers are configured - see :ref:`configuring-transformers`.
+
+You can use both ``--transform`` and ``--load-transformer`` options to load custom user transformer. The main difference
+is that ``--transform`` works like include and will only run transformers listed with ``--transform``. While ``--load-transformer``
+will run default transformers first and then user transformers.
 
 You can use the same syntax ``robotidy`` is using for developing internal transformers. The name of the file should
 be the same as name of the class containing your transformer. Your transformer should inherit from ``robot.api.parsing.ModelTransformer``
@@ -60,10 +65,6 @@ class:
 
 
     class ExternalTransformer(Transformer):
-        def __init__(self):
-            super().__init__()
+        pass
 
 ``Transformer`` also inherits from ``ModelTransformer`` but provides more utility methods (and better lint support).
-However because of how we are dynamically loading class arguments from cli/config we need to make a call to
-``super().__init__()`` even if our class don't have any arguments to set. If you're unsure what to use - use
-``ModelTransformer``.
