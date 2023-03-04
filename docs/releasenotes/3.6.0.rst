@@ -1,0 +1,33 @@
+Robotidy 3.6.0
+=========================================
+
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==3.6.0
+
+Rerun the transformation in place
+----------------------------------
+
+Because of high independence of each transformer, Robotidy runs them in specific order to obtain predictable results.
+But sometimes the subsequent transformer modifies the file to the point that it requires another run of Robotidy.
+Good example would be one transformer that replaces the deprecated syntax - but new syntax is inserted using standard
+whitespace. If there is transformer that aligns this whitespace according to special rules (like ``AlignKeywordsSection``)
+we need to run Robotidy again to format this whitespace.
+
+This could be inconvenient in some cases where user had to rerun Robotidy without knowing why. That's why Robotidy
+now has new option ``reruns`` that allows to define limit of how many extra reruns Robotidy can perform if the
+file keeps changing after the transformation. The default is ``0`` (original behaviour). Recommended value is ``3``
+although in vast majority of cases one extra run should suffice (and only in cases described above).
+
+Example usage::
+
+    robotidy --reruns 3 --diff test.robot
+
+Note that if you enable it, it can double the execution time of Robotidy (if the file was modified, it will be
+transformed again to check if next transformation does not further modify the file). It should be not a problem because
+Robotidy is fast enough but report any issues with this feature.

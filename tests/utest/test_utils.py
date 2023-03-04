@@ -40,6 +40,7 @@ def app():
         target_version=ROBOT_VERSION.major,
         color=True,
         language=None,
+        reruns=1,
     )
     return Robotidy(
         config=config,
