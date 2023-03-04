@@ -13,7 +13,7 @@ except ImportError:  # Fails on vendored-in LSP plugin
 
     RICH_PRESENT = False
 
-from robotidy import app, decorators, exceptions, files, skip, utils, version
+from robotidy import app, decorators, files, skip, utils, version
 from robotidy.config import Config, FormattingConfig
 from robotidy.rich_console import console
 from robotidy.transformers import TransformType, load_transformers
