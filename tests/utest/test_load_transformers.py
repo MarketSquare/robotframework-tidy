@@ -12,15 +12,20 @@ def skip_config():
     return SkipConfig()
 
 
+def get_transformer_list(order):
+    return [(transf, []) for transf in order]
+
+
 class TestLoadTransformers:
     def test_transformer_order(self, skip_config):
+
         order_1 = ["NormalizeSeparators", "OrderSettings"]
         order_2 = ["OrderSettings", "NormalizeSeparators"]
         transformers_1 = load_transformers(
-            [(transf, []) for transf in order_1], {}, skip=skip_config, target_version=ROBOT_VERSION.major
+            get_transformer_list(order_1), [], {}, skip=skip_config, target_version=ROBOT_VERSION.major
         )
         transformers_2 = load_transformers(
-            [(transf, []) for transf in order_2], {}, skip=skip_config, target_version=ROBOT_VERSION.major
+            get_transformer_list(order_2), [], {}, skip=skip_config, target_version=ROBOT_VERSION.major
         )
         assert all(t1.name == t2.name for t1, t2 in zip(transformers_1, transformers_2))
 
@@ -28,7 +33,8 @@ class TestLoadTransformers:
         # default_order = ['NormalizeSeparators', 'OrderSettings']
         custom_order = ["OrderSettings", "NormalizeSeparators"]
         transformers = load_transformers(
-            [(transf, []) for transf in custom_order],
+            get_transformer_list(custom_order),
+            [],
             {},
             skip=skip_config,
             force_order=True,
@@ -37,20 +43,22 @@ class TestLoadTransformers:
         assert all(t1.name == t2 for t1, t2 in zip(transformers, custom_order))
 
     def test_disabled_transformer(self, skip_config):
-        transformers = load_transformers(None, {}, skip=skip_config, target_version=ROBOT_VERSION.major)
+        transformers = load_transformers([], [], {}, skip=skip_config, target_version=ROBOT_VERSION.major)
         assert all(transformer.name != "SmartSortKeywords" for transformer in transformers)
 
     def test_enable_disable_transformer(self, skip_config):
         transformers = load_transformers(
-            [("SmartSortKeywords", [])], {}, skip=skip_config, target_version=ROBOT_VERSION.major
+            get_transformer_list(["SmartSortKeywords"]), [], {}, skip=skip_config, target_version=ROBOT_VERSION.major
         )
         assert transformers[0].name == "SmartSortKeywords"
 
     def test_configure_transformer(self, skip_config):
         transformers = load_transformers(
-            None, {"AlignVariablesSection": ["up_to_column=4"]}, skip=skip_config, target_version=ROBOT_VERSION.major
+            [], [], {"AlignVariablesSection": ["up_to_column=4"]}, skip=skip_config, target_version=ROBOT_VERSION.major
         )
-        transformers_not_configured = load_transformers(None, {}, skip=skip_config, target_version=ROBOT_VERSION.major)
+        transformers_not_configured = load_transformers(
+            [], [], {}, skip=skip_config, target_version=ROBOT_VERSION.major
+        )
         assert len(transformers) == len(transformers_not_configured)
         for transformer in transformers:
             if transformer.name == "AlignVariablesSection":
@@ -59,6 +67,7 @@ class TestLoadTransformers:
     def test_configure_transformer_overwrite(self, skip_config):
         transformers = load_transformers(
             [("AlignVariablesSection", ["up_to_column=3"])],
+            [],
             {"AlignVariablesSection": ["up_to_column=4"]},
             skip=skip_config,
             target_version=ROBOT_VERSION.major,
@@ -71,15 +80,15 @@ class TestLoadTransformers:
         "transformers, configure, present, test_for",
         [
             # robotidy .
-            (None, {}, True, "AlignVariablesSection"),
+            ([], {}, True, "AlignVariablesSection"),
             # robotidy -c AlignVariablesSection:enabled=True .
-            (None, {"AlignVariablesSection": ["enabled=True"]}, True, "AlignVariablesSection"),
+            ([], {"AlignVariablesSection": ["enabled=True"]}, True, "AlignVariablesSection"),
             # robotidy -c AlignVariablesSection:enabled=false .
-            (None, {"AlignVariablesSection": ["enabled=false"]}, False, "AlignVariablesSection"),
+            ([], {"AlignVariablesSection": ["enabled=false"]}, False, "AlignVariablesSection"),
             # robotidy -c SmartSortKeywords:enabled=True .
-            (None, {"SmartSortKeywords": ["enabled=True"]}, True, "SmartSortKeywords"),  # disabled by default
+            ([], {"SmartSortKeywords": ["enabled=True"]}, True, "SmartSortKeywords"),  # disabled by default
             # robotidy -c SmartSortKeywords:enabled=False .
-            (None, {"SmartSortKeywords": ["enabled=False"]}, False, "SmartSortKeywords"),
+            ([], {"SmartSortKeywords": ["enabled=False"]}, False, "SmartSortKeywords"),
             # robotidy --transform SmartSortKeywords:enabled=True .
             ([("SmartSortKeywords", ["enabled=True"])], {}, True, "SmartSortKeywords"),
             # robotidy --transform NormalizeAssignments .
@@ -132,6 +141,7 @@ class TestLoadTransformers:
             present = False
         loaded_transformers = load_transformers(
             transformers,
+            [],
             configure,
             skip=skip_config,
             allow_disabled=allow_disabled,
@@ -178,7 +188,7 @@ class TestLoadTransformers:
         expected_transformers = sorted(expected_transformers)
         mocked_version = Mock(major=version)
         with patch("robotidy.transformers.ROBOT_VERSION", mocked_version):
-            transformers = load_transformers(transform, config, skip=skip_config, target_version=target_version)
+            transformers = load_transformers(transform, [], config, skip=skip_config, target_version=target_version)
         transformers_names = sorted([transformer.name for transformer in transformers])
         if expected_transformers == ["all_default"]:
             only_5_found = any(
@@ -220,7 +230,7 @@ class TestLoadTransformers:
     )
     def test_duplicated_name_in_transform(self, transform, warn_on, capsys):
         transformers = [(name, []) for name in transform]
-        load_transformers(transformers, {}, target_version=ROBOT_VERSION.major)
+        load_transformers(transformers, [], {}, target_version=ROBOT_VERSION.major)
         expected_output = "".join(
             [
                 f"Duplicated transformer '{name}' in the transform option. "

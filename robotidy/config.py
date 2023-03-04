@@ -63,6 +63,7 @@ class Config:
         formatting: FormattingConfig,
         skip,
         transformers: List[Tuple[str, List]],
+        custom_transformers: List[Tuple[str, List]],
         transformers_config: List[Tuple[str, List]],
         src: Tuple[str, ...],
         exclude: Optional[Pattern],
@@ -92,11 +93,20 @@ class Config:
         transformers_config = self.convert_configure(transformers_config)
         self.transformers = []
         self.transformers_lookup = dict()
-        self.load_transformers(transformers, transformers_config, force_order, target_version, skip)
+        self.load_transformers(
+            transformers, custom_transformers, transformers_config, force_order, target_version, skip
+        )
 
-    def load_transformers(self, transformers, transformers_config, force_order, target_version, skip):
+    def load_transformers(
+        self, transformers, custom_transformers, transformers_config, force_order, target_version, skip
+    ):
         transformers = load_transformers(
-            transformers, transformers_config, force_order=force_order, target_version=target_version, skip=skip
+            transformers,
+            custom_transformers,
+            transformers_config,
+            force_order=force_order,
+            target_version=target_version,
+            skip=skip,
         )
         for transformer in transformers:
             # inject global settings TODO: handle it better

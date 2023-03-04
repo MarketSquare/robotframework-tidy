@@ -325,7 +325,8 @@ def assert_not_duplicated_transform(allowed_mapped, allowed_transformers):
 
 
 def load_transformers(
-    allowed_transformers,
+    selected_transformers,
+    custom_transformers,
     config,
     target_version,
     skip=None,
@@ -333,34 +334,47 @@ def load_transformers(
     force_order=False,
     allow_version_mismatch=True,
 ):
-    """Dynamically load all classes from this file with attribute `name` defined in allowed_transformers"""
+    """Dynamically load all classes from this file with attribute `name` defined in selected_transformers"""
     loaded_transformers = []
-    allowed_mapped = {name: args for name, args in allowed_transformers} if allowed_transformers else {}
-    assert_not_duplicated_transform(allowed_mapped, allowed_transformers)
+    allowed_mapped = {name: args for name, args in selected_transformers}
+    custom_mapped = {name: args for name, args in custom_transformers}
+    assert_not_duplicated_transform(allowed_mapped, selected_transformers)
     validate_config(config, allowed_mapped)
     if not force_order:
         for name in TRANSFORMERS:
+            # load all default ones if allowed_mapped is not defined, or only those listed in allowed_mapped
             if not allowed_mapped or name in allowed_mapped:
                 args = get_args(name, allowed_mapped, config)
                 container = load_transformer(name, args, skip)
                 if container is None:
                     continue
                 enabled = getattr(container.instance, "ENABLED", True) or args.get("enabled", False)
-                if allowed_mapped or allow_disabled or enabled:
-                    overwritten = name in allowed_mapped or args.get("enabled", False)
-                    if can_run_in_robot_version(
-                        container.instance, overwritten=overwritten, target_version=target_version
-                    ):
-                        loaded_transformers.append(container)
-                    elif allow_version_mismatch and allow_disabled:
-                        setattr(container.instance, "ENABLED", False)
-                        container.enabled_by_default = False
-                        loaded_transformers.append(container)
+                if not (allowed_mapped or allow_disabled or enabled):
+                    continue
+                overwritten = name in allowed_mapped or args.get("enabled", False)
+                if can_run_in_robot_version(container.instance, overwritten=overwritten, target_version=target_version):
+                    loaded_transformers.append(container)
+                elif allow_version_mismatch and allow_disabled:
+                    setattr(container.instance, "ENABLED", False)
+                    container.enabled_by_default = False
+                    loaded_transformers.append(container)
     for name in allowed_mapped:
         if force_order or name not in TRANSFORMERS:
             args = get_args(name, allowed_mapped, config)
             container = load_transformer(name, args, skip)
-            if container is not None:
-                if can_run_in_robot_version(container.instance, overwritten=True, target_version=target_version):
-                    loaded_transformers.append(container)
+            if container is None:
+                continue
+            if can_run_in_robot_version(container.instance, overwritten=True, target_version=target_version):
+                loaded_transformers.append(container)
+    for name in custom_mapped:
+        args = get_args(name, custom_mapped, config)
+        container = load_transformer(name, args, skip)
+        if container is None:
+            continue
+        enabled = getattr(container.instance, "ENABLED", True) or args.get("enabled", False)
+        if not (allow_disabled or enabled):
+            continue
+        overwritten = args.get("enabled", False)
+        if can_run_in_robot_version(container.instance, overwritten=overwritten, target_version=target_version):
+            loaded_transformers.append(container)
     return loaded_transformers

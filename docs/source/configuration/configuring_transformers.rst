@@ -3,15 +3,25 @@
 Configuring Transformers
 ========================
 
-Transformers can be configured through two different options: ``--transform`` (``-t``) and ``--configure`` (``-c``). They share the same
-syntax for parameter names and values. The main difference is that ``--transform`` is also used to select what
-transformers will be used. For example::
+Transformers can be configured through three different options: ``--transform`` (``-t``), ``--load-transformer`` and
+``--configure`` (``-c``). They share the same syntax for parameter names and values.
+
+- ``--configure`` simply provides the configuration to the transformer,
+- ``--transform`` is used to include only transformers that have ``--transform`` option,
+- ``--load-transformer`` is used to load user transformers. Read more at :ref:`external-transformers`.
+
+For example::
 
     robotidy --transform NormalizeNewLines:test_case_lines=2 src
     robotidy --configure NormalizeNewLines:test_case_lines=2 src
+    robotidy --configure NormalizeNewLines:test_case_lines=1 --load-transformer MyCustomTransformer.py:param=value src
 
 With first command robotidy will run only ``NormalizeNewLines`` transformer and it will configure it with ``test_case_lines = 2``.
+
 Second command robotidy will run all of the transformers and will configure ``NormalizeNewLines`` with ``test_case_lines = 2``.
+
+Third command will run all of the transformers, configure ``NormalizeNewLines`` with ``test_case_lines = 1`` and
+import user transformer ``MyCustomTransformer`` with `param=value` configuration.
 
 You can also run all transformers except selected ones. For that you need to configure transformer you want to exclude
 with ``enabled`` parameter::

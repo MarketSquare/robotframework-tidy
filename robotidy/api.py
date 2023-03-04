@@ -54,13 +54,17 @@ def get_formatting_config(config, kwargs):
 
 
 def get_robotidy(src: str, output: Optional[str], **kwargs):
+    def convert_transformers_config(param_name, config):
+        return [converter.convert(tr, None, None) for tr in config.get(param_name, ())]
+
     # TODO Refactor - Config should be read in one place both for API and CLI
     # TODO Remove kwargs usage - other SDKs are not using this feature
     config = files.find_and_read_config((src,))
     config = {k: str(v) if not isinstance(v, (list, dict)) else v for k, v in config.items()}
     converter = transformers.TransformType()
-    transformer_list = [converter.convert(tr, None, None) for tr in config.get("transform", ())]
-    configurations = [converter.convert(c, None, None) for c in config.get("configure", ())]
+    transformer_list = convert_transformers_config("transform", config)
+    custom_transformers = convert_transformers_config("load-transformers", config)
+    configurations = convert_transformers_config("configure", config)
     formatting_config = get_formatting_config(config, kwargs)
     exclude = config.get("exclude", None)
     extend_exclude = config.get("extend_exclude", None)
@@ -71,6 +75,7 @@ def get_robotidy(src: str, output: Optional[str], **kwargs):
     language = config.get("language", None)
     configuration = Config(
         transformers=transformer_list,
+        custom_transformers=custom_transformers,
         transformers_config=configurations,
         skip=global_skip,
         src=(),

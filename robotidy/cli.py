@@ -24,6 +24,10 @@ CLI_OPTIONS_LIST = [
         "options": ["--transform"],
     },
     {
+        "name": "Load custom transformers",
+        "options": ["--load-transformers"],
+    },
+    {
         "name": "Work modes",
         "options": ["--overwrite", "--diff", "--check", "--force-order"],
     },
@@ -165,7 +169,8 @@ def print_transformer_docs(transformer):
 
 @decorators.optional_rich
 def print_description(name: str, target_version: int):
-    transformers = load_transformers(None, {}, allow_disabled=True, target_version=target_version)
+    # TODO: --desc works only for default transformers, it should also print custom transformer desc
+    transformers = load_transformers([], [], {}, allow_disabled=True, target_version=target_version)
     transformer_by_names = {transformer.name: transformer for transformer in transformers}
     if name == "all":
         for transformer in transformers:
@@ -182,6 +187,7 @@ def print_description(name: str, target_version: int):
 
 def _load_external_transformers(
     transformers: List,
+    custom_transformers: List[Tuple[str, List]],
     transformers_from_config: List[Tuple[str, List]],
     transformer_config: List[Tuple[str, List]],
     target_version: int,
@@ -190,7 +196,7 @@ def _load_external_transformers(
     transformers_names = {transformer.name for transformer in transformers}
     transformer_config_converted = Config.convert_configure(transformer_config)
     transformers_from_conf = load_transformers(
-        transformers_from_config, transformer_config_converted, target_version=target_version
+        transformers_from_config, custom_transformers, transformer_config_converted, target_version=target_version
     )
     for transformer in transformers_from_conf:
         if transformer.name not in transformers_names:
@@ -201,6 +207,7 @@ def _load_external_transformers(
 @decorators.optional_rich
 def print_transformers_list(
     transformers_from_config: List[Tuple[str, List]],
+    custom_transformers: List[Tuple[str, List]],
     transformer_config: List[Tuple[str, List]],
     config: Config,
     target_version: int,
@@ -211,9 +218,11 @@ def print_transformers_list(
     table = Table(title="Transformers", header_style="bold red")
     table.add_column("Name", justify="left", no_wrap=True)
     table.add_column("Enabled")
-    transformers = load_transformers(None, {}, allow_disabled=True, target_version=target_version)
+    transformers = load_transformers([], [], {}, allow_disabled=True, target_version=target_version)
     transformers.extend(
-        _load_external_transformers(transformers, transformers_from_config, transformer_config, target_version)
+        _load_external_transformers(
+            transformers, custom_transformers, transformers_from_config, transformer_config, target_version
+        )
     )
 
     for transformer in transformers:
@@ -248,7 +257,15 @@ def print_transformers_list(
     type=TransformType(),
     multiple=True,
     metavar="TRANSFORMER_NAME",
-    help="Transform files from \[PATH(S)] with given transformer",
+    help="Transform files from [PATH(S)] with given transformer",
+)
+@click.option(
+    "--load-transformers",
+    "custom_transformers",
+    type=TransformType(),
+    multiple=True,
+    metavar="TRANSFORMER_NAME",
+    help="Load custom transformer from the path and run them after default ones.",
 )
 @click.option(
     "--configure",
@@ -474,6 +491,7 @@ def print_transformers_list(
 def cli(
     ctx: click.Context,
     transform: List[Tuple[str, List]],
+    custom_transformers: List[Tuple[str, List]],
     configure: List[Tuple[str, List]],
     src: Tuple[str, ...],
     exclude: Optional[Pattern],
@@ -566,10 +584,13 @@ def cli(
         end_line=endline,
         line_length=line_length,
     )
+    # array of some class, that holds info if it's forced, configure or custom
+    # or just name:args TODO
     config = Config(
         formatting=formatting,
         skip=skip_config,
         transformers=transform,
+        custom_transformers=custom_transformers,
         transformers_config=configure,
         src=src,
         exclude=exclude,
@@ -588,7 +609,7 @@ def cli(
     )
 
     if list_transformers:
-        print_transformers_list(transform, configure, config, target_version, list_transformers)
+        print_transformers_list(transform, custom_transformers, configure, config, target_version, list_transformers)
         sys.exit(0)
     if desc is not None:
         return_code = print_description(desc, target_version)
