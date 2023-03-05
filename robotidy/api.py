@@ -1,10 +1,11 @@
 """
 Methods for transforming Robot Framework ast model programmatically.
 """
-from typing import Optional
+from typing import Dict, List, Optional
 
 from robotidy import app, disablers, files, skip, transformers, utils
 from robotidy.config import Config, FormattingConfig
+from robotidy.transformers import TransformConfig, TransformConfigMap
 
 
 def get_skip_config(config):
@@ -54,17 +55,28 @@ def get_formatting_config(config, kwargs):
 
 
 def get_robotidy(src: str, output: Optional[str], **kwargs):
-    def convert_transformers_config(param_name, config):
-        return [converter.convert(tr, None, None) for tr in config.get(param_name, ())]
+    def convert_transformers_config(
+        param_name: str,
+        config: Dict,
+        force_included: bool = False,
+        custom_transformer: bool = False,
+        is_config: bool = False,
+    ) -> List[TransformConfig]:
+        return [
+            TransformConfig(
+                tr, force_include=force_included, custom_transformer=custom_transformer, is_config=is_config
+            )
+            for tr in config.get(param_name, ())
+        ]
 
     # TODO Refactor - Config should be read in one place both for API and CLI
     # TODO Remove kwargs usage - other SDKs are not using this feature
     config = files.find_and_read_config((src,))
     config = {k: str(v) if not isinstance(v, (list, dict)) else v for k, v in config.items()}
-    converter = transformers.TransformType()
-    transformer_list = convert_transformers_config("transform", config)
-    custom_transformers = convert_transformers_config("load-transformers", config)
-    configurations = convert_transformers_config("configure", config)
+    transformer_list = convert_transformers_config("transform", config, force_included=True)
+    custom_transformers = convert_transformers_config("load-transformers", config, custom_transformer=True)
+    configurations = convert_transformers_config("configure", config, is_config=True)
+    transformer_config = TransformConfigMap(transformer_list, custom_transformers, configurations)
     formatting_config = get_formatting_config(config, kwargs)
     exclude = config.get("exclude", None)
     extend_exclude = config.get("extend_exclude", None)
@@ -74,9 +86,7 @@ def get_robotidy(src: str, output: Optional[str], **kwargs):
     global_skip = get_skip_config(config)
     language = config.get("language", None)
     configuration = Config(
-        transformers=transformer_list,
-        custom_transformers=custom_transformers,
-        transformers_config=configurations,
+        transformers_config=transformer_config,
         skip=global_skip,
         src=(),
         exclude=exclude,

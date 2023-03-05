@@ -6,6 +6,7 @@ import pytest
 from robotidy.app import Robotidy
 from robotidy.config import Config, FormattingConfig
 from robotidy.skip import SkipConfig
+from robotidy.transformers import TransformConfigMap
 from robotidy.utils import ROBOT_VERSION, decorate_diff_with_color, split_args_from_name_or_path
 
 
@@ -23,9 +24,7 @@ def app():
         line_length=120,
     )
     config = Config(
-        transformers=[],
-        custom_transformers=[],
-        transformers_config=[],
+        transformers_config=TransformConfigMap([], [], []),
         skip=skip_config,
         src=(".",),
         exclude=None,

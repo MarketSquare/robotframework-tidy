@@ -20,9 +20,6 @@ def catch_exceptions(func):
             return functools.partial(catch_exceptions)
         try:
             return func(*args, **kwargs)
-        except exceptions.RobotidyConfigError as err:
-            print(f"Error: {err}")
-            sys.exit(1)
         except (click.exceptions.ClickException, click.exceptions.Exit):
             raise
         except Exception as err:

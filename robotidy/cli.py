@@ -16,7 +16,7 @@ except ImportError:  # Fails on vendored-in LSP plugin
 from robotidy import app, decorators, files, skip, utils, version
 from robotidy.config import Config, FormattingConfig
 from robotidy.rich_console import console
-from robotidy.transformers import TransformType, load_transformers
+from robotidy.transformers import TransformConfig, TransformConfigMap, TransformConfigParameter, load_transformers
 
 CLI_OPTIONS_LIST = [
     {
@@ -170,7 +170,7 @@ def print_transformer_docs(transformer):
 @decorators.optional_rich
 def print_description(name: str, target_version: int):
     # TODO: --desc works only for default transformers, it should also print custom transformer desc
-    transformers = load_transformers([], [], {}, allow_disabled=True, target_version=target_version)
+    transformers = load_transformers(TransformConfigMap([], [], []), allow_disabled=True, target_version=target_version)
     transformer_by_names = {transformer.name: transformer for transformer in transformers}
     if name == "all":
         for transformer in transformers:
@@ -185,19 +185,10 @@ def print_description(name: str, target_version: int):
     return 0
 
 
-def _load_external_transformers(
-    transformers: List,
-    custom_transformers: List[Tuple[str, List]],
-    transformers_from_config: List[Tuple[str, List]],
-    transformer_config: List[Tuple[str, List]],
-    target_version: int,
-):
+def _load_external_transformers(transformers: List, transformers_config: TransformConfigMap, target_version: int):
     external = []
     transformers_names = {transformer.name for transformer in transformers}
-    transformer_config_converted = Config.convert_configure(transformer_config)
-    transformers_from_conf = load_transformers(
-        transformers_from_config, custom_transformers, transformer_config_converted, target_version=target_version
-    )
+    transformers_from_conf = load_transformers(transformers_config, target_version=target_version)
     for transformer in transformers_from_conf:
         if transformer.name not in transformers_names:
             external.append(transformer)
@@ -206,24 +197,15 @@ def _load_external_transformers(
 
 @decorators.optional_rich
 def print_transformers_list(
-    transformers_from_config: List[Tuple[str, List]],
-    custom_transformers: List[Tuple[str, List]],
-    transformer_config: List[Tuple[str, List]],
-    config: Config,
-    target_version: int,
-    list_transformers: str,
+    transformers_config: TransformConfigMap, config: Config, target_version: int, list_transformers: str
 ):
     from rich.table import Table
 
     table = Table(title="Transformers", header_style="bold red")
     table.add_column("Name", justify="left", no_wrap=True)
     table.add_column("Enabled")
-    transformers = load_transformers([], [], {}, allow_disabled=True, target_version=target_version)
-    transformers.extend(
-        _load_external_transformers(
-            transformers, custom_transformers, transformers_from_config, transformer_config, target_version
-        )
-    )
+    transformers = load_transformers(TransformConfigMap([], [], []), allow_disabled=True, target_version=target_version)
+    transformers.extend(_load_external_transformers(transformers, transformers_config, target_version))
 
     for transformer in transformers:
         enabled = transformer.name in config.transformers_lookup
@@ -254,7 +236,7 @@ def print_transformers_list(
 @click.option(
     "--transform",
     "-t",
-    type=TransformType(),
+    type=TransformConfigParameter(),
     multiple=True,
     metavar="TRANSFORMER_NAME",
     help="Transform files from [PATH(S)] with given transformer",
@@ -262,7 +244,7 @@ def print_transformers_list(
 @click.option(
     "--load-transformers",
     "custom_transformers",
-    type=TransformType(),
+    type=TransformConfigParameter(),
     multiple=True,
     metavar="TRANSFORMER_NAME",
     help="Load custom transformer from the path and run them after default ones.",
@@ -270,7 +252,7 @@ def print_transformers_list(
 @click.option(
     "--configure",
     "-c",
-    type=TransformType(),
+    type=TransformConfigParameter(),
     multiple=True,
     metavar="TRANSFORMER_NAME:PARAM=VALUE",
     help="Configure transformers",
@@ -490,9 +472,9 @@ def print_transformers_list(
 @decorators.catch_exceptions
 def cli(
     ctx: click.Context,
-    transform: List[Tuple[str, List]],
-    custom_transformers: List[Tuple[str, List]],
-    configure: List[Tuple[str, List]],
+    transform: List[TransformConfig],
+    custom_transformers: List[TransformConfig],
+    configure: List[TransformConfig],
     src: Tuple[str, ...],
     exclude: Optional[Pattern],
     extend_exclude: Optional[Pattern],
@@ -584,14 +566,12 @@ def cli(
         end_line=endline,
         line_length=line_length,
     )
-    # array of some class, that holds info if it's forced, configure or custom
-    # or just name:args TODO
+
+    transformers_config = TransformConfigMap(transform, custom_transformers, configure)
     config = Config(
         formatting=formatting,
         skip=skip_config,
-        transformers=transform,
-        custom_transformers=custom_transformers,
-        transformers_config=configure,
+        transformers_config=transformers_config,
         src=src,
         exclude=exclude,
         extend_exclude=extend_exclude,
@@ -609,7 +589,7 @@ def cli(
     )
 
     if list_transformers:
-        print_transformers_list(transform, custom_transformers, configure, config, target_version, list_transformers)
+        print_transformers_list(transformers_config, config, target_version, list_transformers)
         sys.exit(0)
     if desc is not None:
         return_code = print_description(desc, target_version)

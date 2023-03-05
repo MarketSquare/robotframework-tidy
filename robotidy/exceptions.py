@@ -1,5 +1,10 @@
+import sys
+
+
 class RobotidyConfigError(Exception):
-    pass
+    def __init__(self, err):
+        print(f"Error: {err}")
+        sys.exit(1)
 
 
 class InvalidParameterValueError(RobotidyConfigError):
