@@ -56,6 +56,7 @@ TRANSFORMERS = [
     "ReplaceBreakContinue",
     "InlineIf",
     "Translate",
+    "BrowserDeprecateClick",
 ]
 
 
