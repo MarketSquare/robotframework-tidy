@@ -9,7 +9,7 @@ except ImportError:
     Languages = None
 
 from robotidy.files import get_paths
-from robotidy.transformers import load_transformers
+from robotidy.transformers import TransformConfig, TransformConfigMap, load_transformers
 
 
 class FormattingConfig:
@@ -62,9 +62,7 @@ class Config:
         self,
         formatting: FormattingConfig,
         skip,
-        transformers: List[Tuple[str, List]],
-        custom_transformers: List[Tuple[str, List]],
-        transformers_config: List[Tuple[str, List]],
+        transformers_config: TransformConfigMap,
         src: Tuple[str, ...],
         exclude: Optional[Pattern],
         extend_exclude: Optional[Pattern],
@@ -90,19 +88,12 @@ class Config:
         self.color = color
         self.reruns = reruns
         self.language = self.get_languages(language)
-        transformers_config = self.convert_configure(transformers_config)
         self.transformers = []
         self.transformers_lookup = dict()
-        self.load_transformers(
-            transformers, custom_transformers, transformers_config, force_order, target_version, skip
-        )
+        self.load_transformers(transformers_config, force_order, target_version, skip)
 
-    def load_transformers(
-        self, transformers, custom_transformers, transformers_config, force_order, target_version, skip
-    ):
+    def load_transformers(self, transformers_config: TransformConfigMap, force_order, target_version, skip):
         transformers = load_transformers(
-            transformers,
-            custom_transformers,
             transformers_config,
             force_order=force_order,
             target_version=target_version,
@@ -115,13 +106,6 @@ class Config:
             setattr(transformer.instance, "languages", self.language)
             self.transformers.append(transformer.instance)
             self.transformers_lookup[transformer.name] = transformer.instance
-
-    @staticmethod
-    def convert_configure(configure: List[Tuple[str, List]]) -> Dict[str, List]:
-        config_map = defaultdict(list)
-        for transformer, args in configure:
-            config_map[transformer].extend(args)
-        return config_map
 
     @staticmethod
     def get_languages(lang):

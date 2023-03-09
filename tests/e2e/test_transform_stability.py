@@ -7,7 +7,7 @@ import pytest
 from click.testing import CliRunner
 
 from robotidy.cli import cli
-from robotidy.transformers import load_transformers
+from robotidy.transformers import TransformConfigMap, load_transformers
 from robotidy.utils import ROBOT_VERSION
 
 RERUN_NEEDED_4 = {
@@ -94,7 +94,10 @@ def get_enable_disabled_config() -> List[str]:
         return not getattr(transformer, "ENABLED", True)
 
     transformers = load_transformers(
-        [], [], {}, allow_disabled=True, target_version=ROBOT_VERSION.major, allow_version_mismatch=False
+        TransformConfigMap([], [], []),
+        allow_disabled=True,
+        target_version=ROBOT_VERSION.major,
+        allow_version_mismatch=False,
     )
     config = []
     for transformer in transformers:

@@ -12,7 +12,7 @@ import copy
 import pathlib
 import textwrap
 from itertools import chain
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 try:
     import rich_click as click
@@ -62,12 +62,139 @@ TRANSFORMERS = [
 IMPORTER = Importer()
 
 
-class TransformType(click.ParamType):
+class TransformConfig:
+    def __init__(self, config, force_include, custom_transformer, is_config):
+        name, args = split_args_from_name_or_path(config.replace(" ", ""))
+        self.name = name
+        self.args = self.convert_args(args)
+        self.force_include = force_include
+        self.custom_transformer = custom_transformer
+        self.is_config_only = is_config
+        self.duplicate_reported = False
+
+    def convert_args(self, args):
+        """
+        Convert list of param=value arguments to dictionary.
+        """
+        converted = dict()
+        for arg in args:
+            try:
+                param, value = arg.split("=", maxsplit=1)
+            except ValueError:
+                raise InvalidParameterFormatError(self.name) from None
+            if param == "enabled":
+                converted[param] = value.lower() == "true"
+            else:
+                converted[param] = value
+        return converted
+
+    def join_transformer_configs(self, transformer_config: "TransformConfig"):
+        """
+        Join 2 configurations i.e. from --transform, --load-transformers or --config.
+        """
+        if self.force_include and transformer_config.force_include:
+            if not self.duplicate_reported:
+                click.echo(
+                    f"Duplicated transformer '{self.name}' in the transform option. "
+                    f"It will be run only once with the configuration from the last transform."
+                )
+                self.duplicate_reported = True
+        self.is_config_only = self.is_config_only and transformer_config.is_config_only
+        self.force_include = self.force_include or transformer_config.force_include
+        self.custom_transformer = self.custom_transformer or transformer_config.custom_transformer
+        self.join_args(transformer_config)
+
+    def join_args(self, transformer_config: "TransformConfig"):
+        self.args.update(transformer_config.args)
+
+
+class TransformConfigMap:
+    """
+    Collection of all transformers and their configs.
+    """
+
+    def __init__(
+        self,
+        transform: List[TransformConfig],
+        custom_transformers: List[TransformConfig],
+        config: List[TransformConfig],
+    ):
+        self.force_included_only = False
+        self.transformers: Dict[str, TransformConfig] = dict()
+        for tr in chain(transform, custom_transformers, config):
+            self.add_transformer(tr)
+
+    def add_transformer(self, tr):
+        if tr.force_include:
+            self.force_included_only = True
+        if tr.name in self.transformers:
+            self.transformers[tr.name].join_transformer_configs(tr)
+        else:
+            self.transformers[tr.name] = tr
+
+    def transformer_should_be_included(self, name: str) -> bool:
+        """
+        Check whether --transform option was used. If it was, check if transformer name was used with --transform.
+        """
+        if not self.force_included_only:
+            return True
+        return self.transformer_is_force_included(name)
+
+    def transformer_is_force_included(self, name: str) -> bool:
+        return name in self.transformers and self.transformers[name].force_include
+
+    def transformer_was_forcefully_enabled(self, name: str) -> bool:
+        if name not in self.transformers:
+            return False
+        return self.transformers[name].force_include or self.transformers[name].args.get("enabled", False)
+
+    def update_with_defaults(self, defaults: List[str]):
+        for default in defaults:
+            if default in self.transformers:
+                self.transformers[default].is_config_only = False
+            else:
+                self.transformers[default] = TransformConfig(default, False, False, False)
+
+    def order_using_list(self, order: List[str]):
+        temp_transformers: Dict[str, TransformConfig] = dict()
+        for name in order:
+            if name in self.transformers:
+                temp_transformers[name] = self.transformers[name]
+        for name, transformer in self.transformers.items():
+            if name not in temp_transformers:
+                temp_transformers[name] = transformer
+        self.transformers = temp_transformers
+
+    def validate_config_names(self):
+        """
+        Assert that all --configure NAME are either defaults or from --transform/--load-transformer.
+        Otherwise raise an error with similar names.
+        """
+        for transf_name, transformer in self.transformers.items():
+            if not transformer.is_config_only:
+                continue
+            similar_finder = RecommendationFinder()
+            transformer_names = [name for name, transf in self.transformers.items() if not transf.is_config_only]
+            similar = similar_finder.find_similar(transf_name, transformer_names)
+            raise ImportTransformerError(
+                f"Configuring transformer '{transf_name}' failed. " f"Verify if correct name was provided.{similar}"
+            ) from None
+
+
+class TransformConfigParameter(click.ParamType):
+    """
+    Click parameter that holds the name of the transformer and optional configuration.
+    """
+
     name = "transform"
 
     def convert(self, value, param, ctx):
-        name, args = split_args_from_name_or_path(value.replace(" ", ""))
-        return name, args
+        force_included = param.name == "transform"
+        custom_transformer = param.name == "custom_transformers"
+        is_config = param.name == "configure"
+        return TransformConfig(
+            value, force_include=force_included, custom_transformer=custom_transformer, is_config=is_config
+        )
 
 
 class TransformerParameter:
@@ -247,40 +374,8 @@ def resolve_core_import_path(name):
 
 
 def load_transformer(name, args, skip) -> Optional[TransformerContainer]:
-    if not args.get("enabled", True):
-        return None
     import_name = resolve_core_import_path(name)
     return import_transformer(import_name, args, skip)
-
-
-def join_configs(args, config):
-    # args are from --transform Name:param=value and config is from --configure
-    temp_args = {}
-    for arg in chain(args, config):
-        param, value = arg.split("=", maxsplit=1)
-        if param == "enabled":
-            temp_args[param] = value.lower() == "true"
-        else:
-            temp_args[param] = value
-    return temp_args
-
-
-def get_args(transformer, allowed_mapped, config):
-    try:
-        return join_configs(allowed_mapped.get(transformer, ()), config.get(transformer, ()))
-    except ValueError:
-        raise InvalidParameterFormatError(transformer) from None
-
-
-def validate_config(config, allowed_mapped):
-    for transformer in config:
-        if transformer in allowed_mapped or transformer in TRANSFORMERS:
-            continue
-        similar_finder = RecommendationFinder()
-        similar = similar_finder.find_similar(transformer, TRANSFORMERS + list(allowed_mapped.keys()))
-        raise ImportTransformerError(
-            f"Configuring transformer '{transformer}' failed. " f"Verify if correct name was provided.{similar}"
-        ) from None
 
 
 def can_run_in_robot_version(transformer, overwritten, target_version):
@@ -306,28 +401,8 @@ def can_run_in_robot_version(transformer, overwritten, target_version):
     return False
 
 
-def assert_not_duplicated_transform(allowed_mapped, allowed_transformers):
-    """
-    Warns if user provides duplicated transformer names in --transform option.
-    """
-    if not allowed_mapped or len(allowed_mapped) == len(allowed_transformers):
-        return
-    transformers, reported = set(), set()
-    for name, _ in allowed_transformers:
-        if name in transformers and name not in reported:
-            reported.add(name)
-            click.echo(
-                f"Duplicated transformer '{name}' in the transform option. "
-                f"It will be run only once with the configuration from the last transform."
-            )
-        else:
-            transformers.add(name)
-
-
 def load_transformers(
-    selected_transformers,
-    custom_transformers,
-    config,
+    transformers_config: TransformConfigMap,
     target_version,
     skip=None,
     allow_disabled=False,
@@ -336,45 +411,32 @@ def load_transformers(
 ):
     """Dynamically load all classes from this file with attribute `name` defined in selected_transformers"""
     loaded_transformers = []
-    allowed_mapped = {name: args for name, args in selected_transformers}
-    custom_mapped = {name: args for name, args in custom_transformers}
-    assert_not_duplicated_transform(allowed_mapped, selected_transformers)
-    validate_config(config, allowed_mapped)
+    transformers_config.update_with_defaults(TRANSFORMERS)
+    transformers_config.validate_config_names()
     if not force_order:
-        for name in TRANSFORMERS:
-            # load all default ones if allowed_mapped is not defined, or only those listed in allowed_mapped
-            if not allowed_mapped or name in allowed_mapped:
-                args = get_args(name, allowed_mapped, config)
-                container = load_transformer(name, args, skip)
-                if container is None:
-                    continue
-                enabled = getattr(container.instance, "ENABLED", True) or args.get("enabled", False)
-                if not (allowed_mapped or allow_disabled or enabled):
-                    continue
-                overwritten = name in allowed_mapped or args.get("enabled", False)
-                if can_run_in_robot_version(container.instance, overwritten=overwritten, target_version=target_version):
-                    loaded_transformers.append(container)
-                elif allow_version_mismatch and allow_disabled:
-                    setattr(container.instance, "ENABLED", False)
-                    container.enabled_by_default = False
-                    loaded_transformers.append(container)
-    for name in allowed_mapped:
-        if force_order or name not in TRANSFORMERS:
-            args = get_args(name, allowed_mapped, config)
-            container = load_transformer(name, args, skip)
-            if container is None:
-                continue
-            if can_run_in_robot_version(container.instance, overwritten=True, target_version=target_version):
-                loaded_transformers.append(container)
-    for name in custom_mapped:
-        args = get_args(name, custom_mapped, config)
-        container = load_transformer(name, args, skip)
-        if container is None:
+        transformers_config.order_using_list(TRANSFORMERS)
+    for name, transformer_config in transformers_config.transformers.items():
+        if not allow_disabled and not transformers_config.transformer_should_be_included(name):
             continue
-        enabled = getattr(container.instance, "ENABLED", True) or args.get("enabled", False)
-        if not (allow_disabled or enabled):
+        container = load_transformer(name, transformer_config.args, skip)
+        if transformers_config.force_included_only:
+            enabled = transformer_config.args.get("enabled", True)
+        else:
+            if "enabled" in transformer_config.args:
+                enabled = transformer_config.args["enabled"]
+            else:
+                enabled = getattr(container.instance, "ENABLED", True)
+        if not (enabled or allow_disabled):
             continue
-        overwritten = args.get("enabled", False)
-        if can_run_in_robot_version(container.instance, overwritten=overwritten, target_version=target_version):
+        if can_run_in_robot_version(
+            container.instance,
+            overwritten=transformers_config.transformer_was_forcefully_enabled(name),
+            target_version=target_version,
+        ):
+            container.enabled_by_default = enabled
+            loaded_transformers.append(container)
+        elif allow_version_mismatch and allow_disabled:
+            setattr(container.instance, "ENABLED", False)
+            container.enabled_by_default = False
             loaded_transformers.append(container)
     return loaded_transformers
