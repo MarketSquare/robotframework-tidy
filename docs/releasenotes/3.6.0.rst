@@ -48,3 +48,36 @@ This release introduces new option ``--load-transformer`` which imports custom t
 It is also possible to pass transformer configuration either using this option or through ``--configure``::
 
     > robotidy -c ExtClass1.py:param=value --load-transformer ExtClass2.py:param2=value test.robot
+
+Load custom transformers from the module
+-------------------------------------------
+
+It is now possible to load transformers from the Python module. Importing transformers from module works similarly
+to how custom libraries are imported in Robot Framework. If the the file has the same name as transformer it will
+be auto imported::
+
+    > robotidy --load-transformer CustomClass.py
+
+will load ``class CustomClass`` from the ``CustomClass.py`` file. It's the old behaviour and it will not change.
+
+If the file does not contain class with the same name, Robotidy will load all transformers from the file (using the
+same logic as importing the module).
+
+If you use directory or Python module, Robotidy will check the ``__init__.py`` file inside. By default it will import
+all transformers from the ``__init__.py`` file::
+
+    from robotidy.transformers import Transformer
+
+    from other_file import TransformerB
+
+    class TransformerA(Transformer)
+
+will import TransformerB and TransformerA (it doesn't need to be defined in ``__init__.py`` but imported here).
+
+The order of defining will be used as execution order. If you want to use different order you can define ``TRANSFORMERS``
+list in the ``__init__.py``::
+
+    TRANSFORMERS = [
+        "TransformerA",
+        "TransformerB"
+    ]

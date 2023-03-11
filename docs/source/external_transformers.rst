@@ -15,9 +15,47 @@ You can use both ``--transform`` and ``--load-transformer`` options to load cust
 is that ``--transform`` works like include and will only run transformers listed with ``--transform``. While ``--load-transformer``
 will run default transformers first and then user transformers.
 
-You can use the same syntax ``robotidy`` is using for developing internal transformers. The name of the file should
-be the same as name of the class containing your transformer. Your transformer should inherit from ``robot.api.parsing.ModelTransformer``
-parent class.
+Importing whole modules
+---------------------------
+
+Importing transformers from module works similarly to how custom libraries are imported in Robot Framework. If the the
+file has the same name as transformer it will be auto imported. For example following import::
+
+    robotidy --load-transformer CustomFormatter.py src
+
+will auto import class ``CustomFormatter`` from the file.
+
+If the file does not contain class with the same name, it is directory, or it is Python module with ``__init__.py`` file
+Robotidy will import multiple transformers. By default it imports every class that inherits from
+``robot.api.api.parsing.ModelTransformer`` or ``robotidy.transformers.Transformer`` and executes them in order they
+were imported.
+
+Following ``__init__.py``:
+
+  .. code-block:: python
+
+    from robotidy.transformers import Transformer
+
+    from other_file import TransformerB
+
+    class TransformerA(Transformer)
+
+will import TransformerB and TransformerA.
+
+If you want to use different order you can define ``TRANSFORMERS`` list in the ``__init__.py``:
+
+  .. code-block:: python
+
+    TRANSFORMERS = [
+        "TransformerA",
+        "TransformerB"
+    ]
+
+Transformer development
+---------------------------
+
+You can use the same syntax ``robotidy`` is using for developing internal transformers. Your transformer should inherit
+from ``robotidy.transformers.Transformer`` or ``robot.api.parsing.ModelTransformer`` parent class.
 
   .. code-block:: python
 
