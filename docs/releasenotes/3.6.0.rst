@@ -53,8 +53,8 @@ Load custom transformers from the module
 -------------------------------------------
 
 It is now possible to load transformers from the Python module. Importing transformers from module works similarly
-to how custom libraries are imported in Robot Framework. If the the file has the same name as transformer it will
-be auto imported::
+to how custom libraries are imported in Robot Framework. If the file has the same name as transformer, it will
+be auto-imported. The following command::
 
     > robotidy --load-transformer CustomClass.py
 
@@ -72,7 +72,7 @@ all transformers from the ``__init__.py`` file::
 
     class TransformerA(Transformer)
 
-will import TransformerB and TransformerA (it doesn't need to be defined in ``__init__.py`` but imported here).
+will import ``TransformerB`` and ``TransformerA`` (it doesn't need to be defined in ``__init__.py``, it's enough that it's imported).
 
 The order of defining will be used as execution order. If you want to use different order you can define ``TRANSFORMERS``
 list in the ``__init__.py``::
