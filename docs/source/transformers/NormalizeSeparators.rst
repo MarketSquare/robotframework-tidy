@@ -146,6 +146,7 @@ It is possible to use the following arguments to skip formatting of the code:
 - :ref:`skip keyword call`
 - :ref:`skip keyword call pattern`
 - :ref:`skip comments`
+- :ref:`skip sections`
 
 Documentation is formatted by default. To disable formatting the separators inside documentation, and to only format
 indentation, set ``skip_documentation`` to ``True``::
@@ -193,38 +194,12 @@ indentation, set ``skip_documentation`` to ``True``::
                 ...    long_arg:        Argument long_arg.
                Test Case Body
 
-Ignored sections
-------------------
+Skip formatting
+----------------
 
-You can decide which sections should be transformed by configuring
-``sections = comments,settings,variables,keywords,testcases`` param::
+It is possible to use the following arguments to skip formatting of the code:
 
-    robotidy --configure NormalizeSeparators:sections=variables src
+- :ref:`skip sections`
 
-.. tab-set::
-
-    .. tab-item:: Before
-
-        .. code:: robotframework
-
-            *** Settings ***
-            Library  library.py  WITH NAME          alias
-
-            Force Tags           tag
-            ...   tag
-
-            *** Variables ***
-            ${var}  1  # only this section will be transformed
-
-    .. tab-item:: After
-
-        .. code:: robotframework
-
-            *** Settings ***
-            Library  library.py  WITH NAME          alias
-
-            Force Tags           tag
-            ...   tag
-
-            *** Variables ***
-            ${var}    1    # only this section will be transformed
+It is also possible to use disablers (:ref:`disablers`) but ``skip`` option
+makes it easier to skip all instances of given type of the code.

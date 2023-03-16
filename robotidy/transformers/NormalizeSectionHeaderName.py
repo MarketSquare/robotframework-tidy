@@ -1,8 +1,7 @@
 import string
 
-from robot.api.parsing import Token
-
 from robotidy.disablers import skip_section_if_disabled
+from robotidy.skip import Skip
 from robotidy.transformers import Transformer
 
 
@@ -35,10 +34,11 @@ class NormalizeSectionHeaderName(Transformer):
     ```
     """
 
+    HANDLES_SKIP = frozenset({"skip_sections"})
     EN_SINGULAR_HEADERS = {"comment", "setting", "variable", "task", "test case", "keyword"}
 
-    def __init__(self, uppercase: bool = False):
-        super().__init__()
+    def __init__(self, uppercase: bool = False, skip: Skip = None):
+        super().__init__(skip)
         self.uppercase = uppercase
 
     @skip_section_if_disabled

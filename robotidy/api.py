@@ -9,6 +9,8 @@ from robotidy.transformers import TransformConfig, TransformConfigMap
 
 
 def get_skip_config(config):
+    # TODO: Improve it
+    skip_comments = config.get("skip_comments", False)
     skip_documentation = config.get("skip_documentation", False)
     skip_return_values = config.get("skip_return_values", False)
     skip_keyword_call = config.get("skip_keyword_call", [])
@@ -21,6 +23,8 @@ def get_skip_config(config):
     skip_timeout = config.get("skip_timeout", False)
     skip_return = config.get("skip_return", False)
     skip_tags = config.get("skip_tags", False)
+    skip_sections = config.get("skip_sections", "")
+    skip_block_comments = config.get("skip_block_comments", False)
     return skip.SkipConfig(
         documentation=skip_documentation,
         return_values=skip_return_values,
@@ -34,6 +38,9 @@ def get_skip_config(config):
         timeout=skip_timeout,
         return_statement=skip_return,
         tags=skip_tags,
+        comments=skip_comments,
+        block_comments=skip_block_comments,
+        sections=skip_sections,
     )
 
 

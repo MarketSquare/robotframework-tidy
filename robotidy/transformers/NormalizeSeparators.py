@@ -7,7 +7,6 @@ except ImportError:
     ReturnStatement = None
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
-from robotidy.exceptions import InvalidParameterValueError
 from robotidy.skip import Skip
 from robotidy.transformers import Transformer
 
@@ -19,73 +18,32 @@ class NormalizeSeparators(Transformer):
     All separators (pipes included) are converted to fixed length of 4 spaces (configurable via global argument
     ``--spacecount``).
 
-    You can decide which sections should be transformed by configuring
-    ``sections = comments,settings,variables,keywords,testcases`` param.
-
     To not format documentation configure ``skip_documentation`` to ``True``.
     """
 
     HANDLES_SKIP = frozenset(
-        {"skip_documentation", "skip_keyword_call", "skip_keyword_call_pattern", "skip_comments", "skip_block_comments"}
+        {
+            "skip_documentation",
+            "skip_keyword_call",
+            "skip_keyword_call_pattern",
+            "skip_comments",
+            "skip_block_comments",
+            "skip_sections",
+        }
     )
 
-    def __init__(self, sections: str = None, skip: Skip = None):
+    def __init__(self, skip: Skip = None):
         super().__init__(skip=skip)
         self.indent = 0
-        self.sections = self.parse_sections(sections)
         self.is_inline = False
-
-    def parse_sections(self, sections):
-        default = {"comments", "settings", "testcases", "keywords", "variables"}
-        if sections is None:
-            return default
-        if not sections:
-            return {}
-        parts = sections.split(",")
-        parsed_sections = set()
-        for part in parts:
-            part = part.replace("_", "")
-            if part and part[-1] != "s":
-                part += "s"
-            if part not in default:
-                raise InvalidParameterValueError(
-                    self.__class__.__name__,
-                    "sections",
-                    sections,
-                    f"Sections to be transformed should be provided in comma separated "
-                    f"list with valid section names:\n{sorted(default)}",
-                )
-            parsed_sections.add(part)
-        return parsed_sections
 
     def visit_File(self, node):  # noqa
         self.indent = 0
         return self.generic_visit(node)
 
-    def should_visit(self, name, node):
-        if name in self.sections:
-            return self.generic_visit(node)
-        return node
-
     @skip_section_if_disabled
-    def visit_CommentSection(self, node):  # noqa
-        return self.should_visit("comments", node)
-
-    @skip_section_if_disabled
-    def visit_SettingSection(self, node):  # noqa
-        return self.should_visit("settings", node)
-
-    @skip_section_if_disabled
-    def visit_VariableSection(self, node):  # noqa
-        return self.should_visit("variables", node)
-
-    @skip_section_if_disabled
-    def visit_KeywordSection(self, node):  # noqa
-        return self.should_visit("keywords", node)
-
-    @skip_section_if_disabled
-    def visit_TestCaseSection(self, node):  # noqa
-        return self.should_visit("testcases", node)
+    def visit_Section(self, node):  # noqa
+        return self.generic_visit(node)
 
     def indented_block(self, node):
         self.visit_Statement(node.header)

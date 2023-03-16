@@ -74,7 +74,7 @@ class TestCli:
         expected_output = (
             "Error: DiscardEmptySections: Failed to import. "
             "Verify if correct name or configuration was provided. "
-            "This transformer accepts following arguments:\n    enabled\n    allow_only_comments\n"
+            "This transformer accepts following arguments:\n    enabled\n    allow_only_comments\n    skip_sections\n"
         )
 
         args = "--transform DiscardEmptySections:invalid=True -".split()
@@ -480,7 +480,7 @@ class TestCli:
 
     def test_skip_options(self, tmp_path):
         alternate_names = {"--skip-return-statement": "--skip-return"}
-        with_values = {"--skip-keyword-call-pattern", "--skip-keyword-call"}
+        with_values = {"--skip-keyword-call-pattern", "--skip-keyword-call", "--skip-sections"}
         option_names = []
         for skip_option in skip.SkipConfig.HANDLES:
             option = f"--{skip_option.replace('_', '-')}"

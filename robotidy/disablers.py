@@ -19,6 +19,18 @@ def skip_if_disabled(func):
     return wrapper
 
 
+def get_section_name_from_header_type(node):
+    header_type = node.header.type if node.header else "COMMENT HEADER"
+    return {
+        "SETTING HEADER": "settings",
+        "VARIABLE HEADER": "variables",
+        "TESTCASE HEADER": "testcases",
+        "TASK HEADER": "tasks",
+        "KEYWORD HEADER": "keywords",
+        "COMMENT HEADER": "comments",
+    }.get(header_type, "invalid")
+
+
 def skip_section_if_disabled(func):
     """
     Does the same checks as ``skip_if_disabled`` and additionally checks
@@ -31,6 +43,10 @@ def skip_section_if_disabled(func):
             return node
         if self.disablers.is_header_disabled(node.lineno):
             return node
+        if self.skip:
+            section_name = get_section_name_from_header_type(node)
+            if self.skip.section(section_name):
+                return node
         return func(self, node, *args, **kwargs)
 
     return wrapper

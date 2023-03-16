@@ -18,6 +18,7 @@ To see what types are possible to skip, see ``Skip formatting`` sections in each
 
 Skip documentation
 -------------------
+
 Flag that disables formatting of the documentation. Example usage::
 
     robotidy -c NormalizeSeparators:skip_documentation=True src
@@ -28,6 +29,7 @@ It is possible to use global flag to skip formatting for every transformer that 
 
 Configuration file
 ~~~~~~~~~~~~~~~~~~~~
+
 Both options are configurable using configuration file (:ref:`config-file`).
 
 .. code-block:: toml
@@ -42,6 +44,7 @@ Both options are configurable using configuration file (:ref:`config-file`).
 
 Skip return values
 -------------------
+
 Flag that disables formatting of the return values (assignments). Example usage::
 
     robotidy -c AlignKeywordsSection:skip_return_values=True src
@@ -52,6 +55,7 @@ It is possible to use global flag to skip formatting for every transformer that 
 
 Configuration file
 ~~~~~~~~~~~~~~~~~~~~
+
 Both options are configurable using configuration file (:ref:`config-file`).
 
 .. code-block:: toml
@@ -66,6 +70,7 @@ Both options are configurable using configuration file (:ref:`config-file`).
 
 Skip keyword call
 ------------------
+
 Comma-separated list of keyword call names that should not be formatted. Names will be
 normalized before search (spaces and underscores removed, lowercase).
 
@@ -81,6 +86,7 @@ It is possible to use global option to skip formatting for every transformer tha
 
 Configuration file
 ~~~~~~~~~~~~~~~~~~~~
+
 Both options are configurable using configuration file (:ref:`config-file`).
 
 .. code-block:: toml
@@ -98,6 +104,7 @@ Both options are configurable using configuration file (:ref:`config-file`).
 
 Skip keyword call pattern
 -------------------------
+
 Comma-separated list of keyword call name patterns that should not be formatted. The keyword names are not normalized.
 If you're using different case for the same keyword ("Keyword" and "keyword") or using both spaces and underscores, it is
 recommended to use proper regex flags to match it properly.
@@ -117,6 +124,7 @@ It is possible to use global option to skip formatting for every transformer tha
 
 Configuration file
 ~~~~~~~~~~~~~~~~~~~~
+
 Both options are configurable using configuration file (:ref:`config-file`).
 
 .. code-block:: toml
@@ -134,6 +142,7 @@ Both options are configurable using configuration file (:ref:`config-file`).
 
 Skip settings
 -------------------
+
 Flag that disables formatting of the settings. Example usage::
 
     robotidy -c AlignTestCasesSection:skip_settings=True src
@@ -157,6 +166,7 @@ Following types are possible to skip:
 
 Configuration file
 ~~~~~~~~~~~~~~~~~~~~
+
 Option is configurable using configuration file (:ref:`config-file`).
 
 Skip formatting of all settings:
@@ -185,6 +195,7 @@ Skip formatting of selected settings:
 
 Skip comments and block comments
 ---------------------------------
+
 Flag that disables formatting of the comments and block comments. Example usage::
 
     robotidy -c NormalizeSeparators:skip_comments=True src
@@ -218,4 +229,31 @@ Both options are configurable using configuration file (:ref:`config-file`).
     skip-comments = true
     configure = [
         "NormalizeSeparators : skip_block_comments = False"
+    ]
+
+.. _skip sections:
+
+Skip sections
+---------------
+
+Option that disables formatting of the selected settings. Example usage::
+
+    robotidy -c NormalizeSeparators:skip_sections=variables src
+
+It is possible to use global option to skip formatting for every transformer that supports it::
+
+    robotidy --skip-sections=keywords,testcases src
+
+Section names can be provided using comma separated list: settings,variables,testcases,keywords,comments.
+
+Configuration file
+~~~~~~~~~~~~~~~~~~~~
+Both options are configurable using configuration file (:ref:`config-file`).
+
+.. code-block:: toml
+
+    [tool.robotidy]
+    skip-sections = "comments"
+    configure = [
+        "NormalizeSeparators : skip_sections = tasks,keywords"
     ]

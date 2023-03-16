@@ -1,6 +1,8 @@
-Robotidy 3.6.0
+Robotidy 4.0.0
 =========================================
 
+Major release which contains multiple improvements for external transformers. There are also backward incompatible
+changes, including removing ``section`` option from ``NormalizeSeparators`` (replaced with ``skip_sections``).
 
 You can install the latest available version by running::
 
@@ -8,7 +10,7 @@ You can install the latest available version by running::
 
 or to install exactly this version::
 
-    pip install robotframework-tidy==3.6.0
+    pip install robotframework-tidy==4.0.0
 
 Rerun the transformation in place
 ----------------------------------
@@ -81,3 +83,36 @@ list in the ``__init__.py``::
         "TransformerA",
         "TransformerB"
     ]
+
+New skip option: --skip-sections #388 #475
+-------------------------------------------
+
+It is now possible to skip formatting of whole sections with new ``--skip-sections`` option.
+
+Currently supported in::
+
+    AddMissingEnd
+    DiscardEmptySections
+    NormalizeAssignments
+    NormalizeNewLines
+    NormalizeSectionHeaderName
+    NormalizeSeparators
+    SplitTooLongLine
+
+Support for other transformers can be added if needed.
+
+You can configure which section to skip using comma separated list of section names: settings,variables,testcases,tasks,keywords,comments.
+Like other skip options it can be used either for all transformers with ``--skip-sections``, or only for configured
+transformer::
+
+    > robotidy --configure DiscardEmptySections:skip_sections=variables src
+
+Since this option provides the same functionality as ``section`` argument in ``NormalizeSeparators``, the ``section``
+option was removed. Note that to replicate the same behaviour, you now need to list sections that you want to skip
+rather than the sections you want to format. For example following command::
+
+    > robotidy -c NormalizeSeparators:sections=settings,variables,testcases,comments src
+
+Is now equivalent of::
+
+    > robotidy -c NormalizeSeparators:skip_sections=keywords
