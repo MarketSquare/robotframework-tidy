@@ -14,3 +14,6 @@ Containing replace pattern
 
 Remove special chars: ?$@
     No Operation
+
+Capitalize words (after !special that's
+    No operation
