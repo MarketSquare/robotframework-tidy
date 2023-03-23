@@ -34,6 +34,7 @@ TRANSFORMERS = [
     "DiscardEmptySections",
     "MergeAndOrderSections",
     "RemoveEmptySettings",
+    "ReplaceEmptyValues",
     "NormalizeAssignments",
     "OrderSettings",
     "OrderSettingsSection",
