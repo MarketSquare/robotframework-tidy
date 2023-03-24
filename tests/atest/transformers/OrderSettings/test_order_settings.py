@@ -85,3 +85,6 @@ class TestOrderSettings(TransformerAcceptanceTest):
 
     def test_translated(self):
         self.compare(source="translated.robot", target_version=">=6")
+
+    def test_stick_comments_with_settings(self):
+        self.compare(source="stick_comments.robot")

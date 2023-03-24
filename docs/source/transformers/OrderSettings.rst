@@ -44,6 +44,9 @@ settings like ``[Teardown]``, ``[Return]`` are moved to the end of keyword.
 Test case settings ``[Documentation]``, ``[Tags]``, ``[Template]``, ``[Timeout]``, ``[Setup]`` are put before test case body and
 ``[Teardown]`` is moved to the end of test case.
 
+Configure order of the settings
+----------------------------------
+
 Default order can be changed using following parameters:
 
 - ``keyword_before = documentation,tags,timeout,arguments``
@@ -103,3 +106,32 @@ This configuration is invalid because teardown is by default part of the ``test_
 We need to overwrite both orders::
 
     robotidy --configure OrderSettings:test_before=teardown:test_after=
+
+Settings comments
+---------------------
+
+Comments next to settings will be moved together.
+
+.. tab-set::
+
+    .. tab-item:: Before
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+                # comment about step
+                Step
+                # comment about arguments
+                [Arguments]    ${arg}
+
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+                # comment about arguments
+                [Arguments]    ${arg}
+                # comment about step
+                Step
