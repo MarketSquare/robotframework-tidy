@@ -117,6 +117,7 @@ Is now equivalent of::
 
     > robotidy -c NormalizeSeparators:skip_sections=keywords
 
+
 Group comments with settings in OrderSettings #468
 ---------------------------------------------------
 
@@ -149,3 +150,16 @@ together with settings::
         [Arguments]    ${arg}
         # comment about step
         Step
+
+SplitTooLongLine and splitting single values #436
+--------------------------------------------------
+
+``SplitTooLongLine`` split all too long values including single values (not a lists)::
+
+    ${SHORT_NAME}
+    ...    realy long value realy long value realy long value realy long value realy long value realy long value
+
+This behaviour didn't improve the readability and now single too long values will not be split. You can configure
+this using ``split_single_value`` parameter (default ``False``)::
+
+    > robotidy -c SplitTooLongLine:split_single_value=True
