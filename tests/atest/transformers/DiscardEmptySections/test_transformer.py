@@ -22,3 +22,13 @@ class TestDiscardEmptySections(TransformerAcceptanceTest):
 
     def test_disablers(self):
         self.compare(source="removes_empty_sections_disablers.robot", not_modified=True)
+
+    def test_skip_section(self):
+        config = ":skip_sections=variables"
+        self.compare(
+            source="removes_empty_sections.robot", expected="removes_empty_sections_skip_variables.robot", config=config
+        )
+        config = " --skip-sections=variables"
+        self.compare(
+            source="removes_empty_sections.robot", expected="removes_empty_sections_skip_variables.robot", config=config
+        )

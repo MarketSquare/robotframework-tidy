@@ -6,6 +6,7 @@ except ImportError:
     InlineIfHeader = None
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
+from robotidy.skip import Skip
 from robotidy.transformers import Transformer
 
 
@@ -32,6 +33,11 @@ class AddMissingEnd(Transformer):
         END
     ```
     """
+
+    HANDLES_SKIP = frozenset({"skip_sections"})
+
+    def __init__(self, skip: Skip = None):
+        super().__init__(skip)
 
     def fix_block(self, node, expected_type):
         self.generic_visit(node)

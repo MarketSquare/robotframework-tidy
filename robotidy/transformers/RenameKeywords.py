@@ -2,16 +2,17 @@ import re
 import string
 from typing import Optional
 
-from robot.api.parsing import ModelTransformer, Token
+from robot.api.parsing import Token
 from robot.variables.search import VariableIterator
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
+from robotidy.transformers import Transformer
 from robotidy.transformers.run_keywords import get_run_keywords
 from robotidy.utils import is_token_value_in_tokens, normalize_name, split_on_token_type, split_on_token_value
 
 
-class RenameKeywords(ModelTransformer):
+class RenameKeywords(Transformer):
     """
     Enforce keyword naming.
 
@@ -59,6 +60,7 @@ class RenameKeywords(ModelTransformer):
         remove_underscores: bool = True,
         ignore_library: bool = True,
     ):
+        super().__init__()
         self.ignore_library = ignore_library
         self.remove_underscores = remove_underscores
         self.replace_pattern = self.parse_pattern(replace_pattern)

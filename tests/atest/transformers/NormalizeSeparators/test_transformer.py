@@ -16,29 +16,24 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
         self.compare(source="pipes.robot")
 
     @pytest.mark.parametrize(
-        "sections",
-        ["", "comments,settings,variables", "comment,keywords", "comments,settings,variable,keywords,testcases"],
+        "skip_sections",
+        ["all", "testcases,keywords", "settings,variables,testcases", ""],
     )
-    def test_disable_section(self, sections):
-        if sections:
+    def test_disable_section(self, skip_sections):
+        if skip_sections == "all":
             self.compare(
-                source="test.robot", expected=sections.replace(",", "_") + ".robot", config=f":sections={sections}"
+                source="test.robot",
+                not_modified=True,
+                config=f":skip_sections=settings,variables,testcases,keywords,comments",
             )
+        elif not skip_sections:
+            self.compare(source="test.robot", expected="skip_none.robot")
         else:
-            self.compare(source="test.robot", not_modified=True, config=f":sections={sections}")
-
-    def test_configure_invalid_section(self):
-        result = self.run_tidy(
-            args=f"--transform {self.TRANSFORMER_NAME}:sections=settings,invalid".split(),
-            source="test.robot",
-            exit_code=1,
-        )
-        expected_output = (
-            f"Error: {self.TRANSFORMER_NAME}: Invalid 'sections' parameter value: 'settings,invalid'. "
-            f"Sections to be transformed should be provided in comma separated list with valid section names:\n"
-            f"['comments', 'keywords', 'settings', 'testcases', 'variables']\n"
-        )
-        assert expected_output == result.output
+            self.compare(
+                source="test.robot",
+                expected=skip_sections.replace(",", "_") + ".robot",
+                config=f":skip_sections={skip_sections}",
+            )
 
     def test_rf5_syntax(self):
         self.compare(source="rf5_syntax.robot", target_version=">=5")

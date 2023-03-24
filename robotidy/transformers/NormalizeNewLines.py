@@ -8,6 +8,7 @@ except ImportError:
     Config = None
 
 from robotidy.disablers import skip_section_if_disabled
+from robotidy.skip import Skip
 from robotidy.transformers import Transformer
 from robotidy.utils import is_suite_templated
 
@@ -30,6 +31,7 @@ class NormalizeNewLines(Transformer):
     is set to True.
     """
 
+    HANDLES_SKIP = frozenset({"skip_sections"})
     WHITESPACE_TOKENS = {Token.EOL, Token.SEPARATOR}
 
     def __init__(
@@ -39,8 +41,9 @@ class NormalizeNewLines(Transformer):
         section_lines: int = 2,
         separate_templated_tests: bool = False,
         consecutive_lines: int = 1,
+        skip: Skip = None,
     ):
-        super().__init__()
+        super().__init__(skip)
         self.test_case_lines = test_case_lines
         self.keyword_lines = keyword_lines if keyword_lines is not None else test_case_lines
         self.section_lines = section_lines

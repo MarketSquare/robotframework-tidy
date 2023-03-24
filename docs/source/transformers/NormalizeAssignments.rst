@@ -99,3 +99,13 @@ You can configure that behaviour to automatically add desired equal sign with ``
                 ${var} =  Keyword1
                 ${var} =   Keyword2
                 ${var} =    Keyword
+
+Skip formatting
+----------------
+
+It is possible to use the following arguments to skip formatting of the code:
+
+- :ref:`skip sections`
+
+It is also possible to use disablers (:ref:`disablers`) but ``skip`` option
+makes it easier to skip all instances of given type of the code.

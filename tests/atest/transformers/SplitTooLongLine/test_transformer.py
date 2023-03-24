@@ -1,3 +1,5 @@
+import pytest
+
 from .. import TransformerAcceptanceTest
 
 
@@ -123,3 +125,20 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
             expected="settings_until_line_length_skip_comments.robot",
             config=":split_on_every_setting_arg=False:skip_comments=True",
         )
+
+    @pytest.mark.parametrize(
+        "skip_config",
+        [
+            # verify both local and global skip sections
+            ":skip_sections={section_names}",
+            " --skip-sections={section_names}",
+        ],
+    )
+    def test_skip_sections(self, skip_config):
+        skip_variables = skip_config.format(section_names="variables")
+        self.compare(source="variables.robot", config=skip_variables, not_modified=True)
+        self.compare(source="comments.robot", config=skip_variables, not_modified=True)
+        skip_multiple = skip_config.format(section_names="settings,testcases,keywords")
+        self.compare(source="settings.robot", config=skip_multiple, not_modified=True)
+        skip_partial = skip_config.format(section_names="settings,testcases")
+        self.compare(source="settings.robot", expected="settings_skip_tests.robot", config=skip_partial)
