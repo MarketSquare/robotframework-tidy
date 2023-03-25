@@ -120,8 +120,8 @@ Is now equivalent of::
 Group comments with settings in OrderSettings #468
 ---------------------------------------------------
 
-``OrderSettings`` transformer order the position of settings such as ``[Arguments]`` or ``[Teardown]`` inside test,
-task or keyword. Previously it only ordered the settings and comments were not moved. Following code::
+``OrderSettings`` transformer adjusts the order of the settings such as ``[Arguments]`` or ``[Teardown]`` inside test,
+task or keyword. Previously, it only ordered the settings and comments were not moved. Following code::
 
     *** Keywords ***
     Keyword
