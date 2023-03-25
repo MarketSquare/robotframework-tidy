@@ -116,3 +116,36 @@ rather than the sections you want to format. For example following command::
 Is now equivalent of::
 
     > robotidy -c NormalizeSeparators:skip_sections=keywords
+
+Group comments with settings in OrderSettings #468
+---------------------------------------------------
+
+``OrderSettings`` transformer adjusts the order of the settings such as ``[Arguments]`` or ``[Teardown]`` inside test,
+task or keyword. Previously, it only ordered the settings and comments were not moved. Following code::
+
+    *** Keywords ***
+    Keyword
+        # comment about step
+        Step
+        # comment about arguments
+        [Arguments]    ${arg}
+
+would result in::
+
+
+    *** Keywords ***
+    Keyword
+        [Arguments]    ${arg}
+        # comment about step
+        Step
+         # comment about arguments
+
+However in most cases such comments are meant only the very next line. That's why now the comments will be moved
+together with settings::
+
+    *** Keywords ***
+    Keyword
+        # comment about arguments
+        [Arguments]    ${arg}
+        # comment about step
+        Step
