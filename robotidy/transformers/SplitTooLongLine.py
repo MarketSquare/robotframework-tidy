@@ -82,6 +82,7 @@ class SplitTooLongLine(Transformer):
         split_on_every_arg: bool = True,
         split_on_every_value: bool = True,
         split_on_every_setting_arg: bool = True,
+        split_single_value: bool = False,
         skip: Skip = None,
     ):
         super().__init__(skip)
@@ -89,6 +90,7 @@ class SplitTooLongLine(Transformer):
         self.split_on_every_arg = split_on_every_arg
         self.split_on_every_value = split_on_every_value
         self.split_on_every_setting_arg = split_on_every_setting_arg
+        self.split_single_value = split_single_value
         self.robocop_disabler_pattern = re.compile(
             r"(# )+(noqa|robocop: ?(?P<disabler>disable|enable)=?(?P<rules>[\w\-,]*))"
         )
@@ -265,6 +267,8 @@ class SplitTooLongLine(Transformer):
         return split_tokens, comments
 
     def split_variable_def(self, node):
+        if len(node.value) < 2 and not self.split_single_value:
+            return node
         line = [node.data_tokens[0]]
         tokens, comments = self.split_tokens(node.tokens, line, self.split_on_every_value)
         comments = [Comment([comment, EOL]) for comment in comments]

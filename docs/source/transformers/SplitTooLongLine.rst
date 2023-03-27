@@ -185,6 +185,50 @@ Assignments will be split to multi lines if they don't fit together with Keyword
                 ...    ${arg1}
                 ...    ${arg2}
 
+Single values
+----------------
+
+By default single values (``${variable}    value``) are not split. You can configure ``SplitTooLine`` transformer
+to split on single too long values using ``split_single_value`` option::
+
+    robotidy --configure SplitTooLongLine:split_single_value=True
+
+.. tab-set::
+
+    .. tab-item:: Before
+
+        .. code:: robotframework
+
+            *** Variables ***
+            &{USER_PROFILE}                   name=John Doe                            age=12                            hobby=coding
+            ${SHORT_VALUE}    value
+            ${SINGLE_HEADER}    veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery
+
+    .. tab-item:: After (default)
+
+        .. code:: robotframework
+
+            *** Variables ***
+            &{USER_PROFILE}
+            ...    name=John Doe
+            ...    age=12
+            ...    hobby=coding
+            ${SHORT_VALUE}    value
+            ${SINGLE_HEADER}    veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery
+
+    .. tab-item:: After (split_single_value = True)
+
+        .. code:: robotframework
+
+            *** Variables ***
+            &{USER_PROFILE}
+            ...    name=John Doe
+            ...    age=12
+            ...    hobby=coding
+            ${SHORT_VALUE}    value
+            ${SINGLE_HEADER}
+            ...    veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery
+
 Ignore comments
 ----------------
 

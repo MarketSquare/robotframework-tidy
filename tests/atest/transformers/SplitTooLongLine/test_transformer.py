@@ -99,6 +99,11 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
 
     def test_comments(self):
         self.compare(source="comments.robot", config=":split_on_every_value=False --transform AlignVariablesSection")
+        self.compare(
+            source="comments.robot",
+            expected="comments_split_scalar.robot",
+            config=":split_on_every_value=False:split_single_value=True --transform AlignVariablesSection",
+        )
 
     def test_ignore_comments(self):
         self.compare(
@@ -126,6 +131,7 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
             config=":split_on_every_setting_arg=False:skip_comments=True",
         )
 
+
     @pytest.mark.parametrize(
         "skip_config",
         [
@@ -142,3 +148,10 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
         self.compare(source="settings.robot", config=skip_multiple, not_modified=True)
         skip_partial = skip_config.format(section_names="settings,testcases")
         self.compare(source="settings.robot", expected="settings_skip_tests.robot", config=skip_partial)
+
+    def test_split_on_single_value(self):
+        self.compare(
+            source="variables.robot",
+            expected="variables_split_scalar.robot",
+            config=":split_single_value=True:line_length=80",
+        )
