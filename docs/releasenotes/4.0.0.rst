@@ -154,10 +154,10 @@ together with settings::
 SplitTooLongLine and splitting single values #436
 --------------------------------------------------
 
-``SplitTooLongLine`` split all too long values including single values (not a lists)::
+``SplitTooLongLine`` splits all too long values including single values (not lists)::
 
     ${SHORT_NAME}
-    ...    realy long value realy long value realy long value realy long value realy long value realy long value
+    ...    really long value really long value really long value really long value really long value really long value
 
 This behaviour didn't improve the readability and now single too long values will not be split. You can configure
 this using ``split_single_value`` parameter (default ``False``)::
