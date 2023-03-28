@@ -230,7 +230,7 @@ Both options are configurable using configuration file (:ref:`config-file`).
 Skip sections
 ---------------
 
-Option that disables formatting of the selected settings. Example usage::
+Option that disables formatting of the selected sections. Example usage::
 
     robotidy -c NormalizeSeparators:skip_sections=variables src
 
