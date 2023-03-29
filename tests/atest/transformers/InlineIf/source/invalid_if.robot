@@ -113,7 +113,7 @@ Invalid IF inside FOR
 
 Multiple errors
     [Documentation]    FAIL
-    ...    Multiple errors: 
+    ...    Multiple errors:
     ...    - IF must have a condition.
     ...    - IF branch cannot be empty.
     ...    - ELSE IF after ELSE.

@@ -10,10 +10,10 @@ class TestMergeAndOrderSections(TransformerAcceptanceTest):
         self.compare(source="tests.robot")
 
     def test_both_test_and_task(self):
-        self.compare(source="both_test_and_task.robot", target_version=5)
+        self.compare(source="both_test_and_task.robot", target_version="<6")
 
     def test_both_test_and_task_rf6(self):
-        self.compare(source="both_test_and_task.robot", expected="both_test_and_task_rf6.robot", target_version=6)
+        self.compare(source="both_test_and_task.robot", expected="both_test_and_task_rf6.robot", target_version=">=6")
 
     def test_multiple_header_comments(self):
         self.compare(source="multiple_header_comments.robot")

@@ -91,12 +91,15 @@ class MergeAndOrderSections(Transformer):
         parsed_order = [self.LANGUAGE_MARKER_SECTION]
         for part in parts:
             parsed_order.append(map_names.get(part, None))
-        # all sections needs to be here, and either tasks or test cases or both of them
+        # all sections need to be here, and either tasks or test cases or both of them
         any_of_sections = [Token.TESTCASE_HEADER, "TASK HEADER"]
         required_sections = [section for section in default_order if section not in any_of_sections]
         if (
+            # unexpected section names
             any(header not in default_order for header in parsed_order)
+            # missing required section
             or any(req_section not in parsed_order for req_section in required_sections)
+            # we need either task, test or both in parsing order
             or not any(any_section in parsed_order for any_section in any_of_sections)
         ):
             raise InvalidParameterValueError(
@@ -104,7 +107,7 @@ class MergeAndOrderSections(Transformer):
                 "order",
                 order,
                 "Custom order should be provided in comma separated list with all section names:\n"
-                "order=comments,settings,variables,testcases,variables",
+                "order=comments,settings,variables,testcases,tasks,variables",
             )
         return parsed_order
 
@@ -183,7 +186,6 @@ class MergeAndOrderSections(Transformer):
     def get_section_type(self, section):
         header_tokens = (
             Token.COMMENT_HEADER,
-            "TASK HEADER",  # need to use string const for backward compatibility < RF 6.1
             Token.TESTCASE_HEADER,
             "TASK HEADER",  # added from 6.0, before it was Test Case header
             Token.SETTING_HEADER,
@@ -192,8 +194,6 @@ class MergeAndOrderSections(Transformer):
         )
         if section.header:
             name_token = section.header.get_token(*header_tokens)
-            if name_token.type == "TASK HEADER":
-                return Token.TESTCASE_HEADER
             return name_token.type
         if Config and any(isinstance(child, Config) for child in section.body):
             return self.LANGUAGE_MARKER_SECTION
