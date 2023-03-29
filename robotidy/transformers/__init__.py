@@ -36,6 +36,7 @@ TRANSFORMERS = [
     "RemoveEmptySettings",
     "ReplaceEmptyValues",
     "NormalizeAssignments",
+    "GenerateDocumentation",
     "OrderSettings",
     "OrderSettingsSection",
     "NormalizeTags",
@@ -58,7 +59,6 @@ TRANSFORMERS = [
     "ReplaceBreakContinue",
     "InlineIf",
     "Translate",
-    "GenerateDocumentation",
 ]
 
 
