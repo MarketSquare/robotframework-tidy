@@ -290,3 +290,17 @@ class TestLoadTransformers:
         )
         output = capsys.readouterr()
         assert output.out == expected_output
+
+    def test_space_in_param_value(self):
+        param_with_space = "Keyword With Space"
+        transformers = [
+            TransformConfig(
+                f"RenameKeywords:replace_to={param_with_space}",
+                force_include=True,
+                custom_transformer=False,
+                is_config=False,
+            )
+        ]
+        config_map = TransformConfigMap(transformers, [], [])
+        transformers = load_transformers(config_map, target_version=ROBOT_VERSION.major)
+        assert transformers[0].instance.replace_to == param_with_space

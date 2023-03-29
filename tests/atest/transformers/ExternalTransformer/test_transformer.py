@@ -25,50 +25,50 @@ class TestExternalTransformer(TransformerAcceptanceTest):
 
     @pytest.mark.parametrize("external_transformer", [EXTERNAL_TRANSFORMER, EXTERNAL_TRANSFORMER_REL])
     def test_transform_external_transformer(self, external_transformer):
-        self.run_tidy(args=f"--transform {external_transformer}:param=2".split(), source="tests.robot")
+        self.run_tidy(args=["--transform", f"{external_transformer}:param=2"], source="tests.robot")
         self.compare_file("tests.robot")
 
     @pytest.mark.parametrize("external_transformer", [EXTERNAL_TRANSFORMER, EXTERNAL_TRANSFORMER_REL])
     def test_load_external_transformer(self, external_transformer):
-        self.run_tidy(args=f"--load-transformers {external_transformer}:param=2".split(), source="tests.robot")
+        self.run_tidy(args=["--load-transformers", f"{external_transformer}:param=2"], source="tests.robot")
         self.compare_file("tests.robot", expected_name="tests_with_defaults.robot")
 
     @pytest.mark.parametrize("disabled_transformer", [DISABLED_TRANSFORMER, DISABLED_TRANSFORMER_REL])
     def test_transform_disabled(self, disabled_transformer):
-        self.run_tidy(args=f"--transform {disabled_transformer}".split(), source="tests.robot")
+        self.run_tidy(args=["--transform", str(disabled_transformer)], source="tests.robot")
         self.compare_file("tests.robot", expected_name="tests_lowercase.robot")
 
     @pytest.mark.parametrize("disabled_transformer", [DISABLED_TRANSFORMER, DISABLED_TRANSFORMER_REL])
     def test_load_disabled(self, disabled_transformer):
-        self.run_tidy(args=f"--load-transformers {disabled_transformer}".split(), source="tests.robot")
+        self.run_tidy(args=["--load-transformers", str(disabled_transformer)], source="tests.robot")
         self.compare_file("tests.robot", expected_name="tests_only_defaults.robot")
 
     @pytest.mark.parametrize("module_path", [MODULE_TRANSFORMERS, MODULE_TRANSFORMERS_REL])
     def test_load_from_module(self, module_path):
-        self.run_tidy(args=f"--load-transformers {module_path}".split(), source="tests.robot")
+        self.run_tidy(args=["--load-transformers", str(module_path)], source="tests.robot")
         self.compare_file("tests.robot", expected_name="tests_module_load.robot")
 
     @pytest.mark.parametrize("module_path", [MODULE_TRANSFORMERS, MODULE_TRANSFORMERS_REL])
     def test_load_from_module(self, module_path):
-        self.run_tidy(args=f"--transform {module_path}".split(), source="tests.robot")
+        self.run_tidy(args=["--transform", str(module_path)], source="tests.robot")
         self.compare_file("tests.robot", expected_name="tests_module_transform.robot")
 
     @pytest.mark.parametrize("module_path", [MODULE_TRANSFORMERS, MODULE_TRANSFORMERS_REL])
     def test_load_from_module_and_configure(self, module_path):
-        cmd = f"--load-transformers {module_path} --configure CustomClass2:extra_param=True"
-        self.run_tidy(args=cmd.split(), source="tests.robot")
+        cmd = ["--load-transformers", str(module_path), "--configure", "CustomClass2:extra_param=True"]
+        self.run_tidy(args=cmd, source="tests.robot")
         self.compare_file("tests.robot", expected_name="tests_module_load_configure.robot")
 
     @pytest.mark.parametrize("module_path", [MODULE_TRANSFORMERS, MODULE_TRANSFORMERS_REL])
     def test_load_from_module_and_configure(self, module_path):
-        cmd = f"--transform {module_path} --configure CustomClass2:extra_param=True"
-        self.run_tidy(args=cmd.split(), source="tests.robot")
+        cmd = ["--transform", str(module_path), "--configure", "CustomClass2:extra_param=True"]
+        self.run_tidy(args=cmd, source="tests.robot")
         self.compare_file("tests.robot", expected_name="tests_module_transform_configure.robot")
 
     def test_transform_ordered(self):
-        self.run_tidy(f"--transform {MODULE_ORDERED_TRANFORMERS}".split(), source="tests.robot")
+        self.run_tidy(["--transform", str(MODULE_ORDERED_TRANFORMERS)], source="tests.robot")
         self.compare_file("tests.robot", expected_name="tests_module_transform.robot")
 
     def test_load_ordered(self):
-        self.run_tidy(f"--load-transformers {MODULE_ORDERED_TRANFORMERS}".split(), source="tests.robot")
+        self.run_tidy(["--load-transformers", str(MODULE_ORDERED_TRANFORMERS)], source="tests.robot")
         self.compare_file("tests.robot", expected_name="tests_module_load.robot")

@@ -190,3 +190,12 @@ This behaviour didn't improve the readability and now single too long values wil
 this using ``split_single_value`` parameter (default ``False``)::
 
     > robotidy -c SplitTooLongLine:split_single_value=True
+
+Spaces in the transformer name or configuration
+-------------------------------------------------
+
+Spaces are now allowed in the transformer path or configuration value. To provide such name or value
+enclose it with quotation marks::
+
+    > robotidy --load-transformer "C:\\My Transformers\\Transformer.py"
+    > robotidy --configure CustomTransformer:value="param value"
