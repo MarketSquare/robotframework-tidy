@@ -12,7 +12,7 @@ from robotidy.utils import ROBOT_VERSION
 
 RERUN_NEEDED_4 = {
     "RenameKeywords": {"run_keywords": 2, "disablers": 2},
-    "ReplaceReturns": {"replace_returns_disablers": 2},
+    "ReplaceReturns": {"replace_returns_disablers": 2, "return_from_keyword_if": 2},
 }
 # Transformer_name: {"name of test file from atest": "reruns until stable"}
 RERUN_NEEDED = {
@@ -48,7 +48,12 @@ RERUN_NEEDED = {
     "RemoveEmptySettings": {"empty": 2, "disablers": 2, "overwritten": 2},
     "RenameKeywords": {"disablers": 2},
     "ReplaceBreakContinue": {"test": 2},
-    "ReplaceReturns": {"replace_returns_disablers": 2, "return_from_keyword": 2, "test": 2},
+    "ReplaceReturns": {
+        "replace_returns_disablers": 2,
+        "return_from_keyword": 2,
+        "test": 2,
+        "return_from_keyword_if": 2,
+    },
     "ReplaceRunKeywordIf": {
         "configure_whitespace": 2,
         "disablers": 3,
