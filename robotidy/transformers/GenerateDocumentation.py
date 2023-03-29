@@ -55,6 +55,10 @@ class ArgumentsAndsReturnsVisitor(ModelVisitor):
     def visit_Keyword(self, node):  # noqa
         self.arguments = []
         self.returns = []
+        # embedded variables
+        for variable in node.header.data_tokens[0].tokenize_variables():
+            if variable.type == Token.VARIABLE:
+                self.arguments.append(Argument(variable.value))
         self.doc_exists = False
         self.generic_visit(node)
 

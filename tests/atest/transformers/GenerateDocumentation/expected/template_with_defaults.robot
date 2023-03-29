@@ -96,3 +96,18 @@ Default Based On Earlier Argument
 Existing documentation
     [Documentation]    Overwrite if needed.
     Step
+
+Embedded ${var} variable
+    [Documentation]    Embedded ${var} variable
+    ...
+    ...    Arguments:
+    ...        ${var}: 
+    Step
+
+Two ${embedded:pattern} variables ${embedded2}
+    [Documentation]    Two ${embedded:pattern} variables ${embedded2}
+    ...
+    ...    Arguments:
+    ...        ${embedded:pattern}: 
+    ...        ${embedded2}: 
+    Step

@@ -22,6 +22,9 @@ By default, GenerateDocumentation uses Google documentation template.
                 ${var}   ${var2}    Step
                 RETURN    ${var}    ${var2}
 
+            Keyword With ${embedded} Variable
+                Step
+
     .. tab-item:: After
 
         .. code:: robotframework
@@ -39,6 +42,13 @@ By default, GenerateDocumentation uses Google documentation template.
                 [Arguments]    ${arg}
                 ${var}   ${var2}    Step
                 RETURN    ${var}    ${var2}
+
+            Keyword With ${embedded} Variable
+                [Documentation]
+                ...
+                ...    Arguments:
+                ...        ${embedded}:
+                Step
 
 Overwriting documentation
 --------------------------

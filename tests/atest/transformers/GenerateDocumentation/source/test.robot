@@ -49,3 +49,9 @@ Default Based On Earlier Argument
 Existing documentation
     [Documentation]    Overwrite if needed.
     Step
+
+Embedded ${var} variable
+    Step
+
+Two ${embedded:pattern} variables ${embedded2}
+    Step
