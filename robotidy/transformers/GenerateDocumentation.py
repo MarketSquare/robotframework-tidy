@@ -26,7 +26,7 @@ class Argument:
             self.name, self.default = arg.split("=", 1)
         else:
             self.name = arg
-            self.default = ""
+            self.default = None
         self.full_name = arg
 
     def __str__(self):

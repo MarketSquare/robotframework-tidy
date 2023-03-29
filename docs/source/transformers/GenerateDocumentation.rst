@@ -137,8 +137,8 @@ Path to template can be absolute or relative (to working directory or configurat
 
 .. dropdown:: Whitespace can be static or dynamic
 
-Any whitespace in the template will apply to the documentation. For example you can put 4 spaces after every argument
-and before `->` sign:
+    Any whitespace in the template will apply to the documentation. For example you can put 4 spaces after every argument
+    and before `->` sign:
 
     .. tab-set::
 
@@ -149,7 +149,6 @@ and before `->` sign:
                 Args:
                 {%- for arg in keyword.arguments %}
                         {{ arg.name }}    ->{% endfor %}
-                {% endif -%}
 
         .. tab-item:: Code
 
@@ -167,9 +166,138 @@ and before `->` sign:
                 *** Keywords ***
                 Keyword
                     [Documentation]
-                    ...    Arguments:
+                    ...    Args:
                     ...        ${arguments}    ->
-                    ...        ${arg    ->
+                    ...        ${arg}    ->
                     ...        ${arg2}    ->
                     [Arguments]    ${arguments}    ${arg}    ${arg2}
                     Step
+
+    Robotidy provides also ``formatting`` class that contains two variables:
+
+    - ``separator`` (default 4 spaces) - spacing between tokens
+    - ``cont_indent`` (default 4 spaces) - spacing after ``...`` signs
+
+    You can use them in the template - and their values will be affected by your configuration::
+
+        {{ formatting.separator }}
+        {{ formatting.cont_indent }}
+
+.. dropdown:: Arguments data
+
+    Robotidy provides arguments in a list in ``keyword.arguments`` variable. Every argument contains following
+    variables:
+
+     - ``name`` - name of the argument without default value (ie. ``${arg}``)
+     - ``default`` - default value (ie. ``value``)
+     - ``full_name`` - name with default value (ie. ``${arg} = value``)
+
+    You can use them in the template:
+
+    .. tab-set::
+
+        .. tab-item:: Template
+
+            .. code:: text
+
+                Arguments:
+                {%- for arg in keyword.arguments %}
+                    {{ arg.name }} - {{ arg.default }}:{% endfor %}
+
+        .. tab-item:: Code
+
+            .. code:: robotframework
+
+                *** Keywords ***
+                Keyword
+                    [Arguments]    ${var}    ${var2} = 2
+                    Step
+
+        .. tab-item:: Generated example
+
+            .. code:: robotframework
+
+                *** Keywords ***
+                Keyword
+                    [Documentation]
+                    ...    Arguments:
+                    ...        ${var} - :
+                    ...        ${var2} - 2:
+                    [Arguments]    ${var}    ${var2} = 2
+                    Step
+
+    Note that you can use Jinja templating features like if blocks. For example, if you want to put ``=`` between
+    argument name and default value only if default value is not empty, you can use::
+
+    {{ arg.name }}{% if arg.default %} = '{{ arg.default }}'{% endif %}
+
+.. dropdown:: Returned values data
+
+    Returned values are provided as list of variables names in ``keyword.returns`` variable.
+
+    .. tab-set::
+
+        .. tab-item:: Template
+
+            .. code:: text
+
+                Returns:
+                {%- for value in keyword.returns %}
+                    {{ value }}:{% endfor %}
+
+        .. tab-item:: Code
+
+            .. code:: robotframework
+
+                *** Keywords ***
+                Keyword
+                    ${value}    Step
+                    RETURN    ${value}
+
+        .. tab-item:: Generated example
+
+            .. code:: robotframework
+
+                *** Keywords ***
+                Keyword
+                    [Documentation]
+                    ...    Returns:
+                    ...        ${value}:
+                    ${value}    Step
+                    RETURN    ${value}
+
+.. dropdown:: Keyword name
+
+    You can add current keyword name to the documentation using ``keyword.name`` variable.
+
+    .. tab-set::
+
+        .. tab-item:: Template
+
+            .. code:: text
+
+                    This is documentation for '{{ keyword.name }}' keyword.
+
+        .. tab-item:: Code
+
+            .. code:: robotframework
+
+                *** Keywords ***
+                Keyword
+                    Step
+
+                Other Keyword
+                    Step 2
+
+        .. tab-item:: Generated example
+
+            .. code:: robotframework
+
+                *** Keywords ***
+                Keyword
+                    [Documentation]    This is documentation for 'Keyword' keyword.
+                    Step
+
+                Other Keyword
+                    [Documentation]    This is documentation for 'Other Keyword' keyword.
+                    Step 2
