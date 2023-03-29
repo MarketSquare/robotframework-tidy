@@ -112,8 +112,8 @@ keyword data. Below there is default template::
     {{ formatting.cont_indent }}{{ formatting.cont_indent }}{{ value }}: {% endfor %}
     {% endif -%}
 
-You can use it as reference to create your own template. Following subsections explains possible
-features in detail.
+You can use it as reference to create your own template. Following subsections explains in detail possible
+features.
 
 Path to template can be absolute or relative (to working directory or configuration file directory)::
 
@@ -144,6 +144,8 @@ Path to template can be absolute or relative (to working directory or configurat
                     ...    Second line of example
                     ...  Third line.
                     Step
+
+    Leave the first line empty in the template if you want to start documentation from the second line.
 
 .. dropdown:: Whitespace can be static or dynamic
 
