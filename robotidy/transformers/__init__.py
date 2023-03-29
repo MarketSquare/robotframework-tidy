@@ -66,7 +66,7 @@ IMPORTER = Importer()
 
 class TransformConfig:
     def __init__(self, config, force_include, custom_transformer, is_config):
-        name, args = split_args_from_name_or_path(config.replace(" ", ""))
+        name, args = split_args_from_name_or_path(config)
         self.name = name
         self.args = self.convert_args(args)
         self.force_include = force_include
