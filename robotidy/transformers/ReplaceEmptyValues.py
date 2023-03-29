@@ -22,7 +22,7 @@ class ReplaceEmptyValues(Transformer):
     ...    value3
     ```
 
-    To be more explicit this transformer replace such values with ``${EMPTY}`` variables:
+    To be more explicit, this transformer replace such values with ``${EMPTY}`` variables:
 
     ```robotframework
     *** Variables ***

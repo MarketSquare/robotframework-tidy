@@ -10,7 +10,7 @@ Replace empty values with ``${EMPTY}`` variable.
 
 
 Empty variables, lists or elements in the list can be defined in a way that omits the value.
-To be more explicit this transformer replace such values with ``${EMPTY}`` variables:
+To be more explicit, this transformer replace such values with ``${EMPTY}`` variables:
 
 .. tab-set::
 
