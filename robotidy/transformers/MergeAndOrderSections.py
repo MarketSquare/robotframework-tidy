@@ -68,6 +68,7 @@ class MergeAndOrderSections(Transformer):
             Token.SETTING_HEADER,
             Token.VARIABLE_HEADER,
             Token.TESTCASE_HEADER,
+            "TASK HEADER",
             Token.KEYWORD_HEADER,
         )
         if not order:
@@ -82,13 +83,18 @@ class MergeAndOrderSections(Transformer):
             "variable": Token.VARIABLE_HEADER,
             "testcases": Token.TESTCASE_HEADER,
             "testcase": Token.TESTCASE_HEADER,
+            "tasks": "TASK HEADER",
+            "task": "TASK HEADER",
             "keywords": Token.KEYWORD_HEADER,
             "keyword": Token.KEYWORD_HEADER,
         }
         parsed_order = [self.LANGUAGE_MARKER_SECTION]
         for part in parts:
             parsed_order.append(map_names.get(part, None))
-        if any(header not in parsed_order for header in default_order):
+        # all sections needs to be here, and either tasks or test cases or both of them
+        any_of_sections = [Token.TESTCASE_HEADER, "TASK HEADER"]
+        required_sections = [section for section in default_order if section not in any_of_sections]
+        if any(header not in default_order for header in parsed_order) or any(req_section not in parsed_order for req_section in required_sections) or not any(any_section in parsed_order for any_section in any_of_sections):
             raise InvalidParameterValueError(
                 self.__class__.__name__,
                 "order",
@@ -173,6 +179,7 @@ class MergeAndOrderSections(Transformer):
     def get_section_type(self, section):
         header_tokens = (
             Token.COMMENT_HEADER,
+            "TASK HEADER",  # need to use string const for backward compatibility < RF 6.1
             Token.TESTCASE_HEADER,
             "TASK HEADER",  # added from 6.0, before it was Test Case header
             Token.SETTING_HEADER,
