@@ -94,7 +94,11 @@ class MergeAndOrderSections(Transformer):
         # all sections needs to be here, and either tasks or test cases or both of them
         any_of_sections = [Token.TESTCASE_HEADER, "TASK HEADER"]
         required_sections = [section for section in default_order if section not in any_of_sections]
-        if any(header not in default_order for header in parsed_order) or any(req_section not in parsed_order for req_section in required_sections) or not any(any_section in parsed_order for any_section in any_of_sections):
+        if (
+            any(header not in default_order for header in parsed_order)
+            or any(req_section not in parsed_order for req_section in required_sections)
+            or not any(any_section in parsed_order for any_section in any_of_sections)
+        ):
             raise InvalidParameterValueError(
                 self.__class__.__name__,
                 "order",
