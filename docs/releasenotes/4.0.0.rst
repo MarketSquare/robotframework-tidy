@@ -226,6 +226,40 @@ this using ``split_single_value`` parameter (default ``False``)::
 
     > robotidy -c SplitTooLongLine:split_single_value=True
 
+SplitTooLongLine and aligning new line (#484)
+------------------------------------------------
+
+It is now possible to align new line to previous line when splitting too long line. This mode works only when we are
+filling the line until the line length limit (with one of the ``split_on_every_arg``, `split_on_every_value`` and
+``split_on_every_setting_arg`` flags). To enable it configure it using ``align_new_line``::
+
+    > robotidy -c SplitTooLongLine:align_new_line=True
+
+Following code::
+
+    *** Keywords ***
+    Keyword
+        [Tags]    longertagname1    longertagname2    longertagname3
+        Keyword With Longer Name    ${arg1}    ${arg2}    ${arg3}    # let's assume ${arg3} does not fit under limit
+
+with  ``align_new_line = False`` (default) is transformed to::
+
+    *** Keywords ***
+    Keyword
+        [Tags]    longertagname1    longertagname2
+        ...    longertagname3
+        Keyword With Longer Name    ${arg1}    ${arg2}
+        ...    ${arg3}
+
+and with ``align_new_line = True`` is transformed to::
+
+    *** Keywords ***
+    Keyword
+        [Tags]    longertagname1    longertagname2
+        ...       longertagname3
+        Keyword With Longer Name    ${arg1}    ${arg2}
+        ...                         ${arg3}
+
 Spaces in the transformer name or configuration
 -------------------------------------------------
 
@@ -234,3 +268,8 @@ enclose it with quotation marks::
 
     > robotidy --load-transformer "C:\\My Transformers\\Transformer.py"
     > robotidy --configure CustomTransformer:value="param value"
+
+Bugs
+-----
+
+- Fixed the bug where keyword name would be prefixed with continuation marks (``...``) if name was longer than line length limit (#494)

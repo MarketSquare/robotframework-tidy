@@ -1,4 +1,5 @@
 import re
+from typing import List
 
 from robot.api.parsing import Comment, Token
 
@@ -83,6 +84,7 @@ class SplitTooLongLine(Transformer):
         split_on_every_value: bool = True,
         split_on_every_setting_arg: bool = True,
         split_single_value: bool = False,
+        align_new_line: bool = False,
         skip: Skip = None,
     ):
         super().__init__(skip)
@@ -91,6 +93,7 @@ class SplitTooLongLine(Transformer):
         self.split_on_every_value = split_on_every_value
         self.split_on_every_setting_arg = split_on_every_setting_arg
         self.split_single_value = split_single_value
+        self.align_new_line = align_new_line
         self.robocop_disabler_pattern = re.compile(
             r"(# )+(noqa|robocop: ?(?P<disabler>disable|enable)=?(?P<rules>[\w\-,]*))"
         )
@@ -228,7 +231,11 @@ class SplitTooLongLine(Transformer):
 
     def split_tokens(self, tokens, line, split_on, indent=None):
         separator = Token(Token.SEPARATOR, self.formatting_config.separator)
-        cont_indent = Token(Token.SEPARATOR, self.formatting_config.continuation_indent)
+        align_new_line = self.align_new_line and not split_on
+        if align_new_line:
+            cont_indent = None
+        else:
+            cont_indent = Token(Token.SEPARATOR, self.formatting_config.continuation_indent)
         split_tokens, comments = [], []
         # Comments with separators inside them are split into
         # [COMMENT, SEPARATOR, COMMENT] tokens in the AST, so in order to preserve the
@@ -240,20 +247,13 @@ class SplitTooLongLine(Transformer):
             if token.type == Token.SEPARATOR:
                 last_separator = token
             elif token.type == Token.COMMENT:
-                # AST splits comments with separators, e.g.
-                #
-                # "# Comment     rest" -> ["# Comment", "     ", "rest"].
-                #
-                # Notice the third value not starting with a hash - that's what this
-                # condition is about:
-                if comments and not token.value.startswith("#"):
-                    comments[-1].value += last_separator.value + token.value
-                else:
-                    comments.append(token)
+                self.join_split_comments(comments, token, last_separator)
             elif token.type == Token.ARGUMENT:
                 if token.value == "":
                     token.value = "${EMPTY}"
                 if split_on or not self.col_fit_in_line(line + [separator, token]):
+                    if align_new_line and cont_indent is None:  # we are yet to calculate aligned indent
+                        cont_indent = Token(Token.SEPARATOR, self.calculate_align_separator(line))
                     line.append(EOL)
                     split_tokens.extend(line)
                     if indent:
@@ -265,6 +265,28 @@ class SplitTooLongLine(Transformer):
         split_tokens.extend(line)
         split_tokens.append(EOL)
         return split_tokens, comments
+
+    @staticmethod
+    def join_split_comments(comments: List, token: Token, last_separator: Token):
+        """Join split comments when splitting line.
+        AST splits comments with separators, e.g.
+        "# Comment     rest" -> ["# Comment", "     ", "rest"].
+        Notice the third value not starting with a hash - we need to join such comment with previous comment.
+        """
+        if comments and not token.value.startswith("#"):
+            comments[-1].value += last_separator.value + token.value
+        else:
+            comments.append(token)
+
+    def calculate_align_separator(self, line: List) -> str:
+        """Calculate width of the separator required to align new line to previous line."""
+        if len(line) <= 2:
+            # line only fits one column, so we don't have anything to align it for
+            return self.formatting_config.continuation_indent
+        first_data_token = next((token.value for token in line if token.type != Token.SEPARATOR), "")
+        # Decrease by 3 for ... token
+        align_width = len(first_data_token) + len(self.formatting_config.separator) - 3
+        return align_width * " "
 
     def split_variable_def(self, node):
         if len(node.value) < 2 and not self.split_single_value:
@@ -282,10 +304,11 @@ class SplitTooLongLine(Transformer):
 
         keyword = node.get_token(Token.KEYWORD)
         # check if assign tokens needs to be split too
-        line = [indent, *self.join_on_separator(node.get_tokens(Token.ASSIGN), separator), keyword]
-        if not self.col_fit_in_line(line):
+        assign = node.get_tokens(Token.ASSIGN)
+        line = [indent, *self.join_on_separator(assign, separator), keyword]
+        if assign and not self.col_fit_in_line(line):
             head = [
-                *self.split_to_multiple_lines(node.get_tokens(Token.ASSIGN), indent=indent, separator=cont_indent),
+                *self.split_to_multiple_lines(assign, indent=indent, separator=cont_indent),
                 indent,
                 CONTINUATION,
                 cont_indent,
@@ -294,7 +317,6 @@ class SplitTooLongLine(Transformer):
             line = []
         else:
             head = []
-
         tokens, comments = self.split_tokens(
             node.tokens[node.tokens.index(keyword) + 1 :], line, self.split_on_every_arg, indent
         )

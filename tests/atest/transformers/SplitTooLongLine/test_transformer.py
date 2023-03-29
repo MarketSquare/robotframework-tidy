@@ -131,7 +131,6 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
             config=":split_on_every_setting_arg=False:skip_comments=True",
         )
 
-
     @pytest.mark.parametrize(
         "skip_config",
         [
@@ -154,4 +153,10 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
             source="variables.robot",
             expected="variables_split_scalar.robot",
             config=":split_single_value=True:line_length=80",
+        )
+
+    def test_align_new_lines(self):
+        self.compare(
+            source="align_new_line.robot",
+            config=":align_new_line=True:split_on_every_arg=False:split_on_every_setting_arg=False:line_length=51",
         )
