@@ -84,8 +84,8 @@ list in the ``__init__.py``::
         "TransformerB"
     ]
 
-New skip option: --skip-sections #388 #475
--------------------------------------------
+New skip option: --skip-sections (#388 #475)
+--------------------------------------------
 
 It is now possible to skip formatting of whole sections with new ``--skip-sections`` option.
 
@@ -97,6 +97,7 @@ Currently supported in::
     NormalizeNewLines
     NormalizeSectionHeaderName
     NormalizeSeparators
+    ReplaceEmptyValues
     SplitTooLongLine
 
 Support for other transformers can be added if needed.
@@ -117,9 +118,35 @@ Is now equivalent of::
 
     > robotidy -c NormalizeSeparators:skip_sections=keywords
 
+New transformer ReplaceEmptyValues (#474)
+------------------------------------------
 
-Group comments with settings in OrderSettings #468
----------------------------------------------------
+This new, enabled by default transformer replaces empty values with ``${EMPTY}`` variable.
+
+Empty variables, lists or elements in the list can be defined in the following way::
+
+    *** Variables ***
+    ${EMPTY_VALUE}
+    @{EMPTY_LIST}
+    &{EMPTY_DICT}
+    @{LIST_WITH_EMPTY}
+    ...    value
+    ...
+    ...    value3
+
+To be more explicit, this transformer replace such values with ``${EMPTY}`` variables::
+
+    *** Variables ***
+    ${EMPTY_VALUE}    ${EMPTY}
+    @{EMPTY_LIST}     @{EMPTY}
+    &{EMPTY_DICT}     &{EMPTY}
+    @{LIST_WITH_EMPTY}
+    ...    value
+    ...    ${EMPTY}
+    ...    value3
+
+Group comments with settings in OrderSettings (#468)
+----------------------------------------------------
 
 ``OrderSettings`` transformer adjusts the order of the settings such as ``[Arguments]`` or ``[Teardown]`` inside test,
 task or keyword. Previously, it only ordered the settings and comments were not moved. Following code::
@@ -151,8 +178,8 @@ together with settings::
         # comment about step
         Step
 
-SplitTooLongLine and splitting single values #436
---------------------------------------------------
+SplitTooLongLine and splitting single values (#436)
+---------------------------------------------------
 
 ``SplitTooLongLine`` splits all too long values including single values (not lists)::
 
