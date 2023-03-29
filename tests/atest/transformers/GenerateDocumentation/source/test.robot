@@ -28,10 +28,13 @@ Return in block
 Double [Return]
      Step
      [Return]    ${var}
-     IF    $var
      [Return]    ${var}
      ...    $[var2}
-     END
+
+Arguments And Return
+    [Arguments]    ${var}
+    ...    ${var2}
+    RETURN    ${var}
 
 One Required And One With Default
     [Arguments]    ${required}    ${optional}=default

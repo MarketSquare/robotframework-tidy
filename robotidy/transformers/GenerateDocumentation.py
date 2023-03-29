@@ -1,17 +1,19 @@
-from robot.api.parsing import Documentation, Token, ModelVisitor
-from jinja2 import Template
-from robotidy.transformers import Transformer
 import re
 from pathlib import Path
 
+from jinja2 import Template
+from robot.api.parsing import Documentation, ModelVisitor, Token
+
+from robotidy.transformers import Transformer
 
 GOOGLE_TEMPLATE = """
-
-{% if keyword.arguments|length > 0 -%}{{ formatting.cont_indent }}Arguments:
+{% if keyword.arguments|length > 0 %}
+{{ formatting.cont_indent }}Arguments:
 {%- for arg in keyword.arguments %}
 {{ formatting.cont_indent }}{{ formatting.cont_indent }}{{ arg.name }}: {% endfor %}
 {% endif -%}
-{% if keyword.returns|length > 0 -%}{{ formatting.cont_indent }}Returns:
+{% if keyword.returns|length > 0 %}
+{{ formatting.cont_indent }}Returns:
 {%- for value in keyword.returns %}
 {{ formatting.cont_indent }}{{ formatting.cont_indent }}{{ value }}: {% endfor %}
 {% endif -%}
@@ -33,8 +35,7 @@ class Argument:
 
 class KeywordData:
     def __init__(self, name, arguments, returns):
-        self.name = name.split(".")[-1]
-        self.original_name = name
+        self.name = name
         self.arguments = arguments
         self.returns = returns
 
@@ -72,19 +73,51 @@ class ArgumentsAndsReturnsVisitor(ModelVisitor):
 
     visit_Return = visit_ReturnStatement
 
-# TODO: --documentation-template option
-# pros:
-# autochecked for existence
-# can be relative path
-# accept : and spaces in value
-# cons
-# breaks the convenance
+
 class GenerateDocumentation(Transformer):
     """
-    Short description in one line.
+    Generate keyword documentation with the documentation template.
 
-    Long description with short example before/after.
+    By default, GenerateDocumentation uses Google documentation template.
+    Following keyword:
+
+    ```robotframework
+    *** Keywords ***
+    Keyword
+        [Arguments]    ${arg}
+        ${var}   ${var2}    Step
+        RETURN    ${var}    ${var2}
+    ```
+
+    will produce following documentation:
+
+    ```robotframework
+    *** Keywords ***
+    Keyword
+        [Documentation]
+        ...
+        ...    Arguments:
+        ...        ${arg}:
+        ...
+        ...    Returns:
+        ...        ${var}
+        ...        ${var2}
+        [Arguments]    ${arg}
+        ${var}   ${var2}    Step
+        RETURN    ${var}    ${var2}
+    ```
+
+    It is possible to create own template and insert dynamic text like keyword name, argument default values
+    or static text (like ``[Documentation]    Documentation stub``). See our docs for more details.
+
+    Generated documentation will be affected by ``NormalizeSeparators`` transformer that's why it's best to
+    skip formatting documentation by this transformer:
+
+    ```
+    > robotidy --configure GenerateDocumentation:enabled=True --configure NormalizeSeparators:skip_documentation=True src
+    ```
     """
+
     ENABLED = False
     # templated test docs?
 
