@@ -67,7 +67,7 @@ class TestMergeAndOrderSections(TransformerAcceptanceTest):
         expected_output = (
             f"Error: {self.TRANSFORMER_NAME}: Invalid 'order' parameter value: '{parameter}'. "
             "Custom order should be provided in comma separated list with all section names:\n"
-            "order=comments,settings,variables,testcases,variables\n"
+            "order=comments,settings,variables,testcases,tasks,variables\n"
         )
         assert expected_output == result.output
 
