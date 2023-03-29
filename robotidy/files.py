@@ -60,19 +60,21 @@ def find_and_read_config(src_paths: Iterable[str]) -> Dict[str, Any]:
     return {}
 
 
-def load_toml_file(path: str) -> Dict[str, Any]:
+def load_toml_file(config_path: Path) -> Dict[str, Any]:
     try:
-        with Path(path).open("rb") as tf:
+        with config_path.open("rb") as tf:
             config = tomli.load(tf)
         return config
     except (tomli.TOMLDecodeError, OSError) as e:
-        raise click.FileError(filename=path, hint=f"Error reading configuration file: {e}")
+        raise click.FileError(filename=str(config_path), hint=f"Error reading configuration file: {e}")
 
 
 def read_pyproject_config(path: str) -> Dict[str, Any]:
-    config = load_toml_file(path)
+    config_path = Path(path)
+    config = load_toml_file(config_path)
     config = config.get("tool", {}).get("robotidy", {})
     if config:
+        config["config_directory"] = str(config_path.parent)
         click.echo(f"Loaded configuration from {path}")
     return {k.replace("--", "").replace("-", "_"): v for k, v in config.items()}
 

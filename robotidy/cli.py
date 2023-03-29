@@ -304,6 +304,13 @@ def print_transformers_list(
     callback=read_config,
     help="Read configuration from FILE path.",
 )
+# This option is workaround to make it possible to pass configuration directory when reading config.
+# We first load the config file and then map every value from it as cli option defaults. The option must exist, so we
+# cannot pass additional info, ie the directory where config file was found.
+@click.option(
+    "--config-directory",
+    hidden=True,
+)
 @click.option(
     "--overwrite/--no-overwrite",
     default=None,
@@ -490,6 +497,7 @@ def cli(
     lineseparator: str,
     verbose: bool,
     config: Optional[str],
+    config_directory: Optional[str],
     separator: Optional[str],
     startline: Optional[int],
     endline: Optional[int],
@@ -589,6 +597,7 @@ def cli(
         color=color,
         language=language,
         reruns=reruns,
+        config_directory=config_directory,
     )
 
     if list_transformers:

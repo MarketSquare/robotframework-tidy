@@ -8,7 +8,7 @@ Generate keyword documentation with the documentation template.
 .. include:: disabled_hint.txt
 
 
-By default, GenerateDocumentation uses Google documentation template.
+By default, GenerateDocumentation uses Google docstring as the documentation template.
 
 .. tab-set::
 
@@ -53,7 +53,7 @@ By default, GenerateDocumentation uses Google documentation template.
 Overwriting documentation
 --------------------------
 
-The documentation will not be added if it's already present in the keyword. You can configure it
+The documentation will not be added if it is already present in the keyword. You can configure it
 by using ``overwrite`` parameter:
 
 .. tab-set::

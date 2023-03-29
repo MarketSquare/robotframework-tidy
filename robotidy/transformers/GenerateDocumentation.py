@@ -1,9 +1,11 @@
 import re
 from pathlib import Path
+from typing import Optional
 
 from jinja2 import Template
 from robot.api.parsing import Documentation, ModelVisitor, Token
 
+from robotidy.exceptions import InvalidParameterValueError
 from robotidy.transformers import Transformer
 
 GOOGLE_TEMPLATE = """
@@ -114,7 +116,7 @@ class GenerateDocumentation(Transformer):
     It is possible to create own template and insert dynamic text like keyword name, argument default values
     or static text (like ``[Documentation]    Documentation stub``). See our docs for more details.
 
-    Generated documentation will be affected by ``NormalizeSeparators`` transformer that's why it's best to
+    Generated documentation will be affected by ``NormalizeSeparators`` transformer that's why it is best to
     skip formatting documentation by this transformer:
 
     ```
@@ -123,21 +125,29 @@ class GenerateDocumentation(Transformer):
     """
 
     ENABLED = False
-    # templated test docs?
 
     WHITESPACE_PATTERN = re.compile(r"(\s{2,}|\t)", re.UNICODE)
 
-    def __init__(self, overwrite: bool = False, doc_template: str = "google"):
+    def __init__(self, overwrite: bool = False, doc_template: str = "google", template_directory: Optional[str] = None):
         self.overwrite = overwrite
-        self.doc_template = Template(self.get_template(doc_template))
+        self.doc_template = Template(self.get_template(doc_template, template_directory))
         self.args_returns_finder = ArgumentsAndsReturnsVisitor()
         super().__init__()
 
-    @staticmethod
-    def get_template(template: str) -> str:
+    def get_template(self, template: str, template_directory: Optional[str] = None) -> str:
         if template == "google":
             return GOOGLE_TEMPLATE
         template_path = Path(template)
+        if not template_path.is_file():
+            if not template_path.is_absolute() and template_directory is not None:
+                template_path = Path(template_directory) / template_path
+            if not template_path.is_file():
+                raise InvalidParameterValueError(
+                    self.__class__.__name__,
+                    "doc_template",
+                    template,
+                    "The template path does not exist or cannot be found.",
+                )
         with open(template_path) as fp:
             return fp.read()
 

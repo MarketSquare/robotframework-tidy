@@ -77,6 +77,7 @@ class Config:
         color: bool,
         language: Optional[List[str]],
         reruns: int,
+        config_directory: Optional[str],
     ):
         self.sources = get_paths(src, exclude, extend_exclude, skip_gitignore)
         self.formatting = formatting
@@ -87,12 +88,16 @@ class Config:
         self.output = output
         self.color = color
         self.reruns = reruns
+        self.config_directory = config_directory
         self.language = self.get_languages(language)
         self.transformers = []
         self.transformers_lookup = dict()
         self.load_transformers(transformers_config, force_order, target_version, skip)
 
     def load_transformers(self, transformers_config: TransformConfigMap, force_order, target_version, skip):
+        # Workaround to pass configuration to transformer before the instance is created
+        if "GenerateDocumentation" in transformers_config.transformers:
+            transformers_config.transformers["GenerateDocumentation"].args["template_directory"] = self.config_directory
         transformers = load_transformers(
             transformers_config,
             force_order=force_order,

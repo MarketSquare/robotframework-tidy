@@ -41,6 +41,7 @@ def app():
         color=True,
         language=None,
         reruns=1,
+        config_directory=None,
     )
     return Robotidy(
         config=config,
