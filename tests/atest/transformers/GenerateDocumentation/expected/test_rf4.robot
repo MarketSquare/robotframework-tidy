@@ -1,33 +1,33 @@
 *** Keywords ***
 Single Argument
-    [Documentation]
+    [Documentation]    Short description.
     ...
     ...    Args:
-    ...        ${var}: 
+    ...        ${var}: <description>
     [Arguments]    ${var}
 
 Two Arguments
-    [Documentation]
+    [Documentation]    Short description.
     ...
     ...    Args:
-    ...        ${var}: 
-    ...        ${var2}: 
+    ...        ${var}: <description>
+    ...        ${var2}: <description>
     [Arguments]    ${var}    ${var2}
 
 No Arguments
-    [Documentation]
+    [Documentation]    Short description.
     Log    ${EMPTY}
 
 Empty Arguments
-    [Documentation]
+    [Documentation]    Short description.
     [Arguments]
 
 Return
-    [Documentation]
+    [Documentation]    Short description.
     RETURN    ${var}
 
 Return in block
-    [Documentation]
+    [Documentation]    Short description.
     IF    $condition
         FOR    ${var}    IN RANGE    10
             IF    $var    RETURN    ${other_value}    ${multiple}
@@ -35,69 +35,69 @@ Return in block
     END
 
 [Return]
-    [Documentation]
+    [Documentation]    Short description.
     ...
     ...    Returns:
-    ...        ${var}: 
+    ...        ${var}: <description>
      Step
      [Return]    ${var}
 
 Double [Return]
-    [Documentation]
+    [Documentation]    Short description.
     ...
     ...    Returns:
-    ...        ${var}: 
+    ...        ${var}: <description>
      Step
      [Return]    ${var}
      [Return]    ${var}
      ...    $[var2}
 
 Arguments And Return
-    [Documentation]
+    [Documentation]    Short description.
     ...
     ...    Args:
-    ...        ${var}: 
-    ...        ${var2}: 
+    ...        ${var}: <description>
+    ...        ${var2}: <description>
     [Arguments]    ${var}
     ...    ${var2}
     RETURN    ${var}
 
 One Required And One With Default
-    [Documentation]
+    [Documentation]    Short description.
     ...
     ...    Args:
-    ...        ${required}: 
-    ...        ${optional}: 
+    ...        ${required}: <description>
+    ...        ${optional}: <description>
     [Arguments]    ${required}    ${optional}=default
     Log    Required: ${required}
     Log    Optional: ${optional}
 
 Default Based On Earlier Argument
-    [Documentation]
+    [Documentation]    Short description.
     ...
     ...    Args:
-    ...        ${a}: 
-    ...        ${b}: 
-    ...        ${c}: 
+    ...        ${a}: <description>
+    ...        ${b}: <description>
+    ...        ${c}: <description>
     [Arguments]    ${a}    ${b}=${a}    ${c}=${a} and ${b}
     Should Be Equal    ${a}    ${b}
     Should Be Equal    ${c}    ${a} and ${b}
 
 Existing documentation
-    [Documentation]    Overwrite if needed.
+    [Documentation]    Short description.    Overwrite if needed.
     Step
 
 Embedded ${var} variable
-    [Documentation]
+    [Documentation]    Short description.
     ...
     ...    Args:
-    ...        ${var}: 
+    ...        ${var}: <description>
     Step
 
 Two ${embedded:pattern} variables ${embedded2}
-    [Documentation]
+    [Documentation]    Short description.
     ...
     ...    Args:
-    ...        ${embedded:pattern}: 
-    ...        ${embedded2}: 
+    ...        ${embedded:pattern}: <description>
+    ...        ${embedded2}: <description>
     Step

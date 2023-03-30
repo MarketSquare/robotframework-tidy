@@ -9,16 +9,16 @@ from robot.api.parsing import Documentation, ModelVisitor, Token
 from robotidy.exceptions import InvalidParameterValueError
 from robotidy.transformers import Transformer
 
-GOOGLE_TEMPLATE = """
+GOOGLE_TEMPLATE = """    Short description.
 {% if keyword.arguments|length > 0 %}
 {{ formatting.cont_indent }}Args:
 {%- for arg in keyword.arguments %}
-{{ formatting.cont_indent }}{{ formatting.cont_indent }}{{ arg.name }}: {% endfor %}
+{{ formatting.cont_indent }}{{ formatting.cont_indent }}{{ arg.name }}: <description>{% endfor %}
 {% endif -%}
 {% if keyword.returns|length > 0 %}
 {{ formatting.cont_indent }}Returns:
 {%- for value in keyword.returns %}
-{{ formatting.cont_indent }}{{ formatting.cont_indent }}{{ value }}: {% endfor %}
+{{ formatting.cont_indent }}{{ formatting.cont_indent }}{{ value }}: <description>{% endfor %}
 {% endif -%}
 """
 
