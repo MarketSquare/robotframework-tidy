@@ -8,7 +8,9 @@ Generate keyword documentation with the documentation template.
 .. include:: disabled_hint.txt
 
 
-By default, GenerateDocumentation uses Google docstring as the documentation template.
+By default, GenerateDocumentation uses
+`Google docstring <https://google.github.io/styleguide/pyguide.html#383-functions-and-methods>`_
+as the documentation template.
 
 .. tab-set::
 
@@ -98,8 +100,8 @@ Custom templates can be loaded from the file using ``doc_template`` parameter. I
 
     > robotidy --configure GenerateDocumentation:doc_template=google src
 
-Templates support Jinja templating engines and we are providing several variables based on the
-keyword data. Below, there is a default template::
+Templates support `Jinja templating engine <https://jinja.palletsprojects.com/>`_ and we are providing several variables
+based on the keyword data. Below, there is a default template::
 
     {% if keyword.arguments|length > 0 %}
     {{ formatting.cont_indent }}Arguments:
@@ -112,8 +114,8 @@ keyword data. Below, there is a default template::
     {{ formatting.cont_indent }}{{ formatting.cont_indent }}{{ value }}: {% endfor %}
     {% endif -%}
 
-You can use it as reference to create your own template. Following subsections explains in detail possible
-features.
+The Jinja syntax is described `here <https://jinja.palletsprojects.com/en/3.1.x/templates/>`_. You can use it as
+reference to create your own template. Following subsections explains in detail possible features.
 
 Path to template can be absolute or relative (to working directory or configuration file directory)::
 
