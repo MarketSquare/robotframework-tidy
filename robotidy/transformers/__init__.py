@@ -36,6 +36,7 @@ TRANSFORMERS = [
     "RemoveEmptySettings",
     "ReplaceEmptyValues",
     "NormalizeAssignments",
+    "GenerateDocumentation",
     "OrderSettings",
     "OrderSettingsSection",
     "NormalizeTags",
@@ -256,6 +257,7 @@ class Transformer(ModelTransformer):
         self.languages = None
         self.transformers: Dict = dict()
         self.disablers = None
+        self.config_directory = None
         self.skip = skip
 
 

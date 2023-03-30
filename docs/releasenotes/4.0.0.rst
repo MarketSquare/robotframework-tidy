@@ -2,7 +2,11 @@ Robotidy 4.0.0
 =========================================
 
 Major release which contains multiple improvements for external transformers. There are also backward incompatible
-changes, including removing ``section`` option from ``NormalizeSeparators`` (replaced with ``skip_sections``).
+changes, including removing ``section`` option from ``NormalizeSeparators`` (replaced with ``skip_sections``). We have
+also added following new transformers:
+
+ - RemoveEmptyValues
+ - GenerateDocumentation
 
 You can install the latest available version by running::
 
@@ -144,6 +148,37 @@ To be more explicit, this transformer replace such values with ``${EMPTY}`` vari
     ...    value
     ...    ${EMPTY}
     ...    value3
+
+New transformer GenerateDocumentation (#311)
+--------------------------------------------
+
+Transformer that allows you to generate keyword documentation stubs based on the keyword data such as
+name, arguments or returned values. It uses Jinja templating internally and allows to define your own
+documentation templates. With default template (Google docstring) and following code::
+
+    *** Keywords ***
+    Keyword
+        [Arguments]    ${arg}
+        ${var}   ${var2}    Step
+        RETURN    ${var}    ${var2}
+
+it will generate::
+
+    *** Keywords ***
+    Keyword
+        [Documentation]
+        ...
+        ...    Arguments:
+        ...        ${arg}:
+        ...
+        ...    Returns:
+        ...        ${var}
+        ...        ${var2}
+        [Arguments]    ${arg}
+        ${var}   ${var2}    Step
+        RETURN    ${var}    ${var2}
+
+Read the transformer documentation for more details on configuring your own custom template.
 
 Group comments with settings in OrderSettings (#468)
 ----------------------------------------------------
