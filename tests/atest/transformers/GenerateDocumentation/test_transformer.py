@@ -12,16 +12,19 @@ class TestGenerateDocumentation(TransformerAcceptanceTest):
     TRANSFORMER_NAME = "GenerateDocumentation"
 
     def test_transformer(self):
-        self.compare(source="test.robot")
+        self.compare(source="test.robot", target_version=">=5")
+
+    def test_transformer_rf4(self):
+        self.compare(source="test.robot", expected="test_rf4.robot", target_version="<=4")
 
     def test_transformer_overwrite(self):
-        self.compare(source="test.robot", expected="overwrite.robot", config=":overwrite=True")
+        self.compare(source="test.robot", expected="overwrite.robot", config=":overwrite=True", target_version=">=5")
 
     def test_template_with_defaults(self):
         template_path = Path(__file__).parent / "source" / "template_with_defaults.txt"
         args = ["--transform", f"{self.TRANSFORMER_NAME};doc_template={template_path}"]
         source = "test.robot"
-        self.run_tidy(args=args, source=source)
+        self.run_tidy(args=args, source=source, target_version=">=5")
         self.compare_file(source, "template_with_defaults.robot")
 
     def test_template_with_defaults_relative_path(self):
@@ -29,7 +32,7 @@ class TestGenerateDocumentation(TransformerAcceptanceTest):
         rel_template_path = get_relative_path(template_path)
         args = ["--transform", f"{self.TRANSFORMER_NAME}:doc_template={rel_template_path}"]
         source = "test.robot"
-        self.run_tidy(args=args, source=source)
+        self.run_tidy(args=args, source=source, target_version=">=5")
         self.compare_file(source, "template_with_defaults.robot")
 
     def test_invalid_template_path(self):

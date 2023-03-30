@@ -52,19 +52,26 @@ class TransformerAcceptanceTest:
 
         Use not_modified flag if the content of the file shouldn't be modified by transformer.
         """
-        if not self.enabled_in_version(target_version):
-            pytest.skip(f"Test enabled only for RF {target_version}")
         if expected is None:
             expected = source
         if run_all:
             run_cmd = config
         else:
             run_cmd = f"--transform {self.TRANSFORMER_NAME}{config}"
-        self.run_tidy(args=run_cmd.split(), source=source, not_modified=not_modified)
+        self.run_tidy(args=run_cmd.split(), source=source, not_modified=not_modified, target_version=target_version)
         if not not_modified:
             self.compare_file(source, expected)
 
-    def run_tidy(self, args: List[str] = None, source: str = None, exit_code: int = 0, not_modified: bool = False):
+    def run_tidy(
+        self,
+        args: List[str] = None,
+        source: str = None,
+        exit_code: int = 0,
+        not_modified: bool = False,
+        target_version: Optional[str] = None,
+    ):
+        if not self.enabled_in_version(target_version):
+            pytest.skip(f"Test enabled only for RF {target_version}")
         runner = CliRunner()
         output_path = str(Path(Path(__file__).parent, "actual", source))
         arguments = ["--output", output_path]
