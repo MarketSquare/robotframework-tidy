@@ -233,7 +233,7 @@ Align new line
 ----------------
 
 It is possible to align new line to previous line when splitting too long line. This mode works only when we are
-filling the line until line the length limit (with one of the ``split_on_every_arg``, `split_on_every_value`` and
+filling the line until line the length limit (with one of the ``split_on_every_arg``, ``split_on_every_value`` and
 ``split_on_every_setting_arg`` flags). To enable it configure it using ``align_new_line``::
 
     > robotidy -c SplitTooLongLine:align_new_line=True
