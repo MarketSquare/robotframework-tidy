@@ -48,7 +48,7 @@ class FormattingData:
         self.separator = separator
 
 
-class ArgumentsAndsReturnsVisitor(ModelVisitor):
+class ArgumentsAndReturnsVisitor(ModelVisitor):
     def __init__(self):
         self.arguments = []
         self.returns = []
@@ -131,7 +131,7 @@ class GenerateDocumentation(Transformer):
     def __init__(self, overwrite: bool = False, doc_template: str = "google", template_directory: Optional[str] = None):
         self.overwrite = overwrite
         self.doc_template = Template(self.get_template(doc_template, template_directory))
-        self.args_returns_finder = ArgumentsAndsReturnsVisitor()
+        self.args_returns_finder = ArgumentsAndReturnsVisitor()
         super().__init__()
 
     def get_template(self, template: str, template_directory: Optional[str] = None) -> str:

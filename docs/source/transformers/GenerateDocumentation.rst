@@ -99,7 +99,7 @@ Custom templates can be loaded from the file using ``doc_template`` parameter. I
     > robotidy --configure GenerateDocumentation:doc_template=google src
 
 Templates support Jinja templating engines and we are providing several variables based on the
-keyword data. Below there is default template::
+keyword data. Below, there is a default template::
 
     {% if keyword.arguments|length > 0 %}
     {{ formatting.cont_indent }}Arguments:
@@ -122,7 +122,7 @@ Path to template can be absolute or relative (to working directory or configurat
 
 .. dropdown:: First line of the documentation
 
-    First line of the template is also first line of the documentation - right after the ``[Documentation]`` setting.
+    The first line of the template is also the first line of the documentation that goes next to the ``[Documentation]`` setting.
 
     .. tab-set::
 
@@ -197,7 +197,7 @@ Path to template can be absolute or relative (to working directory or configurat
 
 .. dropdown:: Arguments data
 
-    Robotidy provides arguments in a list in ``keyword.arguments`` variable. Every argument contains following
+    Robotidy provides arguments as a list of variables in ``keyword.arguments`` variable. Every argument contains the following
     variables:
 
      - ``name`` - name of the argument without default value (ie. ``${arg}``)
@@ -238,14 +238,14 @@ Path to template can be absolute or relative (to working directory or configurat
                     [Arguments]    ${var}    ${var2} = 2
                     Step
 
-    Note that you can use Jinja templating features like if blocks. For example, if you want to put ``=`` between
-    argument name and default value only if default value is not empty, you can use::
+    Note that you can use Jinja templating features like ``if`` blocks. For example, if you want to put ``=`` between
+    the argument name and default value (only if default value is not empty), you can use::
 
     {{ arg.name }}{% if arg.default %} = '{{ arg.default }}'{% endif %}
 
 .. dropdown:: Returned values data
 
-    Returned values are provided as list of variables names in ``keyword.returns`` variable.
+    Returned values are provided as a list of variables names in ``keyword.returns`` variable.
 
     .. tab-set::
 
