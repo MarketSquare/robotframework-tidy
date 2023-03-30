@@ -7,6 +7,11 @@ from robotidy.exceptions import InvalidParameterValueError
 from .. import TransformerAcceptanceTest
 
 
+def get_relative_path(abs_path: Path) -> Path:
+    cwd = Path.cwd()
+    return abs_path.relative_to(cwd)
+
+
 class TestGenerateDocumentation(TransformerAcceptanceTest):
     TRANSFORMER_NAME = "GenerateDocumentation"
 
@@ -19,6 +24,14 @@ class TestGenerateDocumentation(TransformerAcceptanceTest):
     def test_template_with_defaults(self):
         template_path = Path(__file__).parent / "source" / "template_with_defaults.txt"
         args = ["--transform", f"{self.TRANSFORMER_NAME};doc_template={template_path}"]
+        source = "test.robot"
+        self.run_tidy(args=args, source=source)
+        self.compare_file(source, "template_with_defaults.robot")
+
+    def test_template_with_defaults_relative_path(self):
+        template_path = Path(__file__).parent / "source" / "template_with_defaults.txt"
+        rel_template_path = get_relative_path(template_path)
+        args = ["--transform", f"{self.TRANSFORMER_NAME}:doc_template={rel_template_path}"]
         source = "test.robot"
         self.run_tidy(args=args, source=source)
         self.compare_file(source, "template_with_defaults.robot")

@@ -117,8 +117,10 @@ features.
 
 Path to template can be absolute or relative (to working directory or configuration file directory)::
 
-    > robotidy --configure GenerateDocumentation:doc_template="C:/doc_templates/template.jinja" src
+    > robotidy --configure GenerateDocumentation;doc_template="C:/doc_templates/template.jinja" src
     > robotidy --configure GenerateDocumentation:doc_template="template.jinja" src
+
+Note that to pass parameter value with ``:`` (like a absolute path), you need to use ``;`` as a parameter separator.
 
 .. dropdown:: First line of the documentation
 
