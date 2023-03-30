@@ -3,15 +3,15 @@ Single Argument
     [Documentation]    Single Argument
     ...
     ...    Arguments:
-    ...        ${var}:
+    ...        ${var}: 
     [Arguments]    ${var}
 
 Two Arguments
     [Documentation]    Two Arguments
     ...
     ...    Arguments:
-    ...        ${var}:
-    ...        ${var2}:
+    ...        ${var}: 
+    ...        ${var2}: 
     [Arguments]    ${var}    ${var2}
 
 No Arguments
