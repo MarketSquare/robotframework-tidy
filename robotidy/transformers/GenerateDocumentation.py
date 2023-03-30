@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Optional
 
 from jinja2 import Template
+from jinja2.exceptions import TemplateError
 from robot.api.parsing import Documentation, ModelVisitor, Token
 
 from robotidy.exceptions import InvalidParameterValueError
@@ -130,9 +131,20 @@ class GenerateDocumentation(Transformer):
 
     def __init__(self, overwrite: bool = False, doc_template: str = "google", template_directory: Optional[str] = None):
         self.overwrite = overwrite
-        self.doc_template = Template(self.get_template(doc_template, template_directory))
+        self.doc_template = self.load_template(doc_template, template_directory)
         self.args_returns_finder = ArgumentsAndReturnsVisitor()
         super().__init__()
+
+    def load_template(self, template: str, template_directory: Optional[str] = None) -> str:
+        try:
+            return Template(self.get_template(template, template_directory))
+        except TemplateError as err:
+            raise InvalidParameterValueError(
+                self.__class__.__name__,
+                "doc_template",
+                "template content",
+                f"Failed to load the template: {err}",
+            )
 
     def get_template(self, template: str, template_directory: Optional[str] = None) -> str:
         if template == "google":

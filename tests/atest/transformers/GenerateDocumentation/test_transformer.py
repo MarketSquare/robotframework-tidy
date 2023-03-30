@@ -1,9 +1,5 @@
 from pathlib import Path
 
-import pytest
-
-from robotidy.exceptions import InvalidParameterValueError
-
 from .. import TransformerAcceptanceTest
 
 
@@ -52,5 +48,18 @@ class TestGenerateDocumentation(TransformerAcceptanceTest):
         expected_output = (
             f"Error: {self.TRANSFORMER_NAME}: Invalid 'doc_template' parameter value: '{template_path}'. "
             f"The template path does not exist or cannot be found.\n"
+        )
+        assert expected_output == result.output
+
+    def test_invalid_template(self):
+        template_path = Path(__file__).parent / "source" / "invalid_template.jinja"
+        rel_template_path = get_relative_path(template_path)
+        args = ["--transform", f"{self.TRANSFORMER_NAME}:doc_template={rel_template_path}"]
+        source = "test.robot"
+        result = self.run_tidy(args=args, source=source, exit_code=1)
+        expected_output = (
+            f"Error: {self.TRANSFORMER_NAME}: Invalid 'doc_template' parameter value: 'template content'. "
+            f"Failed to load the template: Unexpected end of template. Jinja was looking for the "
+            f"following tags: 'endfor' or 'else'. The innermost block that needs to be closed is 'for'.\n"
         )
         assert expected_output == result.output
