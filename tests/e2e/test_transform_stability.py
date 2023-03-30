@@ -65,7 +65,7 @@ RERUN_NEEDED = {
     "SplitTooLongLine": {"continuation_indent": 2, "disablers": 2, "tests": 2, "comments": 2, "settings": 2},
     "Translate": {"pl_language_header": 2},
 }
-SKIP_TESTS_4 = {"ReplaceReturns": {"test"}}
+SKIP_TESTS_4 = {"ReplaceReturns": {"test"}, "GenerateDocumentation": {"test": 2}}
 SKIP_TESTS = {"ReplaceRunKeywordIf": {"invalid_data"}, "SplitTooLongLine": {"variables"}}
 
 
