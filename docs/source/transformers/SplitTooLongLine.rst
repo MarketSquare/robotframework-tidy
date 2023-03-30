@@ -229,6 +229,48 @@ to split on single too long values using ``split_single_value`` option::
             ${SINGLE_HEADER}
             ...    veeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeery
 
+Align new line
+----------------
+
+It is possible to align new line to previous line when splitting too long line. This mode works only when we are
+filling the line until line the length limit (with one of the ``split_on_every_arg``, ``split_on_every_value`` and
+``split_on_every_setting_arg`` flags). To enable it configure it using ``align_new_line``::
+
+    > robotidy -c SplitTooLongLine:align_new_line=True
+
+.. tab-set::
+
+    .. tab-item:: Before
+
+        .. code:: robotframework
+
+        *** Keywords ***
+        Keyword
+            [Tags]    longertagname1    longertagname2    longertagname3
+            Keyword With Longer Name    ${arg1}    ${arg2}    ${arg3}    # let's assume ${arg3} does not fit under limit
+
+    .. tab-item:: After (align_new_line = False)
+
+        .. code:: robotframework
+
+    *** Keywords ***
+    Keyword
+        [Tags]    longertagname1    longertagname2
+        ...    longertagname3
+        Keyword With Longer Name    ${arg1}    ${arg2}
+        ...    ${arg3}
+
+    .. tab-item:: After (align_new_line = True)
+
+        .. code:: robotframework
+
+    *** Keywords ***
+    Keyword
+        [Tags]    longertagname1    longertagname2
+        ...       longertagname3
+        Keyword With Longer Name    ${arg1}    ${arg2}
+        ...                         ${arg3}
+
 Ignore comments
 ----------------
 
