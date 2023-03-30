@@ -11,7 +11,7 @@ from robotidy.transformers import Transformer
 
 GOOGLE_TEMPLATE = """
 {% if keyword.arguments|length > 0 %}
-{{ formatting.cont_indent }}Arguments:
+{{ formatting.cont_indent }}Args:
 {%- for arg in keyword.arguments %}
 {{ formatting.cont_indent }}{{ formatting.cont_indent }}{{ arg.name }}: {% endfor %}
 {% endif -%}

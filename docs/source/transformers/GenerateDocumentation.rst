@@ -104,7 +104,7 @@ Templates support `Jinja templating engine <https://jinja.palletsprojects.com/>`
 based on the keyword data. Below, there is a default template::
 
     {% if keyword.arguments|length > 0 %}
-    {{ formatting.cont_indent }}Arguments:
+    {{ formatting.cont_indent }}Args:
     {%- for arg in keyword.arguments %}
     {{ formatting.cont_indent }}{{ formatting.cont_indent }}{{ arg.name }}: {% endfor %}
     {% endif -%}

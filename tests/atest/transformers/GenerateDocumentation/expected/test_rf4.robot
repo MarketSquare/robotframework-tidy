@@ -2,14 +2,14 @@
 Single Argument
     [Documentation]
     ...
-    ...    Arguments:
+    ...    Args:
     ...        ${var}: 
     [Arguments]    ${var}
 
 Two Arguments
     [Documentation]
     ...
-    ...    Arguments:
+    ...    Args:
     ...        ${var}: 
     ...        ${var2}: 
     [Arguments]    ${var}    ${var2}
@@ -55,7 +55,7 @@ Double [Return]
 Arguments And Return
     [Documentation]
     ...
-    ...    Arguments:
+    ...    Args:
     ...        ${var}: 
     ...        ${var2}: 
     [Arguments]    ${var}
@@ -65,7 +65,7 @@ Arguments And Return
 One Required And One With Default
     [Documentation]
     ...
-    ...    Arguments:
+    ...    Args:
     ...        ${required}: 
     ...        ${optional}: 
     [Arguments]    ${required}    ${optional}=default
@@ -75,7 +75,7 @@ One Required And One With Default
 Default Based On Earlier Argument
     [Documentation]
     ...
-    ...    Arguments:
+    ...    Args:
     ...        ${a}: 
     ...        ${b}: 
     ...        ${c}: 
@@ -90,14 +90,14 @@ Existing documentation
 Embedded ${var} variable
     [Documentation]
     ...
-    ...    Arguments:
+    ...    Args:
     ...        ${var}: 
     Step
 
 Two ${embedded:pattern} variables ${embedded2}
     [Documentation]
     ...
-    ...    Arguments:
+    ...    Args:
     ...        ${embedded:pattern}: 
     ...        ${embedded2}: 
     Step
