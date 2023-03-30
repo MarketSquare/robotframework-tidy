@@ -57,7 +57,7 @@ Double [Return]
      Step
      [Return]    ${var}
      [Return]    ${var}
-     ...    $[var2}
+     ...    ${var2}
 
 Arguments And Return
     [Documentation]    Short description.

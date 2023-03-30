@@ -29,7 +29,7 @@ Double [Return]
      Step
      [Return]    ${var}
      [Return]    ${var}
-     ...    $[var2}
+     ...    ${var2}
 
 Arguments And Return
     [Arguments]    ${var}
