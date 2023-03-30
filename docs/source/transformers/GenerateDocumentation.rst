@@ -115,7 +115,7 @@ based on the keyword data. Below, there is a default template::
     {% endif -%}
 
 The Jinja syntax is described `here <https://jinja.palletsprojects.com/en/3.1.x/templates/>`_. You can use it as
-reference to create your own template. Following subsections explains in detail possible features.
+a reference to create your own template. The following subsections explain in detail possible features.
 
 Path to template can be absolute or relative (to working directory or configuration file directory)::
 
