@@ -180,6 +180,33 @@ it will generate::
 
 Read the transformer documentation for more details on configuring your own custom template.
 
+New transformer NormalizeComments (#290)
+-----------------------------------------
+
+``NormalizeComments`` handles comments formatting. For now it only focus on fixing ``missing-space-after-comment``
+rule violations from the Robocop::
+
+    *** Settings ***
+    #linecomment
+    ### header
+
+
+    *** Keywords ***
+    Keyword
+        Step  #comment
+
+will be transformed to::
+
+    *** Settings ***
+    # linecomment
+    ### header
+
+
+    *** Keywords ***
+    Keyword
+        Step  # comment
+    ```
+
 Group comments with settings in OrderSettings (#468)
 ----------------------------------------------------
 
