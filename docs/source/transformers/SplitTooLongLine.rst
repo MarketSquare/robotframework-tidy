@@ -244,32 +244,32 @@ filling the line until line the length limit (with one of the ``split_on_every_a
 
         .. code:: robotframework
 
-        *** Keywords ***
-        Keyword
-            [Tags]    longertagname1    longertagname2    longertagname3
-            Keyword With Longer Name    ${arg1}    ${arg2}    ${arg3}    # let's assume ${arg3} does not fit under limit
+            *** Keywords ***
+            Keyword
+                [Tags]    longertagname1    longertagname2    longertagname3
+                Keyword With Longer Name    ${arg1}    ${arg2}    ${arg3}    # let's assume ${arg3} does not fit under limit
 
     .. tab-item:: After (align_new_line = False)
 
         .. code:: robotframework
 
-    *** Keywords ***
-    Keyword
-        [Tags]    longertagname1    longertagname2
-        ...    longertagname3
-        Keyword With Longer Name    ${arg1}    ${arg2}
-        ...    ${arg3}
+            *** Keywords ***
+            Keyword
+                [Tags]    longertagname1    longertagname2
+                ...    longertagname3
+                Keyword With Longer Name    ${arg1}    ${arg2}
+                ...    ${arg3}
 
     .. tab-item:: After (align_new_line = True)
 
         .. code:: robotframework
 
-    *** Keywords ***
-    Keyword
-        [Tags]    longertagname1    longertagname2
-        ...       longertagname3
-        Keyword With Longer Name    ${arg1}    ${arg2}
-        ...                         ${arg3}
+            *** Keywords ***
+            Keyword
+                [Tags]    longertagname1    longertagname2
+                ...       longertagname3
+                Keyword With Longer Name    ${arg1}    ${arg2}
+                ...                         ${arg3}
 
 Ignore comments
 ----------------
