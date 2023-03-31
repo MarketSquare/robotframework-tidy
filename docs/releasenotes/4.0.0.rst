@@ -307,3 +307,15 @@ Bugs
     # robotidy: off
     # robotidy: on
     *** Settings ***
+
+- non templated tests in suites with ``Test Template`` set will no longer be aligned together with templated tests by
+  ``AlignTemplatedTestCVases`` transformer (#444)::
+
+    *** Test Cases ***                  UNLINTED FILE               LINTED FILE
+    Garbage Commit Message              garbage.txt                 garbage_linted.txt
+    Valid Commit Message                unchanged.txt               unchanged_linted.txt
+    Header Validation
+        [Template]    NONE
+        ${valid header} =    Validate Header    ${header}
+        Should Be True    ${valid header}
+        ${err invalid header} =    Validate Header    ${EMPTY}
