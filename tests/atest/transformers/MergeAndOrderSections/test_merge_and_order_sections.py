@@ -10,7 +10,10 @@ class TestMergeAndOrderSections(TransformerAcceptanceTest):
         self.compare(source="tests.robot")
 
     def test_both_test_and_task(self):
-        self.compare(source="both_test_and_task.robot")
+        self.compare(source="both_test_and_task.robot", target_version="<6")
+
+    def test_both_test_and_task_rf6(self):
+        self.compare(source="both_test_and_task.robot", expected="both_test_and_task_rf6.robot", target_version=">=6")
 
     def test_multiple_header_comments(self):
         self.compare(source="multiple_header_comments.robot")
@@ -64,7 +67,7 @@ class TestMergeAndOrderSections(TransformerAcceptanceTest):
         expected_output = (
             f"Error: {self.TRANSFORMER_NAME}: Invalid 'order' parameter value: '{parameter}'. "
             "Custom order should be provided in comma separated list with all section names:\n"
-            "order=comments,settings,variables,testcases,variables\n"
+            "order=comments,settings,variables,testcases,tasks,variables\n"
         )
         assert expected_output == result.output
 

@@ -27,7 +27,7 @@ def catch_exceptions(func):
                 "\nFatal exception occurred. You can create an issue at "
                 "https://github.com/MarketSquare/robotframework-tidy/issues . Thanks!"
             )
-            err.args = (err.args[0] + message,) + err.args[1:]
+            err.args = (str(err.args[0]) + message,) + err.args[1:]
             raise err
 
     return wrapper
