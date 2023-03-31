@@ -272,5 +272,5 @@ enclose it with quotation marks::
 Bugs
 -----
 
-- Keyword name will not longer be prefixed with continuation marks (``...``) if name was longer than line length limit (#494)
+- Keyword name will no longer be prefixed with continuation marks (``...``) if name was longer than line length limit (#494)
 - It is now safe to use Tasks sections with ``MergeAndOrderSections`` transformer with Robot Framework 6.0+ (#490)
