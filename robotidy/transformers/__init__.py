@@ -60,6 +60,7 @@ TRANSFORMERS = [
     "InlineIf",
     "Translate",
     "NormalizeComments",
+    "RenameVariables",
 ]
 
 
