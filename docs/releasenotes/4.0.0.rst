@@ -180,6 +180,33 @@ it will generate::
 
 Read the transformer documentation for more details on configuring your own custom template.
 
+New transformer NormalizeComments (#290)
+-----------------------------------------
+
+``NormalizeComments`` handles comments formatting. For now, it only focuses on fixing ``missing-space-after-comment``
+rule violations from the Robocop::
+
+    *** Settings ***
+    #linecomment
+    ### header
+
+
+    *** Keywords ***
+    Keyword
+        Step  #comment
+
+will be transformed to::
+
+    *** Settings ***
+    # linecomment
+    ### header
+
+
+    *** Keywords ***
+    Keyword
+        Step  # comment
+    ```
+
 Group comments with settings in OrderSettings (#468)
 ----------------------------------------------------
 
@@ -275,3 +302,8 @@ Bugs
 - Keyword name will no longer be prefixed with continuation marks (``...``) if name was longer than line length limit (#494)
 - It is now safe to use Tasks sections with ``MergeAndOrderSections`` transformer with Robot Framework 6.0+ (#490)
 - Test case titles are now capitalized with ``RenameTestCases:capitalize_each_word=True`` even if the word is inside brackets (#485)
+- It is now possible to use disabler in the first line and enable it later (previously the whole file was always ignored) (#479)::
+
+    # robotidy: off
+    # robotidy: on
+    *** Settings ***

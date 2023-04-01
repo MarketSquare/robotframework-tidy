@@ -68,6 +68,13 @@ class DisabledLines:
         self.lines = []
         self.disabled_headers = set()
 
+    @property
+    def file_disabled(self):
+        """Check if file is disabled. Whole file is only disabled if the first line contains one line disabler."""
+        if not self.lines:
+            return False
+        return self.lines[0] == (1, 1)
+
     def add_disabler(self, start_line, end_line):
         self.lines.append((start_line, end_line))
 
@@ -128,9 +135,9 @@ class RegisterDisablers(ModelVisitor):
         self.disablers = DisabledLines(self.start_line, self.end_line, node.end_lineno)
         self.disablers.parse_global_disablers()
         self.stack = []
-        self.file_disabled = False
         self.generic_visit(node)
         self.disablers.sort_disablers()
+        self.file_disabled = self.disablers.file_disabled
 
     def visit_SectionHeader(self, node):  # noqa
         for comment in node.get_tokens(Token.COMMENT):
@@ -143,8 +150,6 @@ class RegisterDisablers(ModelVisitor):
     def visit_TestCase(self, node):  # noqa
         self.stack.append(0)
         self.generic_visit(node)
-        if self.file_disabled:  # stop visiting if whole file is disabled
-            return
         self.close_disabler(node.end_lineno)
 
     def visit_Try(self, node):  # noqa
@@ -152,8 +157,6 @@ class RegisterDisablers(ModelVisitor):
         self.stack.append(0)
         for statement in node.body:
             self.visit(statement)
-        if self.file_disabled:  # stop visiting if whole file is disabled
-            return
         self.close_disabler(node.end_lineno)
         tail = node
         while tail.next:
@@ -161,8 +164,6 @@ class RegisterDisablers(ModelVisitor):
             self.stack.append(0)
             for statement in tail.body:
                 self.visit(statement)
-            if self.file_disabled:  # stop visiting if whole file is disabled
-                return
             end_line = tail.next.lineno - 1 if tail.next else tail.end_lineno
             self.close_disabler(end_line=end_line)
             tail = tail.next
@@ -181,11 +182,8 @@ class RegisterDisablers(ModelVisitor):
                     return
                 self.disablers.add_disabler(self.stack[index], node.lineno)
                 self.stack[index] = 0
-            else:
-                if node.lineno == 1 and index == 0:
-                    self.file_disabled = True
-                elif not self.stack[index]:
-                    self.stack[index] = node.lineno
+            elif not self.stack[index]:
+                self.stack[index] = node.lineno
         else:
             # inline disabler
             if self.any_disabler_open():
