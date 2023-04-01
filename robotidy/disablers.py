@@ -70,7 +70,7 @@ class DisabledLines:
 
     @property
     def file_disabled(self):
-        """Check if file is disabled. Whole file is only disabled if first line contains one line disabler."""
+        """Check if file is disabled. Whole file is only disabled if the first line contains one line disabler."""
         if not self.lines:
             return False
         return self.lines[0] == (1, 1)
