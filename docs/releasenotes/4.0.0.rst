@@ -274,3 +274,8 @@ Bugs
 
 - Keyword name will no longer be prefixed with continuation marks (``...``) if name was longer than line length limit (#494)
 - It is now safe to use Tasks sections with ``MergeAndOrderSections`` transformer with Robot Framework 6.0+ (#490)
+- It is now possible to use disabler in the first line and enable it later (previously the whole file was always ignored) (#479)::
+
+    # robotidy: off
+    # robotidy: on
+    *** Settings ***
