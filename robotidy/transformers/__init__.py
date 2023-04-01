@@ -59,6 +59,7 @@ TRANSFORMERS = [
     "ReplaceBreakContinue",
     "InlineIf",
     "Translate",
+    "NormalizeComments",
 ]
 
 
