@@ -14,3 +14,6 @@ Containing Replace Pattern JIRA-1234
 
 Remove Special Chars: ?$@
     No Operation
+
+Capitalize Words (After !Special That's
+    No operation
