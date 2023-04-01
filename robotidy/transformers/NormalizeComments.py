@@ -8,7 +8,7 @@ class NormalizeComments(Transformer):
     """
     Normalize comments.
 
-    Normalize spacing after beginning of the comment. Fixes ``missing-space-after-comment`` rule violations
+    Normalizes spacing after beginning of the comment. Fixes ``missing-space-after-comment`` rule violations
     from the Robocop.
 
     Following code:

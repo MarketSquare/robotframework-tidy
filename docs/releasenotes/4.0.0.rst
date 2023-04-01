@@ -183,7 +183,7 @@ Read the transformer documentation for more details on configuring your own cust
 New transformer NormalizeComments (#290)
 -----------------------------------------
 
-``NormalizeComments`` handles comments formatting. For now it only focus on fixing ``missing-space-after-comment``
+``NormalizeComments`` handles comments formatting. For now, it only focuses on fixing ``missing-space-after-comment``
 rule violations from the Robocop::
 
     *** Settings ***

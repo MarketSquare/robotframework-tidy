@@ -8,7 +8,7 @@ Normalize comments.
 .. |TRANSFORMERNAME| replace:: NormalizeComments
 .. include:: enabled_hint.txt
 
-Normalize spacing after beginning of the comment. Fixes ``missing-space-after-comment`` rule violations
+Normalizes spacing after the beginning of the comment. Fixes ``missing-space-after-comment`` rule violations
 from the Robocop.
 
 .. tab-set::
