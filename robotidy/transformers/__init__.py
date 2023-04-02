@@ -41,6 +41,7 @@ TRANSFORMERS = [
     "OrderSettingsSection",
     "NormalizeTags",
     "OrderTags",
+    "RenameVariables",
     "IndentNestedKeywords",
     "AlignSettingsSection",
     "AlignVariablesSection",
@@ -60,7 +61,6 @@ TRANSFORMERS = [
     "InlineIf",
     "Translate",
     "NormalizeComments",
-    "RenameVariables",
 ]
 
 
