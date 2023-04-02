@@ -4,12 +4,26 @@ from typing import List, Pattern, Tuple
 from robot.api.parsing import Arguments, Token
 from robot.errors import VariableError
 from robot.variables import VariableIterator
-from robot.variables.search import _search_variable
+
+try:  # only available starting RF 6.0
+    from robot.variables.search import _search_variable
+
+    VariableSearcher = None
+except ImportError:
+    _search_variable = None
+    from robot.variables.search import VariableSearcher
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 from robotidy.skip import Skip
 from robotidy.transformers import Transformer
+
+
+def search_variable(name: str, ignore_errors: bool):
+    identifiers = "$@&%*"
+    if _search_variable:
+        return _search_variable(name, identifiers, ignore_errors)
+    return VariableSearcher(identifiers, ignore_errors).search(name)
 
 
 class VariablesScope:
@@ -28,7 +42,7 @@ class VariablesScope:
         return variable.lower().replace("_", "").replace(" ", "")
 
     def add_global(self, variable: str):
-        match = _search_variable(variable, identifiers="$@&%*")
+        match = search_variable(variable, ignore_errors=True)
         if not match.base:
             return
         self._global.add(self.normalize_name(match.base))
@@ -38,7 +52,7 @@ class VariablesScope:
 
         If the variable is embedded argument, it can contain pattern we need to ignore (${var:[^pattern]})
         """
-        match = _search_variable(variable, identifiers="$@&%*")
+        match = search_variable(variable, ignore_errors=True)
         if not match.base:
             return
         name = match.base
@@ -333,7 +347,7 @@ class RenameVariables(Transformer):
                 else:
                     name += before
             # handle ${variable}[item][${syntax}]
-            match = _search_variable(variable, identifiers="$@&%*")
+            match = search_variable(variable, ignore_errors=True)
             # inline eval will start and end with {}
             if not (match.base.startswith("{") and match.base.endswith("}")):
                 base = self.rename_value(match.base, variable_case=variable_case, is_var=True)
