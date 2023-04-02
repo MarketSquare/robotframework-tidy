@@ -308,8 +308,7 @@ Bugs
     # robotidy: on
     *** Settings ***
 
-- non templated tests in suites with ``Test Template`` set will no longer be aligned together with templated tests by
-  ``AlignTemplatedTestCVases`` transformer (#444)::
+- Test cases with no template will no longer be aligned together with other tests in a templated test case file (#444)::
 
     *** Test Cases ***                  UNLINTED FILE               LINTED FILE
     Garbage Commit Message              garbage.txt                 garbage_linted.txt
