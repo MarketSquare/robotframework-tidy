@@ -160,7 +160,7 @@ class RenameVariables(Transformer):
                 f"Invalid case type. Allowed case types are: {case_types}",
             )
 
-    def validate_variable_separator(self, variable_separator):
+    def validate_variable_separator(self, variable_separator: str):
         if variable_separator not in ("underscore", "space"):
             raise InvalidParameterValueError(
                 self.__class__.__name__,
@@ -198,7 +198,7 @@ class RenameVariables(Transformer):
     ) = visit_TestTemplate = visit_TestTimeout = visit_VariablesImport = visit_ResourceImport = visit_LibraryImport
 
     @skip_if_disabled
-    def visit_Setup(self, node):
+    def visit_Setup(self, node):  # noqa
         for data_token in node.data_tokens[1:]:
             data_token.value = self.rename_value(data_token.value, variable_case="auto", is_var=False)
         return self.generic_visit(node)
@@ -243,7 +243,7 @@ class RenameVariables(Transformer):
         return self.generic_visit(node)
 
     @skip_if_disabled
-    def visit_KeywordName(self, node):
+    def visit_KeywordName(self, node):  # noqa
         for token in node.data_tokens:
             name = ""
             for name_token in token.tokenize_variables():
