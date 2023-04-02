@@ -7,6 +7,7 @@ from robot.api.parsing import (
     ForHeader,
     IfHeader,
     ModelVisitor,
+    Template,
     Token,
 )
 
@@ -80,6 +81,12 @@ class AlignTemplatedTestCases(Transformer):
         counter = ColumnWidthCounter(self.disablers)
         counter.visit(node)
         self.widths = counter.widths
+        return self.generic_visit(node)
+
+    def visit_TestCase(self, node):  # noqa
+        for statement in node.body:
+            if isinstance(statement, Template) and statement.value is None:
+                return node
         return self.generic_visit(node)
 
     @skip_if_disabled
@@ -160,6 +167,12 @@ class ColumnWidthCounter(ModelVisitor):
         if not self.header_with_cols and not self.any_one_line_test and self.widths:
             self.widths[0] = 0
         self.widths = [round_to_four(length) for length in self.widths]
+
+    def visit_TestCase(self, node):  # noqa
+        for statement in node.body:
+            if isinstance(statement, Template) and statement.value is None:
+                return
+        self.generic_visit(node)
 
     @skip_if_disabled
     def visit_Statement(self, statement):  # noqa

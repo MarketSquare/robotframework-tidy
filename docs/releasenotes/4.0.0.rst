@@ -307,3 +307,14 @@ Bugs
     # robotidy: off
     # robotidy: on
     *** Settings ***
+
+- Test cases with no template will no longer be aligned together with other tests in a templated test case file (#444)::
+
+    *** Test Cases ***                  UNLINTED FILE               LINTED FILE
+    Garbage Commit Message              garbage.txt                 garbage_linted.txt
+    Valid Commit Message                unchanged.txt               unchanged_linted.txt
+    Header Validation
+        [Template]    NONE
+        ${valid header} =    Validate Header    ${header}
+        Should Be True    ${valid header}
+        ${err invalid header} =    Validate Header    ${EMPTY}
