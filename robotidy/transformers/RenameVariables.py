@@ -133,6 +133,7 @@ class RenameVariables(Transformer):
         settings_section_case: str = "upper",
         variables_section_case: str = "upper",
         unknown_variables_case: str = "upper",
+        variable_separator: str = "underscore",
         convert_camel_case: bool = True,
         skip: Skip = None,
     ):
@@ -140,9 +141,12 @@ class RenameVariables(Transformer):
         self.validate_case("settings_section_case", settings_section_case, ["upper", "lower", "ignore"])
         self.validate_case("variables_section_case", variables_section_case, ["upper", "lower", "ignore"])
         self.validate_case("unknown_variables_case", unknown_variables_case, ["upper", "lower", "ignore"])
+        self.validate_variable_separator(variable_separator)
         self.settings_section_case = settings_section_case
         self.variables_section_case = variables_section_case
         self.unknown_variables_case = unknown_variables_case
+        # we always convert to space, so we only need to check if we need to convert back to _
+        self.replace_variable_separator = variable_separator == "underscore"
         self.convert_camel_case = convert_camel_case
         self.variables_scope = VariablesScope()
 
@@ -154,6 +158,15 @@ class RenameVariables(Transformer):
                 param_name,
                 case,
                 f"Invalid case type. Allowed case types are: {case_types}",
+            )
+
+    def validate_variable_separator(self, variable_separator):
+        if variable_separator not in ("underscore", "space"):
+            raise InvalidParameterValueError(
+                self.__class__.__name__,
+                "variable_separator",
+                variable_separator,
+                "Allowed values are: underscore, space",
             )
 
     @skip_section_if_disabled
@@ -368,7 +381,8 @@ class RenameVariables(Transformer):
             variable_name = variable_name.lstrip()
         elif strip_fn == "rstrip":
             variable_name = variable_name.rstrip()
-        variable_name = variable_name.replace(" ", "_")
+        if self.replace_variable_separator:
+            variable_name = variable_name.replace(" ", "_")
         return variable_name + item_access
 
 

@@ -39,6 +39,11 @@ class TestRenameVariables(TransformerAcceptanceTest):
     def test_ignore_camel_case(self):
         self.compare(source="test.robot", expected="test_ignore_camel_case.robot", config=":convert_camel_case=False")
 
+    def test_separator_underscore(self):
+        self.compare(
+            source="test.robot", expected="test_separator_underscore.robot", config=":variable_separator=space"
+        )
+
     @pytest.mark.parametrize(
         "param_name, allowed",
         [
@@ -56,5 +61,17 @@ class TestRenameVariables(TransformerAcceptanceTest):
         expected_output = (
             f"Error: {self.TRANSFORMER_NAME}: Invalid '{param_name}' parameter value: 'invalid'. "
             f"Invalid case type. Allowed case types are: {allowed}\n"
+        )
+        assert expected_output == result.output
+
+    def test_invalid_variable_separator(self):
+        result = self.run_tidy(
+            args=f"--transform {self.TRANSFORMER_NAME}:variable_separator=invalid".split(),
+            source="test.robot",
+            exit_code=1,
+        )
+        expected_output = (
+            f"Error: {self.TRANSFORMER_NAME}: Invalid 'variable_separator' parameter value: 'invalid'. "
+            f"Allowed values are: underscore, space\n"
         )
         assert expected_output == result.output

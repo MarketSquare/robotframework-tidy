@@ -76,7 +76,7 @@ Conventions can be configured or switched off using parameters - read more in th
 
     RenameVariables is still under development and is not considered feature complete. Following syntax is not yet supported:
 
-      - changing variable scope with ``Śet Test/Suite/Global Variable``
+      - changing variable scope with ``Set Test/Suite/Global Variable``
       - variable evaluation with ``${variable * 2}`` (following will be replaced to ``${variable_*_2}``
 
     Robotidy can be locally disabled with # robotidy: off if you want to ignore specific cases.
@@ -212,6 +212,56 @@ Variable names written in camelCase are converted to snake_case. You can disable
             Keyword
                 ${camelcase_name}    Set Variable    value
                 Keyword Call    ${camelcase_name}
+
+Variable separator
+-------------------
+
+Separators inside variable name are converted to underscore (``_``). You can configure it using ``variable_separator``::
+
+    > robotidy -c RenameVariables:variable_separator=underscore
+
+Allowed values are:
+
+- ``underscore`` (default)
+- ``space``
+
+.. tab-set::
+
+    .. tab-item:: Before
+
+        .. code:: robotframework
+
+            *** Variables ***
+            ${camelCase}    value
+
+            *** Keywords ***
+            Keyword
+                ${variable_name}    Set Variable    value
+                Keyword Call    ${variable name}
+
+    .. tab-item:: After - default (variable_separator = underscore)
+
+        .. code:: robotframework
+
+            *** Variables ***
+            ${CAMEL_CASE}    value
+
+            *** Keywords ***
+            Keyword
+                ${variable_name}    Set Variable    value
+                Keyword Call    ${variable_name}
+
+    .. tab-item:: After (variable_separator = space)
+
+        .. code:: robotframework
+
+            *** Variables ***
+            ${CAMEL CASE}    value
+
+            *** Keywords ***
+            Keyword
+                ${variable name}    Set Variable    value
+                Keyword Call    ${variable name}
 
 Skip formatting
 ----------------
