@@ -144,7 +144,7 @@ class GenerateDocumentation(Transformer):
                 "doc_template",
                 "template content",
                 f"Failed to load the template: {err}",
-            )
+            ) from None
 
     def get_template(self, template: str, template_directory: Optional[str] = None) -> str:
         if template == "google":

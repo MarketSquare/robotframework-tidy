@@ -1,4 +1,4 @@
-from robot.api.parsing import DefaultTags, ForceTags, Tags, Token
+from robot.api.parsing import Token
 
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
@@ -47,7 +47,7 @@ class NormalizeTags(Transformer):
         except KeyError:
             raise InvalidParameterValueError(
                 self.__class__.__name__, "case", case, "Supported cases: lowercase, uppercase, titlecase."
-            )
+            ) from None
 
     @skip_section_if_disabled
     def visit_Section(self, node):  # noqa

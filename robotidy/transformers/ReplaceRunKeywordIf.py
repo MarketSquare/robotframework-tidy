@@ -150,7 +150,7 @@ class ReplaceRunKeywordIf(Transformer):
                 self.args_to_keyword(keyword[1:], assign, indent)
                 for keyword in self.split_args_on_delimiters(arg_tokens, ("AND",))
             ]
-        elif is_var(keyword_name):
+        if is_var(keyword_name):
             keyword_token = Token(Token.KEYWORD_NAME, "Run Keyword")
             arg_tokens = [keyword_token] + arg_tokens
         return [self.args_to_keyword(arg_tokens, assign, indent)]

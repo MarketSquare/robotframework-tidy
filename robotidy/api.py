@@ -3,7 +3,7 @@ Methods for transforming Robot Framework ast model programmatically.
 """
 from typing import Dict, List, Optional
 
-from robotidy import app, disablers, files, skip, transformers, utils
+from robotidy import app, disablers, files, skip, utils
 from robotidy.config import Config, FormattingConfig
 from robotidy.transformers import TransformConfig, TransformConfigMap
 

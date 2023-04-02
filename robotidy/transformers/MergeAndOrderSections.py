@@ -1,8 +1,3 @@
-from robot.api.parsing import EmptyLine, SectionHeader, Token
-from robot.parsing.model.statements import Statement
-
-from robotidy.exceptions import InvalidParameterValueError
-
 try:
     from robot.api.parsing import InlineIfHeader
 except ImportError:
@@ -11,6 +6,10 @@ try:
     from robot.api.parsing import Config  # from RF 6.0
 except ImportError:
     Config = None
+from robot.api.parsing import EmptyLine, SectionHeader, Token
+from robot.parsing.model.statements import Statement
+
+from robotidy.exceptions import InvalidParameterValueError
 from robotidy.transformers import Transformer
 
 

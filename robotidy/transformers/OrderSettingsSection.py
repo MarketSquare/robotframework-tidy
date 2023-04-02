@@ -128,7 +128,7 @@ class OrderSettingsSection(Transformer):
                 "order",
                 order,
                 f"Custom order should be provided in comma separated list with valid group names:\n{sorted(mapping.keys())}",
-            )
+            ) from None
 
     def visit_File(self, node):  # noqa
         self.last_section = node.sections[-1] if node.sections else None
@@ -137,7 +137,7 @@ class OrderSettingsSection(Transformer):
     @skip_section_if_disabled
     def visit_SettingSection(self, node):  # noqa
         if not node.body:
-            return
+            return node
         if node is self.last_section and not isinstance(node.body[-1], EmptyLine):
             node.body[-1] = self.fix_eol(node.body[-1])
         comments, errors = [], []

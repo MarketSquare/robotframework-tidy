@@ -1,10 +1,9 @@
 from robot.api.parsing import Token
 
 try:
-    from robot.api.parsing import InlineIfHeader, ReturnStatement
+    from robot.api.parsing import InlineIfHeader
 except ImportError:
     InlineIfHeader = None
-    ReturnStatement = None
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.skip import Skip

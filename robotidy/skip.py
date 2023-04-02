@@ -10,7 +10,7 @@ from robotidy.utils import normalize_name
 def parse_csv(value):
     if not value:
         return []
-    return [val for val in value.split(",")]
+    return value.split(",")
 
 
 def str_to_bool(value):

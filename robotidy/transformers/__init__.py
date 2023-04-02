@@ -81,7 +81,7 @@ class TransformConfig:
         """
         Convert list of param=value arguments to dictionary.
         """
-        converted = dict()
+        converted = {}
         for arg in args:
             try:
                 param, value = arg.split("=", maxsplit=1)
@@ -125,7 +125,7 @@ class TransformConfigMap:
         config: List[TransformConfig],
     ):
         self.force_included_only = False
-        self.transformers: Dict[str, TransformConfig] = dict()
+        self.transformers: Dict[str, TransformConfig] = {}
         for tr in chain(transform, custom_transformers, config):
             self.add_transformer(tr)
 
@@ -142,7 +142,7 @@ class TransformConfigMap:
             name = str(name)
             if name in self.transformers:
                 return self.transformers[name].args
-        return dict()
+        return {}
 
     def transformer_should_be_included(self, name: str) -> bool:
         """
@@ -168,7 +168,7 @@ class TransformConfigMap:
                 self.transformers[default] = TransformConfig(default, False, False, False)
 
     def order_using_list(self, order: List[str]):
-        temp_transformers: Dict[str, TransformConfig] = dict()
+        temp_transformers: Dict[str, TransformConfig] = {}
         for name in order:
             if name in self.transformers:
                 temp_transformers[name] = self.transformers[name]
@@ -257,7 +257,7 @@ class Transformer(ModelTransformer):
     def __init__(self, skip: Optional[Skip] = None):
         self.formatting_config = None  # to make lint happy (we're injecting the configs)
         self.languages = None
-        self.transformers: Dict = dict()
+        self.transformers: Dict = {}
         self.disablers = None
         self.config_directory = None
         self.skip = skip
@@ -283,7 +283,7 @@ def get_absolute_path_to_transformer(name, short_name):
 
 def load_transformers_from_module(module):
     classes = inspect.getmembers(module, inspect.isclass)
-    transformers = dict()
+    transformers = {}
     for name, transformer_class in classes:
         if issubclass(transformer_class, (Transformer, ModelTransformer)) and transformer_class not in (
             Transformer,
@@ -298,7 +298,7 @@ def order_transformers(transformers, module):
     transform_list = getattr(module, "TRANSFORMERS", [])
     if not (transform_list and isinstance(transform_list, list)):
         return transformers
-    ordered_transformers = dict()
+    ordered_transformers = {}
     for name in transform_list:
         if name not in transformers:
             raise ImportTransformerError(
@@ -322,9 +322,9 @@ def import_transformer(name, config: TransformConfigMap, skip) -> Iterable[Trans
         else:
             transformers = load_transformers_from_module(imported)
             transformers = order_transformers(transformers, imported)
-            for name, transformer_class in transformers.items():
+            for tr_name, transformer_class in transformers.items():
                 yield create_transformer_instance(
-                    transformer_class, name, config.get_args(name, short_name, import_path), skip
+                    transformer_class, tr_name, config.get_args(tr_name, short_name, import_path), skip
                 )
     except DataError:
         similar_finder = RecommendationFinder()
@@ -387,7 +387,7 @@ def get_skip_args_from_spec(spec):
     from False to True in AlignKeywordsSection).
     This method iterate over spec and finds such overrides.
     """
-    defaults = dict()
+    defaults = {}
     for arg, value in spec.defaults.items():
         if arg in SkipConfig.HANDLES:
             defaults[arg.replace("skip_", "")] = value
@@ -469,7 +469,7 @@ def load_transformers(
     transformers_config.update_with_defaults(TRANSFORMERS)
     if not force_order:
         transformers_config.order_using_list(TRANSFORMERS)
-    for name, transformer_config in transformers_config.transformers.items():
+    for name in transformers_config.transformers:
         if not allow_disabled and not transformers_config.transformer_should_be_included(name):
             continue
         for container in import_transformer(name, transformers_config, skip):

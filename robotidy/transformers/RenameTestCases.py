@@ -1,5 +1,4 @@
 import re
-import string
 from typing import Optional
 
 from robot.api.parsing import Token
@@ -106,7 +105,7 @@ class RenameTestCases(Transformer):
                 "replace_pattern",
                 replace_pattern,
                 f"It should be a valid regex expression. Regex error: '{err.msg}'",
-            )
+            ) from None
         self.replace_to = "" if replace_to is None else replace_to
         self.capitalize_each_word = capitalize_each_word
 

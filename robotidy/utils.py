@@ -82,7 +82,7 @@ def validate_regex(value: Optional[str]) -> Optional[Pattern]:
     try:
         return re.compile(value) if value is not None else None
     except re.error:
-        raise click.BadParameter("Not a valid regular expression")
+        raise click.BadParameter("Not a valid regular expression") from None
 
 
 def decorate_diff_with_color(contents: List[str]) -> List[str]:
@@ -362,8 +362,7 @@ def collect_comments_from_tokens(tokens, indent):
     eol = Token(Token.EOL)
     if indent:
         return [Comment([indent, comment, eol]) for comment in comments]
-    else:
-        return [Comment([comment, eol]) for comment in comments]
+    return [Comment([comment, eol]) for comment in comments]
 
 
 def flatten_multiline(tokens, separator, remove_comments: bool = False):
@@ -406,8 +405,7 @@ def split_on_token_value(tokens, value, resolve: int):
             branch = tokens[index : index + resolve]
             remainder = tokens[index + resolve :]
             return prefix, branch, remainder
-    else:
-        return [], [], tokens
+    return [], [], tokens
 
 
 def join_tokens_with_token(tokens, token):

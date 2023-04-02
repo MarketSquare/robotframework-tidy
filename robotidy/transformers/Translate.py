@@ -98,7 +98,8 @@ class Translate(Transformer):
                     self.__class__.__name__,
                     param_name,
                     alternative,
-                    f"Provided BDD keyword alternative does not exist in the destination language. Select one of: {names}",
+                    f"Provided BDD keyword alternative does not exist in the destination language. "
+                    f"Select one of: {names}",
                 )
             return alternative.title()
         return sorted(kw.title() for kw in container)[0]

@@ -1,5 +1,4 @@
 import functools
-import sys
 
 try:
     import rich_click as click
@@ -39,6 +38,6 @@ def optional_rich(func):
         try:
             return func(*args, **kwargs)
         except ImportError:
-            raise exceptions.MissingOptionalRichDependencyError()
+            raise exceptions.MissingOptionalRichDependencyError() from None
 
     return wrapper

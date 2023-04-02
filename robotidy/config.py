@@ -1,7 +1,6 @@
 import os
-from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Optional, Pattern, Tuple
+from typing import List, Optional, Pattern, Tuple
 
 try:
     from robot.api import Languages  # RF 6.0
@@ -9,7 +8,7 @@ except ImportError:
     Languages = None
 
 from robotidy.files import get_paths
-from robotidy.transformers import TransformConfig, TransformConfigMap, load_transformers
+from robotidy.transformers import TransformConfigMap, load_transformers
 
 
 class FormattingConfig:
@@ -49,12 +48,11 @@ class FormattingConfig:
     def get_line_sep(line_sep):
         if line_sep == "windows":
             return "\r\n"
-        elif line_sep == "unix":
+        if line_sep == "unix":
             return "\n"
-        elif line_sep == "auto":
+        if line_sep == "auto":
             return "auto"
-        else:
-            return os.linesep
+        return os.linesep
 
 
 class Config:
@@ -91,7 +89,7 @@ class Config:
         self.config_directory = config_directory
         self.language = self.get_languages(language)
         self.transformers = []
-        self.transformers_lookup = dict()
+        self.transformers_lookup = {}
         self.load_transformers(transformers_config, force_order, target_version, skip)
 
     def load_transformers(self, transformers_config: TransformConfigMap, force_order, target_version, skip):

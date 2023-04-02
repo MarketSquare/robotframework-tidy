@@ -67,7 +67,7 @@ class AlignKeywordsTestsSection(Transformer):
         return self.generic_visit(node)
 
     def parse_widths(self, widths):
-        parsed_widths = dict()
+        parsed_widths = {}
         for index, width in enumerate(widths.split(",")):
             try:
                 number = int(width)
@@ -196,7 +196,7 @@ class AlignKeywordsTestsSection(Transformer):
                         separator_len = max(width - len(prev_token.value), self.formatting_config.space_count)
                     token.value = " " * separator_len
                     break
-                elif token.type != Token.ARGUMENT:  # ...   # comment edge case
+                if token.type != Token.ARGUMENT:  # ...   # comment edge case
                     prev_token = token
         return node
 
@@ -393,7 +393,7 @@ class AlignKeywordsTestsSection(Transformer):
         return column, prev_overflow_len, [get_separator(skip_width)]
 
     def align_tokens(self, tokens: List, skip_width: int):
-        last_assign, misaligned_cols = 0, 0
+        misaligned_cols = 0
         min_separator = self.formatting_config.space_count
         column, prev_overflow_len, aligned = self.get_start_column_and_aligned(skip_width, min_separator)
         for index, token in enumerate(tokens):
@@ -515,7 +515,7 @@ class ColumnWidthCounter(ModelVisitor):
         self.default_width = default_width
         self.min_separator = min_separator
         self.raw_widths = defaultdict(list)
-        self.widths = dict()
+        self.widths = {}
         self.disablers = disablers
 
     def get_width(self, col):

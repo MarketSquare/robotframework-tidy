@@ -55,7 +55,6 @@ class Robotidy:
                 click.echo(
                     f"Failed to decode {source}. Default supported encoding by Robot Framework is UTF-8. Skipping file"
                 )
-                pass
         if not self.config.check or not changed_files:
             return 0
         return 1
@@ -101,8 +100,7 @@ class Robotidy:
                     return os.linesep
                 if isinstance(f.newlines, str):
                     return f.newlines
-                else:
-                    return f.newlines[0]
+                return f.newlines[0]
         return self.config.formatting.line_sep
 
     def output_diff(

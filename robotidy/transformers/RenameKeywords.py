@@ -78,7 +78,7 @@ class RenameKeywords(Transformer):
                 "replace_pattern",
                 replace_pattern,
                 f"It should be a valid regex expression. Regex error: '{err.msg}'",
-            )
+            ) from None
 
     def get_run_keyword(self, kw_name):
         kw_norm = normalize_name(kw_name)
@@ -100,7 +100,7 @@ class RenameKeywords(Transformer):
     def normalize_name(self, value, is_keyword_call):
         var_found = False
         parts = []
-        new_name, remaining = "", ""
+        remaining = "", ""
         for prefix, match, remaining in VariableIterator(value, ignore_errors=True):
             var_found = True
             # rename strips whitespace, so we need to preserve it if needed
@@ -181,10 +181,10 @@ class RenameKeywords(Transformer):
         if run_keyword.branches:
             if "ELSE IF" in run_keyword.branches:
                 while is_token_value_in_tokens("ELSE IF", tokens):
-                    prefix, branch, tokens = split_on_token_value(tokens, "ELSE IF", 2)
+                    prefix, _, tokens = split_on_token_value(tokens, "ELSE IF", 2)
                     self.parse_run_keyword(prefix)
             if "ELSE" in run_keyword.branches and is_token_value_in_tokens("ELSE", tokens):
-                prefix, branch, tokens = split_on_token_value(tokens, "ELSE", 1)
+                prefix, _, tokens = split_on_token_value(tokens, "ELSE", 1)
                 self.parse_run_keyword(prefix)
                 self.parse_run_keyword(tokens)
                 return
@@ -198,7 +198,7 @@ class RenameKeywords(Transformer):
                 self.rename_node(token, is_keyword_call=True)
             return
         while is_token_value_in_tokens("AND", tokens):
-            prefix, branch, tokens = split_on_token_value(tokens, "AND", 1)
+            prefix, _, tokens = split_on_token_value(tokens, "AND", 1)
             self.parse_run_keyword(prefix)
         self.parse_run_keyword(tokens)
 

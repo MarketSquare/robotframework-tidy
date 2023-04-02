@@ -117,7 +117,7 @@ class OrderSettings(Transformer):
         try:
             return [name_map[part] for part in parts]
         except KeyError:
-            raise InvalidSettingsOrderError(self.__class__.__name__, param_name, order, name_map)
+            raise InvalidSettingsOrderError(self.__class__.__name__, param_name, order, name_map) from None
 
     def assert_no_duplicates_in_orders(self):
         """Checks if settings are not duplicated in after/before section and in the same section itself."""
@@ -154,7 +154,7 @@ class OrderSettings(Transformer):
     def order_settings(self, node, setting_types, before, after):
         if not node.body:
             return node
-        settings = dict()
+        settings = {}
         not_settings, trailing_after = [], []
         after_seen = False
         # when after_seen is set to True then all statements go to trailing_after and last non data
