@@ -74,16 +74,16 @@ Conventions can be configured or switched off using parameters - read more in th
 
 .. note::
 
-    RenameVariables is still under development and is not considered feature complete. Following syntax is not yet supported:
+    RenameVariables is still under development and is not considered a complete feature. The following syntax is not yet supported:
 
       - variable evaluation with ``${variable * 2}`` (following will be replaced to ``${variable_*_2}``
 
-    Robotidy can be locally disabled with # robotidy: off if you want to ignore specific cases.
+    Robotidy can be locally disabled with ``# robotidy: off`` if you want to ignore specific cases.
 
 Variable case in Settings section
 ---------------------------------
 
-All variables in the the ``*** Settings ***`` section are formatted to be uppercase. This behaviour is configurable
+All variables in the ``*** Settings ***`` section are formatted to uppercase. This behaviour is configurable
 using ``settings_section_case``::
 
     > robotidy -c RenameVariables:settings_section_case=upper src
@@ -97,7 +97,7 @@ Allowed values are:
 Variable case in Variables section
 ----------------------------------
 
-All variables in the the ``*** Variables ***`` section are formatted to be uppercase. This behaviour is configurable
+All variables in the ``*** Variables ***`` section are formatted to uppercase. This behaviour is configurable
 using ``variables_section_case``::
 
     > robotidy -c RenameVariables:variables_section_case=upper src

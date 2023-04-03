@@ -21,7 +21,7 @@ or to install exactly this version::
 New transformer RenameVariables (#354)
 ---------------------------------------
 
-Transformer than renames and normalizes variable names.
+Transformer that renames and normalizes variable names.
 
 Following conventions are applied:
 
