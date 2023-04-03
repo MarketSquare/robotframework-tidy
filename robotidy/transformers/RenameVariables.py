@@ -51,21 +51,11 @@ class VariablesScope:
         self._local = set()
         self._global = set()
 
-    def normalize_name(self, variable: str):
-        """
-        Return normalized variable name. Normalized name is :
-
-         - lowercase
-         - underscored and spaces removed
-
-        """
-        return variable.lower().replace("_", "").replace(" ", "")
-
     def add_global(self, variable: str):
         match = search_variable(variable, ignore_errors=True)
         if not match.base:
             return
-        self._global.add(self.normalize_name(match.base))
+        self._global.add(normalize_name(match.base))
 
     def add_local(self, variable: str, split_pattern: bool = False):
         """Add variable name to local cache.
@@ -78,7 +68,7 @@ class VariablesScope:
         name = match.base
         if split_pattern:
             name = name.split(":", maxsplit=1)[0]
-        self._local.add(self.normalize_name(name))
+        self._local.add(normalize_name(name))
 
     def change_scope_from_local_to_global(self, variable: str):
         """
@@ -88,14 +78,14 @@ class VariablesScope:
         if not match.base:
             return
         name = match.base
-        self._local.discard(self.normalize_name(name))
-        self._global.add(self.normalize_name(match.base))
+        self._local.discard(normalize_name(name))
+        self._global.add(normalize_name(match.base))
 
     def is_local(self, variable: str):
-        return self.normalize_name(variable) in self._local
+        return normalize_name(variable) in self._local
 
     def is_global(self, variable: str):
-        return self.normalize_name(variable) in self._global
+        return normalize_name(variable) in self._global
 
 
 class RenameVariables(Transformer):
