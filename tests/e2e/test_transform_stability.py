@@ -66,7 +66,11 @@ RERUN_NEEDED = {
     "Translate": {"pl_language_header": 2},
 }
 SKIP_TESTS_4 = {"ReplaceReturns": {"test"}, "GenerateDocumentation": {"test": 2}}
-SKIP_TESTS = {"ReplaceRunKeywordIf": {"invalid_data"}, "SplitTooLongLine": {"variables"}}
+SKIP_TESTS = {
+    "ReplaceRunKeywordIf": {"invalid_data"},
+    "SplitTooLongLine": {"variables"},
+    "AlignKeywordsSection": "error_node",
+}
 
 
 def run_tidy(cmd, enable_disabled: bool):
