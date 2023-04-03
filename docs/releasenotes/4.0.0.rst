@@ -5,7 +5,9 @@ Major release which contains multiple improvements for external transformers. Th
 changes, including removing ``section`` option from ``NormalizeSeparators`` (replaced with ``skip_sections``). We have
 also added following new transformers:
 
- - RemoveEmptyValues
+ - RenameVariables
+ - NormalizeComments
+ - ReplaceEmptyValues
  - GenerateDocumentation
 
 You can install the latest available version by running::
@@ -15,6 +17,152 @@ You can install the latest available version by running::
 or to install exactly this version::
 
     pip install robotframework-tidy==4.0.0
+
+New transformer RenameVariables (#354)
+---------------------------------------
+
+Transformer that renames and normalizes variable names.
+
+Following conventions are applied:
+
+- variable case depends on the variable scope (lowercase for local variables and uppercase for non-local variables)
+- leading and trailing whitespace is stripped
+- more than 2 consecutive whitespace in name is replaced by 1
+- whitespace is replaced by _
+- camelCase is converted to snake_case
+
+Conventions can be configured or switched off using parameters - read more in the documentation.
+
+Following code::
+
+    *** Settings ***
+    Suite Setup    ${keyword}
+
+    *** Variables ***
+    ${global}    String with {other global}
+
+    *** Test Cases ***
+    Test
+        ${local}    Set Variable    variable
+        Log    ${local}
+        Log    ${global}
+        Log    ${local['item']}
+
+    *** Keywords ***
+    Keyword
+        [Arguments]    ${ARG}
+        Log    ${arg}
+
+    Keyword With ${EMBEDDED}
+        Log    ${emb   eded}
+
+will be transformed to::
+
+    *** Settings ***
+    Suite Setup    ${KEYWORD}
+
+    *** Variables ***
+    ${GLOBAL}    String with {OTHER_GLOBAL}
+
+    *** Test Cases ***
+    Test
+        ${local}    Set Variable    variable
+        Log    ${local}
+        Log    ${GLOBAL}
+        Log    ${local['item']}
+
+    *** Keywords ***
+    Keyword
+        [Arguments]    ${arg}
+        Log    ${arg}
+
+    Keyword With ${embedded}
+        Log    ${emb_eded}
+
+New transformer ReplaceEmptyValues (#474)
+------------------------------------------
+
+This new, enabled by default transformer replaces empty values with ``${EMPTY}`` variable.
+
+Empty variables, lists or elements in the list can be defined in the following way::
+
+    *** Variables ***
+    ${EMPTY_VALUE}
+    @{EMPTY_LIST}
+    &{EMPTY_DICT}
+    @{LIST_WITH_EMPTY}
+    ...    value
+    ...
+    ...    value3
+
+To be more explicit, this transformer replace such values with ``${EMPTY}`` variables::
+
+    *** Variables ***
+    ${EMPTY_VALUE}    ${EMPTY}
+    @{EMPTY_LIST}     @{EMPTY}
+    &{EMPTY_DICT}     &{EMPTY}
+    @{LIST_WITH_EMPTY}
+    ...    value
+    ...    ${EMPTY}
+    ...    value3
+
+New transformer NormalizeComments (#290)
+-----------------------------------------
+
+``NormalizeComments`` handles comments formatting. For now, it only focuses on fixing ``missing-space-after-comment``
+rule violations from the Robocop::
+
+    *** Settings ***
+    #linecomment
+    ### header
+
+
+    *** Keywords ***
+    Keyword
+        Step  #comment
+
+will be transformed to::
+
+    *** Settings ***
+    # linecomment
+    ### header
+
+
+    *** Keywords ***
+    Keyword
+        Step  # comment
+    ```
+
+New transformer GenerateDocumentation (#311)
+--------------------------------------------
+
+Transformer that allows you to generate keyword documentation stubs based on the keyword data such as
+name, arguments or returned values. It uses Jinja templating internally and allows to define your own
+documentation templates. With default template (Google docstring) and following code::
+
+    *** Keywords ***
+    Keyword
+        [Arguments]    ${arg}
+        ${var}   ${var2}    Step
+        RETURN    ${var}    ${var2}
+
+it will generate::
+
+    *** Keywords ***
+    Keyword
+        [Documentation]
+        ...
+        ...    Arguments:
+        ...        ${arg}:
+        ...
+        ...    Returns:
+        ...        ${var}
+        ...        ${var2}
+        [Arguments]    ${arg}
+        ${var}   ${var2}    Step
+        RETURN    ${var}    ${var2}
+
+Read the transformer documentation for more details on configuring your own custom template.
 
 Rerun the transformation in place
 ----------------------------------
@@ -101,6 +249,7 @@ Currently supported in::
     NormalizeNewLines
     NormalizeSectionHeaderName
     NormalizeSeparators
+    RenameVariables
     ReplaceEmptyValues
     SplitTooLongLine
 
@@ -121,91 +270,6 @@ rather than the sections you want to format. For example following command::
 Is now equivalent of::
 
     > robotidy -c NormalizeSeparators:skip_sections=keywords
-
-New transformer ReplaceEmptyValues (#474)
-------------------------------------------
-
-This new, enabled by default transformer replaces empty values with ``${EMPTY}`` variable.
-
-Empty variables, lists or elements in the list can be defined in the following way::
-
-    *** Variables ***
-    ${EMPTY_VALUE}
-    @{EMPTY_LIST}
-    &{EMPTY_DICT}
-    @{LIST_WITH_EMPTY}
-    ...    value
-    ...
-    ...    value3
-
-To be more explicit, this transformer replace such values with ``${EMPTY}`` variables::
-
-    *** Variables ***
-    ${EMPTY_VALUE}    ${EMPTY}
-    @{EMPTY_LIST}     @{EMPTY}
-    &{EMPTY_DICT}     &{EMPTY}
-    @{LIST_WITH_EMPTY}
-    ...    value
-    ...    ${EMPTY}
-    ...    value3
-
-New transformer GenerateDocumentation (#311)
---------------------------------------------
-
-Transformer that allows you to generate keyword documentation stubs based on the keyword data such as
-name, arguments or returned values. It uses Jinja templating internally and allows to define your own
-documentation templates. With default template (Google docstring) and following code::
-
-    *** Keywords ***
-    Keyword
-        [Arguments]    ${arg}
-        ${var}   ${var2}    Step
-        RETURN    ${var}    ${var2}
-
-it will generate::
-
-    *** Keywords ***
-    Keyword
-        [Documentation]
-        ...
-        ...    Arguments:
-        ...        ${arg}:
-        ...
-        ...    Returns:
-        ...        ${var}
-        ...        ${var2}
-        [Arguments]    ${arg}
-        ${var}   ${var2}    Step
-        RETURN    ${var}    ${var2}
-
-Read the transformer documentation for more details on configuring your own custom template.
-
-New transformer NormalizeComments (#290)
------------------------------------------
-
-``NormalizeComments`` handles comments formatting. For now, it only focuses on fixing ``missing-space-after-comment``
-rule violations from the Robocop::
-
-    *** Settings ***
-    #linecomment
-    ### header
-
-
-    *** Keywords ***
-    Keyword
-        Step  #comment
-
-will be transformed to::
-
-    *** Settings ***
-    # linecomment
-    ### header
-
-
-    *** Keywords ***
-    Keyword
-        Step  # comment
-    ```
 
 Group comments with settings in OrderSettings (#468)
 ----------------------------------------------------
