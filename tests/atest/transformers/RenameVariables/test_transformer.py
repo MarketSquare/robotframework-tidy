@@ -44,6 +44,9 @@ class TestRenameVariables(TransformerAcceptanceTest):
             source="test.robot", expected="test_separator_underscore.robot", config=":variable_separator=space"
         )
 
+    def test_return_and_set_globals(self):
+        self.compare(source="return_and_set_global.robot")
+
     @pytest.mark.parametrize(
         "param_name, allowed",
         [
