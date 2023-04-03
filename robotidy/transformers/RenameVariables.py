@@ -312,7 +312,7 @@ class RenameVariables(Transformer):
                         # is_var=False because it can contain space ie ${var} =
                         variable = self.rename_value(variable, variable_case="lower", is_var=False)
                         # default value can contain other argument, so we need to auto-detect case
-                        default = self.rename_value(default, variable_case="auto", is_var=False)  # TODO detect case
+                        default = self.rename_value(default, variable_case="auto", is_var=False)
                         arg.value = f"{variable}={default}"
                     else:
                         self.variables_scope.add_local(arg.value)
