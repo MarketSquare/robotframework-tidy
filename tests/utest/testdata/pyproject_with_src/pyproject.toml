@@ -8,8 +8,9 @@ src = [
 startline = 10
 endline = 20
 transform = [
-   "DiscardEmptySections:allow_only_comments=True",
-   "SplitTooLongLine"
+    "DiscardEmptySections:allow_only_comments=True",
+    "OrderSettings",
+    "SplitTooLongLine"
 ]
 configure = [
     "DiscardEmptySections:allow_only_comments=False",

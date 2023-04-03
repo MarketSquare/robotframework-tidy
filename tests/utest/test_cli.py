@@ -424,7 +424,7 @@ class TestCli:
             (".", ["test.robot", "test3.robot", "resources/test.robot"]),
         ],
     )
-    def test_src_in_configuration(self, source, should_parse, test_data_dir):
+    def test_src_and_space_in_param_in_configuration(self, source, should_parse, test_data_dir):
         source_dir = test_data_dir / "pyproject_with_src"
         os.chdir(source_dir)
         if source is not None:

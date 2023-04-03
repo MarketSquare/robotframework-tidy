@@ -1,0 +1,14 @@
+Robotidy 4.0.1
+================
+
+Fix release for breaking changes in the Robotidy 4.0. The spaces in param:value in ``pyproject.toml`` should not
+raise unrecognized parameter error anymore.
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==4.0.1
+
