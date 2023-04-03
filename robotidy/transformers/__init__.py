@@ -70,7 +70,7 @@ IMPORTER = Importer()
 class TransformConfig:
     def __init__(self, config, force_include, custom_transformer, is_config):
         name, args = split_args_from_name_or_path(config)
-        self.name = name
+        self.name = name.strip()
         self.args = self.convert_args(args)
         self.force_include = force_include
         self.custom_transformer = custom_transformer
@@ -85,6 +85,7 @@ class TransformConfig:
         for arg in args:
             try:
                 param, value = arg.split("=", maxsplit=1)
+                param, value = param.strip(), value.strip()
             except ValueError:
                 raise InvalidParameterFormatError(self.name) from None
             if param == "enabled":
