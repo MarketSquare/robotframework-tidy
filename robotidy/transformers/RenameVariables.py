@@ -4,26 +4,12 @@ from typing import List, Pattern, Tuple
 from robot.api.parsing import Arguments, Token
 from robot.errors import VariableError
 from robot.variables import VariableIterator
-
-try:  # only available starting RF 6.0
-    from robot.variables.search import _search_variable
-
-    VariableSearcher = None
-except ImportError:
-    _search_variable = None
-    from robot.variables.search import VariableSearcher
+from robot.variables.search import search_variable
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 from robotidy.skip import Skip
 from robotidy.transformers import Transformer
-
-
-def search_variable(name: str, ignore_errors: bool):
-    identifiers = "$@&%*"
-    if _search_variable:
-        return _search_variable(name, identifiers, ignore_errors)
-    return VariableSearcher(identifiers, ignore_errors).search(name)
 
 
 class VariablesScope:
