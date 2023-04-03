@@ -135,6 +135,17 @@ class TestCli:
         path = find_project_root((src,))
         assert path == test_data_dir / "nested"
 
+    def test_ignore_git_dir(self, test_data_dir):
+        """Test if --ignore-git-dir works when locating pyproject.toml file."""
+        src = test_data_dir / "with_git_dir" / "project_a"
+        (src / ".git").mkdir(exist_ok=True)
+        root_with_git = src
+        root_without_git = test_data_dir / "with_git_dir"
+        path = find_project_root((src,), ignore_git_dir=False)
+        assert path == root_with_git
+        path = find_project_root((src,), ignore_git_dir=True)
+        assert path == root_without_git
+
     def test_read_robotidy_config(self, test_data_dir):
         """robotidy.toml follows the same format as pyproject starting from 1.2.0"""
         expected_config = {
@@ -182,7 +193,7 @@ class TestCli:
             ],
         }
         ctx_mock = MagicMock()
-        ctx_mock.params = {"src": (config_path,)}
+        ctx_mock.params = {"src": (config_path,), "ignore_git_dir": False}
         ctx_mock.command.params = None
         param_mock = Mock()
         read_config(ctx_mock, param_mock, value=None)
@@ -231,7 +242,7 @@ class TestCli:
             "transform": ["DiscardEmptySections:allow_only_comments=True", "ReplaceRunKeywordIf"],
         }
         ctx_mock = MagicMock()
-        ctx_mock.params = {"src": (config_path,)}
+        ctx_mock.params = {"src": (config_path,), "ignore_git_dir": False}
         ctx_mock.command.params = None
         param_mock = Mock()
         read_config(ctx_mock, param_mock, value=None)

@@ -14,6 +14,13 @@ Robotidy will also look by default for ``pyproject.toml`` file starting from dir
 passed on the command line and going up to parent directories. It stops when it finds the file or it finds root of the
 project (determined by existence of ``.git`` directory) or root of the file system.
 
+.. note::
+
+    You can keep searching for configuration file in parent directories even if there is ``.git`` directory with
+    ``--ignore_git_dir`` flag::
+
+        > robotidy --ignore_git_dir src
+
 ``pyproject.toml`` contain separate sections for different tools. Robotidy uses ``tool.robotidy`` section. The option
 names are the same as name of the options used on the command line.
 

@@ -15,7 +15,7 @@ INCLUDE_EXT = (".robot", ".resource")
 
 
 @lru_cache()
-def find_project_root(srcs: Iterable[str]) -> Path:
+def find_project_root(srcs: Iterable[str], ignore_git_dir: bool = False) -> Path:
     """Return a directory containing .git, or robotidy.toml.
     That directory will be a common parent of all files and directories
     passed in `srcs`.
@@ -37,7 +37,7 @@ def find_project_root(srcs: Iterable[str]) -> Path:
     )
 
     for directory in (common_base, *common_base.parents):
-        if (directory / ".git").exists():
+        if not ignore_git_dir and (directory / ".git").exists():
             return directory
 
         if (directory / "robotidy.toml").is_file():
@@ -49,8 +49,8 @@ def find_project_root(srcs: Iterable[str]) -> Path:
     return directory
 
 
-def find_and_read_config(src_paths: Iterable[str]) -> Dict[str, Any]:
-    project_root = find_project_root(src_paths)
+def find_and_read_config(src_paths: Iterable[str], ignore_git_dir: bool = False) -> Dict[str, Any]:
+    project_root = find_project_root(src_paths, ignore_git_dir)
     config_path = project_root / "robotidy.toml"
     if config_path.is_file():
         return read_pyproject_config(str(config_path))
