@@ -12,7 +12,7 @@ also affected.
 
 Following conventions are applied:
 
-- variable case depends on the variable scope (lowercase for local variables and uppercase for global variables)
+- variable case depends on the variable scope (lowercase for local variables and uppercase for non-local variables)
 - leading and trailing whitespace is stripped
 - more than 2 consecutive whitespace in name is replaced by 1
 - whitespace is replaced by _
