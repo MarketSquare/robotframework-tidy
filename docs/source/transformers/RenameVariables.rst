@@ -76,7 +76,6 @@ Conventions can be configured or switched off using parameters - read more in th
 
     RenameVariables is still under development and is not considered feature complete. Following syntax is not yet supported:
 
-      - changing variable scope with ``Set Test/Suite/Global Variable``
       - variable evaluation with ``${variable * 2}`` (following will be replaced to ``${variable_*_2}``
 
     Robotidy can be locally disabled with # robotidy: off if you want to ignore specific cases.

@@ -10,6 +10,40 @@ from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 from robotidy.skip import Skip
 from robotidy.transformers import Transformer
+from robotidy.utils import after_last_dot, normalize_name
+
+SET_GLOBAL_VARIABLES = {"settestvariable", "settaskvariable", "setsuitevariable", "setglobalvariable"}
+
+
+def is_set_global_variable(keyword: str) -> bool:
+    """Checks if keyword call is Set Test/Suite/Global keyword."""
+    normalized_name = normalize_name(after_last_dot(keyword))
+    return normalized_name in SET_GLOBAL_VARIABLES
+
+
+def is_nested_variable(variable: str) -> bool:
+    """Checks if variable name is nested.
+
+    name -> not nested
+    ${name} -> not nested
+    ${name_${VAR}} -> nested
+    """
+    match = search_variable(variable, ignore_errors=True)
+    if not match.base:
+        return False
+    match = search_variable(match.base, ignore_errors=True)
+    return match.base
+
+
+def resolve_var_name(name: str) -> str:
+    """Resolve name of the variable from \\${name} or $name syntax."""
+    if name.startswith("\\"):
+        name = name[1:]
+    if len(name) < 2 or name[0] not in "$@&":
+        return name
+    if name[1] != "{":
+        name = f"{name[0]}{{{name[1:]}}}"  # Add {} brackets around name
+    return name
 
 
 class VariablesScope:
@@ -45,6 +79,17 @@ class VariablesScope:
         if split_pattern:
             name = name.split(":", maxsplit=1)[0]
         self._local.add(self.normalize_name(name))
+
+    def change_scope_from_local_to_global(self, variable: str):
+        """
+        Changes the variable scope from local to global by removing it from local cache and adding to global one.
+        """
+        match = search_variable(variable, ignore_errors=True)
+        if not match.base:
+            return
+        name = match.base
+        self._local.discard(self.normalize_name(name))
+        self._global.add(self.normalize_name(match.base))
 
     def is_local(self, variable: str):
         return self.normalize_name(variable) in self._local
@@ -285,7 +330,19 @@ class RenameVariables(Transformer):
         # ${overwritten_scope}  Set Variable  ${OVERWRITTEN_SCOPE}  case
         for assign_token in node.get_tokens(Token.ASSIGN):
             self.variables_scope.add_local(assign_token.value)
+        self.uppercase_global_name_in_set_variable(node)
         return node
+
+    def uppercase_global_name_in_set_variable(self, node):
+        if not is_set_global_variable(node.keyword):
+            return
+        args = node.get_tokens(Token.ARGUMENT)
+        if len(args) < 1:
+            return
+        if not is_nested_variable(args[0].value):
+            args[0].value = args[0].value.upper()
+            resolved_var = resolve_var_name(args[0].value)  # convert $name
+            self.variables_scope.change_scope_from_local_to_global(resolved_var)
 
     @skip_if_disabled
     def visit_For(self, node):  # noqa
