@@ -158,5 +158,9 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
     def test_align_new_lines(self):
         self.compare(
             source="align_new_line.robot",
-            config=":align_new_line=True:split_on_every_arg=False:split_on_every_setting_arg=False:line_length=51",
+            config=":align_new_line=True"
+            ":split_on_every_arg=False"
+            ":split_on_every_setting_arg=False"
+            ":line_length=51",
+            run_all=True,
         )

@@ -45,7 +45,7 @@ class TestAlignTemplatedTestCases(TransformerAcceptanceTest):
         self.compare(source="disablers.robot", not_modified=True)
 
     def test_tags(self):
-        self.compare(source="tags_settings.robot", config=f"-c {self.TRANSFORMER_NAME}:enabled=True", run_all=True)
+        self.compare(source="tags_settings.robot", run_all=True)
 
     def test_partly_templated(self):
         self.compare(source="partly_templated.robot")
