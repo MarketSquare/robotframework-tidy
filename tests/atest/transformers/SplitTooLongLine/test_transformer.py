@@ -161,6 +161,8 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
             config=":align_new_line=True"
             ":split_on_every_arg=False"
             ":split_on_every_setting_arg=False"
-            ":line_length=51",
+            ":line_length=51 "
+            "-c NormalizeTags:enabled=False "
+            "-c OrderTags:enabled=False",
             run_all=True,
         )
