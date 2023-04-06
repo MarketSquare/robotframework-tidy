@@ -16,8 +16,8 @@ project (determined by existence of ``.git`` directory) or root of the file syst
 
 .. note::
 
-    You can keep searching for configuration file in parent directories even if there is ``.git`` directory with
-    ``--ignore_git_dir`` flag::
+    You can let Robotidy keep searching for configuration file in the parent directories even if it detects ``.git`` 
+    directory on the way. Turn it on using ``--ignore_git_dir`` flag::
 
         > robotidy --ignore_git_dir src
 
