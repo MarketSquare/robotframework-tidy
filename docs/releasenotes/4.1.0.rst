@@ -1,0 +1,13 @@
+Robotidy 4.1.0
+================
+
+Added ``--ignore_git_dir`` option that allows to ignore ``.git`` directories when looking for Robotidy configuration file.
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==4.1.0
+

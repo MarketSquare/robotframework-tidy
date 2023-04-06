@@ -100,7 +100,9 @@ def read_config(ctx: click.Context, param: click.Parameter, value: Optional[str]
     if value:
         config = files.read_pyproject_config(value)
     else:
-        config = files.find_and_read_config(ctx.params["src"] or (str(Path(".").resolve()),))
+        src = ctx.params["src"] or (str(Path(".").resolve()),)
+        ignore_git_dir = ctx.params["ignore_git_dir"]
+        config = files.find_and_read_config(src, ignore_git_dir)
     if not config:
         return
     # Sanitize the values to be Click friendly. For more information please see:
@@ -289,6 +291,14 @@ def print_transformers_list(
     is_flag=True,
     show_default=True,
     help="Skip **.gitignore** files and do not ignore files listed inside.",
+)
+@click.option(
+    "--ignore-git-dir",
+    is_flag=True,
+    is_eager=True,
+    help="Ignore .git directories when searching for the default configuration file. "
+    "By default first parent directory with .git directory is returned and this flag disables this behaviour.",
+    show_default=True,
 )
 @click.option(
     "--config",
@@ -509,6 +519,7 @@ def cli(
     target_version: int,
     language: Optional[List[str]],
     reruns: int,
+    ignore_git_dir: bool,
     skip_comments: bool,
     skip_documentation: bool,
     skip_return_values: bool,

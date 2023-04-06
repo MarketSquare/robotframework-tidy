@@ -77,8 +77,8 @@ def get_robotidy(src: str, output: Optional[str], **kwargs):
         ]
 
     # TODO Refactor - Config should be read in one place both for API and CLI
-    # TODO Remove kwargs usage - other SDKs are not using this feature
-    config = files.find_and_read_config((src,))
+    ignore_git_dir = kwargs.get("ignore_git_dir", False)
+    config = files.find_and_read_config((src,), ignore_git_dir)
     config = {k: str(v) if not isinstance(v, (list, dict)) else v for k, v in config.items()}
     transformer_list = convert_transformers_config("transform", config, force_included=True)
     custom_transformers = convert_transformers_config("load-transformers", config, custom_transformer=True)
