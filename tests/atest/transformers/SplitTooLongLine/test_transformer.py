@@ -155,13 +155,25 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
             config=":split_single_value=True:line_length=80",
         )
 
-    def test_align_new_lines(self):
+    def test_align_new_lines_alone(self):
         self.compare(
             source="align_new_line.robot",
             config=":align_new_line=True"
             ":split_on_every_arg=False"
             ":split_on_every_setting_arg=False"
+            ":line_length=51",
+        )
+
+    def test_align_new_lines(self):
+        self.compare(
+            source="align_new_line.robot",
+            expected="align_new_line_all.robot",
+            config=f"-c {self.TRANSFORMER_NAME}"
+            ":align_new_line=True"
+            ":split_on_every_arg=False"
+            ":split_on_every_setting_arg=False"
             ":line_length=51 "
+            "-c NormalizeSeparators:align_new_line=True "
             "-c NormalizeTags:enabled=False "
             "-c OrderTags:enabled=False",
             run_all=True,
