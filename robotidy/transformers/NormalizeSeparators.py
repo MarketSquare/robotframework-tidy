@@ -87,10 +87,11 @@ class NormalizeSeparators(Transformer):
         self.is_inline = False
         return node
 
+    @skip_if_disabled
     def visit_Documentation(self, doc):  # noqa
         if self.skip.documentation or self.flatten_lines:
             has_pipes = doc.tokens[0].value.startswith("|")
-            return self._handle_spaces(doc, has_pipes, only_indent=True)
+            return self.handle_spaces(doc, has_pipes, only_indent=True)
         return self.visit_Statement(doc)
 
     def visit_KeywordCall(self, keyword):  # noqa
@@ -98,10 +99,12 @@ class NormalizeSeparators(Transformer):
             return keyword
         return self.visit_Statement(keyword)
 
+    @skip_if_disabled
     def visit_Comment(self, node):  # noqa
         if self.skip.comment(node):
             return node
-        return self.visit_Statement(node)
+        has_pipes = node.tokens[0].value.startswith("|")
+        return self.handle_spaces(node, has_pipes)
 
     def is_keyword_inside_inline_if(self, node):
         return self.is_inline and not isinstance(node, InlineIfHeader)
@@ -111,12 +114,47 @@ class NormalizeSeparators(Transformer):
         if statement is None:
             return None
         has_pipes = statement.tokens[0].value.startswith("|")
-        return self._handle_spaces(statement, has_pipes)
+        if has_pipes or not self.flatten_lines:
+            return self.handle_spaces(statement, has_pipes)
+        else:
+            return self.handle_spaces_and_flatten_lines(statement)
 
-    # separate method for flattening lines? pop comments, then yield from tokens if not eol, sep, cont
-    def _handle_spaces(self, statement, has_pipes, only_indent=False):
+    def handle_spaces_and_flatten_lines(self, statement):
+        """Normalize separators and flatten multiline statements to one line."""
+        add_eol, prev_sep = False, False
+        add_indent = not self.is_keyword_inside_inline_if(statement)
         new_tokens, comments = [], []
-        add_eol = False
+        for token in statement.tokens:
+            if token.type == Token.SEPARATOR:
+                if prev_sep:
+                    continue
+                prev_sep = True
+                if add_indent:
+                    token.value = self.formatting_config.indent * self.indent
+                else:
+                    token.value = self.formatting_config.separator
+            elif token.type == Token.EOL:
+                add_eol = True
+                continue
+            elif token.type == Token.CONTINUATION:
+                continue
+            elif token.type == Token.COMMENT:
+                comments.append(token)
+                continue
+            else:
+                prev_sep = False
+            new_tokens.append(token)
+            add_indent = False
+        if comments:
+            new_tokens.extend(join_comments(comments))
+        if add_eol:
+            new_tokens.append(Token(Token.EOL))
+        statement.tokens = new_tokens
+        self.generic_visit(statement)
+        return statement
+
+    def handle_spaces(self, statement, has_pipes, only_indent=False):
+        new_tokens = []
         prev_token = None
         for line in statement.lines:
             prev_sep = False
@@ -125,7 +163,6 @@ class NormalizeSeparators(Transformer):
                     if prev_sep:
                         continue
                     prev_sep = True
-                    # only for first line for flatten_lines
                     if index == 0 and not self.is_keyword_inside_inline_if(statement):
                         token.value = self.formatting_config.indent * self.indent
                     elif not only_indent:
@@ -133,24 +170,12 @@ class NormalizeSeparators(Transformer):
                             token.value = self.formatting_config.continuation_indent
                         else:
                             token.value = self.formatting_config.separator
-                elif self.flatten_lines and token.type in (Token.CONTINUATION, Token.EOL, Token.COMMENT):
-                    if token.type == Token.COMMENT:
-                        comments.append(token)
-                    if token.type == Token.EOL:
-                        add_eol = True
-                    continue
                 else:
                     prev_sep = False
                     prev_token = token
                 if has_pipes and index == len(line) - 2:
                     token.value = token.value.rstrip()
                 new_tokens.append(token)
-        if self.flatten_lines:
-            if comments:
-                indent_exist = len(new_tokens) > 0
-                new_tokens.extend(join_comments(comments, prefix=indent_exist))
-            if add_eol:
-                new_tokens.append(Token(Token.EOL))
         statement.tokens = new_tokens
         self.generic_visit(statement)
         return statement

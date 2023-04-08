@@ -83,6 +83,4 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
         self.compare(source="comments.robot", expected=expected, config=config, target_version=">=5")
 
     def test_flatten_lines(self):
-        # self.compare(source="test.robot", config=":flatten_lines=True")
-        # self.compare(source="rf5_syntax.robot", config=":flatten_lines=True")
-        self.compare(source="continuation_indent.robot", config=":flatten_lines=True")
+        self.compare(source="flatten.robot", config=":flatten_lines=True")
