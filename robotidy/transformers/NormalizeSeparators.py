@@ -9,6 +9,7 @@ except ImportError:
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.skip import Skip
 from robotidy.transformers import Transformer
+from robotidy.utils import join_comments
 
 
 class NormalizeSeparators(Transformer):
@@ -32,9 +33,10 @@ class NormalizeSeparators(Transformer):
         }
     )
 
-    def __init__(self, skip: Skip = None):
+    def __init__(self, flatten_lines: bool = False, skip: Skip = None):
         super().__init__(skip=skip)
         self.indent = 0
+        self.flatten_lines = flatten_lines
         self.is_inline = False
 
     def visit_File(self, node):  # noqa
@@ -86,7 +88,7 @@ class NormalizeSeparators(Transformer):
         return node
 
     def visit_Documentation(self, doc):  # noqa
-        if self.skip.documentation:
+        if self.skip.documentation or self.flatten_lines:
             has_pipes = doc.tokens[0].value.startswith("|")
             return self._handle_spaces(doc, has_pipes, only_indent=True)
         return self.visit_Statement(doc)
@@ -111,8 +113,10 @@ class NormalizeSeparators(Transformer):
         has_pipes = statement.tokens[0].value.startswith("|")
         return self._handle_spaces(statement, has_pipes)
 
+    # separate method for flattening lines? pop comments, then yield from tokens if not eol, sep, cont
     def _handle_spaces(self, statement, has_pipes, only_indent=False):
-        new_tokens = []
+        new_tokens, comments = [], []
+        add_eol = False
         prev_token = None
         for line in statement.lines:
             prev_sep = False
@@ -121,6 +125,7 @@ class NormalizeSeparators(Transformer):
                     if prev_sep:
                         continue
                     prev_sep = True
+                    # only for first line for flatten_lines
                     if index == 0 and not self.is_keyword_inside_inline_if(statement):
                         token.value = self.formatting_config.indent * self.indent
                     elif not only_indent:
@@ -128,12 +133,24 @@ class NormalizeSeparators(Transformer):
                             token.value = self.formatting_config.continuation_indent
                         else:
                             token.value = self.formatting_config.separator
+                elif self.flatten_lines and token.type in (Token.CONTINUATION, Token.EOL, Token.COMMENT):
+                    if token.type == Token.COMMENT:
+                        comments.append(token)
+                    if token.type == Token.EOL:
+                        add_eol = True
+                    continue
                 else:
                     prev_sep = False
                     prev_token = token
                 if has_pipes and index == len(line) - 2:
                     token.value = token.value.rstrip()
                 new_tokens.append(token)
+        if self.flatten_lines:
+            if comments:
+                indent_exist = len(new_tokens) > 0
+                new_tokens.extend(join_comments(comments, prefix=indent_exist))
+            if add_eol:
+                new_tokens.append(Token(Token.EOL))
         statement.tokens = new_tokens
         self.generic_visit(statement)
         return statement
