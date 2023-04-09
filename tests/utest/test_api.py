@@ -37,16 +37,18 @@ class TestAPI:
         assert transformed == expected
 
     def test_with_default_parameters(self):
+        # transform the file starting only from line 10 to 20
         expected = (
             "*** Comments ***\n"
             "# robocop: disable=all\n"
             "\n\n"
+            "*** Settings ***\n\n\n"
             "*** Test Cases ***\n"
             "Test\n"
-            "        [Documentation]        doc\n"
-            "        [Tags]        sometag\n"
-            "        Pass\n"
-            "        Keyword\n"
+            "    [Documentation]  doc\n"
+            "    [Tags]  sometag\n"
+            "    Pass\n"
+            "    Keyword\n"
             "        One More\n\n\n"
             "*** Keywords ***\n"
             "# This section is considered to be empty.\n"
@@ -64,7 +66,7 @@ class TestAPI:
             )
         )
         model = get_model(source)
-        transformed = transform_model(model, config_path, spacecount=8, linestart=10, endline=20)
+        transformed = transform_model(model, config_path, spacecount=8, startline=10, endline=20)
         assert transformed == expected
 
     def test_with_tab_separator(self):
@@ -95,5 +97,5 @@ class TestAPI:
             )
         )
         model = get_model(source)
-        transformed = transform_model(model, config_path, separator="tab", linestart=10, endline=20)
+        transformed = transform_model(model, config_path, separator="tab")
         assert transformed == expected

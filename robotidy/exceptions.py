@@ -1,4 +1,9 @@
 import sys
+from typing import List
+
+from click import NoSuchOption
+
+from robotidy import utils
 
 
 class RobotidyConfigError(Exception):
@@ -35,3 +40,10 @@ class MissingOptionalRichDependencyError(RobotidyConfigError):
     def __init__(self):
         msg = "It looks like you have rich module uninstalled. Install it to be able to use robotidy in the cli mode."
         super().__init__(msg)
+
+
+class NoSuchOptionError(NoSuchOption):
+    def __init__(self, option_name: str, allowed_options: List[str]):
+        rec_finder = utils.RecommendationFinder()
+        similar = rec_finder.find(option_name, allowed_options)
+        super().__init__(option_name, possibilities=similar)

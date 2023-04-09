@@ -197,6 +197,15 @@ class TransformConfigMap:
             ) from None
 
 
+def convert_transform_config(value: str, param_name: str) -> TransformConfig:
+    force_included = param_name == "transform"
+    custom_transformer = param_name == "custom_transformers"
+    is_config = param_name == "configure"
+    return TransformConfig(
+        value, force_include=force_included, custom_transformer=custom_transformer, is_config=is_config
+    )
+
+
 class TransformConfigParameter(click.ParamType):
     """
     Click parameter that holds the name of the transformer and optional configuration.
@@ -205,12 +214,7 @@ class TransformConfigParameter(click.ParamType):
     name = "transform"
 
     def convert(self, value, param, ctx):
-        force_included = param.name == "transform"
-        custom_transformer = param.name == "custom_transformers"
-        is_config = param.name == "configure"
-        return TransformConfig(
-            value, force_include=force_included, custom_transformer=custom_transformer, is_config=is_config
-        )
+        return convert_transform_config(value, param.name)
 
 
 class TransformerParameter:

@@ -1,4 +1,5 @@
 import filecmp
+import shutil
 from difflib import unified_diff
 from pathlib import Path
 from typing import List, Optional
@@ -74,16 +75,16 @@ class TransformerAcceptanceTest:
         if not self.enabled_in_version(target_version):
             pytest.skip(f"Test enabled only for RF {target_version}")
         runner = CliRunner()
-        output_path = str(TRANSFORMERS_DIR / "actual" / source)
+        output_path = str(self.TRANSFORMERS_DIR / "actual" / source)
         arguments = ["--output", output_path]
         if not_modified:
             arguments.extend(["--check", "--overwrite"])
         if args is not None:
             arguments += args
         if source is None:
-            source_path = str(TRANSFORMERS_DIR / self.TRANSFORMER_NAME / "source")
+            source_path = str(self.TRANSFORMERS_DIR / self.TRANSFORMER_NAME / "source")
         else:
-            source_path = str(TRANSFORMERS_DIR / self.TRANSFORMER_NAME / "source" / source)
+            source_path = str(self.TRANSFORMERS_DIR / self.TRANSFORMER_NAME / "source" / source)
         cmd = arguments + [source_path]
         result = runner.invoke(cli, cmd)
         if result.exit_code != exit_code:
@@ -96,8 +97,8 @@ class TransformerAcceptanceTest:
     def compare_file(self, actual_name: str, expected_name: str = None):
         if expected_name is None:
             expected_name = actual_name
-        expected = TRANSFORMERS_DIR / self.TRANSFORMER_NAME / "expected" / expected_name
-        actual = TRANSFORMERS_DIR / "actual" / actual_name
+        expected = self.TRANSFORMERS_DIR / self.TRANSFORMER_NAME / "expected" / expected_name
+        actual = self.TRANSFORMERS_DIR / "actual" / actual_name
         if not filecmp.cmp(expected, actual):
             display_file_diff(expected, actual)
             pytest.fail(f"File {actual_name} is not same as expected")
@@ -108,3 +109,52 @@ class TransformerAcceptanceTest:
         if self.TRANSFORMER_NAME in VERSION_MATRIX:
             return ROBOT_VERSION.major >= VERSION_MATRIX[self.TRANSFORMER_NAME]
         return True
+
+
+class MultipleConfigsTest:
+    TEST_DIR: str = "PLACEHOLDER"
+    ROOT_DIR = Path(__file__).parent / "configuration_files"
+
+    def run_tidy(self, tmpdir, args: List[str] = None, exit_code: int = 0, not_modified: bool = False):
+        runner = CliRunner()
+        temporary_dir = tmpdir / self.TEST_DIR
+        shutil.copytree(self.ROOT_DIR / self.TEST_DIR / "source", temporary_dir)
+        arguments = []
+        if not_modified:
+            arguments.extend(["--check", "--overwrite"])
+        if args is not None:
+            arguments += args
+        cmd = arguments + [str(temporary_dir)]
+        result = runner.invoke(cli, cmd)
+        if result.exit_code != exit_code:
+            raise AssertionError(
+                f"robotidy exit code: {result.exit_code} does not match expected: {exit_code}. "
+                f"Exception description: {result.exception}"
+            )
+
+    def compare_files(self, tmpdir, expected_dir: str):
+        expected = self.ROOT_DIR / self.TEST_DIR / expected_dir
+        actual = Path(tmpdir / self.TEST_DIR)
+        if compare_file_tree(expected, actual):
+            pytest.fail(f"Files in expected file tree: {expected} and the actual are not the same.")
+
+
+def compare_file_tree(actual_dir: Path, expected_dir: Path) -> bool:
+    error = False
+    actual_files = {x.name: x for x in actual_dir.iterdir()}
+    expected_files = {x.name: x for x in expected_dir.iterdir()}
+    for exp_file_name, exp_file in expected_files.items():
+        if exp_file_name in actual_files:
+            if exp_file.is_dir():
+                error = compare_file_tree(actual_files[exp_file_name], exp_file) or error
+            elif not filecmp.cmp(exp_file, actual_files[exp_file_name]):
+                error = True
+                display_file_diff(exp_file, actual_files[exp_file_name])
+        else:
+            error = True
+            print(f"File {exp_file} not found in the actual files.")
+    for actual_file_name, actual_file in actual_files.items():
+        if actual_file_name not in expected_files:
+            error = True
+            print(f"Extra {actual_file} found in the actual files.")
+    return error

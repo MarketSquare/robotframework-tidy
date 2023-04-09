@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 from robotidy.app import Robotidy
-from robotidy.config import Config, FormattingConfig
+from robotidy.config import FormattingConfig, MainConfig, RawConfig
 from robotidy.skip import SkipConfig
 from robotidy.transformers import TransformConfigMap
 from robotidy.utils import ROBOT_VERSION, decorate_diff_with_color, split_args_from_name_or_path
@@ -23,28 +23,15 @@ def app():
         end_line=None,
         line_length=120,
     )
-    config = Config(
-        transformers_config=TransformConfigMap([], [], []),
-        skip=skip_config,
+    config = RawConfig(
         src=(".",),
-        exclude=None,
-        extend_exclude=None,
-        skip_gitignore=False,
-        overwrite=False,
-        show_diff=False,
-        formatting=formatting_config,
-        verbose=False,
-        check=False,
-        output=None,
-        force_order=False,
         target_version=ROBOT_VERSION.major,
         color=True,
-        language=None,
         reruns=1,
-        config_directory=None,
     )
+    main_config = MainConfig(config)
     return Robotidy(
-        config=config,
+        main_config=main_config,
     )
 
 
