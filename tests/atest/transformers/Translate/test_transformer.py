@@ -1,8 +1,7 @@
 import pytest
 
 from robotidy.utils import ROBOT_VERSION
-
-from .. import TransformerAcceptanceTest
+from tests.atest import TransformerAcceptanceTest
 
 
 class TestTranslate(TransformerAcceptanceTest):

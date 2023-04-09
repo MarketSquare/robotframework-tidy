@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from .. import TransformerAcceptanceTest
+from tests.atest import TransformerAcceptanceTest
 
 
 def get_relative_path(abs_path: Path) -> Path:

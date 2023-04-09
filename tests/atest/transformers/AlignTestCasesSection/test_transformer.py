@@ -2,7 +2,7 @@ from typing import Tuple
 
 import pytest
 
-from .. import TransformerAcceptanceTest
+from tests.atest import TransformerAcceptanceTest
 
 
 class TestAlignTestCasesSection(TransformerAcceptanceTest):

@@ -1,4 +1,4 @@
-from .. import TransformerAcceptanceTest
+from tests.atest import TransformerAcceptanceTest
 
 
 class TestAlignVariablesSection(TransformerAcceptanceTest):

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from .. import TransformerAcceptanceTest
+from tests.atest import TransformerAcceptanceTest
 
 
 def get_relative_path(abs_path: Path) -> Path:

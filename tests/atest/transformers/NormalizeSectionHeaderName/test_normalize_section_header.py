@@ -1,6 +1,6 @@
 import pytest
 
-from tests.atest.transformers import TransformerAcceptanceTest
+from tests.atest import TransformerAcceptanceTest
 
 
 class TestNormalizeSectionHeaderName(TransformerAcceptanceTest):
