@@ -72,6 +72,7 @@ CLI_OPTIONS_LIST = [
 if RICH_PRESENT:
     click.rich_click.USE_RICH_MARKUP = True
     click.rich_click.USE_MARKDOWN = True
+    click.rich_click.FORCE_TERMINAL = None  # workaround rich_click trying to force color in GitHub Actions
     click.rich_click.STYLE_OPTION = "bold sky_blue3"
     click.rich_click.STYLE_SWITCH = "bold sky_blue3"
     click.rich_click.STYLE_METAVAR = "bold white"
