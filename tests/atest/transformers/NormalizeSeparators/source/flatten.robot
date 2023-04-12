@@ -71,3 +71,8 @@ Keyword
         ...    1  # comment
         ...    2    3
     END
+
+Multiple Comments In Multiline Keyword
+    ${assign}
+    ...    Keyword Call    # comment 1
+    ...    ${arg}    # comment 2

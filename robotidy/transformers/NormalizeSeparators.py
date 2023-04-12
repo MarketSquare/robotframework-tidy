@@ -145,6 +145,8 @@ class NormalizeSeparators(Transformer):
                 prev_sep = False
             new_tokens.append(token)
             add_indent = False
+        if new_tokens and new_tokens[-1].type == Token.SEPARATOR:
+            new_tokens.pop()
         if comments:
             new_tokens.extend(join_comments(comments))
         if add_eol:
