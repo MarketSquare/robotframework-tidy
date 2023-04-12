@@ -16,7 +16,7 @@ from robotidy import config as config_module
 from robotidy import decorators, files, skip, utils, version
 from robotidy.config import RawConfig, csv_list_type, validate_target_version
 from robotidy.rich_console import console
-from robotidy.transformers import TransformConfig, TransformConfigMap, TransformConfigParameter, load_transformers
+from robotidy.transformers import TransformConfigMap, TransformConfigParameter, load_transformers
 
 CLI_OPTIONS_LIST = [
     {
@@ -37,7 +37,7 @@ CLI_OPTIONS_LIST = [
     },
     {
         "name": "Configuration",
-        "options": ["--configure", "--config"],
+        "options": ["--configure", "--config", "--ignore-git-dir"],
     },
     {
         "name": "Global formatting settings",
@@ -56,7 +56,16 @@ CLI_OPTIONS_LIST = [
     skip.option_group,
     {
         "name": "Other",
-        "options": ["--target-version", "--language", "--verbose", "--color", "--output", "--version", "--help"],
+        "options": [
+            "--target-version",
+            "--language",
+            "--reruns",
+            "--verbose",
+            "--color",
+            "--output",
+            "--version",
+            "--help",
+        ],
     },
 ]
 
@@ -237,8 +246,8 @@ def print_transformers_list(global_config: config_module.MainConfig):
 @click.option(
     "--ignore-git-dir",
     is_flag=True,
-    help="Ignore .git directories when searching for the default configuration file. "
-    "By default first parent directory with .git directory is returned and this flag disables this behaviour.",
+    help="Ignore **.git** directories when searching for the default configuration file. "
+    "By default first parent directory with **.git** directory is returned and this flag disables this behaviour.",
     show_default=True,
 )
 @click.option(

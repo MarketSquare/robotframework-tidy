@@ -258,7 +258,7 @@ class MainConfig:
         self.loaded_configs[str(loaded_config.config_directory)] = loaded_config
         return tuple(config["src"])
 
-    def get_sources_with_configs(self):  # TODO exclude, extend_exclude ensure parsed
+    def get_sources_with_configs(self):
         sources = files.get_paths(
             self.sources, self.default.exclude, self.default.extend_exclude, self.default.skip_gitignore
         )

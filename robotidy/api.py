@@ -14,14 +14,14 @@ def get_robotidy(src: str, output: Optional[str], ignore_git_dir: bool = False, 
     if config_file:
         config_dict = files.read_pyproject_config(config_file)
         config = config.from_config_file(config_dict, config_file)
-    global_config = MainConfig(config)
-    global_config.default_loaded.overwrite = False
-    global_config.default_loaded.show_diff = False
-    global_config.default_loaded.verbose = False
-    global_config.default_loaded.check = False
-    global_config.default_loaded.force_order = False
-    global_config.default_loaded.output = output
-    return app.Robotidy(global_config)
+    main_config = MainConfig(config)
+    main_config.default_loaded.overwrite = False
+    main_config.default_loaded.show_diff = False
+    main_config.default_loaded.verbose = False
+    main_config.default_loaded.check = False
+    main_config.default_loaded.force_order = False
+    main_config.default_loaded.output = output
+    return app.Robotidy(main_config)
 
 
 def transform_model(model, root_dir: str, output: Optional[str] = None, **kwargs) -> Optional[str]:

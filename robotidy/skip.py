@@ -194,5 +194,6 @@ option_group = {
         "--skip-tags",
         "--skip-comments",
         "--skip-block-comments",
+        "--skip-sections",
     ],
 }

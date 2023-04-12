@@ -33,7 +33,7 @@ def coverage(session):
     session.run("coverage", "html")
 
 
-@nox.session(python=DEFAULT_PYTHON_VERSION)
+@nox.session()
 def docs(session):
     install_doc_deps(session, "stable5")
     session.run("sphinx-build", "-b", "html", "docs/source", "docs/_build/")
