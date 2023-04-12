@@ -42,11 +42,11 @@ setup(
     python_requires=">=3.7",
     install_requires=[
         "robotframework>=4.0",
-        "click>=8.1.3",
-        "colorama>=0.4.3",
-        "pathspec>=0.9.0,<0.12.0",
-        "tomli>=2.0.0",
-        "rich_click==1.4",
+        "click==8.1.*",
+        "colorama>=0.4.3,<0.4.7",
+        "pathspec>=0.9.0,<0.11.2",
+        "tomli==2.0.*",
+        "rich_click>=1.4,<1.6.0",
         "jinja2>=3.0,<4.0",
     ],
     extras_require={
