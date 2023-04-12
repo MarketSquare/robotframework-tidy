@@ -6,7 +6,7 @@ import pytest
 from click import FileError, NoSuchOption
 
 from robotidy import skip, utils
-from robotidy.cli import read_config
+from robotidy.config import RawConfig
 from robotidy.files import DEFAULT_EXCLUDES, find_project_root, get_paths, read_pyproject_config
 from robotidy.transformers.aligners_core import AlignKeywordsTestsSection
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
@@ -154,9 +154,8 @@ class TestCli:
             "spacecount": 4,
             "transform": ["DiscardEmptySections:allow_only_comments=True", "ReplaceRunKeywordIf"],
         }
-        config_path = str(test_data_dir / "config" / "robotidy.toml")
+        config_path = test_data_dir / "config" / "robotidy.toml"
         config = read_pyproject_config(config_path)
-        config.pop("config_directory")
         assert config == expected_config
 
     def test_read_pyproject_config(self, test_data_dir):
@@ -172,81 +171,23 @@ class TestCli:
                 "OrderSettings: keyword_before = documentation,tags,timeout,arguments",
             ],
         }
-        config_path = str(test_data_dir / "only_pyproject" / "pyproject.toml")
+        config_path = test_data_dir / "only_pyproject" / "pyproject.toml"
         config = read_pyproject_config(config_path)
-        config.pop("config_directory")
         assert config == expected_parsed_config
 
-    def test_read_pyproject_config_e2e(self, test_data_dir):
-        config_path = str(test_data_dir / "only_pyproject")
-        expected_parsed_config = {
-            "overwrite": "False",
-            "diff": "False",
-            "continuation_indent": "2",
-            "startline": "10",
-            "endline": "20",
-            "config_directory": config_path,
-            "transform": ["DiscardEmptySections:allow_only_comments=True", "SplitTooLongLine"],
-            "configure": [
-                "DiscardEmptySections:allow_only_comments=False",
-                "OrderSettings: keyword_before = documentation,tags,timeout,arguments",
-            ],
-        }
-        ctx_mock = MagicMock()
-        ctx_mock.params = {"src": (config_path,), "ignore_git_dir": False}
-        ctx_mock.command.params = None
-        param_mock = Mock()
-        read_config(ctx_mock, param_mock, value=None)
-        assert ctx_mock.default_map == expected_parsed_config
-
     def test_read_invalid_config(self, test_data_dir):
-        config_path = str(test_data_dir / "invalid_pyproject" / "pyproject.toml")
+        config_path = test_data_dir / "invalid_pyproject" / "pyproject.toml"
         with pytest.raises(FileError) as err:
             read_pyproject_config(config_path)
         assert "Error reading configuration file: " in str(err)
 
     @pytest.mark.parametrize("option, correct", [("confgure", "configure"), ("idontexist", None)])
     def test_read_invalid_option_config(self, option, correct, test_data_dir):
-        config_path = str(test_data_dir / "invalid_options_config" / f"pyproject_{option}.toml")
-        ctx_mock = MagicMock()
-        param_mock = MagicMock()
+        config_path = test_data_dir / "invalid_options_config" / f"pyproject_{option}.toml"
         with pytest.raises(NoSuchOption) as err:
-            read_config(ctx_mock, param_mock, config_path)
-        similar = "" if correct is None else f" Did you mean {correct}"
-        assert f"no such option: {option}{similar}"
-
-    def test_read_config_from_param(self, test_data_dir):
-        config_dir = test_data_dir / "config"
-        config_path = str(config_dir / "robotidy.toml")
-        expected_parsed_config = {
-            "overwrite": "False",
-            "diff": "False",
-            "spacecount": "4",
-            "config_directory": str(config_dir),
-            "transform": ["DiscardEmptySections:allow_only_comments=True", "ReplaceRunKeywordIf"],
-        }
-        ctx_mock = MagicMock()
-        ctx_mock.command.params = None
-        param_mock = Mock()
-        read_config(ctx_mock, param_mock, config_path)
-        assert ctx_mock.default_map == expected_parsed_config
-
-    def test_read_config_without_param(self, test_data_dir):
-        config_dir = test_data_dir / "config"
-        config_path = str(config_dir / "robotidy.toml")
-        expected_parsed_config = {
-            "overwrite": "False",
-            "diff": "False",
-            "spacecount": "4",
-            "config_directory": str(config_dir),
-            "transform": ["DiscardEmptySections:allow_only_comments=True", "ReplaceRunKeywordIf"],
-        }
-        ctx_mock = MagicMock()
-        ctx_mock.params = {"src": (config_path,), "ignore_git_dir": False}
-        ctx_mock.command.params = None
-        param_mock = Mock()
-        read_config(ctx_mock, param_mock, value=None)
-        assert ctx_mock.default_map == expected_parsed_config
+            config_file = read_pyproject_config(config_path)
+            RawConfig().from_config_file(config_file, config_path)
+        assert f"No such option: {option}" in str(err)
 
     @pytest.mark.parametrize("flag", ["--list", "-l"])
     @pytest.mark.parametrize("target_version", ["4", "5", None])

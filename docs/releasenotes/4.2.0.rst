@@ -1,0 +1,32 @@
+Robotidy 4.2.0
+================
+
+Completely refactored our configuration file handling to allow multiple configuration files.
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==4.2.0
+
+Multiple configuration files support (#506)
+-------------------------------------------
+
+Configuration file could be either loaded using cli (with ``--config`` option) or auto-detected in the current project.
+The auto-detected configuration file was always first configuration found in the parent directories common
+for all sources. Now it will be possible to create multiple configuration files in the project.
+
+With following file structure::
+
+    root/
+      pyproject.toml
+      source/
+        test.robot
+        nested/
+            pyproject.toml
+            test2.robot
+
+The ``test.robot`` file will use ``root/pyproject.toml`` configuration file and ``test2.robot`` will use
+``root/source/nested/pyproject.toml``.

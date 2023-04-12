@@ -1,6 +1,7 @@
 import os
 import sys
 from difflib import unified_diff
+from typing import Dict
 
 try:
     import rich_click as click
@@ -11,14 +12,15 @@ from robot.api import get_model
 from robot.errors import DataError
 
 from robotidy import utils
-from robotidy.config import Config
+from robotidy.config import MainConfig
 from robotidy.disablers import RegisterDisablers
 from robotidy.rich_console import console
 
 
 class Robotidy:
-    def __init__(self, config: Config):
-        self.config = config
+    def __init__(self, main_config: "MainConfig"):
+        self.main_config = main_config
+        self.config = main_config.default_loaded
 
     def get_model(self, source):
         if utils.rf_supports_lang():
@@ -27,8 +29,9 @@ class Robotidy:
 
     def transform_files(self):
         changed_files = 0
-        disabler_finder = RegisterDisablers(self.config.formatting.start_line, self.config.formatting.end_line)
-        for source in self.config.sources:
+        for source, config in self.main_config.get_sources_with_configs():
+            self.config = config
+            disabler_finder = RegisterDisablers(self.config.formatting.start_line, self.config.formatting.end_line)
             try:
                 stdin = False
                 if str(source) == "-":
@@ -106,10 +109,7 @@ class Robotidy:
         return self.config.formatting.line_sep
 
     def output_diff(
-        self,
-        path: str,
-        old_model: utils.StatementLinesCollector,
-        new_model: utils.StatementLinesCollector,
+        self, path: str, old_model: utils.StatementLinesCollector, new_model: utils.StatementLinesCollector
     ):
         if not self.config.show_diff:
             return

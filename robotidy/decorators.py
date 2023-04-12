@@ -1,5 +1,4 @@
 import functools
-import sys
 
 try:
     import rich_click as click

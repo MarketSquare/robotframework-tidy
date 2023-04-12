@@ -14,6 +14,20 @@ Robotidy will also look by default for ``pyproject.toml`` file starting from dir
 passed on the command line and going up to parent directories. It stops when it finds the file or it finds root of the
 project (determined by existence of ``.git`` directory) or root of the file system.
 
+Multiple configuration files are allowed. Robotidy will use a configuration file that is closer to the source file. You can
+create several configuration files in a file tree. For example, with the following file structure::
+
+    root/
+      pyproject.toml
+      source/
+        test.robot
+        nested/
+            pyproject.toml
+            test2.robot
+
+The ``test.robot`` file will use ``root/pyproject.toml`` configuration file and ``test2.robot`` will use
+``root/source/nested/pyproject.toml``.
+
 .. note::
 
     You can let Robotidy keep searching for configuration file in the parent directories even if it detects ``.git`` 
@@ -55,6 +69,9 @@ Source paths can be configured via ``src`` parameter. If the path does not exist
         "test.robot",
         "directory"
     ]
+
+If you don't provide source paths in the cli, they will be taken from the closest configuration file. In a setup with
+multiple configuration files, the source paths from other configurations than the closest will be ignored.
 
 Multiline configuration
 ------------------------

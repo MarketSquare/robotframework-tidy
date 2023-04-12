@@ -38,7 +38,7 @@ Source files should go to ``source`` directory and expected files to ``expected`
 If you generated transformer using invoke script (See ``invoke list`` too check possible commands) you should have get
 prepared test stub::
 
-    from .. import TransformerAcceptanceTest
+    from tests.atest import TransformerAcceptanceTest
 
     class TestMyTransformer(TransformerAcceptanceTest):
         TRANSFORMER_NAME = 'MyTransformer'
