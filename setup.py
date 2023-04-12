@@ -64,7 +64,7 @@ setup(
             "sphinx",
             "furo",
             "sphinx-design",
-            "sphinx-copybutton==0.3.3",
+            "sphinx-copybutton==0.5.1",
         ],
     },
     entry_points={"console_scripts": ["robotidy=robotidy.cli:cli"]},
