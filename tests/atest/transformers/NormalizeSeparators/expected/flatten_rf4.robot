@@ -50,9 +50,7 @@ Keyword With Tabulators
 
 Nested IF 3
     [Documentation]    FAIL Inline IF cannot be nested.
-    IF    True    IF    True    Not run
-    ...    ELSE IF    True    IF    True    Not run
-    ...    ELSE               IF    True    Not run
+    IF    True    IF    True    Not run    ELSE IF    True    IF    True    Not run    ELSE    IF    True    Not run
 
 Keyword
     [Arguments]    ${argument1}    ${argument2}    ${argument3}
