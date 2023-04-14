@@ -9,6 +9,7 @@ except ImportError:
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.skip import Skip
 from robotidy.transformers import Transformer
+from robotidy.utils import join_comments
 
 
 class NormalizeSeparators(Transformer):
@@ -32,9 +33,10 @@ class NormalizeSeparators(Transformer):
         }
     )
 
-    def __init__(self, skip: Skip = None):
+    def __init__(self, flatten_lines: bool = False, skip: Skip = None):
         super().__init__(skip=skip)
         self.indent = 0
+        self.flatten_lines = flatten_lines
         self.is_inline = False
 
     def visit_File(self, node):  # noqa
@@ -85,10 +87,11 @@ class NormalizeSeparators(Transformer):
         self.is_inline = False
         return node
 
+    @skip_if_disabled
     def visit_Documentation(self, doc):  # noqa
-        if self.skip.documentation:
+        if self.skip.documentation or self.flatten_lines:
             has_pipes = doc.tokens[0].value.startswith("|")
-            return self._handle_spaces(doc, has_pipes, only_indent=True)
+            return self.handle_spaces(doc, has_pipes, only_indent=True)
         return self.visit_Statement(doc)
 
     def visit_KeywordCall(self, keyword):  # noqa
@@ -96,10 +99,12 @@ class NormalizeSeparators(Transformer):
             return keyword
         return self.visit_Statement(keyword)
 
+    @skip_if_disabled
     def visit_Comment(self, node):  # noqa
         if self.skip.comment(node):
             return node
-        return self.visit_Statement(node)
+        has_pipes = node.tokens[0].value.startswith("|")
+        return self.handle_spaces(node, has_pipes)
 
     def is_keyword_inside_inline_if(self, node):
         return self.is_inline and not isinstance(node, InlineIfHeader)
@@ -109,9 +114,48 @@ class NormalizeSeparators(Transformer):
         if statement is None:
             return None
         has_pipes = statement.tokens[0].value.startswith("|")
-        return self._handle_spaces(statement, has_pipes)
+        if has_pipes or not self.flatten_lines:
+            return self.handle_spaces(statement, has_pipes)
+        else:
+            return self.handle_spaces_and_flatten_lines(statement)
 
-    def _handle_spaces(self, statement, has_pipes, only_indent=False):
+    def handle_spaces_and_flatten_lines(self, statement):
+        """Normalize separators and flatten multiline statements to one line."""
+        add_eol, prev_sep = False, False
+        add_indent = not self.is_keyword_inside_inline_if(statement)
+        new_tokens, comments = [], []
+        for token in statement.tokens:
+            if token.type == Token.SEPARATOR:
+                if prev_sep:
+                    continue
+                prev_sep = True
+                if add_indent:
+                    token.value = self.formatting_config.indent * self.indent
+                else:
+                    token.value = self.formatting_config.separator
+            elif token.type == Token.EOL:
+                add_eol = True
+                continue
+            elif token.type == Token.CONTINUATION:
+                continue
+            elif token.type == Token.COMMENT:
+                comments.append(token)
+                continue
+            else:
+                prev_sep = False
+            new_tokens.append(token)
+            add_indent = False
+        if new_tokens and new_tokens[-1].type == Token.SEPARATOR:
+            new_tokens.pop()
+        if comments:
+            new_tokens.extend(join_comments(comments))
+        if add_eol:
+            new_tokens.append(Token(Token.EOL))
+        statement.tokens = new_tokens
+        self.generic_visit(statement)
+        return statement
+
+    def handle_spaces(self, statement, has_pipes, only_indent=False):
         new_tokens = []
         prev_token = None
         for line in statement.lines:

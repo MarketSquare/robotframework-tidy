@@ -437,3 +437,12 @@ def get_line_length(tokens):
 
 def get_line_length_with_sep(tokens, sep_len: int):
     return get_line_length(tokens) + ((len(tokens) - 1) * sep_len)
+
+
+def join_comments(comments) -> List:
+    tokens = []
+    separator = Token(Token.SEPARATOR, "  ")
+    for token in comments:
+        tokens.append(separator)
+        tokens.append(token)
+    return tokens

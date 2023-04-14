@@ -1,5 +1,6 @@
 import pytest
 
+from robotidy.utils import ROBOT_VERSION
 from tests.atest import TransformerAcceptanceTest
 
 
@@ -81,3 +82,9 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
         else:
             expected = "comments_skip_block_comments.robot"
         self.compare(source="comments.robot", expected=expected, config=config, target_version=">=5")
+
+    def test_flatten_lines(self):
+        if ROBOT_VERSION.major > 4:
+            self.compare(source="flatten.robot", config=":flatten_lines=True")
+        else:
+            self.compare(source="flatten.robot", expected="flatten_rf4.robot", config=":flatten_lines=True")

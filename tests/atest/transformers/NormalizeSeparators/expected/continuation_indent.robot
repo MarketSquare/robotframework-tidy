@@ -18,6 +18,6 @@ Keyword
     FOR  ${var}  IN  1  2
     ...    1  2
         Keyword Call  1  2
-        ...    1
+        ...    1  # comment
         ...    2  3
     END

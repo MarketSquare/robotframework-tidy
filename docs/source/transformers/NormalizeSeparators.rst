@@ -138,6 +138,44 @@ Combine it with ``spacecount`` to set whitespace separately for indent and separ
                     Keyword With  ${var}
                 END
 
+Flatten multi line statements
+------------------------------
+
+By default ``NormalizeSeparators`` only updates the separators and leave any multi line intact. It is possible to
+flatten multi line statements into single line using ``flatten_lines`` option::
+
+    > robotidy -c NormalizeSeparators:flatten_lines=True src
+
+.. tab-set::
+
+    .. tab-item:: Before
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+                Keyword Call    1  2
+                  ...    1  # comment
+                ...    2          3
+
+    .. tab-item:: After - default (flatten_lines = False)
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+                Keyword Call    1    2
+                ...    1    # comment
+                ...    2    3
+
+    .. tab-item:: After (flatten_lines = True)
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+                Keyword Call    1    2    1    2    3  # comment
+
 Skip formatting
 ----------------
 It is possible to use the following arguments to skip formatting of the code:
@@ -193,13 +231,6 @@ indentation, set ``skip_documentation`` to ``True``::
                 ...    a:               Argument A
                 ...    long_arg:        Argument long_arg.
                Test Case Body
-
-Skip formatting
-----------------
-
-It is possible to use the following arguments to skip formatting of the code:
-
-- :ref:`skip sections`
 
 It is also possible to use disablers (:ref:`disablers`) but ``skip`` option
 makes it easier to skip all instances of given type of the code.

@@ -30,3 +30,12 @@ With following file structure::
 
 The ``test.robot`` file will use ``root/pyproject.toml`` configuration file and ``test2.robot`` will use
 ``root/source/nested/pyproject.toml``.
+
+Flatten multiline statements with NormalizeSeparators
+-------------------------------------------------------
+
+New ``flatten_lines`` option in ``NormalizeSeparators`` transformer. By default ``NormalizeSeparators`` only updates
+the separators and leave any multiline intact. Now it is possible to flatten multiline statements into single line
+using ``flatten_lines``::
+
+    > robotidy -c NormalizeSeparators:flatten_lines=True src
