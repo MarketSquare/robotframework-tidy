@@ -77,6 +77,7 @@ Conventions can be configured or switched off using parameters - read more in th
     RenameVariables is still under development and is not considered a complete feature. The following syntax is not yet supported:
 
       - variable evaluation with ``${variable * 2}`` (following will be replaced to ``${variable_*_2}``
+      - variables passed by variable, not value (``$var``) are ignored
 
     Robotidy can be locally disabled with ``# robotidy: off`` if you want to ignore specific cases.
 
