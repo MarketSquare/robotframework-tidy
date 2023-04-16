@@ -357,9 +357,18 @@ class RenameVariables(Transformer):
     def visit_If(self, node):  # noqa
         if node.errors:
             return node
-        for assign in node.header.get_tokens(Token.ASSIGN):
-            self.variables_scope.add_local(assign.value)
-            assign.value = self.rename_value(assign.value, variable_case="lower", is_var=False)
+        for token in node.header.data_tokens:
+            if token.type == Token.ASSIGN:
+                self.variables_scope.add_local(token.value)
+                token.value = self.rename_value(token.value, variable_case="lower", is_var=False)
+            elif token.type == Token.ARGUMENT:
+                token.value = self.rename_value(token.value, variable_case="auto", is_var=False)
+        return self.generic_visit(node)
+
+    @skip_if_disabled
+    def visit_While(self, node):  # noqa
+        for arg in node.header.get_tokens(Token.ARGUMENT):
+            arg.value = self.rename_value(arg.value, variable_case="auto", is_var=False)
         return self.generic_visit(node)
 
     def rename_value(self, value: str, variable_case: str, is_var: bool = False):

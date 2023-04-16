@@ -47,6 +47,9 @@ class TestRenameVariables(TransformerAcceptanceTest):
     def test_return_and_set_globals(self):
         self.compare(source="return_and_set_global.robot")
 
+    def test_if_while_conditons(self):
+        self.compare(source="if_while_conditions.robot")
+
     @pytest.mark.parametrize(
         "param_name, allowed",
         [

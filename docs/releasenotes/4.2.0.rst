@@ -39,3 +39,8 @@ the separators and leave any multiline intact. Now it is possible to flatten mul
 using ``flatten_lines``::
 
     > robotidy -c NormalizeSeparators:flatten_lines=True src
+
+Variables in IF and WHILE conditions are now renamed with RenameVariables
+--------------------------------------------------------------------------
+
+``RenameVariables`` now also renames the variables found in IF and WHILE conditions.
