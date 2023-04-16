@@ -12,7 +12,8 @@ from pathspec import PathSpec
 
 DEFAULT_EXCLUDES = r"/(\.direnv|\.eggs|\.git|\.hg|\.nox|\.tox|\.venv|venv|\.svn)/"
 INCLUDE_EXT = (".robot", ".resource")
-CONFIG_NAMES = ("robotidy.toml", "pyproject.toml")
+DOTFILE_CONFIG = ".robotidy"
+CONFIG_NAMES = ("robotidy.toml", "pyproject.toml", DOTFILE_CONFIG)
 
 
 @lru_cache()
@@ -78,7 +79,8 @@ def load_toml_file(config_path: Path) -> Dict[str, Any]:
 
 def read_pyproject_config(config_path: Path) -> Dict[str, Any]:
     config = load_toml_file(config_path)
-    config = config.get("tool", {}).get("robotidy", {})
+    if config_path.name != DOTFILE_CONFIG or "tool" in config:
+        config = config.get("tool", {}).get("robotidy", {})
     return {k.replace("--", "").replace("-", "_"): v for k, v in config.items()}
 
 

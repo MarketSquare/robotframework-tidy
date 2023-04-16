@@ -1,4 +1,3 @@
-[tool.robotidy]
 overwrite = false
 src = ["."]
 transform = [

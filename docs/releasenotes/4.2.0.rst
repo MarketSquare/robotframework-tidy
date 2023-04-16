@@ -31,6 +31,12 @@ With following file structure::
 The ``test.robot`` file will use ``root/pyproject.toml`` configuration file and ``test2.robot`` will use
 ``root/source/nested/pyproject.toml``.
 
+Dotfile configuration filename (#506)
+-------------------------------------
+
+It is now possible to use new configuration file name besides ``pyproject.toml`` - ``.robotidy``. It uses the same
+toml syntax but allows to skip ``tool.robotidy`` section name.
+
 Flatten multiline statements with NormalizeSeparators
 -------------------------------------------------------
 
