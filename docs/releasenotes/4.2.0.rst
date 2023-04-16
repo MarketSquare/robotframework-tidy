@@ -35,7 +35,7 @@ Dotfile configuration filename (#506)
 -------------------------------------
 
 It is now possible to use new configuration file name besides ``pyproject.toml`` - ``.robotidy``. It uses the same
-toml syntax but allows to skip ``tool.rootidy`` section name.
+toml syntax but allows to skip ``tool.robotidy`` section name.
 
 Flatten multiline statements with NormalizeSeparators
 -------------------------------------------------------

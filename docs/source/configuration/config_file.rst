@@ -73,7 +73,7 @@ Source paths can be configured via ``src`` parameter. If the path does not exist
 If you don't provide source paths in the cli, they will be taken from the closest configuration file. In a setup with
 multiple configuration files, the source paths from other configurations than the closest will be ignored.
 
-``.robotidy`` file uses the same toml syntax as ``pyproject.toml`` file but allows to skip ``tool.robotodiy`` section:
+``.robotidy`` file uses the same toml syntax as ``pyproject.toml`` file but allows to skip ``tool.robotidy`` section:
 
   .. code-block:: toml
 
