@@ -1,9 +1,0 @@
-[tool.robotidy]
-spacecount = 2
-indent = 4
-transform = [
-    "NormalizeSeparators"
-]
-configure = [
-    "RenameVariables: enabled = True"
-]

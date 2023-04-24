@@ -1,5 +1,0 @@
-[tool.robotidy]
-diff = false
-transform = [
-    "NormalizeSeparators"
-]

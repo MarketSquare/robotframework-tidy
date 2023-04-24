@@ -250,6 +250,8 @@ class MainConfig:
             return sources
         src = Path(".").resolve()
         config_path = files.find_source_config_file(src, self.default.ignore_git_dir)
+        if not config_path:
+            return None
         config = files.read_pyproject_config(config_path)
         if not config or "src" not in config:
             return None
