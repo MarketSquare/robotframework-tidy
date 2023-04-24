@@ -1,0 +1,5 @@
+overwrite = false
+src = ["."]
+transform = [
+    "DiscardEmptySections"
+]
