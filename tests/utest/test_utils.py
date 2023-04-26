@@ -5,24 +5,11 @@ import pytest
 
 from robotidy.app import Robotidy
 from robotidy.config import FormattingConfig, MainConfig, RawConfig
-from robotidy.skip import SkipConfig
-from robotidy.transformers import TransformConfigMap
 from robotidy.utils import ROBOT_VERSION, decorate_diff_with_color, split_args_from_name_or_path
 
 
 @pytest.fixture
 def app():
-    skip_config = SkipConfig()
-    formatting_config = FormattingConfig(
-        space_count=4,
-        indent=4,
-        continuation_indent=None,
-        line_sep="auto",
-        start_line=None,
-        separator="space",
-        end_line=None,
-        line_length=120,
-    )
     config = RawConfig(
         src=(".",),
         target_version=ROBOT_VERSION.major,

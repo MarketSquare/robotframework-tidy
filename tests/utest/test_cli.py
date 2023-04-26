@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import patch
 
 import pytest
 from click import FileError, NoSuchOption
@@ -17,6 +17,16 @@ from .utils import run_tidy
 @pytest.fixture(scope="session")
 def test_data_dir():
     return Path(__file__).parent / "testdata"
+
+
+@pytest.fixture
+def temporary_cwd(tmpdir):
+    prev_cwd = Path.cwd()
+    os.chdir(tmpdir)
+    try:
+        yield
+    finally:
+        os.chdir(prev_cwd)
 
 
 class TestCli:
@@ -219,6 +229,10 @@ class TestCli:
         assert "RenameKeywords" in result.output
         assert "NormalizeNewLines" in result.output
         assert "SmartSortKeywords" not in result.output
+
+    def test_no_config(self, temporary_cwd):
+        """Execute Robotidy in temporary directory to ensure it supports running without default configuration file."""
+        run_tidy(["--list"])
 
     @pytest.mark.parametrize("flag", ["--list", "-l"])
     def test_list_transformers_filter_disabled(self, flag):

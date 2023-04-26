@@ -1,0 +1,17 @@
+Robotidy 4.2.1
+================
+
+Fix release for breaking changes in the Robotidy 4.2.0.
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==4.2.1
+
+Robotidy now handles missing configuration file (#526)
+-------------------------------------------------------
+
+It is now possible to run Robotidy without providing configuring file, which was crashing the tool before.
