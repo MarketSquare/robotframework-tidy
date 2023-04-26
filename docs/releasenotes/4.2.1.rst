@@ -14,4 +14,4 @@ or to install exactly this version::
 Robotidy now handles missing configuration file (#526)
 -------------------------------------------------------
 
-It is now possible to run Robotidy without providing configuring file without crashing the tool.
+It is now possible to run Robotidy without providing configuring file, which was crashing the tool before.
