@@ -13,3 +13,7 @@ With IF
     END
     Return From Keyword If    ${var}==2
     ...  ${var}
+
+Multiline Statements
+    Return From Keyword If  # comment
+    ...    ${condition}    ${var}

@@ -130,7 +130,7 @@ class IndentNestedKeywords(Transformer):
         if comment:
             # need to add comments on first line for [Setup] / [Teardown] settings
             comment_sep = Token(Token.SEPARATOR, "  ")
-            tokens.extend([comment_sep, Token(Token.COMMENT, comment)])
+            tokens.extend([comment_sep, comment])
         node.tokens = self.parse_keyword_lines(lines, tokens, new_line, eol=node.tokens[-1])
         return node
 

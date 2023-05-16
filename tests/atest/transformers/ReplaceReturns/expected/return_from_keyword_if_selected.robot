@@ -14,6 +14,9 @@ With IF
         END
     END
     IF    ${var}==2
-        RETURN
-        ...  ${var}
+        RETURN    ${var}
     END
+
+Multiline Statements
+    Return From Keyword If  # comment
+    ...    ${condition}    ${var}

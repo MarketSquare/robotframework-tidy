@@ -55,3 +55,9 @@ In While
         Continue For Loop
         Continue For Loop If    $condition
     END
+
+Multiline Statements
+    FOR    ${var}    IN    @{LIST}
+        Exit For Loop If
+        ...    $condition
+    END
