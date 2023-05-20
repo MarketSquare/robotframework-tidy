@@ -312,14 +312,22 @@ def wrap_in_if_and_replace_statement(node, statement, default_separator):
     if len(node.data_tokens) < 2:
         return node
     condition = node.data_tokens[1]
+    separator = Token(Token.SEPARATOR, default_separator)
     indent = Token(Token.SEPARATOR, node.tokens[0].value + default_separator)
-    indented_tokens = replace_indent_in_lines(node, default_separator)
-    body = create_statement_from_tokens(statement=statement, tokens=indented_tokens[4:], indent=indent)
+    merged_comment = merge_comments_into_one(node.tokens)
+    data_tokens = join_tokens_with_token(node.data_tokens[2:], separator)
+    if data_tokens:
+        data_tokens.insert(0, separator)
+    if merged_comment:
+        data_tokens.append(Token(Token.SEPARATOR, "  "))
+        data_tokens.append(merged_comment)
+    data_tokens.append(Token(Token.EOL))
+    body = create_statement_from_tokens(statement=statement, tokens=data_tokens, indent=indent)
     header = IfHeader(
         [
             node.tokens[0],
             Token(Token.IF),
-            Token(Token.SEPARATOR, default_separator),
+            separator,
             condition,
             Token(Token.EOL),
         ]
@@ -354,7 +362,7 @@ def merge_comments_into_one(tokens):
     if not comments:
         return None
     comment = " ".join(comments)
-    return f"# {comment}"
+    return Token(Token.COMMENT, f"# {comment}")
 
 
 def collect_comments_from_tokens(tokens, indent):

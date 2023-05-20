@@ -71,3 +71,10 @@ In While
             CONTINUE
         END
     END
+
+Multiline Statements
+    FOR    ${var}    IN    @{LIST}
+        IF    $condition
+            BREAK
+        END
+    END

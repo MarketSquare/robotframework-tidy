@@ -1,0 +1,21 @@
+================
+Robotidy 4.3.0
+================
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==4.3.0
+
+Fixes
+=====
+
+ReplaceReturns and ReplaceBreakContinue now handle multiline statements correctly (#529)
+-----------------------------------------------------------------------------------------
+
+Multiline statements were not correctly handled by ``ReplaceReturns``and ``ReplaceBreakContinue`` transformers.
+To fix this issue we are now flattening the multiline statements first before replacing the syntax
+(formatting is no longer preserved). Additionally, the comments inside transformed syntax are now preserved.
