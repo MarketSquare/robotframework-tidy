@@ -10,10 +10,10 @@ or to install exactly this version::
 
     pip install robotframework-tidy==4.3.0
 
-Align new lines in NormalizeSeparator (#507)
+Align new lines in NormalizeSeparators (#507)
 --------------------------------------------
 
-``NormalizeSeparator`` can now align new lines to first line of the statement.
+``NormalizeSeparators`` can now align new lines to the first line of the statement.
 You can enable it using ``align_new_line`` parameter::
 
     > robotidy --configure NormalizeSeparators:align_new_line=True src

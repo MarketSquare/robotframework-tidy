@@ -179,7 +179,7 @@ flatten multi line statements into single line using ``flatten_lines`` option::
 Align new lines
 ---------------
 
-It is possible to align new lines to first line. This alignment will be overwritten if you have transformers affecting
+It is possible to align new lines to the first line. This alignment will be overwritten if you have transformers affecting
 alignment enabled, such as:
 
 - AlignKeywordsSection
