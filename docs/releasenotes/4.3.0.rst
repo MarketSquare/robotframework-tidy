@@ -10,6 +10,51 @@ or to install exactly this version::
 
     pip install robotframework-tidy==4.3.0
 
+Align new lines in NormalizeSeparators (#507)
+--------------------------------------------
+
+``NormalizeSeparators`` can now align new lines to the first line of the statement.
+You can enable it using ``align_new_line`` parameter::
+
+    > robotidy --configure NormalizeSeparators:align_new_line=True src
+
+Following code::
+
+    *** Test Cases ***
+    Test
+        [Tags]    tag
+        ...  tag2
+    *** Keywords ***
+    Keyword
+        [Arguments]    ${argument1}
+        ...    ${argument2} ${argument3}
+        Keyword Call    argument
+        ...  arg2
+        ...    arg3
+
+will be transformed to::
+
+    *** Test Cases ***
+    Test
+        [Tags]    tag
+        ...       tag2
+    *** Keywords ***
+    Keyword
+        [Arguments]    ${argument1}
+        ...            ${argument2}   ${argument3}
+        Keyword Call    argument
+        ...             arg2
+        ...             arg3
+
+Alignment done by ``NormalizeSeparators`` will be overwritten if you have transformers affecting
+alignment enabled, such as:
+
+- AlignKeywordsSection
+- AlignSettingsSection
+- AlignTemplatedTestCases
+- AlignTestCasesSection
+- AlignVariablesSection
+
 Fixes
 =====
 

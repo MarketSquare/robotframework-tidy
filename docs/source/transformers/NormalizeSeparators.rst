@@ -176,6 +176,76 @@ flatten multi line statements into single line using ``flatten_lines`` option::
             Keyword
                 Keyword Call    1    2    1    2    3  # comment
 
+Align new lines
+---------------
+
+It is possible to align new lines to the first line. This alignment will be overwritten if you have transformers affecting
+alignment enabled, such as:
+
+- AlignKeywordsSection
+- AlignSettingsSection
+- AlignTemplatedTestCases
+- AlignTestCasesSection
+- AlignVariablesSection
+
+You can enable it using ``align_new_line`` parameter::
+
+    > robotidy --configure NormalizeSeparators:align_new_line=True src
+
+.. tab-set::
+
+    .. tab-item:: Before
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test
+                [Tags]    tag
+                ...  tag2
+
+            *** Keywords ***
+            Keyword
+                [Arguments]    ${argument1}
+                ...    ${argument2} ${argument3}
+                Keyword Call    argument
+                ...  arg2
+                ...    arg3
+
+
+    .. tab-item:: After - default (align_new_line=False)
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test
+                [Tags]    tag
+                ...    tag2
+
+            *** Keywords ***
+            Keyword
+                [Arguments]    ${argument1}
+                ...    ${argument2}   ${argument3}
+                Keyword Call    argument
+                ...    arg2
+                ...    arg3
+
+    .. tab-item:: After (align_new_line=True)
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test
+                [Tags]    tag
+                ...       tag2
+
+            *** Keywords ***
+            Keyword
+                [Arguments]    ${argument1}
+                ...            ${argument2}   ${argument3}
+                Keyword Call    argument
+                ...             arg2
+                ...             arg3
+
 Skip formatting
 ----------------
 It is possible to use the following arguments to skip formatting of the code:

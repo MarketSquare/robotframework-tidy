@@ -33,11 +33,23 @@ class NormalizeSeparators(Transformer):
         }
     )
 
-    def __init__(self, flatten_lines: bool = False, skip: Skip = None):
+    def __init__(self, flatten_lines: bool = False, align_new_line: bool = False, skip: Skip = None):
         super().__init__(skip=skip)
         self.indent = 0
         self.flatten_lines = flatten_lines
         self.is_inline = False
+        self.align_new_line = align_new_line
+        self._allowed_line_length = None  # we can only retrieve it after all transformers are initialized
+
+    @property
+    def allowed_line_length(self) -> int:
+        """Get line length from SplitTooLongLine transformer or global config."""
+        if self._allowed_line_length is None:
+            if "SplitTooLongLine" in self.transformers:
+                self._allowed_line_length = self.transformers["SplitTooLongLine"].line_length
+            else:
+                self._allowed_line_length = self.formatting_config.line_length
+        return self._allowed_line_length
 
     def visit_File(self, node):  # noqa
         self.indent = 0
@@ -158,8 +170,13 @@ class NormalizeSeparators(Transformer):
     def handle_spaces(self, statement, has_pipes, only_indent=False):
         new_tokens = []
         prev_token = None
+        first_col_width = 0
+        first_data_token = True
+        is_sep_after_first_data_token = False
+        align_continuation = self.align_new_line
         for line in statement.lines:
             prev_sep = False
+            line_length = 0
             for index, token in enumerate(line):
                 if token.type == Token.SEPARATOR:
                     if prev_sep:
@@ -169,14 +186,27 @@ class NormalizeSeparators(Transformer):
                         token.value = self.formatting_config.indent * self.indent
                     elif not only_indent:
                         if prev_token and prev_token.type == Token.CONTINUATION:
-                            token.value = self.formatting_config.continuation_indent
+                            if align_continuation:
+                                token.value = first_col_width * " "
+                            else:
+                                token.value = self.formatting_config.continuation_indent
                         else:
                             token.value = self.formatting_config.separator
                 else:
                     prev_sep = False
+                    if align_continuation:
+                        if first_data_token:
+                            first_col_width += max(len(token.value), 3) - 3  # remove ... token length
+                            # Check if first line is not longer than allowed line length - we cant align over limit
+                            align_continuation = align_continuation and first_col_width < self.allowed_line_length
+                            first_data_token = False
+                        elif not is_sep_after_first_data_token and token.type != Token.EOL:
+                            is_sep_after_first_data_token = True
+                            first_col_width += len(self.formatting_config.separator)
                     prev_token = token
                 if has_pipes and index == len(line) - 2:
                     token.value = token.value.rstrip()
+                line_length += len(token.value)
                 new_tokens.append(token)
         statement.tokens = new_tokens
         self.generic_visit(statement)

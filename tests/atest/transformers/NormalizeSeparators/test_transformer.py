@@ -88,3 +88,10 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
             self.compare(source="flatten.robot", config=":flatten_lines=True")
         else:
             self.compare(source="flatten.robot", expected="flatten_rf4.robot", config=":flatten_lines=True")
+
+    def test_align_new_line(self):
+        self.compare(
+            source="continuation_indent.robot",
+            expected="cont_indent_align_new_line.robot",
+            config=":align_new_line=True",
+        )
