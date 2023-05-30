@@ -2,6 +2,9 @@
 Robotidy 4.3.0
 ================
 
+This release further enhance ``NormalizeSeparators`` with option to align new lines to the first line of the statement.
+Additionally, multiline handling in ``ReplaceReturns`` and ``ReplaceBreakContinue`` is now fixed.
+
 You can install the latest available version by running::
 
     pip install --upgrade robotframework-tidy
