@@ -127,7 +127,8 @@ class RenameKeywords(Transformer):
 
     def remove_underscores_and_capitalize(self, value: str):
         if self.remove_underscores:
-            value = re.sub("_+", " ", value)  # replace one or more _ with one space
+            value = value.replace("_", " ")
+            value = re.sub(r" +", " ", value)  # replace one or more spaces by one
         value = value.strip()
         # capitalize first letter of every word, leave rest untouched
         return "".join([a if a.isupper() else b for a, b in zip(value, string.capwords(value))])

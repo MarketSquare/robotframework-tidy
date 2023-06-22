@@ -1,0 +1,31 @@
+================
+Robotidy 4.3.1
+================
+
+<description>
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==4.3.1
+
+Fixes
+=====
+
+RenameKeywords capitalizes keywords with mixed spaces and underscores correctly (#537)
+---------------------------------------------------------------------------------------
+
+Keywords with spaces and underscores were not capitalized correctly. First letter of each word was repeated.
+
+Following code::
+
+    Keyword _with_Problematic_Space_Underscore_Combination
+
+was transformed to::
+
+    Keyword With PPoblematic SSace UUderscore CCmbination
+
+It should be now handled correctly.
