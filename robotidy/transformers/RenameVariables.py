@@ -162,6 +162,7 @@ class RenameVariables(Transformer):
     HANDLES_SKIP = frozenset({"skip_sections"})
     MORE_THAN_2_SPACES: Pattern = re.compile(r"\s{2,}")
     CAMEL_CASE: Pattern = re.compile(r"((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))")
+    IGNORE_CASE = {"\\n"}
 
     def __init__(
         self,
@@ -408,6 +409,8 @@ class RenameVariables(Transformer):
         return name
 
     def set_name_case(self, name: str, case: str):
+        if name.lower() in self.IGNORE_CASE:
+            return name
         if case == "upper":
             return name.upper()
         if case == "lower":
@@ -430,6 +433,8 @@ class RenameVariables(Transformer):
         variable_name = self.set_name_case(variable_name, case)
         variable_name = variable_name.replace("_", " ")
         variable_name = self.MORE_THAN_2_SPACES.sub(" ", variable_name)
+        if variable_name == " ":  # ${ } or ${_}
+            return "_" if self.replace_variable_separator else " " + item_access
         # to handle cases like ${var_${variable}_} we need to only strip whitespace at start/end depending on the type
         if strip_fn == "strip":
             variable_name = variable_name.strip()

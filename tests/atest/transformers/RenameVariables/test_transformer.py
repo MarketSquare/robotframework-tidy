@@ -81,3 +81,6 @@ class TestRenameVariables(TransformerAcceptanceTest):
             f"Allowed values are: underscore, space\n"
         )
         assert expected_output == result.output
+
+    def test_excluded_and_env_vars(self):
+        self.compare(source="excluded_vars.robot")
