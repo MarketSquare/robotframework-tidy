@@ -29,3 +29,15 @@ was transformed to::
     Keyword With PPoblematic SSace UUderscore CCmbination
 
 It should be now handled correctly.
+
+
+RenameKeywords does not remove whitespace after variable (#538)
+----------------------------------------------------------------
+
+``RenameKeywords`` will now correctly replace underscore with space after variables::
+
+    Embedded ${variable}_And_Remove_Underscores
+
+will be transformed to::
+
+    Embedded ${variable} And Remove Underscores
