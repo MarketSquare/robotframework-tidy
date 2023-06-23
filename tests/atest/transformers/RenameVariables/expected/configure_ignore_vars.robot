@@ -2,21 +2,21 @@
 Not important variable
     ${_}    ${local}    Keyword    ${global_arg}
     ...
-    ...    ${prev_empty}
+    ...    ${PREV_EMPTY}
     FOR    ${_}    IN    @{LIST}
         Log    ${_}
     END
-    Multiple Underscores    ${___}    ${ _}    ${_ }    ${ }
+    Multiple Underscores    ${_}    ${_}    ${_}    ${_}
 
 *** Keywords ***
 Not important variable
     ${_}    ${local}    Keyword    ${global_arg}
     ...
-    ...    ${prev_empty}
+    ...    ${PREV_EMPTY}
     FOR    ${_}    IN    @{LIST}
         Log    ${_}
     END
-    Multiple Underscores    ${___}    ${ _}    ${_ }    ${ }
+    Multiple Underscores    ${_}    ${_}    ${_}    ${_}
 
 Path and line separators
     Load From Path    C${:}/tests${/}file.csv
@@ -25,7 +25,7 @@ Path and line separators
     ...    sentence2
 
 Environment variable
-    Log    %{application_port=8080}
+    Log    %{APPLICATION_PORT=8080}
     Log    %{env_var}
 
 True and False

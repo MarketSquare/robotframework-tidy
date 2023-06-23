@@ -114,7 +114,7 @@ Variable case in Keywords, Tasks and Test Cases sections
 
 Variable case in ``*** Keywords ***``, ``*** Tasks ***`` and ``*** Test Cases ***`` sections depends on the
 variable scope. Local variables are lowercase and global variables are uppercase. Any unknown variable (not defined
-in current keyword or test case) is considered as global. You can configure what happes with unknown variables using
+in current keyword or test case) is considered as global. You can configure what should happen with unknown variables using
 ``unknown_variables_case``::
 
     > robotidy -c RenameVariables:unknown_variables_case=upper src
@@ -167,6 +167,19 @@ Allowed values are:
                 ${local}    Set Variable    value  # since we set it, ${local} is also known
                 Keyword Call    ${arg}    ${local}    ${global}  # ${global} is unknown
 
+Ignore variable case
+--------------------
+
+All variables case are converted according to configured conventions. It is possible to pass names of the variables
+that should be ignored. By default following variables case is ignored and not transformed:
+
+- ${\n}
+
+Configure ``ignore_case`` to ignore additional list. This parameter accept comma separated list of variable names,
+case sensitive::
+
+    robotidy -c RenameVariables:ignore_case=true,LOCAL_THAT_SHOULD_BE_UPPER .
+
 Converting camelCase to snake_case
 ----------------------------------
 
@@ -212,6 +225,19 @@ Variable names written in camelCase are converted to snake_case. You can disable
             Keyword
                 ${camelcase_name}    Set Variable    value
                 Keyword Call    ${camelcase_name}
+
+Renaming from camelCase to snake_case is usually safe with the exception of the variables passed as kwargs::
+
+    *** Keywords ***
+    Keyword
+        Keyword With Kwargs    processValue=40
+
+    Keyword With Kwargs
+        [Arguments]    ${with_default}=10    ${processValue}=10
+        Should Be Equal    ${with_default}    ${processValue}
+
+In such case ``${processValue}`` will be converted to ``${process_value}`` but processValue from keyword call
+will not be converted.
 
 Variable separator
 -------------------

@@ -27,3 +27,10 @@ Path and line separators
 Environment variable
     Log    %{APPLICATION_PORT=8080}
     Log    %{ENV_VAR}
+
+True and False
+    IF    $True
+        Log    The truth.
+    ELIF    ${FALSE}
+        Log    The lie.
+    END
