@@ -94,7 +94,7 @@ class RenameKeywords(Transformer):
         else:
             new_value = self.normalize_name(token.value, is_keyword_call=is_keyword_call)
         new_value = new_value.strip()
-        if not new_value:  # do not allow renames that removes keywords altogether
+        if not new_value:  # do not allow renaming that removes keywords altogether
             return
         token.value = new_value
 
