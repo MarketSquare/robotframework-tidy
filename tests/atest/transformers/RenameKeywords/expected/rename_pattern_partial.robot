@@ -48,5 +48,5 @@ All Upper Case
     Create Product DFG
 
 Underscores And. Dots
-    Foo.BAR Baz A B C
+    Foo. BAR Baz A B C
     Foo Bar BAZ

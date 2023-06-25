@@ -68,5 +68,5 @@ class TestRenameKeywords(TransformerAcceptanceTest):
             source="library_embedded_var_pattern.robot",
         )
 
-    def test_bug537(self):
-        self.compare(source="bug537.robot")
+    def test_underscore_handling_bugs(self):
+        self.compare(source="bug537_538.robot")
