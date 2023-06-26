@@ -162,7 +162,7 @@ class RenameVariables(Transformer):
     HANDLES_SKIP = frozenset({"skip_sections"})
     MORE_THAN_2_SPACES: Pattern = re.compile(r"\s{2,}")
     CAMEL_CASE: Pattern = re.compile(r"((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))")
-    DEFAULT_IGNORE_CASE = {"\\n"}  # TODO: Decide on "None", "True", "False"
+    DEFAULT_IGNORE_CASE = {"\\n"}
 
     def __init__(
         self,
