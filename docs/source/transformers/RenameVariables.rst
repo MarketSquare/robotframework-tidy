@@ -114,7 +114,7 @@ Variable case in Keywords, Tasks and Test Cases sections
 
 Variable case in ``*** Keywords ***``, ``*** Tasks ***`` and ``*** Test Cases ***`` sections depends on the
 variable scope. Local variables are lowercase and global variables are uppercase. Any unknown variable (not defined
-in current keyword or test case) is considered as global. You can configure what should happen with unknown variables using
+in the current keyword or test case) is considered as global. You can configure what should happen with unknown variables using
 ``unknown_variables_case``::
 
     > robotidy -c RenameVariables:unknown_variables_case=upper src
@@ -170,13 +170,13 @@ Allowed values are:
 Ignore variable case
 --------------------
 
-All variables case are converted according to configured conventions. It is possible to pass names of the variables
-that should be ignored. By default following variables case is ignored and not transformed:
+Case of all variables is converted according to the configured conventions. It is possible to pass the names of the
+variables that should be ignored. By default, the following variables case is ignored and not transformed:
 
 - ${\n}
 
-Configure ``ignore_case`` to ignore additional list. This parameter accept comma separated list of variable names,
-case sensitive::
+Configure ``ignore_case`` to ignore an additional list. This parameter accepts comma-separated list of variable names
+(case-sensitive)::
 
     robotidy -c RenameVariables:ignore_case=true,LOCAL_THAT_SHOULD_BE_UPPER .
 
