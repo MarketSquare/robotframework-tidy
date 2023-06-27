@@ -57,3 +57,4 @@ RenameKeywords does not remove whitespace after variable (#538)
 will be transformed to::
 
     Embedded ${variable} And Removed Underscores
+
