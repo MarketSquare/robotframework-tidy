@@ -1,8 +1,8 @@
 ================
-Robotidy 4.3.1
+Robotidy 4.4.0
 ================
 
-<description>
+Added a possibility to ignore variables case in ``RenameVariables``. Fixed and improved ``RenameKeywords``.
 
 You can install the latest available version by running::
 
@@ -10,10 +10,26 @@ You can install the latest available version by running::
 
 or to install exactly this version::
 
-    pip install robotframework-tidy==4.3.1
+    pip install robotframework-tidy==4.4.0
+
+Ignore variable case in RenameVariables (#540)
+----------------------------------------------
+
+Case of all variables is converted according to the configured conventions. It is now possible to pass the names of the
+variables that should be ignored. By default, only ${\n} ``${\n}`` variable case is ignored and not transformed.
+
+Configure ``ignore_case`` to ignore an additional list. This parameter accepts comma-separated list of variable names
+(case-sensitive)::
+
+    robotidy -c RenameVariables:ignore_case=true,LOCAL_THAT_SHOULD_BE_UPPER .
 
 Fixes
 =====
+
+${_} variable is now preserved by ``RenameVariables`` (#540)
+------------------------------------------------------------
+
+``${_}`` variable was transformed to ``${}``. It should be now handled correctly and ignored when formatting the file.
 
 RenameKeywords capitalizes keywords with mixed spaces and underscores correctly (#537)
 ---------------------------------------------------------------------------------------
