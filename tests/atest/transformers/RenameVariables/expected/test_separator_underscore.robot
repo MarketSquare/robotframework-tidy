@@ -28,7 +28,7 @@ ${VARIABLE}    ${VARIABLE['item_access']}
 ${VARIABLE}    ${VARIABLE}[item_access]
 ${VARIABLE}    ${VARIABLE}[${ITEM}_access]
 ${VARIABLE}    ${VARIABLE['${VARIABLE}']}
-${VARIABLE}    ${ }____
+${VARIABLE}    ${_}____
 ${VARI ABLE}    ${WO RD}
 ${VARIABLE}     \${escaped}
 ${INLINE EVAL}    ${{ eval }}
