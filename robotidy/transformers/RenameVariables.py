@@ -441,7 +441,7 @@ class RenameVariables(Transformer):
         variable_name = variable_name.replace("_", " ")
         variable_name = self.MORE_THAN_2_SPACES.sub(" ", variable_name)
         if variable_name == " ":  # ${ } or ${_}
-            return "_" if self.replace_variable_separator else " " + item_access
+            return "_" + item_access
         # to handle cases like ${var_${variable}_} we need to only strip whitespace at start/end depending on the type
         if strip_fn == "strip":
             variable_name = variable_name.strip()
