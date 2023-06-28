@@ -58,3 +58,32 @@ will be transformed to::
 
     Embedded ${variable} And Removed Underscores
 
+RenameTestCases does not rename character in the middle of string (#545)
+------------------------------------------------------------------------
+
+Previous fix made it possible to capitalize words inside brackets (with ``capitalize_each_word=True``).
+However it also applied to words with numbers and special characters::
+
+    *** Test Cases ***
+    Select 3rd Option
+        No Operation
+
+    With 1200x950
+        No Operation
+
+    Open 3-dot Menu
+        No Operation
+
+would be transformed to::
+
+    *** Test Cases ***
+    Select 3Rd Option
+        No Operation
+
+    With 1200X950
+        No Operation
+
+    Open 3-Dot Menu
+        No Operation
+
+Now ``RenameTestCases`` should only capitalize words after bracket and exclamation characters: "(", "[", "{", "!", "?".

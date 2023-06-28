@@ -17,3 +17,12 @@ Remove special chars
 
 Capitalize words (after !special that's
     No operation
+
+Select 3rd Option
+    No Operation
+
+With 1200x950
+    No Operation
+
+Open 3-dot Menu
+    No Operation
