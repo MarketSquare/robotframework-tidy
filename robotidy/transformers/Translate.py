@@ -74,7 +74,7 @@ class Translate(Transformer):
         if Language is not None:
             self.language = Language.from_name(language)
             # reverse mapping, in core it's other_lang: en and we need en: other_lang name
-            self.settings = {value: key.title() for key, value in self.language.settings.items()}
+            self.settings = {value: key.title() for key, value in self.language.settings.items() if key}
         else:
             self.language, self.settings = None, None
         self._bdd_mapping = None
