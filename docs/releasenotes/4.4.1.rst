@@ -1,0 +1,32 @@
+================
+Robotidy 4.4.1
+================
+
+Fixed ``NormalizeSeparators`` not handling Inline Ifs when ``flatten_lines`` is set to True.
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==4.4.1
+
+
+Fixes
+=====
+
+``NormalizeSeparators`` with ``flatten_lines=True`` not handling Infline IFs (#548)
+-----------------------------------------------------------------------------------
+
+Robotidy should nowcorrectly handle Infline IFs in ``NormalizeSeparators`` with ``flatten_lines=True``. Previously
+spacing before `ELSE` and `ELSE IF` branches was set to 0::
+
+    IF    ${value}>0    Do Thing    ELSE    Do Other Thing
+
+was transformed to::
+
+    IF    ${value}>0    Do ThingELSE    Do Other Thing
+
+Additionally, number of spaces before `ELSE` and `ELSE IF` in Inline IFs should now be calculated correctly
+(based on the separator length and not indentation).

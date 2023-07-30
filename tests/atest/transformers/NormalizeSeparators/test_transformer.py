@@ -54,12 +54,18 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
     @pytest.mark.parametrize("indent", [2, 4])
     @pytest.mark.parametrize("spaces", [2, 4])
     def test_inline_if(self, spaces, indent):
-        not_modified = indent == 4 and spaces == 4
         self.compare(
             source="inline_if.robot",
             expected=f"inline_if_{indent}indent_{spaces}spaces.robot",
             config=f" --spacecount {spaces} --indent {indent}",
-            not_modified=not_modified,
+            target_version=">=5",
+        )
+
+    def test_inline_if_flatten(self):
+        self.compare(
+            source="inline_if.robot",
+            expected=f"inline_if_flatten.robot",
+            config=":flatten_lines=True:align_new_line=True --indent 4 --spacecount 4",
             target_version=">=5",
         )
 

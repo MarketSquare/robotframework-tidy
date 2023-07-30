@@ -12,4 +12,4 @@ Nested IF
 
 ELSE IF
     IF    ${condition}    Keyword Call    ELSE    Keyword Call 2
-    ${assign}    IF    ${{ inline eval }}    Keyword Call    ${arg}  ELSE IF    $flag    Keyword Call 2
+    ${assign}    IF    ${{ inline eval }}    Keyword Call    ${arg}    ELSE IF    $flag    Keyword Call 2
