@@ -27,7 +27,6 @@ def get_transformer_config_from_order(order: List[str]) -> TransformConfigMap:
 
 class TestLoadTransformers:
     def test_transformer_order(self, skip_config):
-
         order_1 = ["NormalizeSeparators", "OrderSettings"]
         order_2 = ["OrderSettings", "NormalizeSeparators"]
         transformers_1 = load_transformers(
