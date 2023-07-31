@@ -26,6 +26,15 @@ class TestRenameVariables(TransformerAcceptanceTest):
             source="test.robot",
             expected="test_lower.robot",
             config=":settings_section_case=lower:variables_section_case=lower:unknown_variables_case=lower",
+            target_version="<6.1",
+        )
+
+    def test_lower_case_rf61(self):
+        self.compare(
+            source="test.robot",
+            expected="test_lower_with_nested.robot",
+            config=":settings_section_case=lower:variables_section_case=lower:unknown_variables_case=lower",
+            target_version=">=6.1",
         )
 
     def test_ignore_unknown_case(self):
