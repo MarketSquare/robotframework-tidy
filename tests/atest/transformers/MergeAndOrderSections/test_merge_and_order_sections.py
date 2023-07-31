@@ -79,3 +79,6 @@ class TestMergeAndOrderSections(TransformerAcceptanceTest):
 
     def test_translated(self):
         self.compare(source="translated.robot", target_version=">=6")
+
+    def test_invalid(self):
+        self.compare(source="invalid.robot", not_modified=True, target_version=">=6.1")

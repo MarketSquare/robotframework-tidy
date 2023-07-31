@@ -1,0 +1,25 @@
+================
+Robotidy 4.4.1
+================
+
+Fixes related to Robot Framework 6.1 changes.
+
+You can install the latest available version by running::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version::
+
+    pip install robotframework-tidy==4.4.1
+
+
+Fixes
+=====
+
+Robot Framework 6.1 fixes (#550)
+--------------------------------
+
+- ``Translate`` transformer should now properly handle creating Comments section (if needed),
+- Missing settings translations should now be ignored by ``Translate`` transformer,
+- Files with invalid sections (for example unrecognized translated section names) should be ignored by
+  ``MergeAndOrderSections``
