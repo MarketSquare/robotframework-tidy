@@ -162,6 +162,7 @@ class RenameVariables(Transformer):
     HANDLES_SKIP = frozenset({"skip_sections"})
     MORE_THAN_2_SPACES: Pattern = re.compile(r"\s{2,}")
     CAMEL_CASE: Pattern = re.compile(r"((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))")
+    EXTENDED_SYNTAX: Pattern = re.compile(r"(.+?)([^\s\w].+)", re.UNICODE)
     DEFAULT_IGNORE_CASE = {"\\n"}
 
     def __init__(
@@ -424,12 +425,19 @@ class RenameVariables(Transformer):
         if case == "lower":
             return name.lower()
         if case == "auto":
-            if self.variables_scope.is_local(name):
-                return name.lower()
-            if self.variables_scope.is_global(name):
-                return name.upper()
-            return self.set_name_case(name, self.unknown_variables_case)
+            return self.set_case_for_local_and_global(name)
         return name
+
+    def set_case_for_local_and_global(self, name):
+        if self.variables_scope.is_local(name):
+            return name.lower()
+        if self.variables_scope.is_global(name):
+            return name.upper()
+        extended_syntax = self.EXTENDED_SYNTAX.match(name)
+        if extended_syntax is None:
+            return self.set_name_case(name, self.unknown_variables_case)
+        base_name, extended = extended_syntax.groups()
+        return self.set_case_for_local_and_global(base_name) + extended
 
     def rename(self, variable_value: str, case: str, strip_fn: str = "strip"):
         if not variable_value:

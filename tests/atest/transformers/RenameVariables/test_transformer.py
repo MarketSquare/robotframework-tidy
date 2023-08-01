@@ -100,3 +100,6 @@ class TestRenameVariables(TransformerAcceptanceTest):
             expected="configure_ignore_vars.robot",
             config=":ignore_case=global_arg,env_var,False",
         )
+
+    def test_extended_variables_syntax(self):
+        self.compare(source="math_operations.robot")
