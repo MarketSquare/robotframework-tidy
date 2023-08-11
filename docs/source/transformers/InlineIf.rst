@@ -53,42 +53,42 @@ your consent:
         .. code:: robotframework
 
             *** Keywords ***
-            Keyword
-            # assignment variable but missing ELSE
-            IF    $condition
-                ${var}    Keyword
-            END
-            # assignment variables and ELSE branch
-            IF    $condition
-                ${var}    ${var2}    Keyword
-            ELSE
-                ${var}    ${var2}    Keyword 2
-            END
-            # assignment variable and ELSE branch but variable name does not match
-            IF    $condition
-                ${var}    Keyword
-            ELSE
-                ${other_var}    Keyword 2
-            END
+                Keyword
+                # assignment variable but missing ELSE
+                IF    $condition
+                    ${var}    Keyword
+                END
+                # assignment variables and ELSE branch
+                IF    $condition
+                    ${var}    ${var2}    Keyword
+                ELSE
+                    ${var}    ${var2}    Keyword 2
+                END
+                # assignment variable and ELSE branch but variable name does not match
+                IF    $condition
+                    ${var}    Keyword
+                ELSE
+                    ${other_var}    Keyword 2
+                END
 
     .. tab-item:: After
 
         .. code:: robotframework
 
             *** Keywords ***
-            Keyword
-            # assignment variable but missing ELSE
-            IF    $condition
-                ${var}    Keyword
-            END
-            # assignment variables and ELSE branch
-            ${var}    ${var2}    IF    $condition    Keyword    ELSE    Keyword 2
-            # assignment variable and ELSE branch but variable name does not match
-            IF    $condition
-                ${var}    Keyword
-            ELSE
-                ${other_var}    Keyword 2
-            END
+                Keyword
+                # assignment variable but missing ELSE
+                IF    $condition
+                    ${var}    Keyword
+                END
+                # assignment variables and ELSE branch
+                ${var}    ${var2}    IF    $condition    Keyword    ELSE    Keyword 2
+                # assignment variable and ELSE branch but variable name does not match
+                IF    $condition
+                    ${var}    Keyword
+                ELSE
+                    ${other_var}    Keyword 2
+                END
 
 Line length
 ------------
