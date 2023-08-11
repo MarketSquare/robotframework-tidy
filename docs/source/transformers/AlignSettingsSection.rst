@@ -156,6 +156,7 @@ You can configure the indent or disable it by setting ``argument_indent`` to 0.
 
         .. code:: robotframework
 
+            *** Settings ***
             Library             SeleniumLibrary
             ...                     timeout=${TIMEOUT}
             ...                     implicit_wait=${TIMEOUT}
