@@ -165,9 +165,9 @@ You can configure the indent or disable it by setting ``argument_indent`` to 0.
 
 Fixed width of column
 -------------------------
-It's possible to set fixed minimal width of column. To configure it use ``min_width`` parameter::
+It's possible to set fixed width of the column. To configure it use ``fixed_width`` parameter::
 
-    robotidy --configure AlignSettingsSection:min_width=30 src
+    robotidy --configure AlignSettingsSection:fixed_width=30 src
 
 This configuration respects ``up_to_column`` parameter but ignores ``argument_indent``.
 
@@ -196,6 +196,40 @@ This configuration respects ``up_to_column`` parameter but ignores ``argument_in
             Documentation                Example using the space separated format.
             ...                          and this documentation is multiline
             ...                          where this line should go I wonder?
+
+Minimal width of column
+-------------------------
+It's possible to set minimal width of the column. To configure it use ``min_width`` parameter::
+
+    robotidy --configure AlignSettingsSection:min_width=20 src
+
+This configuration respects ``up_to_column`` parameter.
+
+.. tab-set::
+
+    .. tab-item:: Before
+
+        .. code:: robotframework
+
+            *** Settings ***
+            Library    CustomLibrary   WITH NAME  name
+            Library    ArgsedLibrary   ${1}  ${2}  ${3}
+
+            Documentation     Example using the space separated format.
+            ...  and this documentation is multiline
+            ...  where this line should go I wonder?
+
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Settings ***
+            Library             CustomLibrary   WITH NAME  name
+            Library             ArgsedLibrary   ${1}  ${2}  ${3}
+
+            Documentation       Example using the space separated format.
+            ...                 and this documentation is multiline
+            ...                 where this line should go I wonder?
 
 Select lines to transform
 -------------------------

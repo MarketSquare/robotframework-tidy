@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from robot.api.parsing import Documentation, Token
+from robot.api.parsing import Token
 from robot.parsing.model import Statement
 
 from robotidy.disablers import skip_section_if_disabled
@@ -160,7 +160,7 @@ class AlignSettingsSection(Transformer):
                 else:
                     up_to = len(line)
                 for index, token in enumerate(line[:up_to]):
-                    if self.min_width:
-                        look_up[index] = self.min_width - 4
                     look_up[index] = max(look_up[index], len(token.value))
+        if self.min_width:
+            look_up = {index: max(length, self.min_width - 4) for index, length in look_up.items()}
         return {index: round_to_four(length) for index, length in look_up.items()}
