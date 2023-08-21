@@ -1,3 +1,5 @@
+import pytest
+
 from tests.atest import TransformerAcceptanceTest
 
 
@@ -50,17 +52,25 @@ class TestAlignVariablesSection(TransformerAcceptanceTest):
         self.compare(source="multiline_skip.robot", config=":skip_types=list,dict")
 
     def test_fixed_tests(self):
-        self.compare(source="tests.robot", expected="tests_fixed.robot", config=":min_width=30")
+        self.compare(source="tests.robot", expected="tests_fixed.robot", config=":fixed_width=30")
 
     def test_fixed_tests_zero(self):
-        self.compare(source="tests.robot", expected="tests_fixed_one.robot", config=":min_width=1")
+        self.compare(source="tests.robot", expected="tests_fixed_one.robot", config=":fixed_width=1")
 
     def test_fixed_all_columns(self):
         self.compare(
             source="tests.robot",
             expected="all_columns_fixed.robot",
-            config=":min_width=20:up_to_column=0",
+            config=":fixed_width=20:up_to_column=0",
         )
 
     def test_disablers(self):
         self.compare(source="tests_disablers.robot")
+
+    @pytest.mark.parametrize("min_width", [0, 1, 20])
+    def test_min_width_shorter(self, min_width):
+        self.compare(source="tests.robot", expected="tests_min_width.robot", config=f":min_width={min_width}")
+
+    @pytest.mark.parametrize("min_width", [49, 50, 51, 52])
+    def test_min_width_longer(self, min_width):
+        self.compare(source="tests.robot", expected="tests_min_width_50_width.robot", config=f":min_width={min_width}")

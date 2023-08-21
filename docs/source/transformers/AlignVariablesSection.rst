@@ -123,12 +123,11 @@ Using above configuration code will be aligned in following way:
             ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
             &{SOME_DICT}    key=value  key2=value
 
-
 Fixed width of column
 -------------------------
-It's possible to set fixed minimal width of column. To configure it use ``min_width`` parameter::
+It's possible to set fixed width of the column. To configure it use ``fixed_width`` parameter::
 
-    robotidy --configure AlignVariablesSection:min_width=20 src
+    robotidy --configure AlignVariablesSection:fixed_width=20 src
 
 This configuration respects ``up_to_column`` parameter:
 
@@ -159,6 +158,78 @@ This configuration respects ``up_to_column`` parameter:
             ${VARIABLE 1}       10    # comment
             @{LIST}             a    b    c    d
             ${LONGER_NAME_THAT_GOES_AND_GOES}    longer value that goes and goes
+
+            &{MULTILINE}        a=b
+            ...                 b=c
+            ...                 d=1
+
+Minimal width of column
+-------------------------
+It's possible to set minimal width of the the column. To configure it use ``min_width`` parameter::
+
+    robotidy --configure AlignVariablesSection:min_width=20 src
+
+This configuration respects ``up_to_column`` parameter. Example where there is variable longer than ``min_width``:
+
+.. tab-set::
+
+    .. tab-item:: Before
+
+        .. code:: robotframework
+
+            *** Variables ***
+            # some comment
+
+            ${VARIABLE 1}    10    # comment
+            @{LIST}                                 a    b    c    d
+            ${LONGER_NAME_THAT_GOES_AND_GOES}       longer value that goes and goes
+
+            &{MULTILINE}    a=b
+            ...     b=c
+            ...     d=1
+
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Variables ***
+            # some comment
+
+            ${VARIABLE 1}                        10    # comment
+            @{LIST}                              a    b    c    d
+            ${LONGER_NAME_THAT_GOES_AND_GOES}    longer value that goes and goes
+
+            &{MULTILINE}                          a=b
+            ...                                   b=c
+            ...                                   d=1
+
+Example where all variables are shorter than ``min_width``:
+
+.. tab-set::
+
+    .. tab-item:: Before
+
+        .. code:: robotframework
+
+            *** Variables ***
+            # some comment
+
+            ${VARIABLE 1}    10    # comment
+            @{LIST}                                 a    b    c    d
+
+            &{MULTILINE}    a=b
+            ...     b=c
+            ...     d=1
+
+    .. tab-item:: After
+
+        .. code:: robotframework
+
+            *** Variables ***
+            # some comment
+
+            ${VARIABLE 1}       10    # comment
+            @{LIST}             a    b    c    d
 
             &{MULTILINE}        a=b
             ...                 b=c
