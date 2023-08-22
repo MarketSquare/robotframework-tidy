@@ -154,16 +154,15 @@ def print_transformers_list(global_config: config_module.MainConfig):
 
     target_version = global_config.default.target_version
     list_transformers = global_config.default.list_transformers
+    config = global_config.get_config_for_source(Path.cwd())
     table = Table(title="Transformers", header_style="bold red")
     table.add_column("Name", justify="left", no_wrap=True)
     table.add_column("Enabled")
     transformers = load_transformers(TransformConfigMap([], [], []), allow_disabled=True, target_version=target_version)
-    transformers.extend(
-        _load_external_transformers(transformers, global_config.default_loaded.transformers_config, target_version)
-    )
+    transformers.extend(_load_external_transformers(transformers, config.transformers_config, target_version))
 
     for transformer in transformers:
-        enabled = transformer.name in global_config.default_loaded.transformers_lookup
+        enabled = transformer.name in config.transformers_lookup
         if list_transformers != "all":
             filter_by = list_transformers == "enabled"
             if enabled != filter_by:

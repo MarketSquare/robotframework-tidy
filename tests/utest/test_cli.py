@@ -1,4 +1,5 @@
 import os
+from contextlib import contextmanager
 from pathlib import Path
 from unittest.mock import patch
 
@@ -13,16 +14,23 @@ from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
 
 from .utils import run_tidy
 
-
-@pytest.fixture(scope="session")
-def test_data_dir():
-    return Path(__file__).parent / "testdata"
+TEST_DATA_DIR = Path(__file__).parent / "testdata"
 
 
 @pytest.fixture
 def temporary_cwd(tmpdir):
     prev_cwd = Path.cwd()
     os.chdir(tmpdir)
+    try:
+        yield
+    finally:
+        os.chdir(prev_cwd)
+
+
+@contextmanager
+def switch_cwd(new_cwd):
+    prev_cwd = Path.cwd()
+    os.chdir(new_cwd)
     try:
         yield
     finally:
@@ -140,23 +148,23 @@ class TestCli:
         result = run_tidy(args, exit_code=1)
         assert result.output == expected_output
 
-    def test_find_project_root_from_src(self, test_data_dir):
-        src = test_data_dir / "nested" / "test.robot"
+    def test_find_project_root_from_src(self):
+        src = TEST_DATA_DIR / "nested" / "test.robot"
         path = find_project_root((src,))
-        assert path == test_data_dir / "nested"
+        assert path == TEST_DATA_DIR / "nested"
 
-    def test_ignore_git_dir(self, test_data_dir):
+    def test_ignore_git_dir(self):
         """Test if --ignore-git-dir works when locating pyproject.toml file."""
-        src = test_data_dir / "with_git_dir" / "project_a"
+        src = TEST_DATA_DIR / "with_git_dir" / "project_a"
         (src / ".git").mkdir(exist_ok=True)
         root_with_git = src
-        root_without_git = test_data_dir / "with_git_dir"
+        root_without_git = TEST_DATA_DIR / "with_git_dir"
         path = find_project_root((src,), ignore_git_dir=False)
         assert path == root_with_git
         path = find_project_root((src,), ignore_git_dir=True)
         assert path == root_without_git
 
-    def test_read_robotidy_config(self, test_data_dir):
+    def test_read_robotidy_config(self):
         """robotidy.toml follows the same format as pyproject starting from 1.2.0"""
         expected_config = {
             "overwrite": False,
@@ -164,11 +172,11 @@ class TestCli:
             "spacecount": 4,
             "transform": ["DiscardEmptySections:allow_only_comments=True", "ReplaceRunKeywordIf"],
         }
-        config_path = test_data_dir / "config" / "robotidy.toml"
+        config_path = TEST_DATA_DIR / "config" / "robotidy.toml"
         config = read_pyproject_config(config_path)
         assert config == expected_config
 
-    def test_read_pyproject_config(self, test_data_dir):
+    def test_read_pyproject_config(self):
         expected_parsed_config = {
             "overwrite": False,
             "diff": False,
@@ -181,19 +189,19 @@ class TestCli:
                 "OrderSettings: keyword_before = documentation,tags,timeout,arguments",
             ],
         }
-        config_path = test_data_dir / "only_pyproject" / "pyproject.toml"
+        config_path = TEST_DATA_DIR / "only_pyproject" / "pyproject.toml"
         config = read_pyproject_config(config_path)
         assert config == expected_parsed_config
 
-    def test_read_invalid_config(self, test_data_dir):
-        config_path = test_data_dir / "invalid_pyproject" / "pyproject.toml"
+    def test_read_invalid_config(self):
+        config_path = TEST_DATA_DIR / "invalid_pyproject" / "pyproject.toml"
         with pytest.raises(FileError) as err:
             read_pyproject_config(config_path)
         assert "Error reading configuration file: " in str(err)
 
     @pytest.mark.parametrize("option, correct", [("confgure", "configure"), ("idontexist", None)])
-    def test_read_invalid_option_config(self, option, correct, test_data_dir):
-        config_path = test_data_dir / "invalid_options_config" / f"pyproject_{option}.toml"
+    def test_read_invalid_option_config(self, option, correct):
+        config_path = TEST_DATA_DIR / "invalid_options_config" / f"pyproject_{option}.toml"
         with pytest.raises(NoSuchOption) as err:
             config_file = read_pyproject_config(config_path)
             RawConfig().from_config_file(config_file, config_path)
@@ -230,9 +238,16 @@ class TestCli:
         assert "NormalizeNewLines" in result.output
         assert "SmartSortKeywords" not in result.output
 
-    def test_no_config(self, temporary_cwd):
+    def test_list_no_config(self, temporary_cwd):
         """Execute Robotidy in temporary directory to ensure it supports running without default configuration file."""
         run_tidy(["--list"])
+
+    def test_list_with_config(self):
+        config_dir = TEST_DATA_DIR / "pyproject_with_src"
+        with switch_cwd(config_dir):
+            result = run_tidy(["--list", "enabled"])
+        assert "SplitTooLongLine" in result.output
+        assert "NormalizeSeparators" not in result.output
 
     @pytest.mark.parametrize("flag", ["--list", "-l"])
     def test_list_transformers_filter_disabled(self, flag):
@@ -294,8 +309,8 @@ class TestCli:
         assert f"Robotidy is a tool for formatting" in result.output
 
     @pytest.mark.parametrize("source, return_status", [("golden.robot", 0), ("not_golden.robot", 1)])
-    def test_check(self, source, return_status, test_data_dir):
-        source = test_data_dir / "check" / source
+    def test_check(self, source, return_status):
+        source = TEST_DATA_DIR / "check" / source
         with patch("robotidy.utils.ModelWriter") as mock_writer:
             run_tidy(
                 ["--check", "--transform", "NormalizeSectionHeaderName", str(source)],
@@ -304,8 +319,8 @@ class TestCli:
             mock_writer.assert_not_called()
 
     @pytest.mark.parametrize("source, return_status", [("golden.robot", 0), ("not_golden.robot", 1)])
-    def test_check_overwrite(self, source, return_status, test_data_dir):
-        source = test_data_dir / "check" / source
+    def test_check_overwrite(self, source, return_status):
+        source = TEST_DATA_DIR / "check" / source
         with patch("robotidy.utils.ModelWriter") as mock_writer:
             run_tidy(
                 ["--check", "--overwrite", "--transform", "NormalizeSectionHeaderName", str(source)],
@@ -318,10 +333,10 @@ class TestCli:
 
     @pytest.mark.parametrize("color_flag", ["--color", "--no-color", None])
     @pytest.mark.parametrize("color_env", [True, False])
-    def test_disable_coloring(self, color_flag, color_env, test_data_dir):
+    def test_disable_coloring(self, color_flag, color_env):
         should_be_colored = not ((color_flag is not None and color_flag == "--no-color") or color_env)
         mocked_env = {"NO_COLOR": ""} if color_env else {}
-        source = test_data_dir / "check" / "not_golden.robot"
+        source = TEST_DATA_DIR / "check" / "not_golden.robot"
         command = ["--diff", "--no-overwrite"]
         if color_flag:
             command.append(color_flag)
@@ -333,17 +348,17 @@ class TestCli:
             else:
                 mock_color.assert_not_called()
 
-    def test_diff(self, test_data_dir):
-        source = test_data_dir / "check" / "not_golden.robot"
+    def test_diff(self):
+        source = TEST_DATA_DIR / "check" / "not_golden.robot"
         result = run_tidy(["--diff", "--no-overwrite", "--transform", "NormalizeSectionHeaderName", str(source)])
         assert "*** settings ***" in result.output
         assert "*** Settings ***" in result.output
 
     @pytest.mark.parametrize("line_sep", ["unix", "windows", "native", None])
-    def test_line_sep(self, line_sep, test_data_dir):
-        source = test_data_dir / "line_sep" / "test.robot"
-        expected = test_data_dir / "line_sep" / "expected.robot"
-        actual = test_data_dir.parent / "actual" / "test.robot"
+    def test_line_sep(self, line_sep):
+        source = TEST_DATA_DIR / "line_sep" / "test.robot"
+        expected = TEST_DATA_DIR / "line_sep" / "expected.robot"
+        actual = TEST_DATA_DIR.parent / "actual" / "test.robot"
         if line_sep is not None:
             run_tidy(["--lineseparator", line_sep, str(source)], output="test.robot")
         else:
@@ -366,12 +381,12 @@ class TestCli:
             ("test.resource", "nested/*", ["test.robot"]),
         ],
     )
-    def test_exclude_gitignore(self, exclude, extend_exclude, skip_gitignore, allowed, test_data_dir):
+    def test_exclude_gitignore(self, exclude, extend_exclude, skip_gitignore, allowed):
         if skip_gitignore:
             allowed = allowed + ["test2.robot"]  # extend will not work due to mutability of list
             if not extend_exclude or "nested" not in extend_exclude:
                 allowed = allowed + ["nested/test2.robot"]
-        source = test_data_dir / "gitignore"
+        source = TEST_DATA_DIR / "gitignore"
         allowed_paths = {Path(source, path) for path in allowed}
         paths = get_paths(
             (str(source),),
@@ -390,8 +405,8 @@ class TestCli:
             (".", ["test.robot", "test3.robot", "resources/test.robot"]),
         ],
     )
-    def test_src_and_space_in_param_in_configuration(self, source, should_parse, test_data_dir):
-        source_dir = test_data_dir / "pyproject_with_src"
+    def test_src_and_space_in_param_in_configuration(self, source, should_parse):
+        source_dir = TEST_DATA_DIR / "pyproject_with_src"
         os.chdir(source_dir)
         if source is not None:
             source = source_dir / source
@@ -406,8 +421,8 @@ class TestCli:
         assert actual == sorted(expected)
 
     @pytest.mark.parametrize("source", [1, 2])
-    def test_empty_configuration(self, source, test_data_dir):
-        config_dir = test_data_dir / f"empty_pyproject{source}"
+    def test_empty_configuration(self, source):
+        config_dir = TEST_DATA_DIR / f"empty_pyproject{source}"
         os.chdir(config_dir)
         result = run_tidy(exit_code=1)
         assert "Loaded configuration from" not in result.output
