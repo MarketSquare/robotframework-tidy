@@ -13,7 +13,7 @@ except ImportError:  # Fails on vendored-in LSP plugin
 
 from robotidy import app
 from robotidy import config as config_module
-from robotidy import decorators, files, skip, utils, version
+from robotidy import decorators, exceptions, files, skip, utils, version
 from robotidy.config import RawConfig, csv_list_type, validate_target_version
 from robotidy.rich_console import console
 from robotidy.transformers import TransformConfigMap, TransformConfigParameter, load_transformers
@@ -37,7 +37,7 @@ CLI_OPTIONS_LIST = [
     },
     {
         "name": "Configuration",
-        "options": ["--configure", "--config", "--ignore-git-dir"],
+        "options": ["--configure", "--config", "--ignore-git-dir", "--generate-config"],
     },
     {
         "name": "Global formatting settings",
@@ -184,6 +184,40 @@ def print_transformers_list(global_config: config_module.MainConfig):
         "Non-default transformers needs to be selected explicitly with [bold cyan]--transform[/] or "
         "configured with param `enabled=True`.\n"
     )
+
+
+def generate_config(global_config: config_module.MainConfig):
+    try:
+        import tomli_w
+    except ImportError:
+        raise exceptions.MissingOptionalTomliWDependencyError()
+    target_version = global_config.default.target_version
+    config = global_config.default_loaded
+    transformers = load_transformers(TransformConfigMap([], [], []), allow_disabled=True, target_version=target_version)
+    transformers.extend(_load_external_transformers(transformers, config.transformers_config, target_version))
+
+    toml_config = {
+        "tool": {
+            "robotidy": {
+                "diff": global_config.default_loaded.show_diff,
+                "overwrite": global_config.default_loaded.overwrite,
+                "verbose": global_config.default_loaded.verbose,
+                "separator": global_config.default.separator,
+                "spacecount": global_config.default_loaded.formatting.space_count,
+                "line_length": global_config.default.line_length,
+                "lineseparator": global_config.default.lineseparator,
+                "skip_gitignore": global_config.default.skip_gitignore,
+                "ignore_git_dir": global_config.default.ignore_git_dir,
+            }
+        }
+    }
+    configure_transformers = [
+        f"{transformer.name}:enabled={transformer.name in config.transformers_lookup}" for transformer in transformers
+    ]
+    toml_config["tool"]["robotidy"]["configure"] = configure_transformers
+
+    with open(global_config.default.generate_config, "w") as fp:
+        fp.write(tomli_w.dumps(toml_config))
 
 
 @click.command(context_settings=CONTEXT_SETTINGS)
@@ -368,6 +402,14 @@ def print_transformers_list(global_config: config_module.MainConfig):
     "Pass optional value **enabled** or **disabled** to filter out list by transformer status.",
 )
 @click.option(
+    "--generate-config",
+    is_flag=False,
+    default="",
+    flag_value="pyproject.toml",
+    help="Generate configuration file. Pass optional value to change default config filename.",
+    show_default="pyproject.toml",
+)
+@click.option(
     "--desc",
     "-d",
     default=None,
@@ -442,6 +484,9 @@ def cli(ctx: click.Context, **kwargs):
     if global_config.default.desc is not None:
         return_code = print_description(global_config.default.desc, global_config.default.target_version)
         sys.exit(return_code)
+    if global_config.default.generate_config:
+        generate_config(global_config)
+        sys.exit(0)
     tidy = app.Robotidy(global_config)
     status = tidy.transform_files()
     sys.exit(status)

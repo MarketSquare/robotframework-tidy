@@ -59,6 +59,7 @@ setup(
             "pylama",
             "pytest",
             "pre-commit",
+            "tomli_w==1.0.*",
         ],
         "doc": [
             "sphinx",
@@ -66,6 +67,7 @@ setup(
             "sphinx-design",
             "sphinx-copybutton==0.5.2",
         ],
+        "generate_config": ["tomli_w==1.0.*"],
     },
     entry_points={"console_scripts": ["robotidy=robotidy.cli:cli"]},
 )

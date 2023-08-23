@@ -1,4 +1,5 @@
 import os
+import shutil
 from contextlib import contextmanager
 from pathlib import Path
 from unittest.mock import patch
@@ -8,7 +9,7 @@ from click import FileError, NoSuchOption
 
 from robotidy import skip, utils
 from robotidy.config import RawConfig
-from robotidy.files import DEFAULT_EXCLUDES, find_project_root, get_paths, read_pyproject_config
+from robotidy.files import DEFAULT_EXCLUDES, find_project_root, get_paths, load_toml_file, read_pyproject_config
 from robotidy.transformers.aligners_core import AlignKeywordsTestsSection
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
 
@@ -22,7 +23,7 @@ def temporary_cwd(tmpdir):
     prev_cwd = Path.cwd()
     os.chdir(tmpdir)
     try:
-        yield
+        yield Path(tmpdir)
     finally:
         os.chdir(prev_cwd)
 
@@ -477,3 +478,69 @@ class TestCli:
             if option in with_values:
                 option_names.append("empty")
         run_tidy([*option_names, str(tmp_path)])
+
+
+class TestGenerateConfig:
+    def validate_generated_default_configuration(
+        self, config_path: Path, diff: bool, add_missing_enabled: bool, rename_variables_enabled: bool
+    ):
+        assert config_path.is_file()
+        config = load_toml_file(config_path)
+        configured_transformers = config["tool"]["robotidy"].pop("configure")
+        expected_config = {
+            "tool": {
+                "robotidy": {
+                    "diff": diff,
+                    "overwrite": True,
+                    "verbose": False,
+                    "separator": "space",
+                    "spacecount": 4,
+                    "line_length": 120,
+                    "lineseparator": "native",
+                    "skip_gitignore": False,
+                    "ignore_git_dir": False,
+                }
+            }
+        }
+        assert expected_config == config
+        assert f"AddMissingEnd:enabled={add_missing_enabled}" in configured_transformers
+        assert f"RenameVariables:enabled={rename_variables_enabled}" in configured_transformers
+
+    def test_generate_default_config(self, temporary_cwd):
+        config_path = temporary_cwd / "pyproject.toml"
+        run_tidy(["--generate-config"])
+        self.validate_generated_default_configuration(
+            config_path, diff=False, add_missing_enabled=True, rename_variables_enabled=False
+        )
+
+    def test_generate_config_ignore_existing_config(self, temporary_cwd):
+        config_path = temporary_cwd / "pyproject.toml"
+        orig_config_path = TEST_DATA_DIR / "only_pyproject" / "pyproject.toml"
+        shutil.copy(orig_config_path, config_path)
+        run_tidy(["--generate-config"])
+        self.validate_generated_default_configuration(
+            config_path, diff=False, add_missing_enabled=True, rename_variables_enabled=False
+        )
+
+    def test_generate_config_with_filename(self, temporary_cwd):
+        config_path = temporary_cwd / "different.txt"
+        run_tidy(["--generate-config", "different.txt"])
+        self.validate_generated_default_configuration(
+            config_path, diff=False, add_missing_enabled=True, rename_variables_enabled=False
+        )
+
+    def test_generate_config_with_cli_config(self, temporary_cwd):
+        config_path = temporary_cwd / "pyproject.toml"
+        run_tidy(["--generate-config", "--diff", "--transform", "RenameVariables"])
+        self.validate_generated_default_configuration(
+            config_path, diff=True, add_missing_enabled=False, rename_variables_enabled=True
+        )
+
+    def test_missing_dependency(self, monkeypatch, temporary_cwd):
+        with patch.dict("sys.modules", {"tomli_w": None}):
+            result = run_tidy(["--generate-config"], exit_code=1)
+        expected_output = (
+            "Error: Missing optional dependency: tomli_w. Install robotidy with extra `generate_config` "
+            "profile:\n\npip install robotidy[generate_config]\n"
+        )
+        assert result.output == expected_output

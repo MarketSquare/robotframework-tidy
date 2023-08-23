@@ -42,6 +42,14 @@ class MissingOptionalRichDependencyError(RobotidyConfigError):
         super().__init__(msg)
 
 
+class MissingOptionalTomliWDependencyError(RobotidyConfigError):
+    def __init__(self):
+        super().__init__(
+            f"Missing optional dependency: tomli_w. Install robotidy with extra `generate_config` "
+            f"profile:\n\npip install robotidy[generate_config]"
+        )
+
+
 class NoSuchOptionError(NoSuchOption):
     def __init__(self, option_name: str, allowed_options: List[str]):
         rec_finder = utils.RecommendationFinder()
