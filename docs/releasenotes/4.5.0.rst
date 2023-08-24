@@ -1,0 +1,79 @@
+:orphan:
+
+==============
+Robotidy 4.5.0
+==============
+
+Fixes related to Robot Framework 6.1 changes. Additionally, the behaviour of the ``min_width`` parameter in
+``AlignVariablesSection`` and ``AlignSettingsSection`` transformers changed.
+
+Also fixed:
+
+- ``NormalizeSeparators`` not handling Inline Ifs when ``flatten_lines`` is set to True
+- Invalid variable case with extended syntax in ``RenameVariables``
+
+You can install the latest available version by running
+
+::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version
+
+::
+
+    pip install robotframework-tidy==4.5.0
+
+.. contents::
+   :depth: 2
+   :local:
+
+
+Fixes
+=====
+
+Robot Framework 6.1 fixes (#550)
+--------------------------------
+
+- ``Translate`` transformer should now properly handle creating Comments section (if needed),
+- Missing settings translations should now be ignored by ``Translate`` transformer,
+- Files with invalid sections (for example unrecognized translated section names) should be ignored by
+  ``MergeAndOrderSections``
+
+``NormalizeSeparators`` with ``flatten_lines=True`` not handling Inline IFs (#548)
+-----------------------------------------------------------------------------------
+
+Robotidy should now correctly handles Inline IFs in ``NormalizeSeparators`` transformer with ``flatten_lines=True``.
+Previously, spacing before `ELSE` and `ELSE IF` branches was set to 0::
+
+    IF    ${value}>0    Do Thing    ELSE    Do Other Thing
+
+it was transformed to::
+
+    IF    ${value}>0    Do ThingELSE    Do Other Thing
+
+Additionally, number of spaces before `ELSE` and `ELSE IF` in Inline IFs should now be calculated correctly
+(based on the separator length and not indentation).
+
+Invalid variable case with extended syntax in RenameVariables (#551)
+--------------------------------------------------------------------
+
+Robotidy should now be able to recognize variables using extended variable syntax and set variable case accordingly::
+
+    *** Test Cases ***
+    Simple math operations
+        ${i}    Set Variable    ${0}
+        Log    ${i+1}  # i+1 instead of previous I+1
+
+Minimal width of the column in AlignVariablesSection and AlignSettingsSection (#558)
+------------------------------------------------------------------------------------
+
+``AlignVariablesSection`` and ``AlignSettingsSection`` transformers use ``min_width`` parameter.
+Contrary to the name, it didn't set minimal width of the column, but set fixed width of the column.
+To clear this confusion and to fill missing feature we have:
+
+- introduced new parameter ``fixed_width`` which work the same as previous ``min_width``
+- ``min_width`` is now fixed and is used to configure minimal width of the aligned column
+
+If you are relying on ``min_width`` to set fixed width of the column, rename it to ``fixed_width`` in your
+configuration.

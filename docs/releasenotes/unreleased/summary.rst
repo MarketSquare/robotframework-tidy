@@ -1,1 +1,0 @@
-Fixes related to Robot Framework 6.1 changes. Also fixed ``NormalizeSeparators`` not handling Inline Ifs when ``flatten_lines`` is set to True.
