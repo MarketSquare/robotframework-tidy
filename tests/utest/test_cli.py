@@ -477,3 +477,19 @@ class TestCli:
             if option in with_values:
                 option_names.append("empty")
         run_tidy([*option_names, str(tmp_path)])
+
+    def test_diff_with_extra_encoding(self):
+        input_file = (
+            "*** Test Cases ***\n"
+            "Robotidy Normalizer test\n"
+            "[Documentation]   Random piece of code that will break because of 'special' characters:\n"
+            "   ...  Log 'Хокей'\n"
+            "        Log   Хокей\n"
+        )
+        run_tidy(
+            [
+                "--diff",
+                "-",
+            ],
+            std_in=input_file,
+        )
