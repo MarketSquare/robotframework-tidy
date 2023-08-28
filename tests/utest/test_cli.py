@@ -38,6 +38,16 @@ def switch_cwd(new_cwd):
         os.chdir(prev_cwd)
 
 
+@contextmanager
+def switch_cwd(new_cwd):
+    prev_cwd = Path.cwd()
+    os.chdir(new_cwd)
+    try:
+        yield
+    finally:
+        os.chdir(prev_cwd)
+
+
 class TestCli:
     @pytest.mark.parametrize(
         "name, similar",
