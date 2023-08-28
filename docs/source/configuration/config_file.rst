@@ -83,6 +83,126 @@ multiple configuration files, the source paths from other configurations than th
         "NormalizeSeparators"
      ]
 
+Generate configuration file
+---------------------------
+
+It is possible to generate configuration files that contains most important options with their default values.
+First install ``robotidy`` with ``generate_config`` that contains module for writing TOML files::
+
+    pip install robotidy[generate_config]
+
+You can generate configuration now::
+
+    robotidy --generate-config
+
+.. dropdown:: Example of generated configuration file
+
+   .. code-block:: toml
+
+    [tool.robotidy]
+    diff = false
+    overwrite = true
+    verbose = false
+    separator = "space"
+    spacecount = 4
+    line_length = 120
+    lineseparator = "native"
+    skip_gitignore = false
+    ignore_git_dir = false
+    configure = [
+        "AddMissingEnd:enabled=True",
+        "NormalizeSeparators:enabled=True",
+        "DiscardEmptySections:enabled=True",
+        "MergeAndOrderSections:enabled=True",
+        "RemoveEmptySettings:enabled=True",
+        "ReplaceEmptyValues:enabled=True",
+        "NormalizeAssignments:enabled=True",
+        "GenerateDocumentation:enabled=False",
+        "OrderSettings:enabled=True",
+        "OrderSettingsSection:enabled=True",
+        "NormalizeTags:enabled=True",
+        "OrderTags:enabled=False",
+        "RenameVariables:enabled=False",
+        "IndentNestedKeywords:enabled=False",
+        "AlignSettingsSection:enabled=True",
+        "AlignVariablesSection:enabled=True",
+        "AlignTemplatedTestCases:enabled=False",
+        "AlignTestCasesSection:enabled=False",
+        "AlignKeywordsSection:enabled=False",
+        "NormalizeNewLines:enabled=True",
+        "NormalizeSectionHeaderName:enabled=True",
+        "NormalizeSettingName:enabled=True",
+        "ReplaceRunKeywordIf:enabled=True",
+        "SplitTooLongLine:enabled=True",
+        "SmartSortKeywords:enabled=False",
+        "RenameTestCases:enabled=False",
+        "RenameKeywords:enabled=False",
+        "ReplaceReturns:enabled=True",
+        "ReplaceBreakContinue:enabled=True",
+        "InlineIf:enabled=True",
+        "Translate:enabled=False",
+        "NormalizeComments:enabled=True",
+    ]
+
+By default configuration file will be save in the current working directory as ``pyproject.toml`` file. Default
+filename can be configured::
+
+    robotidy --generate-config your_name.txt
+
+Configuration is based on default values and configuration from the cli::
+
+    robotidy --transform ReplaceReturns --diff --generate-config
+
+.. dropdown:: Generated file
+
+   .. code-block:: toml
+
+    [tool.robotidy]
+    diff = true
+    overwrite = true
+    verbose = false
+    separator = "space"
+    spacecount = 4
+    line_length = 120
+    lineseparator = "native"
+    skip_gitignore = false
+    ignore_git_dir = false
+    configure = [
+        "AddMissingEnd:enabled=False",
+        "NormalizeSeparators:enabled=False",
+        "DiscardEmptySections:enabled=False",
+        "MergeAndOrderSections:enabled=False",
+        "RemoveEmptySettings:enabled=False",
+        "ReplaceEmptyValues:enabled=False",
+        "NormalizeAssignments:enabled=False",
+        "GenerateDocumentation:enabled=False",
+        "OrderSettings:enabled=False",
+        "OrderSettingsSection:enabled=False",
+        "NormalizeTags:enabled=False",
+        "OrderTags:enabled=False",
+        "RenameVariables:enabled=False",
+        "IndentNestedKeywords:enabled=False",
+        "AlignSettingsSection:enabled=False",
+        "AlignVariablesSection:enabled=False",
+        "AlignTemplatedTestCases:enabled=False",
+        "AlignTestCasesSection:enabled=False",
+        "AlignKeywordsSection:enabled=False",
+        "NormalizeNewLines:enabled=False",
+        "NormalizeSectionHeaderName:enabled=False",
+        "NormalizeSettingName:enabled=False",
+        "ReplaceRunKeywordIf:enabled=False",
+        "SplitTooLongLine:enabled=False",
+        "SmartSortKeywords:enabled=False",
+        "RenameTestCases:enabled=False",
+        "RenameKeywords:enabled=False",
+        "ReplaceReturns:enabled=True",
+        "ReplaceBreakContinue:enabled=False",
+        "InlineIf:enabled=False",
+        "Translate:enabled=False",
+        "NormalizeComments:enabled=False",
+    ]
+
+
 Multiline configuration
 ------------------------
 Transformers with multiple parameters can be configured in one line (each param delimited by ``:``) or in separate lines:

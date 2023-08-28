@@ -138,6 +138,7 @@ class RawConfig:
     endline: int = None
     line_length: int = 120
     list_transformers: str = ""
+    generate_config: str = ""
     desc: str = None
     output: Path = None
     force_order: bool = False
@@ -227,7 +228,7 @@ class MainConfig:
         self.sources = self.get_sources(self.default.src)
 
     def validate_src_is_required(self):
-        if self.sources or self.default.list_transformers or self.default.desc:
+        if self.sources or self.default.list_transformers or self.default.desc or self.default.generate_config:
             return
         print("No source path provided. Run robotidy --help to see how to use robotidy")
         sys.exit(1)

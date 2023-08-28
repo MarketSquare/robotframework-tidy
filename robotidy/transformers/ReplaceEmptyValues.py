@@ -35,6 +35,7 @@ class ReplaceEmptyValues(Transformer):
     ...    value3
     ```
     """
+
     HANDLES_SKIP = frozenset({"skip_sections"})
 
     def __init__(self, skip: Skip = None):
