@@ -121,8 +121,6 @@ class SplitTooLongLine(Transformer):
     def visit_If(self, node):  # noqa
         if self.is_inline(node):
             return node
-        if node.orelse:
-            self.generic_visit(node.orelse)
         return self.generic_visit(node)
 
     @staticmethod
