@@ -76,8 +76,6 @@ class InlineIf(Transformer):
         if self.is_inline(node):
             return self.handle_inline(node)
         self.generic_visit(node)
-        if node.orelse:
-            self.generic_visit(node.orelse)
         if self.no_end(node):
             return node
         indent = node.header.tokens[0]
