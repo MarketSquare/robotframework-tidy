@@ -31,7 +31,7 @@ List transformers should now load configuration file (#562)
 
 Transformers listed with ``--list`` option were affected by command line configuration but not by the configuration file.
 
-SplitTooLongLine and InflineIf recursively parsing multi branch IFs (#578)
+SplitTooLongLine and InlineIf recursively parsing multi branch IFs (#578)
 --------------------------------------------------------------------------
 
 ``SplitTooLongLine`` and ``InlineIf`` were taking long time to parse IFs with several branches because of the
