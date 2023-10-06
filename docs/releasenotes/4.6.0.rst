@@ -1,3 +1,47 @@
+:orphan:
+
+==============
+Robotidy 4.6.0
+==============
+
+Added new option to generate default configuration file and included two bug fixes.
+
+You can install the latest available version by running
+
+::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version
+
+::
+
+    pip install robotframework-tidy==4.6.0
+
+.. contents::
+   :depth: 2
+   :local:
+
+
+Fixes
+=====
+
+List transformers should now load configuration file (#562)
+-----------------------------------------------------------
+
+Transformers listed with ``--list`` option were affected by command line configuration but not by the configuration file.
+
+SplitTooLongLine and InlineIf recursively parsing multi branch IFs (#578)
+--------------------------------------------------------------------------
+
+``SplitTooLongLine`` and ``InlineIf`` were taking long time to parse IFs with several branches because of the
+redundant node visitor.
+
+Thanks @Lakitna for discovering and fixing the issue.
+
+Other features
+==============
+
 Generate configuration file (#563)
 -----------------------------------
 
