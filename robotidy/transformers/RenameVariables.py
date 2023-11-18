@@ -10,14 +10,14 @@ from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 from robotidy.skip import Skip
 from robotidy.transformers import Transformer
-from robotidy.utils import after_last_dot, normalize_name
+from robotidy.utils import misc
 
 SET_GLOBAL_VARIABLES = {"settestvariable", "settaskvariable", "setsuitevariable", "setglobalvariable"}
 
 
 def is_set_global_variable(keyword: str) -> bool:
     """Checks if keyword call is Set Test/Suite/Global keyword."""
-    normalized_name = normalize_name(after_last_dot(keyword))
+    normalized_name = misc.normalize_name(misc.after_last_dot(keyword))
     return normalized_name in SET_GLOBAL_VARIABLES
 
 
@@ -55,7 +55,7 @@ class VariablesScope:
         match = search_variable(variable, ignore_errors=True)
         if not match.base:
             return
-        self._global.add(normalize_name(match.base))
+        self._global.add(misc.normalize_name(match.base))
 
     def add_local(self, variable: str, split_pattern: bool = False):
         """Add variable name to local cache.
@@ -68,7 +68,7 @@ class VariablesScope:
         name = match.base
         if split_pattern:
             name = name.split(":", maxsplit=1)[0]
-        self._local.add(normalize_name(name))
+        self._local.add(misc.normalize_name(name))
 
     def change_scope_from_local_to_global(self, variable: str):
         """
@@ -78,14 +78,14 @@ class VariablesScope:
         if not match.base:
             return
         name = match.base
-        self._local.discard(normalize_name(name))
-        self._global.add(normalize_name(match.base))
+        self._local.discard(misc.normalize_name(name))
+        self._global.add(misc.normalize_name(match.base))
 
     def is_local(self, variable: str):
-        return normalize_name(variable) in self._local
+        return misc.normalize_name(variable) in self._local
 
     def is_global(self, variable: str):
-        return normalize_name(variable) in self._global
+        return misc.normalize_name(variable) in self._global
 
 
 class RenameVariables(Transformer):

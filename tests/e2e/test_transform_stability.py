@@ -8,7 +8,7 @@ from click.testing import CliRunner
 
 from robotidy.cli import cli
 from robotidy.transformers import TransformConfigMap, load_transformers
-from robotidy.utils import ROBOT_VERSION
+from robotidy.utils.misc import ROBOT_VERSION
 
 RERUN_NEEDED_4 = {
     "RenameKeywords": {"run_keywords": 2, "disablers": 2},

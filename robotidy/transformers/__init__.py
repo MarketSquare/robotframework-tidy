@@ -26,7 +26,7 @@ from robot.utils.importer import Importer
 
 from robotidy.exceptions import ImportTransformerError, InvalidParameterError, InvalidParameterFormatError
 from robotidy.skip import Skip, SkipConfig
-from robotidy.utils import ROBOT_VERSION, RecommendationFinder, split_args_from_name_or_path
+from robotidy.utils import misc
 
 TRANSFORMERS = [
     "AddMissingEnd",
@@ -69,7 +69,7 @@ IMPORTER = Importer()
 
 class TransformConfig:
     def __init__(self, config, force_include, custom_transformer, is_config):
-        name, args = split_args_from_name_or_path(config)
+        name, args = misc.split_args_from_name_or_path(config)
         self.name = name.strip()
         self.args = self.convert_args(args)
         self.force_include = force_include
@@ -189,7 +189,7 @@ class TransformConfigMap:
         for transf_name, transformer in self.transformers.items():
             if not transformer.is_config_only:
                 continue
-            similar_finder = RecommendationFinder()
+            similar_finder = misc.RecommendationFinder()
             transformer_names = [name for name, transf in self.transformers.items() if not transf.is_config_only]
             similar = similar_finder.find_similar(transf_name, transformer_names)
             raise ImportTransformerError(
@@ -332,7 +332,7 @@ def import_transformer(name, config: TransformConfigMap, skip) -> Iterable[Trans
                     transformer_class, name, config.get_args(name, short_name, import_path), skip
                 )
     except DataError:
-        similar_finder = RecommendationFinder()
+        similar_finder = misc.RecommendationFinder()
         similar = similar_finder.find_similar(short_name, TRANSFORMERS)
         raise ImportTransformerError(
             f"Importing transformer '{short_name}' failed. "
@@ -378,7 +378,7 @@ def assert_handled_arguments(transformer, args, argument_names):
     for arg in arg_names:
         # it's fine to only check for first non-matching parameter
         if arg not in argument_names:
-            similar_finder = RecommendationFinder()
+            similar_finder = misc.RecommendationFinder()
             similar = similar_finder.find_similar(arg, argument_names)
             if not similar and argument_names:
                 arg_names = "\n    " + "\n    ".join(argument_names)
@@ -445,10 +445,10 @@ def can_run_in_robot_version(transformer, overwritten, target_version):
         return True
     if overwritten:
         # --transform TransformerDisabledInVersion or --configure TransformerDisabledInVersion:enabled=True
-        if target_version == ROBOT_VERSION.major:
+        if target_version == misc.ROBOT_VERSION.major:
             click.echo(
                 f"{transformer.__class__.__name__} transformer requires Robot Framework {transformer.MIN_VERSION}.* "
-                f"version but you have {ROBOT_VERSION} installed. "
+                f"version but you have {misc.ROBOT_VERSION} installed. "
                 f"Upgrade installed Robot Framework if you want to use this transformer."
             )
         else:

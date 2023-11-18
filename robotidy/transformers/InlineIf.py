@@ -9,7 +9,7 @@ except ImportError:
 
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.transformers import Transformer
-from robotidy.utils import flatten_multiline, get_comments, normalize_name
+from robotidy.utils import misc
 
 
 class InlineIf(Transformer):
@@ -111,7 +111,7 @@ class InlineIf(Transformer):
             if not isinstance(branch.body[0], KeywordCall) or not branch.body[0].assign:
                 assigned.append([])
             else:
-                assigned.append([normalize_name(assign).replace("=", "") for assign in branch.body[0].assign])
+                assigned.append([misc.normalize_name(assign).replace("=", "") for assign in branch.body[0].assign])
             if len(assigned) > 1 and assigned[-1] != assigned[-2]:
                 return False
         if any(x for x in assigned):
@@ -228,11 +228,11 @@ class InlineIf(Transformer):
 
     @staticmethod
     def collect_comments_from_if(indent, node):
-        comments = get_comments(node.header.tokens)
+        comments = misc.get_comments(node.header.tokens)
         for statement in node.body:
-            comments += get_comments(statement.tokens)
+            comments += misc.get_comments(statement.tokens)
         if node.end:
-            comments += get_comments(node.end)
+            comments += misc.get_comments(node.end)
         return [Comment.from_params(comment=comment.value, indent=indent) for comment in comments]
 
     def create_keyword_for_inline(self, kw_tokens, indent, assign):
@@ -250,11 +250,11 @@ class InlineIf(Transformer):
         )
 
     def flatten_if_block(self, node):
-        node.header.tokens = flatten_multiline(
+        node.header.tokens = misc.flatten_multiline(
             node.header.tokens, self.formatting_config.separator, remove_comments=True
         )
         for index, statement in enumerate(node.body):
-            node.body[index].tokens = flatten_multiline(
+            node.body[index].tokens = misc.flatten_multiline(
                 statement.tokens, self.formatting_config.separator, remove_comments=True
             )
         return node

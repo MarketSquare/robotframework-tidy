@@ -13,10 +13,11 @@ except ImportError:  # Fails on vendored-in LSP plugin
 
 from robotidy import app
 from robotidy import config as config_module
-from robotidy import decorators, exceptions, files, skip, utils, version
+from robotidy import decorators, exceptions, files, skip, version
 from robotidy.config import RawConfig, csv_list_type, validate_target_version
 from robotidy.rich_console import console
 from robotidy.transformers import TransformConfigMap, TransformConfigParameter, load_transformers
+from robotidy.utils import misc
 
 CLI_OPTIONS_LIST = [
     {
@@ -89,7 +90,7 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
 
 def validate_regex_callback(ctx: click.Context, param: click.Parameter, value: Optional[str]) -> Optional[Pattern]:
-    return utils.validate_regex(value)
+    return misc.validate_regex(value)
 
 
 def validate_target_version_callback(
@@ -131,7 +132,7 @@ def print_description(name: str, target_version: int):
     elif name in transformer_by_names:
         print_transformer_docs(transformer_by_names[name])
     else:
-        rec_finder = utils.RecommendationFinder()
+        rec_finder = misc.RecommendationFinder()
         similar = rec_finder.find_similar(name, transformer_by_names.keys())
         click.echo(f"Transformer with the name '{name}' does not exist.{similar}")
         return 1
@@ -433,7 +434,7 @@ def generate_config(global_config: config_module.MainConfig):
 @click.option(
     "--target-version",
     "-tv",
-    type=click.Choice([v.name.lower() for v in utils.TargetVersion], case_sensitive=False),
+    type=click.Choice([v.name.lower() for v in misc.TargetVersion], case_sensitive=False),
     callback=validate_target_version_callback,
     help="Only enable transformers supported in set target version",
     show_default="installed Robot Framework version",

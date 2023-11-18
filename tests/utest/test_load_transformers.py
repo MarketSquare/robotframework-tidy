@@ -5,7 +5,7 @@ import pytest
 
 from robotidy.skip import SkipConfig
 from robotidy.transformers import TransformConfig, TransformConfigMap, load_transformers
-from robotidy.utils import ROBOT_VERSION
+from robotidy.utils.misc import ROBOT_VERSION
 
 
 @pytest.fixture(scope="session")

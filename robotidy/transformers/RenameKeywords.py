@@ -9,7 +9,7 @@ from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 from robotidy.transformers import Transformer
 from robotidy.transformers.run_keywords import get_run_keywords
-from robotidy.utils import is_token_value_in_tokens, normalize_name, split_on_token_type, split_on_token_value
+from robotidy.utils import misc
 
 
 class RenameKeywords(Transformer):
@@ -81,7 +81,7 @@ class RenameKeywords(Transformer):
             )
 
     def get_run_keyword(self, kw_name):
-        kw_norm = normalize_name(kw_name)
+        kw_norm = misc.normalize_name(kw_name)
         return self.run_keywords.get(kw_norm, None)
 
     @skip_section_if_disabled
@@ -171,7 +171,7 @@ class RenameKeywords(Transformer):
         if not name_token or not name_token.value:
             return node
         # ignore assign, separators and comments
-        _, tokens = split_on_token_type(node.data_tokens, Token.KEYWORD)
+        _, tokens = misc.split_on_token_type(node.data_tokens, Token.KEYWORD)
         self.parse_run_keyword(tokens)
         return node
 
@@ -185,11 +185,11 @@ class RenameKeywords(Transformer):
         tokens = tokens[run_keyword.resolve :]
         if run_keyword.branches:
             if "ELSE IF" in run_keyword.branches:
-                while is_token_value_in_tokens("ELSE IF", tokens):
-                    prefix, branch, tokens = split_on_token_value(tokens, "ELSE IF", 2)
+                while misc.is_token_value_in_tokens("ELSE IF", tokens):
+                    prefix, branch, tokens = misc.split_on_token_value(tokens, "ELSE IF", 2)
                     self.parse_run_keyword(prefix)
-            if "ELSE" in run_keyword.branches and is_token_value_in_tokens("ELSE", tokens):
-                prefix, branch, tokens = split_on_token_value(tokens, "ELSE", 1)
+            if "ELSE" in run_keyword.branches and misc.is_token_value_in_tokens("ELSE", tokens):
+                prefix, branch, tokens = misc.split_on_token_value(tokens, "ELSE", 1)
                 self.parse_run_keyword(prefix)
                 self.parse_run_keyword(tokens)
                 return
@@ -198,12 +198,12 @@ class RenameKeywords(Transformer):
         self.parse_run_keyword(tokens)
 
     def split_on_and(self, tokens):
-        if not is_token_value_in_tokens("AND", tokens):
+        if not misc.is_token_value_in_tokens("AND", tokens):
             for token in tokens:
                 self.rename_node(token, is_keyword_call=True)
             return
-        while is_token_value_in_tokens("AND", tokens):
-            prefix, branch, tokens = split_on_token_value(tokens, "AND", 1)
+        while misc.is_token_value_in_tokens("AND", tokens):
+            prefix, branch, tokens = misc.split_on_token_value(tokens, "AND", 1)
             self.parse_run_keyword(prefix)
         self.parse_run_keyword(tokens)
 

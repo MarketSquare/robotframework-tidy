@@ -1,6 +1,6 @@
 import pytest
 
-from robotidy.utils import ROBOT_VERSION
+from robotidy.utils.misc import ROBOT_VERSION
 from tests.atest import TransformerAcceptanceTest
 
 

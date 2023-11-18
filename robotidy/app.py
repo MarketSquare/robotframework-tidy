@@ -11,10 +11,10 @@ except ImportError:  # Fails on vendored-in LSP plugin
 from robot.api import get_model
 from robot.errors import DataError
 
-from robotidy import utils
 from robotidy.config import MainConfig
 from robotidy.disablers import RegisterDisablers
 from robotidy.rich_console import console
+from robotidy.utils import misc
 
 
 class Robotidy:
@@ -23,7 +23,7 @@ class Robotidy:
         self.config = main_config.default_loaded
 
     def get_model(self, source):
-        if utils.rf_supports_lang():
+        if misc.rf_supports_lang():
             return get_model(source, lang=self.config.language)
         return get_model(source)
 
@@ -76,11 +76,11 @@ class Robotidy:
         return diff, old_model, new_model, model
 
     def transform(self, model, disablers):
-        old_model = utils.StatementLinesCollector(model)
+        old_model = misc.StatementLinesCollector(model)
         for transformer in self.config.transformers:
             setattr(transformer, "disablers", disablers)  # set dynamically to allow using external transformers
             transformer.visit(model)
-        new_model = utils.StatementLinesCollector(model)
+        new_model = misc.StatementLinesCollector(model)
         return new_model != old_model, old_model, new_model
 
     @staticmethod
@@ -94,7 +94,7 @@ class Robotidy:
     def save_model(self, source, model):
         if self.config.overwrite:
             output = self.config.output or source
-            utils.ModelWriter(output=output, newline=self.get_line_ending(source)).write(model)
+            misc.ModelWriter(output=output, newline=self.get_line_ending(source)).write(model)
 
     def get_line_ending(self, path: str):
         if self.config.formatting.line_sep == "auto":
@@ -108,9 +108,7 @@ class Robotidy:
                     return f.newlines[0]
         return self.config.formatting.line_sep
 
-    def output_diff(
-        self, path: str, old_model: utils.StatementLinesCollector, new_model: utils.StatementLinesCollector
-    ):
+    def output_diff(self, path: str, old_model: misc.StatementLinesCollector, new_model: misc.StatementLinesCollector):
         if not self.config.show_diff:
             return
         old = [l + "\n" for l in old_model.text.splitlines()]
@@ -119,8 +117,8 @@ class Robotidy:
         if not lines:
             return
         if self.config.color:
-            output = utils.decorate_diff_with_color(lines)
+            output = misc.decorate_diff_with_color(lines)
         else:
-            output = utils.escape_rich_markup(lines)
+            output = misc.escape_rich_markup(lines)
         for line in output:
             console.print(line, end="", highlight=False, soft_wrap=True)

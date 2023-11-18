@@ -13,7 +13,7 @@ from robot.api.parsing import (
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.transformers import Transformer
-from robotidy.utils import is_suite_templated, round_to_four
+from robotidy.utils import misc
 
 
 class AlignTemplatedTestCases(Transformer):
@@ -61,7 +61,7 @@ class AlignTemplatedTestCases(Transformer):
         self.indent = 0
 
     def visit_File(self, node):  # noqa
-        if not is_suite_templated(node):
+        if not misc.is_suite_templated(node):
             return node
         self.test_without_eol = False
         return self.generic_visit(node)
@@ -166,7 +166,7 @@ class ColumnWidthCounter(ModelVisitor):
         self.generic_visit(node)
         if not self.header_with_cols and not self.any_one_line_test and self.widths:
             self.widths[0] = 0
-        self.widths = [round_to_four(length) for length in self.widths]
+        self.widths = [misc.round_to_four(length) for length in self.widths]
 
     def visit_TestCase(self, node):  # noqa
         for statement in node.body:

@@ -7,12 +7,7 @@ except ImportError:
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.transformers import Transformer
-from robotidy.utils import (
-    after_last_dot,
-    create_statement_from_tokens,
-    normalize_name,
-    wrap_in_if_and_replace_statement,
-)
+from robotidy.utils import misc
 
 
 class ReplaceReturns(Transformer):
@@ -66,7 +61,7 @@ class ReplaceReturns(Transformer):
             indent = self.return_statement.tokens[0]
             while node.body and isinstance(node.body[-1], (EmptyLine, Comment)):
                 skip_lines.append(node.body.pop())
-            return_stmt = create_statement_from_tokens(
+            return_stmt = misc.create_statement_from_tokens(
                 statement=ReturnStatement, tokens=self.return_statement.tokens[2:], indent=indent
             )
             node.body.append(return_stmt)
@@ -77,13 +72,13 @@ class ReplaceReturns(Transformer):
     def visit_KeywordCall(self, node):  # noqa
         if not node.keyword or node.errors:
             return node
-        normalized_name = after_last_dot(normalize_name(node.keyword))
+        normalized_name = misc.after_last_dot(misc.normalize_name(node.keyword))
         if normalized_name == "returnfromkeyword":
-            return create_statement_from_tokens(
+            return misc.create_statement_from_tokens(
                 statement=ReturnStatement, tokens=node.tokens[2:], indent=node.tokens[0]
             )
         elif normalized_name == "returnfromkeywordif":
-            return wrap_in_if_and_replace_statement(node, ReturnStatement, self.formatting_config.separator)
+            return misc.wrap_in_if_and_replace_statement(node, ReturnStatement, self.formatting_config.separator)
         return node
 
     @skip_if_disabled

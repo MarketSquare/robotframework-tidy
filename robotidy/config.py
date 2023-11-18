@@ -16,8 +16,9 @@ except ImportError:
 import click
 from click.core import ParameterSource
 
-from robotidy import exceptions, files, skip, utils
+from robotidy import exceptions, files, skip
 from robotidy.transformers import TransformConfig, TransformConfigMap, convert_transform_config, load_transformers
+from robotidy.utils import misc
 
 
 class FormattingConfig:
@@ -67,12 +68,12 @@ class FormattingConfig:
 
 def validate_target_version(value: Optional[str]) -> Optional[int]:
     if value is None:
-        return utils.ROBOT_VERSION.major
-    target_version = utils.TargetVersion[value.upper()].value
-    if target_version > utils.ROBOT_VERSION.major:
+        return misc.ROBOT_VERSION.major
+    target_version = misc.TargetVersion[value.upper()].value
+    if target_version > misc.ROBOT_VERSION.major:
         raise click.BadParameter(
             f"Target Robot Framework version ({target_version}) should not be higher than "
-            f"installed version ({utils.ROBOT_VERSION})."
+            f"installed version ({misc.ROBOT_VERSION})."
         )
     return target_version
 
@@ -142,7 +143,7 @@ class RawConfig:
     desc: str = None
     output: Path = None
     force_order: bool = False
-    target_version: int = utils.ROBOT_VERSION.major
+    target_version: int = misc.ROBOT_VERSION.major
     language: List[str] = field(default_factory=list)
     reruns: int = 0
     ignore_git_dir: bool = False
@@ -197,7 +198,7 @@ class RawConfig:
             elif key == "src":
                 parsed_config[key] = tuple(value)
             elif value_type == Pattern:
-                parsed_config[key] = utils.validate_regex(value)
+                parsed_config[key] = misc.validate_regex(value)
             else:
                 parsed_config[key] = value
             parsed_config["defined_in_config"].add(key)
