@@ -1,15 +1,13 @@
 import re
-import string
 from typing import Optional
 
 from robot.api.parsing import Token
-from robot.variables.search import VariableIterator
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 from robotidy.transformers import Transformer
 from robotidy.transformers.run_keywords import get_run_keywords
-from robotidy.utils import misc
+from robotidy.utils import misc, variable_matcher
 
 
 class RenameKeywords(Transformer):
@@ -101,16 +99,17 @@ class RenameKeywords(Transformer):
     def normalize_name(self, value, is_keyword_call):
         var_found = False
         parts = []
-        remaining = ""
-        for prefix, match, remaining in VariableIterator(value, ignore_errors=True):
+        after = ""
+        for match in variable_matcher.VariableMatches(value, ignore_errors=True):
             var_found = True
             # rename strips whitespace, so we need to preserve it if needed
-            if not prefix.strip() and parts:
-                parts.extend([" ", match])
+            if not match.before.strip() and parts:
+                parts.extend([" ", match.match])
             else:
-                parts.extend([self.rename_part(prefix, is_keyword_call), match])
+                parts.extend([self.rename_part(match.before, is_keyword_call), match.match])
+            after = match.after
         if var_found:
-            parts.append(self.rename_part(remaining, is_keyword_call))
+            parts.append(self.rename_part(after, is_keyword_call))
             return "".join(parts).strip()
         return self.rename_part(value, is_keyword_call)
 
@@ -142,8 +141,8 @@ class RenameKeywords(Transformer):
         if is_keyword_call and "." in value:
             # rename only non lib part
             found_lib = -1
-            for prefix, _, _ in VariableIterator(value):
-                found_lib = prefix.find(".")
+            for match in variable_matcher.VariableMatches(value):
+                found_lib = match.before.find(".")
                 break
             if found_lib != -1:
                 lib_name = value[: found_lib + 1]

@@ -3,14 +3,13 @@ from typing import List, Pattern, Tuple
 
 from robot.api.parsing import Arguments, Token
 from robot.errors import VariableError
-from robot.variables import VariableIterator
 from robot.variables.search import search_variable
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 from robotidy.skip import Skip
 from robotidy.transformers import Transformer
-from robotidy.utils import misc
+from robotidy.utils import misc, variable_matcher
 
 SET_GLOBAL_VARIABLES = {"settestvariable", "settaskvariable", "setsuitevariable", "setglobalvariable"}
 
@@ -32,7 +31,7 @@ def is_nested_variable(variable: str) -> bool:
     if not match.base:
         return False
     match = search_variable(match.base, ignore_errors=True)
-    return match.base
+    return bool(match.base)
 
 
 def resolve_var_name(name: str) -> str:
@@ -383,23 +382,20 @@ class RenameVariables(Transformer):
 
     def rename_value(self, value: str, variable_case: str, is_var: bool = False):
         try:
-            variables = list(VariableIterator(value))
+            variables = list(variable_matcher.VariableMatches(value))
         except VariableError:  # for example ${variable which wasn't closed properly
             variables = []
         if not variables:
             if is_var:
                 return self.rename(value, case=variable_case, strip_fn="strip")
             return value
-        name = ""
-        remaining = ""
-        for before, variable, remaining in variables:
-            if before:
+        name, after = "", ""
+        for match in variables:
+            if match.before:
                 if is_var:
-                    name += self.rename(before, case=variable_case, strip_fn="lstrip")
+                    name += self.rename(match.before, case=variable_case, strip_fn="lstrip")
                 else:
-                    name += before
-            # handle ${variable}[item][${syntax}]
-            match = search_variable(variable, ignore_errors=True)
+                    name += match.before
             # inline eval will start and end with {}
             if not (match.base.startswith("{") and match.base.endswith("}")):
                 base = self.rename_value(match.base, variable_case=variable_case, is_var=True)
@@ -410,11 +406,12 @@ class RenameVariables(Transformer):
                 renamed_item = self.rename_value(item, variable_case=variable_case, is_var=False)
                 base += f"[{renamed_item}]"
             name += base
-        if remaining:
+            after = match.after
+        if after:
             if is_var:
-                name += self.rename(remaining, case=variable_case, strip_fn="rstrip")
+                name += self.rename(after, case=variable_case, strip_fn="rstrip")
             else:
-                name += remaining
+                name += after
         return name
 
     def set_name_case(self, name: str, case: str):

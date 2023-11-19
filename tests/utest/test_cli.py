@@ -323,7 +323,7 @@ class TestCli:
     @pytest.mark.parametrize("source, return_status", [("golden.robot", 0), ("not_golden.robot", 1)])
     def test_check(self, source, return_status):
         source = TEST_DATA_DIR / "check" / source
-        with patch("robotidy.misc.ModelWriter") as mock_writer:
+        with patch("robotidy.utils.misc.ModelWriter") as mock_writer:
             run_tidy(
                 ["--check", "--transform", "NormalizeSectionHeaderName", str(source)],
                 exit_code=return_status,
@@ -333,7 +333,7 @@ class TestCli:
     @pytest.mark.parametrize("source, return_status", [("golden.robot", 0), ("not_golden.robot", 1)])
     def test_check_overwrite(self, source, return_status):
         source = TEST_DATA_DIR / "check" / source
-        with patch("robotidy.misc.ModelWriter") as mock_writer:
+        with patch("robotidy.utils.misc.ModelWriter") as mock_writer:
             run_tidy(
                 ["--check", "--overwrite", "--transform", "NormalizeSectionHeaderName", str(source)],
                 exit_code=return_status,
@@ -353,7 +353,7 @@ class TestCli:
         if color_flag:
             command.append(color_flag)
         command.extend(["--transform", "NormalizeSectionHeaderName", str(source)])
-        with patch.dict("os.environ", mocked_env), patch("robotidy.misc.decorate_diff_with_color") as mock_color:
+        with patch.dict("os.environ", mocked_env), patch("robotidy.utils.misc.decorate_diff_with_color") as mock_color:
             run_tidy(command)
             if should_be_colored:
                 mock_color.assert_called()
