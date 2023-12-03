@@ -5,7 +5,7 @@ import pytest
 from robot.api import get_model
 
 from robotidy.disablers import DisabledLines, RegisterDisablers
-from robotidy.utils import ROBOT_VERSION
+from robotidy.utils.misc import ROBOT_VERSION
 
 
 @pytest.mark.parametrize(

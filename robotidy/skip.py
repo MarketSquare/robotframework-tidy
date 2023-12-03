@@ -4,7 +4,7 @@ from typing import List, Optional, Pattern
 import click
 from robot.api import Token
 
-from robotidy.utils import normalize_name
+from robotidy.utils.misc import normalize_name
 
 
 def parse_csv(value):

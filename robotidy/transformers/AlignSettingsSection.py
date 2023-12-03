@@ -5,7 +5,7 @@ from robot.parsing.model import Statement
 
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.transformers import Transformer
-from robotidy.utils import is_blank_multiline, left_align, round_to_four, tokens_by_lines
+from robotidy.utils import misc
 
 
 class AlignSettingsSection(Transformer):
@@ -84,9 +84,9 @@ class AlignSettingsSection(Transformer):
             if self.disablers.is_node_disabled(child):
                 statements.append(child)
             elif child.type in (Token.EOL, Token.COMMENT):
-                statements.append(left_align(child))
+                statements.append(misc.left_align(child))
             else:
-                statements.append(list(tokens_by_lines(child)))
+                statements.append(list(misc.tokens_by_lines(child)))
         nodes_to_be_aligned = [st for st in statements if isinstance(st, list)]
         if not nodes_to_be_aligned:
             return node
@@ -110,7 +110,7 @@ class AlignSettingsSection(Transformer):
             is_library, indent_args = self.should_indent_arguments(st)
             aligned_statement = []
             for line in st:
-                if is_blank_multiline(line):
+                if misc.is_blank_multiline(line):
                     line[-1].value = line[-1].value.lstrip(" \t")  # normalize eol from '  \n' to '\n'
                     aligned_statement.extend(line)
                     continue
@@ -163,4 +163,4 @@ class AlignSettingsSection(Transformer):
                     look_up[index] = max(look_up[index], len(token.value))
         if self.min_width:
             look_up = {index: max(length, self.min_width - 4) for index, length in look_up.items()}
-        return {index: round_to_four(length) for index, length in look_up.items()}
+        return {index: misc.round_to_four(length) for index, length in look_up.items()}

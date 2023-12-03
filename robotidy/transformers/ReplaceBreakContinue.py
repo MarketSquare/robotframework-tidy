@@ -9,7 +9,7 @@ except ImportError:
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.transformers import Transformer
-from robotidy.utils import after_last_dot, normalize_name, wrap_in_if_and_replace_statement
+from robotidy.utils import misc
 
 
 class ReplaceBreakContinue(Transformer):
@@ -69,7 +69,7 @@ class ReplaceBreakContinue(Transformer):
     def visit_KeywordCall(self, node):  # noqa
         if not self.in_loop or not node.keyword or node.errors:
             return node
-        normalized_name = after_last_dot(normalize_name(node.keyword))
+        normalized_name = misc.after_last_dot(misc.normalize_name(node.keyword))
         if "forloop" not in normalized_name:
             return node
         if normalized_name == "continueforloop":
@@ -77,9 +77,9 @@ class ReplaceBreakContinue(Transformer):
         elif normalized_name == "exitforloop":
             return self.create_statement_from_tokens(statement=Break, tokens=node.tokens[2:], indent=node.tokens[0])
         elif normalized_name == "continueforloopif":
-            return wrap_in_if_and_replace_statement(node, Continue, self.formatting_config.separator)
+            return misc.wrap_in_if_and_replace_statement(node, Continue, self.formatting_config.separator)
         elif normalized_name == "exitforloopif":
-            return wrap_in_if_and_replace_statement(node, Break, self.formatting_config.separator)
+            return misc.wrap_in_if_and_replace_statement(node, Break, self.formatting_config.separator)
         return node
 
     def visit_For(self, node):  # noqa

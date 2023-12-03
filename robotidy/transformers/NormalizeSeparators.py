@@ -9,7 +9,7 @@ except ImportError:
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.skip import Skip
 from robotidy.transformers import Transformer
-from robotidy.utils import join_comments
+from robotidy.utils.misc import join_comments
 
 
 class NormalizeSeparators(Transformer):

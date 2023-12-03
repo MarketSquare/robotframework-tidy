@@ -5,7 +5,7 @@ import pytest
 
 from robotidy.skip import SkipConfig
 from robotidy.transformers import TransformConfig, TransformConfigMap, load_transformers
-from robotidy.utils import ROBOT_VERSION
+from robotidy.utils.misc import ROBOT_VERSION
 
 
 @pytest.fixture(scope="session")
@@ -230,7 +230,7 @@ class TestLoadTransformers:
             TransformConfig(config, force_include=False, custom_transformer=False, is_config=True)
             for config in configure
         ]
-        with patch("robotidy.transformers.ROBOT_VERSION", mocked_version):
+        with patch("robotidy.utils.misc.ROBOT_VERSION", mocked_version):
             transformers = load_transformers(
                 TransformConfigMap(transform_transformers, [], configure_transformers),
                 skip=skip_config,

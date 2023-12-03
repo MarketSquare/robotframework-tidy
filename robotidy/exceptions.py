@@ -3,7 +3,7 @@ from typing import List
 
 from click import NoSuchOption
 
-from robotidy import utils
+from robotidy.utils import misc
 
 
 class RobotidyConfigError(Exception):
@@ -52,6 +52,6 @@ class MissingOptionalTomliWDependencyError(RobotidyConfigError):
 
 class NoSuchOptionError(NoSuchOption):
     def __init__(self, option_name: str, allowed_options: List[str]):
-        rec_finder = utils.RecommendationFinder()
+        rec_finder = misc.RecommendationFinder()
         similar = rec_finder.find(option_name, allowed_options)
         super().__init__(option_name, possibilities=similar)

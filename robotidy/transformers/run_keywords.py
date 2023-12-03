@@ -1,4 +1,4 @@
-from robotidy.utils import normalize_name
+from robotidy.utils.misc import normalize_name
 
 
 class RunKeywordVariant:

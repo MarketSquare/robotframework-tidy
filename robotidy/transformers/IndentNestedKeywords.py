@@ -7,17 +7,7 @@ from robotidy.exceptions import InvalidParameterValueError
 from robotidy.skip import Skip
 from robotidy.transformers import Transformer
 from robotidy.transformers.run_keywords import get_run_keywords
-from robotidy.utils import (
-    collect_comments_from_tokens,
-    get_line_length_with_sep,
-    get_new_line,
-    is_token_value_in_tokens,
-    join_tokens_with_token,
-    merge_comments_into_one,
-    normalize_name,
-    split_on_token_type,
-    split_on_token_value,
-)
+from robotidy.utils import misc
 
 
 class IndentNestedKeywords(Transformer):
@@ -72,7 +62,7 @@ class IndentNestedKeywords(Transformer):
             )
 
     def get_run_keyword(self, kw_name):
-        kw_norm = normalize_name(kw_name)
+        kw_norm = misc.normalize_name(kw_name)
         return self.run_keywords.get(kw_norm, None)
 
     def get_setting_lines(self, node, indent):  # noqa
@@ -98,7 +88,7 @@ class IndentNestedKeywords(Transformer):
         for column, line in lines[1:]:
             tokens.extend(new_line)
             tokens.append(self.get_separator(column, True))
-            tokens.extend(join_tokens_with_token(line, separator))
+            tokens.extend(misc.join_tokens_with_token(line, separator))
         tokens.append(eol)
         return tokens
 
@@ -107,10 +97,10 @@ class IndentNestedKeywords(Transformer):
         lines = self.get_setting_lines(node, 0)
         if not lines:
             return node
-        comments = collect_comments_from_tokens(node.tokens, indent=None)
+        comments = misc.collect_comments_from_tokens(node.tokens, indent=None)
         separator = self.get_separator()
-        new_line = get_new_line()
-        tokens = [node.data_tokens[0], separator, *join_tokens_with_token(lines[0][1], separator)]
+        new_line = misc.get_new_line()
+        tokens = [node.data_tokens[0], separator, *misc.join_tokens_with_token(lines[0][1], separator)]
         node.tokens = self.parse_keyword_lines(lines, tokens, new_line, eol=node.tokens[-1])
         return (*comments, node)
 
@@ -124,9 +114,9 @@ class IndentNestedKeywords(Transformer):
             return node
         indent = node.tokens[0]
         separator = self.get_separator()
-        new_line = get_new_line(indent)
-        tokens = [indent, node.data_tokens[0], separator, *join_tokens_with_token(lines[0][1], separator)]
-        comment = merge_comments_into_one(node.tokens)
+        new_line = misc.get_new_line(indent)
+        tokens = [indent, node.data_tokens[0], separator, *misc.join_tokens_with_token(lines[0][1], separator)]
+        comment = misc.merge_comments_into_one(node.tokens)
         if comment:
             # need to add comments on first line for [Setup] / [Teardown] settings
             comment_sep = Token(Token.SEPARATOR, "  ")
@@ -145,8 +135,8 @@ class IndentNestedKeywords(Transformer):
             return node
 
         indent = node.tokens[0]
-        comments = collect_comments_from_tokens(node.tokens, indent)
-        assign, kw_tokens = split_on_token_type(node.data_tokens, Token.KEYWORD)
+        comments = misc.collect_comments_from_tokens(node.tokens, indent)
+        assign, kw_tokens = misc.split_on_token_type(node.data_tokens, Token.KEYWORD)
         lines = self.parse_sub_kw(kw_tokens)
         if not lines:
             return node
@@ -155,9 +145,9 @@ class IndentNestedKeywords(Transformer):
         separator = self.get_separator()
         tokens = [indent]
         if assign:
-            tokens.extend([*join_tokens_with_token(assign, separator), separator])
-        tokens.extend(join_tokens_with_token(lines[0][1], separator))
-        new_line = get_new_line(indent)
+            tokens.extend([*misc.join_tokens_with_token(assign, separator), separator])
+        tokens.extend(misc.join_tokens_with_token(lines[0][1], separator))
+        new_line = misc.get_new_line(indent)
         node.tokens = self.parse_keyword_lines(lines, tokens, new_line, eol=node.tokens[-1])
         return (*comments, node)
 
@@ -176,11 +166,11 @@ class IndentNestedKeywords(Transformer):
             if (
                 column == 0
                 or len(line) == 1
-                or (pre_indent + get_line_length_with_sep(line, sep_len)) <= allowed_length
+                or (pre_indent + misc.get_line_length_with_sep(line, sep_len)) <= allowed_length
             ):
                 new_lines.append((column, line))
                 continue
-            if (pre_indent + get_line_length_with_sep(line[:2], sep_len)) <= allowed_length:
+            if (pre_indent + misc.get_line_length_with_sep(line[:2], sep_len)) <= allowed_length:
                 first_line_end = 2
             else:
                 first_line_end = 1
@@ -207,12 +197,12 @@ class IndentNestedKeywords(Transformer):
         tokens = tokens[run_keyword.resolve :]
         if run_keyword.branches:
             if "ELSE IF" in run_keyword.branches:
-                while is_token_value_in_tokens("ELSE IF", tokens):
+                while misc.is_token_value_in_tokens("ELSE IF", tokens):
                     column = max(column, 1)
-                    prefix, branch, tokens = split_on_token_value(tokens, "ELSE IF", 2)
+                    prefix, branch, tokens = misc.split_on_token_value(tokens, "ELSE IF", 2)
                     lines.extend(self.parse_sub_kw(prefix, column + 1))
                     lines.append((column, branch))
-            if "ELSE" in run_keyword.branches and is_token_value_in_tokens("ELSE", tokens):
+            if "ELSE" in run_keyword.branches and misc.is_token_value_in_tokens("ELSE", tokens):
                 return self.split_on_else(tokens, lines, column)
         elif run_keyword.split_on_and:
             return self.split_on_and(tokens, lines, column)
@@ -220,16 +210,16 @@ class IndentNestedKeywords(Transformer):
 
     def split_on_else(self, tokens, lines, column):
         column = max(column, 1)
-        prefix, branch, tokens = split_on_token_value(tokens, "ELSE", 1)
+        prefix, branch, tokens = misc.split_on_token_value(tokens, "ELSE", 1)
         lines.extend(self.parse_sub_kw(prefix, column + 1))
         lines.append((column, branch))
         lines.extend(self.parse_sub_kw(tokens, column + 1))
         return lines
 
     def split_on_and(self, tokens, lines, column):
-        if is_token_value_in_tokens("AND", tokens):
-            while is_token_value_in_tokens("AND", tokens):
-                prefix, branch, tokens = split_on_token_value(tokens, "AND", 1)
+        if misc.is_token_value_in_tokens("AND", tokens):
+            while misc.is_token_value_in_tokens("AND", tokens):
+                prefix, branch, tokens = misc.split_on_token_value(tokens, "AND", 1)
                 if self.indent_and == "keep_in_line":
                     lines.extend(self.parse_sub_kw(prefix + branch, column + 1))
                 else:

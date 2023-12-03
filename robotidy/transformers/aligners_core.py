@@ -13,7 +13,7 @@ from robotidy.disablers import skip_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 from robotidy.skip import Skip
 from robotidy.transformers import Transformer
-from robotidy.utils import is_blank_multiline, join_comments, round_to_four
+from robotidy.utils import misc
 
 WHITESPACE_TOKENS = frozenset({Token.SEPARATOR, Token.EOS})
 
@@ -189,9 +189,9 @@ class AlignKeywordsTestsSection(Transformer):
                         first_sep = False
                         continue
                     if width == 0:
-                        separator_len = round_to_four(len(prev_token.value) + self.formatting_config.space_count) - len(
-                            prev_token.value
-                        )
+                        separator_len = misc.round_to_four(
+                            len(prev_token.value) + self.formatting_config.space_count
+                        ) - len(prev_token.value)
                     else:
                         separator_len = max(width - len(prev_token.value), self.formatting_config.space_count)
                     token.value = " " * separator_len
@@ -351,7 +351,7 @@ class AlignKeywordsTestsSection(Transformer):
 
         At the end comments are appended at the end of the line and line is returned.
         """
-        if is_blank_multiline(line):  # ...\n edge case
+        if misc.is_blank_multiline(line):  # ...\n edge case
             line[-1].value = line[-1].value.lstrip(" \t")  # normalize eol from '  \n' to '\n'
             return line
         tokens, comments = separate_comments(line)
@@ -360,7 +360,7 @@ class AlignKeywordsTestsSection(Transformer):
         # skip_tokens, tokens = self.skip_return_values_if_needed(tokens)
         aligned = self.align_tokens(tokens[:-2], skip_width)
         last_token = strip_extra_whitespace(tokens[-2])
-        aligned.extend([last_token, *join_comments(comments), tokens[-1]])
+        aligned.extend([last_token, *misc.join_comments(comments), tokens[-1]])
         return aligned
 
     def too_many_misaligned_cols(self, misaligned_cols: int, prev_overflow_len: int, tokens: List, index: int):
@@ -400,7 +400,7 @@ class AlignKeywordsTestsSection(Transformer):
             aligned.append(token)
             width = self.get_width(column)
             if width == 0:
-                separator_len = round_to_four(len(token.value) + min_separator) - len(token.value)
+                separator_len = misc.round_to_four(len(token.value) + min_separator) - len(token.value)
             else:
                 separator_len = width - len(token.value) - prev_overflow_len
                 if separator_len >= min_separator:
@@ -431,7 +431,7 @@ class AlignKeywordsTestsSection(Transformer):
                                 separator_len = next_width - prev_overflow_len + min_separator
                                 prev_overflow_len = 0
                     else:  # "overflow"
-                        while round_to_four(len(token.value) + min_separator) > width:
+                        while misc.round_to_four(len(token.value) + min_separator) > width:
                             column += 1
                             width += self.get_width(column, override_default_zero=True)
                         separator_len = width - len(token.value)
@@ -537,7 +537,7 @@ class ColumnWidthCounter(ModelVisitor):
             raw_lens = {}
             for column, token in enumerate(data_tokens):
                 max_width = self.get_width(column)
-                token_len = round_to_four(len(token.value) + self.min_separator)
+                token_len = misc.round_to_four(len(token.value) + self.min_separator)
                 if max_width == 0 or token_len <= max_width:
                     raw_lens[column] = token_len
                 elif self.handle_too_long == "ignore_line":
@@ -556,5 +556,5 @@ class ColumnWidthCounter(ModelVisitor):
     def visit_Documentation(self, node):  # noqa
         if self.skip_documentation:
             return
-        doc_header_len = round_to_four(len(node.data_tokens[0].value) + self.min_separator)
+        doc_header_len = misc.round_to_four(len(node.data_tokens[0].value) + self.min_separator)
         self.raw_widths[0].append(doc_header_len)

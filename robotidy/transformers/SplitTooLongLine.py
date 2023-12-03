@@ -11,7 +11,7 @@ from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.skip import Skip
 from robotidy.transformers import Transformer
 from robotidy.transformers.run_keywords import get_run_keywords
-from robotidy.utils import ROBOT_VERSION, normalize_name
+from robotidy.utils.misc import ROBOT_VERSION, normalize_name
 
 EOL = Token(Token.EOL)
 CONTINUATION = Token(Token.CONTINUATION)

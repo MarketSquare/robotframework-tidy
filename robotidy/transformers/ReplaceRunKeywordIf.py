@@ -2,7 +2,7 @@ from robot.api.parsing import ElseHeader, ElseIfHeader, End, If, IfHeader, Keywo
 
 from robotidy.disablers import skip_if_disabled, skip_section_if_disabled
 from robotidy.transformers import Transformer
-from robotidy.utils import after_last_dot, is_var, normalize_name
+from robotidy.utils import misc
 
 
 def insert_separators(indent, tokens, separator):
@@ -91,7 +91,7 @@ class ReplaceRunKeywordIf(Transformer):
     def visit_KeywordCall(self, node):  # noqa
         if not node.keyword:
             return node
-        if after_last_dot(normalize_name(node.keyword)) == "runkeywordif":
+        if misc.after_last_dot(misc.normalize_name(node.keyword)) == "runkeywordif":
             return self.create_branched(node)
         return node
 
@@ -144,13 +144,13 @@ class ReplaceRunKeywordIf(Transformer):
         return prev_if
 
     def create_keywords(self, arg_tokens, assign, indent):
-        keyword_name = normalize_name(arg_tokens[0].value)
+        keyword_name = misc.normalize_name(arg_tokens[0].value)
         if keyword_name == "runkeywords":
             return [
                 self.args_to_keyword(keyword[1:], assign, indent)
                 for keyword in self.split_args_on_delimiters(arg_tokens, ("AND",))
             ]
-        elif is_var(keyword_name):
+        elif misc.is_var(keyword_name):
             keyword_token = Token(Token.KEYWORD_NAME, "Run Keyword")
             arg_tokens = [keyword_token] + arg_tokens
         return [self.args_to_keyword(arg_tokens, assign, indent)]
@@ -179,9 +179,9 @@ class ReplaceRunKeywordIf(Transformer):
 
     @staticmethod
     def check_for_useless_set_variable(tokens, assign):
-        if not assign or normalize_name(tokens[0].value) != "setvariable" or len(tokens[1:]) != len(assign):
+        if not assign or misc.normalize_name(tokens[0].value) != "setvariable" or len(tokens[1:]) != len(assign):
             return False
         for var, var_assign in zip(tokens[1:], assign):
-            if normalize_name(var.value) != normalize_name(var_assign.value):
+            if misc.normalize_name(var.value) != misc.normalize_name(var_assign.value):
                 return False
         return True

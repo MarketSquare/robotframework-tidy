@@ -6,7 +6,7 @@ except ImportError:
 from robotidy.disablers import skip_if_disabled
 from robotidy.skip import Skip
 from robotidy.transformers.aligners_core import AlignKeywordsTestsSection
-from robotidy.utils import is_suite_templated
+from robotidy.utils.misc import is_suite_templated
 
 
 class AlignTestCasesSection(AlignKeywordsTestsSection):

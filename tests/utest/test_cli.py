@@ -7,11 +7,12 @@ from unittest.mock import patch
 import pytest
 from click import FileError, NoSuchOption
 
-from robotidy import skip, utils
+from robotidy import skip
 from robotidy.config import RawConfig
 from robotidy.files import DEFAULT_EXCLUDES, find_project_root, get_paths, load_toml_file, read_pyproject_config
 from robotidy.transformers.aligners_core import AlignKeywordsTestsSection
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
+from robotidy.utils import misc
 
 from .utils import run_tidy
 
@@ -221,7 +222,7 @@ class TestCli:
     @pytest.mark.parametrize("flag", ["--list", "-l"])
     @pytest.mark.parametrize("target_version", ["4", "5", None])
     def test_list_transformers(self, flag, target_version):
-        if target_version and target_version == "5" and utils.ROBOT_VERSION.major < 5:
+        if target_version and target_version == "5" and misc.ROBOT_VERSION.major < 5:
             pytest.skip("Skip RF 5.0 only tests in previous RF versions")
         cmd = [flag]
         if target_version:
@@ -230,7 +231,7 @@ class TestCli:
         assert "Non-default transformers needs to be selected explicitly" in result.output
         assert "ReplaceRunKeywordIf        │ Yes" in result.output
         assert "SmartSortKeywords" in result.output  # this transformer is disabled by default
-        if (not target_version and utils.ROBOT_VERSION.major == 5) or target_version and target_version == "5":
+        if (not target_version and misc.ROBOT_VERSION.major == 5) or target_version and target_version == "5":
             assert "│ ReplaceReturns             │ Yes" in result.output
         elif target_version and target_version == "4":
             assert "│ ReplaceReturns             │ No" in result.output
@@ -322,7 +323,7 @@ class TestCli:
     @pytest.mark.parametrize("source, return_status", [("golden.robot", 0), ("not_golden.robot", 1)])
     def test_check(self, source, return_status):
         source = TEST_DATA_DIR / "check" / source
-        with patch("robotidy.utils.ModelWriter") as mock_writer:
+        with patch("robotidy.utils.misc.ModelWriter") as mock_writer:
             run_tidy(
                 ["--check", "--transform", "NormalizeSectionHeaderName", str(source)],
                 exit_code=return_status,
@@ -332,7 +333,7 @@ class TestCli:
     @pytest.mark.parametrize("source, return_status", [("golden.robot", 0), ("not_golden.robot", 1)])
     def test_check_overwrite(self, source, return_status):
         source = TEST_DATA_DIR / "check" / source
-        with patch("robotidy.utils.ModelWriter") as mock_writer:
+        with patch("robotidy.utils.misc.ModelWriter") as mock_writer:
             run_tidy(
                 ["--check", "--overwrite", "--transform", "NormalizeSectionHeaderName", str(source)],
                 exit_code=return_status,
@@ -352,7 +353,7 @@ class TestCli:
         if color_flag:
             command.append(color_flag)
         command.extend(["--transform", "NormalizeSectionHeaderName", str(source)])
-        with patch.dict("os.environ", mocked_env), patch("robotidy.utils.decorate_diff_with_color") as mock_color:
+        with patch.dict("os.environ", mocked_env), patch("robotidy.utils.misc.decorate_diff_with_color") as mock_color:
             run_tidy(command)
             if should_be_colored:
                 mock_color.assert_called()
@@ -401,8 +402,8 @@ class TestCli:
         allowed_paths = {Path(source, path) for path in allowed}
         paths = get_paths(
             (str(source),),
-            exclude=utils.validate_regex(exclude),
-            extend_exclude=utils.validate_regex(extend_exclude),
+            exclude=misc.validate_regex(exclude),
+            extend_exclude=misc.validate_regex(extend_exclude),
             skip_gitignore=skip_gitignore,
         )
         assert paths == allowed_paths
@@ -452,7 +453,7 @@ class TestCli:
         assert result.output == expected_output
 
     @pytest.mark.parametrize("target_version", ["rf", "abc", "5", "rf3"])
-    @patch("robotidy.utils.ROBOT_VERSION")
+    @patch("robotidy.utils.misc.ROBOT_VERSION")
     def test_invalid_target_version(self, mocked_version, target_version):
         mocked_version.major = 5
         result = run_tidy(f"--target-version {target_version} .".split(), exit_code=2)
@@ -464,7 +465,7 @@ class TestCli:
         error = " ".join(error.split())
         return error
 
-    @patch("robotidy.utils.ROBOT_VERSION")
+    @patch("robotidy.utils.misc.ROBOT_VERSION")
     @pytest.mark.parametrize("option_name", ["-tv", "--target-version"])
     def test_too_recent_target_version(self, mocked_version, option_name):
         target_version = 5

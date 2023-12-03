@@ -10,7 +10,7 @@ except ImportError:
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.skip import Skip
 from robotidy.transformers import Transformer
-from robotidy.utils import is_suite_templated
+from robotidy.utils.misc import is_suite_templated
 
 
 class NormalizeNewLines(Transformer):
