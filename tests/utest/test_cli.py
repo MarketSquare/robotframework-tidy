@@ -552,6 +552,6 @@ class TestGenerateConfig:
             result = run_tidy(["--generate-config"], exit_code=1)
         expected_output = (
             "Error: Missing optional dependency: tomli_w. Install robotidy with extra `generate_config` "
-            "profile:\n\npip install robotidy[generate_config]\n"
+            "profile:\n\npip install robotframework-tidy[generate_config]\n"
         )
         assert result.output == expected_output
