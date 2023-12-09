@@ -51,7 +51,7 @@ New option to generate configuration file with most important options and their 
 
 It is only enabled after installing optional ``generate_config`` profile::
 
-    pip install robotidy[generate_config]
+    pip install robotframework-tidy[generate_config]
 
 Generated configuration contains all transformers with their enabled status. Example of the file::
 

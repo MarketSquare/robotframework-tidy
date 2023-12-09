@@ -89,7 +89,7 @@ Generate configuration file
 It is possible to generate configuration files that contains most important options with their default values.
 First install ``robotidy`` with ``generate_config`` that contains module for writing TOML files::
 
-    pip install robotidy[generate_config]
+    pip install robotframework-tidy[generate_config]
 
 You can generate configuration now::
 

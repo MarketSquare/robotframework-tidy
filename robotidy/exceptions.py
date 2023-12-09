@@ -46,7 +46,7 @@ class MissingOptionalTomliWDependencyError(RobotidyConfigError):
     def __init__(self):
         super().__init__(
             f"Missing optional dependency: tomli_w. Install robotidy with extra `generate_config` "
-            f"profile:\n\npip install robotidy[generate_config]"
+            f"profile:\n\npip install robotframework-tidy[generate_config]"
         )
 
 
