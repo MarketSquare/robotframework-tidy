@@ -1,0 +1,38 @@
+:orphan:
+
+==============
+Robotidy 4.7.0
+==============
+
+Robot Framework 7.0 critical fixes and dependency updates.
+
+You can install the latest available version by running
+
+::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version
+
+::
+
+    pip install robotframework-tidy==4.7.0
+
+.. contents::
+   :depth: 2
+   :local:
+
+Fixes
+=====
+
+Robot Framework 7.0 backward incompatible changes: VariableIterator refactor
+----------------------------------------------------------------------------
+
+Robotidy variables handling relied upon ``VariableIterator`` class imported from Robot Framework package.
+It caused ImportError which should be now fixed.
+
+Robot Framework 7.0 backward incompatible changes: ForceTags deprecation (#584)
+--------------------------------------------------------------------------------
+
+Our tag transformers imports ``Force Tags`` class from ``robot`` module. It was deprecated in Robot Framework 7
+and caused ImportError when using Robotidy. It should be now fixed.
