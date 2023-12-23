@@ -44,7 +44,7 @@ setup(
         "robotframework>=4.0",
         "click==8.1.*",
         "colorama>=0.4.3,<0.4.7",
-        "pathspec>=0.9.0,<0.11.3",
+        "pathspec>=0.9.0,<0.12.2",
         "tomli==2.0.*",
         "rich_click>=1.4,<1.7.3",
         "jinja2>=3.0,<4.0",
