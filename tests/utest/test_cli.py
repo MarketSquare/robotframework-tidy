@@ -39,16 +39,6 @@ def switch_cwd(new_cwd):
         os.chdir(prev_cwd)
 
 
-@contextmanager
-def switch_cwd(new_cwd):
-    prev_cwd = Path.cwd()
-    os.chdir(new_cwd)
-    try:
-        yield
-    finally:
-        os.chdir(prev_cwd)
-
-
 class TestCli:
     @pytest.mark.parametrize(
         "name, similar",
@@ -320,21 +310,38 @@ class TestCli:
         result = run_tidy([flag])
         assert f"Robotidy is a tool for formatting" in result.output
 
-    @pytest.mark.parametrize("source, return_status", [("golden.robot", 0), ("not_golden.robot", 1)])
-    def test_check(self, source, return_status):
+    @pytest.mark.parametrize(
+        "source, return_status, expected_output",
+        [
+            ("golden.robot", 0, "\n0 files would be reformatted, 1 file would be left unchanged.\n"),
+            ("not_golden.robot", 1, "\n1 file would be reformatted, 0 files would be left unchanged.\n"),
+        ],
+    )
+    def test_check(self, source, return_status, expected_output):
         source = TEST_DATA_DIR / "check" / source
+        if return_status:
+            expected_output = f"Would reformat {source}\n{expected_output}"
         with patch("robotidy.utils.misc.ModelWriter") as mock_writer:
-            run_tidy(
+            result = run_tidy(
                 ["--check", "--transform", "NormalizeSectionHeaderName", str(source)],
                 exit_code=return_status,
             )
             mock_writer.assert_not_called()
+            assert result.output == expected_output
 
-    @pytest.mark.parametrize("source, return_status", [("golden.robot", 0), ("not_golden.robot", 1)])
-    def test_check_overwrite(self, source, return_status):
+    @pytest.mark.parametrize(
+        "source, return_status, expected_output",
+        [
+            ("golden.robot", 0, "\n0 files reformatted, 1 file left unchanged.\n"),
+            ("not_golden.robot", 1, "\n1 file reformatted, 0 files left unchanged.\n"),
+        ],
+    )
+    def test_check_overwrite(self, source, return_status, expected_output):
         source = TEST_DATA_DIR / "check" / source
+        if return_status:
+            expected_output = f"Reformatted {source}\n{expected_output}"
         with patch("robotidy.utils.misc.ModelWriter") as mock_writer:
-            run_tidy(
+            result = run_tidy(
                 ["--check", "--overwrite", "--transform", "NormalizeSectionHeaderName", str(source)],
                 exit_code=return_status,
             )
@@ -342,6 +349,7 @@ class TestCli:
                 mock_writer.assert_called()
             else:
                 mock_writer.assert_not_called()
+            assert result.output == expected_output
 
     @pytest.mark.parametrize("color_flag", ["--color", "--no-color", None])
     @pytest.mark.parametrize("color_env", [True, False])
@@ -409,15 +417,27 @@ class TestCli:
         assert paths == allowed_paths
 
     @pytest.mark.parametrize(
-        "source, should_parse",
+        "source, should_parse, summary",
         [
-            (None, ["test.robot", "resources/test.robot"]),  # calls: robotidy
-            ("test3.robot", ["test3.robot"]),  # calls: robotidy test3.robot
-            ("test.robot", ["test.robot"]),
-            (".", ["test.robot", "test3.robot", "resources/test.robot"]),
+            (
+                None,
+                ["test.robot", "resources/test.robot"],
+                "0 files reformatted, 2 files left unchanged.",
+            ),  # calls: robotidy
+            (
+                "test3.robot",
+                ["test3.robot"],
+                "0 files reformatted, 1 file left unchanged.",
+            ),  # calls: robotidy test3.robot
+            ("test.robot", ["test.robot"], "0 files reformatted, 1 file left unchanged."),
+            (
+                ".",
+                ["test.robot", "test3.robot", "resources/test.robot"],
+                "0 files reformatted, 3 files left unchanged.",
+            ),
         ],
     )
-    def test_src_and_space_in_param_in_configuration(self, source, should_parse):
+    def test_src_and_space_in_param_in_configuration(self, source, should_parse, summary):
         source_dir = TEST_DATA_DIR / "pyproject_with_src"
         os.chdir(source_dir)
         if source is not None:
@@ -425,10 +445,10 @@ class TestCli:
             result = run_tidy([str(source)])
         else:
             result = run_tidy()
-        expected = [f"Loaded configuration from {source_dir / 'pyproject.toml'}"]
+        expected = [f"Loaded configuration from {source_dir / 'pyproject.toml'}", summary]
         for file in should_parse:
             path = source_dir / file
-            expected.append(f"Transforming {path} file")
+            expected.append(f"Found {path} file")
         actual = sorted(line for line in result.output.split("\n") if line.strip())
         assert actual == sorted(expected)
 

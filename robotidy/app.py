@@ -29,8 +29,11 @@ class Robotidy:
 
     def transform_files(self):
         changed_files = 0
+        all_files = 0
+        stdin = False
         for source, config in self.main_config.get_sources_with_configs():
             self.config = config
+            all_files += 1
             disabler_finder = RegisterDisablers(self.config.formatting.start_line, self.config.formatting.end_line)
             try:
                 stdin = False
@@ -40,7 +43,7 @@ class Robotidy:
                         click.echo("Loading file from stdin")
                     source = self.load_from_stdin()
                 elif self.config.verbose:
-                    click.echo(f"Transforming {source} file")
+                    click.echo(f"Found {source} file")
                 model = self.get_model(source)
                 model_path = model.source
                 disabler_finder.visit(model)
@@ -48,6 +51,7 @@ class Robotidy:
                     continue
                 diff, old_model, new_model, model = self.transform_until_stable(model, disabler_finder)
                 if diff:
+                    self.log_formatted_source(source, stdin)
                     changed_files += 1
                 self.output_diff(model_path, old_model, new_model)
                 if stdin:
@@ -59,9 +63,32 @@ class Robotidy:
                     f"Failed to decode {source}. Default supported encoding by Robot Framework is UTF-8. Skipping file"
                 )
                 pass
+        return self.formatting_result(all_files, changed_files, stdin)
+
+    def formatting_result(self, all_files: int, changed_files: int, stdin: bool):
+        """
+        Print formatting summary and return status code.
+        """
+        if not stdin:
+            all_files = all_files - changed_files
+            all_files_plurar = "" if all_files == 1 else "s"
+            changed_files_plurar = "" if changed_files == 1 else "s"
+            future_tense = "" if self.config.overwrite else " would be"
+            click.echo(
+                f"\n{changed_files} file{changed_files_plurar}{future_tense} reformatted, "
+                f"{all_files} file{all_files_plurar}{future_tense} left unchanged."
+            )
         if not self.config.check or not changed_files:
             return 0
         return 1
+
+    def log_formatted_source(self, source: str, stdin: bool):
+        if stdin:
+            return
+        if not self.config.overwrite:
+            click.echo(f"Would reformat {source}")
+        else:
+            click.echo(f"Reformatted {source}")
 
     def transform_until_stable(self, model, disabler_finder):
         diff, old_model, new_model = self.transform(model, disabler_finder.disablers)
