@@ -9,6 +9,9 @@ class TestAlignVariablesSection(TransformerAcceptanceTest):
     def test_align_variables(self):
         self.compare(source="tests.robot")
 
+    def test_align_variables_2space_sep(self):
+        self.compare(source="tests.robot", expected="tests_2space_sep.robot", config=" --spacecount 2")
+
     def test_align_three_columns(self):
         self.compare(source="tests.robot", expected="three_columns.robot", config=":up_to_column=3")
 
@@ -74,3 +77,8 @@ class TestAlignVariablesSection(TransformerAcceptanceTest):
     @pytest.mark.parametrize("min_width", [49, 50, 51, 52])
     def test_min_width_longer(self, min_width):
         self.compare(source="tests.robot", expected="tests_min_width_50_width.robot", config=f":min_width={min_width}")
+
+    @pytest.mark.parametrize("space_count", [2, 4])
+    def test_single_var(self, space_count):
+        not_modified = space_count == 4
+        self.compare(source="single_var.robot", not_modified=not_modified, config=f" --spacecount {space_count}")
