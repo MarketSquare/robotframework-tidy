@@ -78,7 +78,7 @@ class ArgumentsAndReturnsVisitor(ModelVisitor):
             return
         self.returns = list(node.values)
 
-    visit_Return = visit_ReturnStatement
+    visit_Return = visit_ReturnSetting = visit_ReturnStatement
 
 
 class GenerateDocumentation(Transformer):

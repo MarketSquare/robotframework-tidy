@@ -293,7 +293,7 @@ class AlignKeywordsTestsSection(Transformer):
             return node
         return self.align_node(node, check_length=False)
 
-    visit_ReturnStatement = visit_Return
+    visit_ReturnStatement = visit_ReturnSetting = visit_Return
 
     @skip_if_disabled
     def visit_Template(self, node):  # noqa
