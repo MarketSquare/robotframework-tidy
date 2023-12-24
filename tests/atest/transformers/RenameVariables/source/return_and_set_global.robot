@@ -22,3 +22,6 @@ Set Variable
     Set Global Variable    &local_dict
     Set Global Variable    ${local_${local4}}
     Log Many    ${local}    ${local2}    ${local3}    ${local4}    @{local_list}    ${local_dict}
+    Set Local Variable    $local_list
+    Set Local Variable    ${local2}
+    Log Many    ${local}    ${local2}    ${local3}    ${local4}    @{local_list}    ${local_dict}
