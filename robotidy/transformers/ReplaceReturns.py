@@ -85,6 +85,8 @@ class ReplaceReturns(Transformer):
     def visit_Return(self, node):  # noqa
         self.return_statement = node
 
+    visit_ReturnSetting = visit_Return
+
     @skip_if_disabled
     def visit_Error(self, node):  # noqa
         """Remove duplicate [Return]"""
