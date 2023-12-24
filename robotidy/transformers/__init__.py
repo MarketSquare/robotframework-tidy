@@ -361,7 +361,7 @@ def split_args_to_class_and_skip(args):
     return filtered_args, skip_args
 
 
-def resolve_argument_names(argument_names, handles_skip):
+def resolve_argument_names(argument_names: List[str], handles_skip):
     """Get transformer argument names with resolved skip parameters."""
     new_args = ["enabled"]
     if "skip" not in argument_names:
@@ -421,12 +421,13 @@ def resolve_args(transformer, spec, args, global_skip, handles_skip):
     "skip" parameter the Skip class will be also added to class arguments.
     """
     args, skip_args = split_args_to_class_and_skip(args)
-    argument_names = resolve_argument_names(spec.argument_names, handles_skip)
+    spec_args = list(spec.argument_names)
+    argument_names = resolve_argument_names(spec_args, handles_skip)
     assert_handled_arguments(transformer, args, argument_names)
     try:
         positional, named = spec.resolve(args)
         named = dict(named)
-        if "skip" in spec.argument_names:
+        if "skip" in spec_args:
             named["skip"] = get_skip_class(spec, skip_args, global_skip)
         return positional, named, argument_names
     except ValueError as err:
