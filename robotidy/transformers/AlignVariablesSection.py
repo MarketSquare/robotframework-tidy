@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import Dict
 
 from robot.api.parsing import Token
 from robot.parsing.model import Statement
@@ -33,8 +34,8 @@ class AlignVariablesSection(Transformer):
     ...             b=c
     ```
 
-    You can configure how many columns should be aligned to longest token in given column. The remaining columns
-    will use fixed length separator length ``--spacecount``. By default only first two columns are aligned.
+    You can configure how many columns should be aligned to the longest token in given column. The remaining columns
+    will use fixed length separator length ``--spacecount``. By default, only first two columns are aligned.
     To align first three columns:
 
     ```console
@@ -87,7 +88,7 @@ class AlignVariablesSection(Transformer):
         nodes_to_be_aligned = [st for st in statements if isinstance(st, list)]
         if not nodes_to_be_aligned:
             return node
-        look_up = self.create_look_up(nodes_to_be_aligned)  # for every col find longest value
+        look_up = self.create_look_up(nodes_to_be_aligned)  # for every col find the longest value
         node.body = self.align_rows(statements, look_up)
         return node
 
@@ -106,7 +107,7 @@ class AlignVariablesSection(Transformer):
                 up_to = self.up_to_column if self.up_to_column != -1 else len(line) - 2
                 for index, token in enumerate(line[:-2]):
                     aligned_statement.append(token)
-                    separator = self.calc_separator(index, up_to, token, look_up)
+                    separator = self.get_separator(index, up_to, token, look_up)
                     aligned_statement.append(Token(Token.SEPARATOR, separator))
                 last_token = line[-2]
                 # remove leading whitespace before token
@@ -116,21 +117,24 @@ class AlignVariablesSection(Transformer):
             aligned_statements.append(Statement.from_tokens(aligned_statement))
         return aligned_statements
 
-    def calc_separator(self, index, up_to, token, look_up):
+    def get_separator(self, index: int, up_to: int, token, look_up: Dict[int, int]) -> str:
         if index < up_to:
             if self.fixed_width:
                 return max(self.fixed_width - len(token.value), self.formatting_config.space_count) * " "
-            return (look_up[index] - len(token.value) + 4) * " "
+            return (look_up[index] - len(token.value)) * " "
         else:
-            return self.formatting_config.space_count * " "
+            return self.formatting_config.separator
 
-    def create_look_up(self, statements):
+    def create_look_up(self, statements) -> Dict[int, int]:
         look_up = defaultdict(int)
         for st in statements:
             for line in st:
                 up_to = self.up_to_column if self.up_to_column != -1 else len(line)
                 for index, token in enumerate(line[:up_to]):
                     look_up[index] = max(look_up[index], len(token.value))
-        if self.min_width:
-            look_up = {index: max(length, self.min_width - 4) for index, length in look_up.items()}
-        return {index: misc.round_to_four(length) for index, length in look_up.items()}
+        for index, length in look_up.items():
+            min_for_token = length + self.formatting_config.space_count
+            if self.min_width:
+                min_for_token = max(min_for_token, self.min_width)
+            look_up[index] = misc.round_to_four(min_for_token)
+        return look_up
