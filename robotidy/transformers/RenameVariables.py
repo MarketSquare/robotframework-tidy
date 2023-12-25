@@ -403,6 +403,27 @@ class RenameVariables(Transformer):
             arg.value = self.rename_value(arg.value, variable_case="auto", is_var=False)
         return self.generic_visit(node)
 
+    @skip_if_disabled
+    def visit_Var(self, node):  # noqa
+        if node.errors:
+            return node
+        for argument in node.get_tokens(Token.ARGUMENT):
+            argument.value = self.rename_value(argument.value, variable_case="auto", is_var=False)
+        variable = node.get_token(Token.VARIABLE)
+        if variable:
+            if self._is_var_scope_local(node):
+                self.variables_scope.add_local(variable.value)
+            variable.value = self.rename_value(variable.value, variable_case="auto", is_var=False)
+        return node
+
+    @staticmethod
+    def _is_var_scope_local(node):
+        is_local = True
+        for option in node.get_tokens(Token.OPTION):
+            if "scope=" in option.value:
+                is_local = option.value.lower() == "scope=local"
+        return is_local
+
     def rename_value(self, value: str, variable_case: str, is_var: bool = False):
         try:
             variables = list(variable_matcher.VariableMatches(value))

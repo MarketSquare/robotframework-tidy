@@ -103,3 +103,9 @@ class TestRenameVariables(TransformerAcceptanceTest):
 
     def test_extended_variables_syntax(self):
         self.compare(source="math_operations.robot")
+
+    def test_var_syntax(self):
+        self.compare(
+            source="VAR_syntax.robot",
+            target_version=">6.1.1",
+        )
