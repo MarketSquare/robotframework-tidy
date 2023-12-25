@@ -12,12 +12,18 @@ from robotidy.transformers import Transformer
 from robotidy.utils import misc, variable_matcher
 
 SET_GLOBAL_VARIABLES = {"settestvariable", "settaskvariable", "setsuitevariable", "setglobalvariable"}
+SET_LOCAL_VARIABLE = "setlocalvariable"
 
 
 def is_set_global_variable(keyword: str) -> bool:
     """Checks if keyword call is Set Test/Suite/Global keyword."""
     normalized_name = misc.normalize_name(misc.after_last_dot(keyword))
     return normalized_name in SET_GLOBAL_VARIABLES
+
+
+def is_set_local_variable(keyword: str) -> bool:
+    normalized_name = misc.normalize_name(misc.after_last_dot(keyword))
+    return normalized_name == SET_LOCAL_VARIABLE
 
 
 def is_nested_variable(variable: str) -> bool:
@@ -50,35 +56,39 @@ class VariablesScope:
         self._local = set()
         self._global = set()
 
-    def add_global(self, variable: str):
+    def _get_var_name(self, variable: str) -> "str|None":
+        if len(variable) > 1 and variable[0] in "$@&" and variable[1] != "{":
+            variable = f"{variable[0]}{{{variable[1:]}}}"
         match = search_variable(variable, ignore_errors=True)
-        if not match.base:
+        return match.base
+
+    def add_global(self, variable: str):
+        var_name = self._get_var_name(variable)
+        if not var_name:
             return
-        self._global.add(misc.normalize_name(match.base))
+        self._global.add(misc.normalize_name(var_name))
 
     def add_local(self, variable: str, split_pattern: bool = False):
         """Add variable name to local cache.
 
         If the variable is embedded argument, it can contain pattern we need to ignore (${var:[^pattern]})
         """
-        match = search_variable(variable, ignore_errors=True)
-        if not match.base:
+        var_name = self._get_var_name(variable)
+        if not var_name:
             return
-        name = match.base
         if split_pattern:
-            name = name.split(":", maxsplit=1)[0]
-        self._local.add(misc.normalize_name(name))
+            var_name = var_name.split(":", maxsplit=1)[0]
+        self._local.add(misc.normalize_name(var_name))
 
     def change_scope_from_local_to_global(self, variable: str):
         """
         Changes the variable scope from local to global by removing it from local cache and adding to global one.
         """
-        match = search_variable(variable, ignore_errors=True)
-        if not match.base:
+        var_name = self._get_var_name(variable)
+        if not var_name:
             return
-        name = match.base
-        self._local.discard(misc.normalize_name(name))
-        self._global.add(misc.normalize_name(match.base))
+        self._local.discard(misc.normalize_name(var_name))
+        self._global.add(misc.normalize_name(var_name))
 
     def is_local(self, variable: str):
         return misc.normalize_name(variable) in self._local
@@ -98,8 +108,8 @@ class RenameVariables(Transformer):
 
     - variable case depends on the variable scope (lowercase for local variables and uppercase for non-local variables)
     - leading and trailing whitespace is stripped
-    - more than 2 consecutive whitespace in name is replaced by 1
-    - whitespace is replaced by _
+    - more than 2 consecutive whitespace in name replaced by 1
+    - whitespace replaced by _
     - camelCase is converted to snake_case
 
     Conventions can be configured or switched off using parameters - read more in the documentation.
@@ -115,7 +125,7 @@ class RenameVariables(Transformer):
 
     *** Test Cases ***
     Test
-        ${local}    Set Variable    variable
+        ${local}    Set Variable    value
         Log    ${local}
         Log    ${global}
         Log    ${local['item']}
@@ -141,7 +151,7 @@ class RenameVariables(Transformer):
 
     *** Test Cases ***
     Test
-        ${local}    Set Variable    variable
+        ${local}    Set Variable    value
         Log    ${local}
         Log    ${GLOBAL}
         Log    ${local['item']}
@@ -321,6 +331,7 @@ class RenameVariables(Transformer):
         return self.generic_visit(node)
 
     def visit_KeywordCall(self, node):  # noqa
+        self.handle_set_local_variable(node)
         if not self.disablers.is_node_disabled(node):
             for token in node.data_tokens:
                 if token.type == Token.ASSIGN:
@@ -333,6 +344,16 @@ class RenameVariables(Transformer):
             self.variables_scope.add_local(assign_token.value)
         self.uppercase_global_name_in_set_variable(node)
         return node
+
+    def handle_set_local_variable(self, node) -> None:
+        """
+        Define local variable or reset scope of existing one to local.
+        """
+        if not is_set_local_variable(node.keyword):
+            return
+        first_arg = node.get_token(Token.ARGUMENT)
+        if first_arg:
+            self.variables_scope.add_local(first_arg.value)
 
     def uppercase_global_name_in_set_variable(self, node):
         if not is_set_global_variable(node.keyword):
