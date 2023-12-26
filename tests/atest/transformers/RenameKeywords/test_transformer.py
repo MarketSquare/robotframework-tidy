@@ -70,3 +70,9 @@ class TestRenameKeywords(TransformerAcceptanceTest):
 
     def test_underscore_handling_bugs(self):
         self.compare(source="bug537_538.robot")
+
+    def test_no_title_case(self):
+        self.compare(
+            source="no_title_case.robot",
+            config=":convert_title_case=False",
+        )

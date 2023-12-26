@@ -13,6 +13,10 @@ You can keep underscores if you set remove_underscores to False::
 
     robotidy --transform RenameKeywords -c RenameKeywords:remove_underscores=False .
 
+You can leave the keyword capitilization as is by setting convert_title_case to False::
+
+    robotidy --transform RenameKeywords -c RenameKeywords:convert_title_case=False .
+
 Library name
 ------------
 By default library name in keyword name is ignored. Anything before the last dot in the name is considered as a library name.
