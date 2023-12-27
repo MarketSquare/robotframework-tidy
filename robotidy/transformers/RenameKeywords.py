@@ -129,22 +129,19 @@ class RenameKeywords(Transformer):
             value = value.replace("_", " ")
             value = re.sub(r" +", " ", value)  # replace one or more spaces by one
 
-        if self.convert_title_case:
-            words = []
-            split_words = value.split(" ")
+        if not self.convert_title_case:
+            return value
+        words = []
+        split_words = value.split(" ")
 
-            # capitalize first letter of every word, leave rest untouched
-            for index, word in enumerate(split_words):
-                if not word:
-                    if index in (0, len(split_words) - 1):  # leading and trailing whitespace
-                        words.append("")
-                else:
-                    words.append(word[0].upper() + word[1:])
-            result = " ".join(words)
-        else:
-            result = value
-
-        return result
+        # capitalize first letter of every word, leave rest untouched
+        for index, word in enumerate(split_words):
+            if not word:
+                if index in (0, len(split_words) - 1):  # leading and trailing whitespace
+                    words.append("")
+            else:
+                words.append(word[0].upper() + word[1:])
+       return " ".join(words)
 
     def rename_with_pattern(self, value: str, is_keyword_call: bool):
         lib_name = ""
