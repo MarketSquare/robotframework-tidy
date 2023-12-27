@@ -16,7 +16,8 @@ class RenameKeywords(Transformer):
 
     Title Case is applied to keyword name and underscores are replaced by spaces.
 
-    You can keep underscores if you set remove_underscores to False:
+    To retain the keyword upper/lower case, set convert_title_case to False.
+    To keep underscores, set remove_underscores to False:
 
     ```
     robotidy --transform RenameKeywords -c RenameKeywords:remove_underscores=False .
@@ -57,10 +58,12 @@ class RenameKeywords(Transformer):
         replace_to: Optional[str] = None,
         remove_underscores: bool = True,
         ignore_library: bool = True,
+        convert_title_case: bool = True,
     ):
         super().__init__()
         self.ignore_library = ignore_library
         self.remove_underscores = remove_underscores
+        self.convert_title_case = convert_title_case
         self.replace_pattern = self.parse_pattern(replace_pattern)
         self.replace_to = "" if replace_to is None else replace_to
         self.run_keywords = get_run_keywords()
@@ -125,6 +128,10 @@ class RenameKeywords(Transformer):
         if self.remove_underscores:
             value = value.replace("_", " ")
             value = re.sub(r" +", " ", value)  # replace one or more spaces by one
+
+        if not self.convert_title_case:
+            return value
+
         words = []
         split_words = value.split(" ")
         # capitalize first letter of every word, leave rest untouched
