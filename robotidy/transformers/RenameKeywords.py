@@ -131,9 +131,9 @@ class RenameKeywords(Transformer):
 
         if not self.convert_title_case:
             return value
+
         words = []
         split_words = value.split(" ")
-
         # capitalize first letter of every word, leave rest untouched
         for index, word in enumerate(split_words):
             if not word:
