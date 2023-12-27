@@ -141,7 +141,7 @@ class RenameKeywords(Transformer):
                     words.append("")
             else:
                 words.append(word[0].upper() + word[1:])
-       return " ".join(words)
+        return " ".join(words)
 
     def rename_with_pattern(self, value: str, is_keyword_call: bool):
         lib_name = ""
