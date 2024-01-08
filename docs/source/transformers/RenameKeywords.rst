@@ -9,13 +9,52 @@ support for keywords with embedded variables - use it on your own risk.
 .. |TRANSFORMERNAME| replace:: RenameKeywords
 .. include:: disabled_hint.txt
 
-You can keep underscores if you set remove_underscores to False::
+You can keep underscores if you set ``remove_underscores`` to ``False``::
 
     robotidy --transform RenameKeywords -c RenameKeywords:remove_underscores=False .
 
-You can leave the keyword capitilization as is by setting convert_title_case to False::
+Keyword case
+------------
 
-    robotidy --transform RenameKeywords -c RenameKeywords:convert_title_case=False .
+By default each word in keyword case is capitalized. It can be configured using ``keyword_case`` parameter:
+
+.. tab-set::
+
+    .. tab-item:: Before
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            keyword name
+                Log    ${GLOBAL}
+                perform Action
+
+    .. tab-item:: keyword_case = capitalize_words (default)
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword Name
+                Log    ${GLOBAL}
+                Perform Action
+
+    .. tab-item:: keyword_case = capitalize_first
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword name
+                Log    ${GLOBAL}
+                Perform Action
+
+    .. tab-item:: keyword_case = ignore
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            keyword name
+                Log    ${GLOBAL}
+                perform Action
 
 Library name
 ------------

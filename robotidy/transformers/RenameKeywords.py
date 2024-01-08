@@ -16,8 +16,8 @@ class RenameKeywords(Transformer):
 
     Title Case is applied to keyword name and underscores are replaced by spaces.
 
-    To retain the keyword upper/lower case, set convert_title_case to False.
-    To keep underscores, set remove_underscores to False:
+    To ignore keywords case set ``keyword_case`` to ``ignore``.
+    To keep underscores, set ``remove_underscores`` to ``False``:
 
     ```
     robotidy --transform RenameKeywords -c RenameKeywords:remove_underscores=False .
@@ -58,15 +58,26 @@ class RenameKeywords(Transformer):
         replace_to: Optional[str] = None,
         remove_underscores: bool = True,
         ignore_library: bool = True,
-        convert_title_case: bool = True,
+        keyword_case: str = "capitalize_words",
     ):
         super().__init__()
         self.ignore_library = ignore_library
         self.remove_underscores = remove_underscores
-        self.convert_title_case = convert_title_case
+        self.keyword_case = keyword_case
         self.replace_pattern = self.parse_pattern(replace_pattern)
         self.replace_to = "" if replace_to is None else replace_to
         self.run_keywords = get_run_keywords()
+
+    def parse_keyword_case(self, value: str) -> str:
+        conventions = ("capitalize_words", "capitalize_first", "ignore")
+        if value not in conventions:
+            raise InvalidParameterValueError(
+                self.__class__.__name__,
+                "keyword_case",
+                value,
+                f"Supported values: {', '.join(conventions)}",
+            )
+        return value
 
     def parse_pattern(self, replace_pattern):
         if replace_pattern is None:
@@ -124,14 +135,14 @@ class RenameKeywords(Transformer):
             return f"{lib_name}.{self.remove_underscores_and_capitalize(kw_name[0])}"
         return ".".join([self.remove_underscores_and_capitalize(name_part) for name_part in part.split(".")])
 
-    def remove_underscores_and_capitalize(self, value: str):
+    def remove_underscores_and_capitalize(self, value: str) -> str:
         if self.remove_underscores:
             value = value.replace("_", " ")
             value = re.sub(r" +", " ", value)  # replace one or more spaces by one
-
-        if not self.convert_title_case:
+        if self.keyword_case == "ignore":
             return value
-
+        if self.keyword_case == "capitalize_first":
+            return value[0].upper() + value[1:] if value else value
         words = []
         split_words = value.split(" ")
         # capitalize first letter of every word, leave rest untouched
