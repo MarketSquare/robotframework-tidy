@@ -1,0 +1,157 @@
+:orphan:
+
+==============
+Robotidy 4.8.0
+==============
+
+Added Robot Framework 7.0 support, configurable case in ``RenameKeywords`` and more verbose output when formatting.
+
+You can install the latest available version by running
+
+::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version
+
+::
+
+    pip install robotframework-tidy==4.8.0
+
+.. contents::
+   :depth: 2
+   :local:
+
+
+Transformers changes
+====================
+
+New VAR syntax support in RenameVariables
+------------------------------------------
+
+Robot Framework 7.0 introduces new syntax for creating variables: ``VAR``. It is now also supported in Robotidy in
+``RenameVariables`` transformer:
+
+Example renaming variables based on the scope. From::
+
+    *** Test Cases ***
+        Test
+        # Create a local variable `${local}` with a value `value`.
+        VAR    ${local}    value
+
+        # Create a variable that is available throughout the whole suite.
+        # Supported scopes are GLOBAL, SUITE, TEST, TASK and LOCAL (default).
+        VAR    ${suite}    value    scope=SUITE
+        VAR    ${global}    value    scope=GLOBAL
+        VAR    ${test}    value    scope=TEST
+        VAR    ${task}    value    scope=TASK
+        VAR    ${local_default}    value    scope=local
+
+        # Validate created variables.
+        Should Be Equal    ${local}    value
+        Should Be Equal    ${suite}    value
+        Should Be Equal    ${global}    value
+        Should Be Equal    ${test}    value
+        Should Be Equal    ${task}    value
+
+To::
+
+    *** Test Cases ***
+    Test
+        # Create a local variable `${local}` with a value `value`.
+        VAR    ${local}    value
+
+        # Create a variable that is available throughout the whole suite.
+        # Supported scopes are GLOBAL, SUITE, TEST, TASK and LOCAL (default).
+        VAR    ${SUITE}    value    scope=SUITE
+        VAR    ${GLOBAL}    value    scope=GLOBAL
+        VAR    ${TEST}    value    scope=TEST
+        VAR    ${TASK}    value    scope=TASK
+        VAR    ${local_default}    value    scope=local
+
+        # Validate created variables.
+        Should Be Equal    ${local}    value
+        Should Be Equal    ${SUITE}    value
+        Should Be Equal    ${GLOBAL}    value
+        Should Be Equal    ${TEST}    value
+        Should Be Equal    ${TASK}    value
+
+Configurable keyword case in RenameKeywords (#585)
+---------------------------------------------------
+
+It is now possible to configure how RenameKeywords capitalize keywords with ``keyword_case`` parameter:
+
+- keyword_case = ``capitalize_words`` (default) - capitalize each word
+- keyword_case = ``capitalize_first`` (default) - only capitalize first character
+- keyword_case = ``ignore`` (default) - do not change existing case
+
+Fixes
+=====
+
+AlignVariablesSection not using configured spacecount (#605)
+------------------------------------------------------------
+
+``AlignVariablesSection`` transformed should now use configured ``--spacecount`` instead of  fixed value of ``4``
+spaces.
+
+Robot Framework 7.0 backward incompatible changes: TypeError: can only concatenate list (not "tuple") to list
+-------------------------------------------------------------------------------------------------------------
+
+Resolving transformers arguments uses Robot Framework argument resolver. Recent change of the return type caused
+fatal exception which should be now fixed.
+
+[Return] setting deprecated
+----------------------------
+
+``[Return]`` setting is now visibly deprecated. The model also changed and several Robotidy transformers stopped
+transforming ``[Return]``. We should now be able to handle both ``[Return]`` and ``RETURN``.
+
+Note that Robotidy replaces ``[Return]`` with ``RETURN`` since Robot Framework 5.0 thanks to ``ReplaceReturns``
+transformer. If you're not using default configuration you should remember to include it.
+
+Set Local Variable not supported in RenameVariables (#593)
+----------------------------------------------------------
+
+``Set Local Variable`` keyword is now supported and scope of the variable is properly preserved::
+
+    ${variable}    Set Variable    value
+    Set Global Variable    ${VARIABLE}
+    Log    ${VARIABLE}
+    Set Local Variable    ${variable}
+    Log    ${variable}
+
+Other features
+==============
+More verbose output (#572)
+---------------------------
+
+Robotidy output is now more verbose. If the file is formatted (or would be formatted if not for
+``--check`` or ``--no-overwrite options) the file path and run summary is displayed::
+
+
+    > robotidy --check .
+    Would reformat  D:\test_repository\resources\db_keywords.resource file
+    Would reformat D:\test_repository\tests\ui\login.robot file
+
+    2 files would be reformatted, 112 files would be left unchanged.
+
+
+::
+
+    > robotidy .
+    Formatting D:\test_repository\resources\db_keywords.resource file
+    Formatting D:\test_repository\tests\ui\login.robot file
+
+    2 files reformatted, 112 files left unchanged.
+
+::
+
+    > robotidy --verbose .
+    Found D:\test_repository\resources\ui_keywords.resource file
+    Found (...)
+    Formatting D:\test_repository\resources\db_keywords.resource file
+    Found (...)
+    Formatting D:\test_repository\tests\ui\login.robot file
+    Found (...)
+
+    2 files reformatted, 112 files left unchanged.
