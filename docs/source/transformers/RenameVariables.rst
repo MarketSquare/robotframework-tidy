@@ -125,6 +125,9 @@ Allowed values are:
 - ``lower`` to lowercase unknown names
 - ``ignore`` to leave existing case
 
+Scope of the variable can be also changed using ``Set Test/Task/Suite/Global Variable`` keywords and with Robot
+Framework 7.0 ``VAR`` syntax using ``scope=local/TEST/TASK/SUITE/GLOBAL`` parameter.
+
 .. tab-set::
 
     .. tab-item:: Before
@@ -135,7 +138,8 @@ Allowed values are:
             Keyword
                 [Arguments]    ${arg}  # ${arg} is known
                 ${local}    Set Variable    value  # since we set it, ${local} is also known
-                Keyword Call    ${arg}    ${local}    ${global}  # ${global} is unknown
+                VAR    ${local2}    value  # default scope is local
+                Keyword Call    ${arg}    ${local}    ${local2}    ${global}  # ${global} is unknown
 
     .. tab-item:: After (unknown_variables_case = upper)
 
@@ -145,7 +149,8 @@ Allowed values are:
             Keyword
                 [Arguments]    ${arg}  # ${arg} is known
                 ${local}    Set Variable    value  # since we set it, ${local} is also known
-                Keyword Call    ${arg}    ${local}    ${GLOBAL}  # ${global} is unknown
+                VAR    ${local2}    value  # default scope is local
+                Keyword Call    ${arg}    ${local}    ${local2}    ${GLOBAL}  # ${global} is unknown
 
     .. tab-item:: After (unknown_variables_case = lower)
 
@@ -155,7 +160,8 @@ Allowed values are:
             Keyword
                 [Arguments]    ${arg}  # ${arg} is known
                 ${local}    Set Variable    value  # since we set it, ${local} is also known
-                Keyword Call    ${arg}    ${local}    ${global}  # ${global} is unknown
+                VAR    ${local2}    value  # default scope is local
+                Keyword Call    ${arg}    ${local}    ${local2}    ${global}  # ${global} is unknown
 
     .. tab-item:: After (unknown_variables_case = ignore)
 
@@ -165,7 +171,8 @@ Allowed values are:
             Keyword
                 [Arguments]    ${arg}  # ${arg} is known
                 ${local}    Set Variable    value  # since we set it, ${local} is also known
-                Keyword Call    ${arg}    ${local}    ${global}  # ${global} is unknown
+                VAR    ${local2}    value  # default scope is local
+                Keyword Call    ${arg}    ${local}    ${local2}    ${global}  # ${global} is unknown
 
 Ignore variable case
 --------------------
