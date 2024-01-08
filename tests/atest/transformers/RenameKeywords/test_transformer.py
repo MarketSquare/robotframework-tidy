@@ -74,5 +74,12 @@ class TestRenameKeywords(TransformerAcceptanceTest):
     def test_no_title_case(self):
         self.compare(
             source="no_title_case.robot",
-            config=":convert_title_case=False",
+            config=":keyword_case=ignore",
+        )
+
+    def test_first_word_case(self):
+        self.compare(
+            source="no_title_case.robot",
+            expected="capitalize_first.robot",
+            config=":keyword_case=capitalize_first",
         )
