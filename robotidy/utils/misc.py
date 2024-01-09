@@ -59,6 +59,7 @@ class TargetVersion(Enum):
     RF4 = 4
     RF5 = 5
     RF6 = 6
+    RF7 = 7
 
 
 class StatementLinesCollector(ModelVisitor):
