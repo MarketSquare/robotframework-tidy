@@ -47,7 +47,7 @@ setup(
         "pathspec>=0.9.0,<0.12.2",
         "tomli==2.0.*",
         "rich_click>=1.4,<1.7.4",
-        "jinja2>=3.0,<4.0",
+        "jinja2>=3.1.3,<4.0",
     ],
     extras_require={
         "dev": [
