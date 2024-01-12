@@ -69,7 +69,11 @@ class FormattingConfig:
 def validate_target_version(value: Optional[str]) -> Optional[int]:
     if value is None:
         return misc.ROBOT_VERSION.major
-    target_version = misc.TargetVersion[value.upper()].value
+    try:
+        target_version = misc.TargetVersion[value.upper()].value
+    except KeyError:
+        versions = ", ".join(ver.value for ver in misc.TargetVersion)
+        raise click.BadParameter(f"Invalid target Robot Framework version: '{value}' is not one of {versions}")
     if target_version > misc.ROBOT_VERSION.major:
         raise click.BadParameter(
             f"Target Robot Framework version ({target_version}) should not be higher than "
