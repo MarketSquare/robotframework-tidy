@@ -82,10 +82,14 @@ class ReplaceReturns(Transformer):
         return node
 
     @skip_if_disabled
-    def visit_Return(self, node):  # noqa
+    def visit_ReturnSetting(self, node):  # noqa
         self.return_statement = node
 
-    visit_ReturnSetting = visit_Return
+    @skip_if_disabled
+    def visit_Return(self, node):  # noqa
+        if misc.ROBOT_VERSION.major >= 7:  # In RF 7, RETURN was class was renamed to Return
+            return node
+        self.return_statement = node
 
     @skip_if_disabled
     def visit_Error(self, node):  # noqa
