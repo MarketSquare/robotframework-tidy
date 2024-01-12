@@ -15,3 +15,8 @@ Keyword with Multiple [Return]
 Keyword with RETURN
     No Operation
     RETURN    1
+
+Keyword With Two RETURN
+    IF    ${GLOBAL}    RETURN
+    No Operation
+    RETURN
