@@ -1,0 +1,24 @@
+:orphan:
+
+==============
+Robotidy 4.9.0
+==============
+
+Support skipping documentation in AlignSettingsSection with ``AlignSettingsSection:skip_documentation=True``
+or ``--skip-documentation`` skip options (#622).
+
+You can install the latest available version by running
+
+::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version
+
+::
+
+    pip install robotframework-tidy==4.9.0
+
+.. contents::
+   :depth: 2
+   :local:

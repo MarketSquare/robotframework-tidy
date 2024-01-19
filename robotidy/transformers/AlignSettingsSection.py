@@ -1,9 +1,10 @@
 from collections import defaultdict
 
-from robot.api.parsing import Token
+from robot.api.parsing import Documentation, Token
 from robot.parsing.model import Statement
 
 from robotidy.disablers import skip_section_if_disabled
+from robotidy.skip import Skip
 from robotidy.transformers import Transformer
 from robotidy.utils import misc
 
@@ -69,9 +70,17 @@ class AlignSettingsSection(Transformer):
         Token.LIBRARY,
         Token.VARIABLES,
     }
+    HANDLES_SKIP = frozenset({"skip_documentation"})
 
-    def __init__(self, up_to_column: int = 2, argument_indent: int = 4, min_width: int = None, fixed_width: int = None):
-        super().__init__()
+    def __init__(
+        self,
+        up_to_column: int = 2,
+        argument_indent: int = 4,
+        min_width: int = None,
+        fixed_width: int = None,
+        skip: Skip = None,
+    ):
+        super().__init__(skip=skip)
         self.up_to_column = up_to_column - 1
         self.argument_indent = argument_indent
         self.min_width = min_width
@@ -81,7 +90,7 @@ class AlignSettingsSection(Transformer):
     def visit_SettingSection(self, node):  # noqa
         statements = []
         for child in node.body:
-            if self.disablers.is_node_disabled(child):
+            if self.disablers.is_node_disabled(child) or self.is_node_skip(child):
                 statements.append(child)
             elif child.type in (Token.EOL, Token.COMMENT):
                 statements.append(misc.left_align(child))
@@ -93,6 +102,11 @@ class AlignSettingsSection(Transformer):
         look_up = self.create_look_up(nodes_to_be_aligned)  # for every col find longest value
         node.body = self.align_rows(statements, look_up)
         return node
+
+    def is_node_skip(self, node):
+        if isinstance(node, Documentation) and self.skip.documentation:
+            return True
+        return False
 
     def should_indent_arguments(self, statement):
         statement_type = statement[0][0].type

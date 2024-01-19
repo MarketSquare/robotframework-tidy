@@ -80,3 +80,7 @@ class TestAlignSettingsSection(TransformerAcceptanceTest):
     @pytest.mark.parametrize("min_width", [49, 50, 51, 52])
     def test_min_width_longer(self, min_width):
         self.compare(source="test.robot", expected="test_min_width_50_width.robot", config=f":min_width={min_width}")
+
+    @pytest.mark.parametrize("skip_config", [" --skip-documentation", ":skip_documentation=True"])
+    def test_skip_documentation(self, skip_config):
+        self.compare(source="test.robot", expected="test_skip_documentation.robot", config=skip_config)
