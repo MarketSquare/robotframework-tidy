@@ -35,6 +35,7 @@ TRANSFORMERS = [
     "MergeAndOrderSections",
     "RemoveEmptySettings",
     "ReplaceEmptyValues",
+    "ReplaceWithVAR",
     "NormalizeAssignments",
     "GenerateDocumentation",
     "OrderSettings",
@@ -181,7 +182,7 @@ class TransformConfigMap:
     def validate_config_names(self):
         """
         Assert that all --configure NAME are either defaults or from --transform/--load-transformer.
-        Otherwise raise an error with similar names.
+        Otherwise, raise an error with similar names.
         """
         # TODO: Currently not used. It enforces that every --config NAME is valid one which may not be desired
         # if the NAME is external transformer which may not be imported.
