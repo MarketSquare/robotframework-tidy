@@ -135,6 +135,11 @@ class GenerateDocumentation(Transformer):
         self.args_returns_finder = ArgumentsAndReturnsVisitor()
         super().__init__()
 
+    def visit_TestCaseSection(self, node):  # noqa
+        return node
+
+    visit_SettingSection = visit_TestCaseSection
+
     def load_template(self, template: str, template_directory: Optional[str] = None) -> str:
         try:
             return Template(self.get_template(template, template_directory))
