@@ -1,3 +1,16 @@
+*** Settings ***
+Documentation    Suite documentation should not be changed.
+
+
+*** Test Cases ***
+Test without documentation
+    No Operation
+
+Test with documentation
+    [Documentation]    Should not be changed.
+    No Operation
+
+
 *** Keywords ***
 Single Argument
     [Arguments]    ${var}

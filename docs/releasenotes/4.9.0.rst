@@ -4,8 +4,8 @@
 Robotidy 4.9.0
 ==============
 
-Support skipping documentation in AlignSettingsSection with ``AlignSettingsSection:skip_documentation=True``
-or ``--skip-documentation`` skip options (#622).
+Allow to skip formatting documentation in ``AlignSettingsSection`` transformer and fix ``GenerateDocumentation``
+transformer removing documentation from settings and test cases sections.
 
 You can install the latest available version by running
 
@@ -22,3 +22,19 @@ or to install exactly this version
 .. contents::
    :depth: 2
    :local:
+
+Transformers changes
+====================
+
+Skip documentation option for AlignSettingsSection transformer (#622)
+---------------------------------------------------------------------
+Support skipping documentation in AlignSettingsSection with ``AlignSettingsSection:skip_documentation=True``
+or ``--skip-documentation`` skip options (#622).
+
+Fixes
+=====
+
+GenerateDocumentation overwriting documentation in Settings and Test Cases sections (#628)
+------------------------------------------------------------------------------------------
+
+``GenerateDocumentation`` transformer should now only overwrite documentation for the ``*** Keywords ***`` section.
