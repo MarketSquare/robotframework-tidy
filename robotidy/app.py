@@ -50,19 +50,15 @@ class Robotidy:
                 if disabler_finder.file_disabled:
                     continue
                 diff, old_model, new_model, model = self.transform_until_stable(model, disabler_finder)
-                if diff:
-                    self.log_formatted_source(source, stdin)
-                    changed_files += 1
-                self.output_diff(model_path, old_model, new_model)
                 if stdin:
                     self.print_to_stdout(new_model)
                 elif diff:
                     self.save_model(model_path, model)
-            except DataError:
-                click.echo(
-                    f"Failed to decode {source}. Default supported encoding by Robot Framework is UTF-8. Skipping file"
-                )
-                pass
+                    self.log_formatted_source(source, stdin)
+                    self.output_diff(model_path, old_model, new_model)
+                    changed_files += 1
+            except DataError as err:
+                click.echo(f"Failed to decode {source} with an error: {err}\nSkipping file")
         return self.formatting_result(all_files, changed_files, stdin)
 
     def formatting_result(self, all_files: int, changed_files: int, stdin: bool):

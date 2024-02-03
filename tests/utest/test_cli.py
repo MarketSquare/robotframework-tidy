@@ -351,6 +351,14 @@ class TestCli:
                 mock_writer.assert_not_called()
             assert result.output == expected_output
 
+    def test_read_only_file(self):
+        source = TEST_DATA_DIR / "read_only" / "test.robot"
+        # change file permission to read-only
+        source.chmod(0o400)
+        # overwrite input which is read-only file
+        result = run_tidy([str(source)], overwrite_input=True)
+        assert "Permission denied" in result.output
+
     @pytest.mark.parametrize("color_flag", ["--color", "--no-color", None])
     @pytest.mark.parametrize("color_env", [True, False])
     def test_disable_coloring(self, color_flag, color_env):
