@@ -79,11 +79,7 @@ class ReplaceWithVAR(Transformer):
             return node
         return self.restore_comments(converted_node, comments, indent.value)
 
-    # def visit_TestCase(self, node):
-    #     if "Inline IF set if and custom keyword value2" in node.name:
-    #         print()
-    #     return self.generic_visit(node)
-
+    @skip_if_disabled
     def visit_If(self, node: "If"):  # noqa
         if not self.is_inline_if(node):
             return self.generic_visit(node)
