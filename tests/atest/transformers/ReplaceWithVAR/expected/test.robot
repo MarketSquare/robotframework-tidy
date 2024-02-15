@@ -11,7 +11,7 @@ Set Variable
     # comment
     # comment2
     VAR    ${comments}    value
-    ${multiple_values}    Set Variable   value1    value2
+    VAR    @{multiple_values}    value1    value2
 
 Set Variable with scope
     # first declares, second de-scopes existing
@@ -49,7 +49,7 @@ Escaped variables
     VAR    &{variable}    &{variable}    scope=TEST
 
 Set Variable with list
-    @{list}    Set Variable    value    value2
+    VAR    @{list}    value    value2
     VAR    @{list}    value
 
 Multiple Set Variable

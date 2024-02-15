@@ -184,7 +184,7 @@ class ReplaceWithVAR(Transformer):
     def replace_set_variable(self, node, kw_name: str, indent: str, assign: Optional[List[str]] = None):
         assign = assign or self.get_assign_names(node.assign)
         args = node.get_tokens(Token.ARGUMENT)
-        if len(assign) != len(args) and (len(assign) != 1 or args):
+        if not assign or (len(assign) != 1 and len(assign) != len(args)):
             return None
         if args:
             values = [arg.value if arg.value else "${EMPTY}" for arg in args]
