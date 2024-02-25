@@ -185,7 +185,7 @@ class ReplaceWithVAR(Transformer):
             node.tokens = tuple(list(node.tokens[:-1]) + [Token(Token.SEPARATOR, "  "), comments[0], node.tokens[-1]])
             return node
         comment_nodes = [Comment.from_params(comment=comment.value, indent=indent) for comment in comments]
-        return *comment_nodes, node
+        return (*comment_nodes, node)  # TODO remove parenthesis in 3.8
 
     @staticmethod
     def resolve_variable_name(name: str) -> Optional[str]:
