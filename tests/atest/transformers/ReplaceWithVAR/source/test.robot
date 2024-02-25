@@ -13,6 +13,13 @@ Set Variable
     ...    value  # comment2
     ${multiple_values}    Set Variable   value1    value2
 
+Set Variable with disablers
+    ${local_variable}    Set Variable    value  # robotidy: off
+    ${list}    Create List
+    ...  item
+    ...  second item  # robotidy: off
+    ...  third item
+
 Set Variable with scope
     # first declares, second de-scopes existing
     # for VAR, if not value given, we should repeat variable
@@ -110,7 +117,7 @@ Set Variable If
     ${var}    Set Variable If
 
 Inline IF
-    ${value}    IF    ${condition}    Set Variable    value    ELSE    Set Variable    ${None}
+    ${value}    IF    ${condition}    Set Variable    value    ELSE    Set Variable    ${None}  # comment
     ${value}    IF    ${condition}    Set Variable    value    ELSE IF  False    BuiltIn.Set Variable    value2    ELSE    Set Variable    ${None}
 
 Inline IF mixed set variable and custom keyword
@@ -129,7 +136,7 @@ Inline IF set with two assign one arg
     ${many}    ${vars}    IF    True   Set Variable    value
 
 Inline IF set if and custom keyword value2
-    # ELSE belongs to IF, and it cannot be converted to online if
+    # ELSE belongs to IF, and it cannot be converted to inline if
     ${assign}    IF    ${rc} > 0    Set Variable If  ${rc}==1  value1  ELSE  value2
 
 Inline IF set if with else value2

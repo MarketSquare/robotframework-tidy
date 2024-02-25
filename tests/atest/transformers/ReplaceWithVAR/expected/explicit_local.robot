@@ -1,17 +1,17 @@
 *** Test Cases ***
 Set Variable
-    VAR    ${local_variable}    value
-    VAR    ${local_variable}    value
-    VAR    ${local_variable}    value
+    VAR    ${local_variable}    value    scope=LOCAL
+    VAR    ${local_variable}    value    scope=LOCAL
+    VAR    ${local_variable}    value    scope=LOCAL
     ${local_variable=    Set Variable    value  # invalid
     ${local_variable}=    ${local_variable}=    Set Variable    value  # invalid
     ${local_variable}    ${local_variable2}    Set Variable  # invalid
-    VAR    ${local_variable}    ${EMPTY}
-    VAR    ${multiple_lines}    value
+    VAR    ${local_variable}    ${EMPTY}    scope=LOCAL
+    VAR    ${multiple_lines}    value    scope=LOCAL
     # comment
     # comment2
-    VAR    ${comments}    value
-    VAR    @{multiple_values}    value1    value2
+    VAR    ${comments}    value    scope=LOCAL
+    VAR    @{multiple_values}    value1    value2    scope=LOCAL
 
 Set Variable with disablers
     ${local_variable}    Set Variable    value  # robotidy: off
@@ -23,8 +23,8 @@ Set Variable with disablers
 Set Variable with scope
     # first declares, second de-scopes existing
     # for VAR, if not value given, we should repeat variable
-    VAR    ${local_variable}    value
-    VAR    ${local_variable}    ${local_variable}
+    VAR    ${local_variable}    value    scope=LOCAL
+    VAR    ${local_variable}    ${local_variable}    scope=LOCAL
     VAR    ${task_variable}    value    scope=TASK
     VAR    ${task_variable}    ${task_variable}    scope=TASK
     VAR    ${test_variable}    ${value}    scope=TEST
@@ -56,114 +56,114 @@ Escaped variables
     VAR    &{variable}    &{variable}    scope=TEST
 
 Set Variable with list
-    VAR    @{list}    value    value2
-    VAR    @{list}    value
+    VAR    @{list}    value    value2    scope=LOCAL
+    VAR    @{list}    value    scope=LOCAL
 
 Multiple Set Variable
-    VAR    ${var1}    value
-    VAR    ${var2}    value2
+    VAR    ${var1}    value    scope=LOCAL
+    VAR    ${var2}    value2    scope=LOCAL
     ${var1}    ${var2}    Set Variable    value  # runtime error
     ${var1}    ${var2}    Set Variable    @{list}
 
 Create List
-    VAR    @{scalar}    a    b
-    VAR    @{list}    a    ${1}    ${2}
+    VAR    @{scalar}    a    b    scope=LOCAL
+    VAR    @{list}    a    ${1}    ${2}    scope=LOCAL
     IF    ${condition}
-        VAR    @{empty_list}    @{EMPTY}
+        VAR    @{empty_list}    @{EMPTY}    scope=LOCAL
     END
-    VAR    @{empty_values}    a    ${EMPTY}    c
+    VAR    @{empty_values}    a    ${EMPTY}    c    scope=LOCAL
     ${first_list}    ${second_list}    Create List    value  # invalid
     ${first_list}    ${second_list}    Create List    value    value  # valid but does not return list
 
 Create Dictionary
-    VAR    &{dict}    key=value
+    VAR    &{dict}    key=value    scope=LOCAL
     TRY
-        VAR    &{dict}    key=value
+        VAR    &{dict}    key=value    scope=LOCAL
     EXCEPT
         No Operation
     END
-    VAR    &{dict}    &{EMPTY}
-    VAR    &{dict}    key=value    key2=value  # comment
+    VAR    &{dict}    &{EMPTY}    scope=LOCAL
+    VAR    &{dict}    key=value    key2=value    scope=LOCAL  # comment
     ${dict}    Create Dictionary    key=value
     ...
     ...    key2=value
 
 Catenate
-    VAR    ${string}    join    with    spaces    separator=${SPACE}
-    VAR    ${string}    join    with    spaces    separator=${SPACE}
-    VAR    ${string}    comma    separated    list    separator=,
+    VAR    ${string}    join    with    spaces    scope=LOCAL    separator=${SPACE}
+    VAR    ${string}    join    with    spaces    scope=LOCAL    separator=${SPACE}
+    VAR    ${string}    comma    separated    list    scope=LOCAL    separator=,
     Catenate    No  Assign
-    VAR    ${string}    single ${value}    separator=${SPACE}
-    VAR    ${multiline_with_empty}    value    ${EMPTY}    third value    separator=${SPACE}
+    VAR    ${string}    single ${value}    scope=LOCAL    separator=${SPACE}
+    VAR    ${multiline_with_empty}    value    ${EMPTY}    third value    scope=LOCAL    separator=${SPACE}
     Catenate
     Catenate    SEPARATOR=\n
-    VAR    ${assign}    separator=${SPACE}    separator=${SPACE}
-    VAR    ${assign}    ${EMPTY}    separator=${SPACE}
-    VAR    ${assign}    first    SEPARATOR=${SPACE}    separator=${SPACE}
+    VAR    ${assign}    separator=${SPACE}    scope=LOCAL    separator=${SPACE}
+    VAR    ${assign}    ${EMPTY}    scope=LOCAL    separator=${SPACE}
+    VAR    ${assign}    first    SEPARATOR=${SPACE}    scope=LOCAL    separator=${SPACE}
 
 Set Variable If
     IF    ${rc} == 0
-        VAR    ${var1}    zero
+        VAR    ${var1}    zero    scope=LOCAL
     ELSE
-        VAR    ${var1}    nonzero
+        VAR    ${var1}    nonzero    scope=LOCAL
     END
     IF    ${rc} > 0
-        VAR    ${var2}    value1
+        VAR    ${var2}    value1    scope=LOCAL
     ELSE
-        VAR    ${var2}    value2
+        VAR    ${var2}    value2    scope=LOCAL
     END
     IF    ${rc} > 0
-        VAR    ${var3}    whatever
+        VAR    ${var3}    whatever    scope=LOCAL
     ELSE
-        VAR    ${var3}    ${None}
+        VAR    ${var3}    ${None}    scope=LOCAL
     END
     IF    ${rc} == 0
-        VAR    ${var}    zero
+        VAR    ${var}    zero    scope=LOCAL
     ELSE IF    ${rc} > 0
-        VAR    ${var}    greater than zero
+        VAR    ${var}    greater than zero    scope=LOCAL
     ELSE
-        VAR    ${var}    less then zero
+        VAR    ${var}    less then zero    scope=LOCAL
     END
     ${var}    Set Variable If    ${condition}    @{items}
     ${var}    Set Variable If
 
 Inline IF
     IF    ${condition}
-        VAR    ${value}    value
+        VAR    ${value}    value    scope=LOCAL
     ELSE
-        VAR    ${value}    ${None}  # comment
+        VAR    ${value}    ${None}    scope=LOCAL  # comment
     END
     IF    ${condition}
-        VAR    ${value}    value
+        VAR    ${value}    value    scope=LOCAL
     ELSE IF    False
-        VAR    ${value}    value2
+        VAR    ${value}    value2    scope=LOCAL
     ELSE
-        VAR    ${value}    ${None}
+        VAR    ${value}    ${None}    scope=LOCAL
     END
 
 Inline IF mixed set variable and custom keyword
     IF    ${condition}
-        VAR    ${value}    value
+        VAR    ${value}    value    scope=LOCAL
     ELSE IF    False
         ${value}    Custom Keyword
     ELSE
-        VAR    ${value}    ${None}
+        VAR    ${value}    ${None}    scope=LOCAL
     END
 
 Inline IF set with one assign and one arg
     IF    ${condition}
-        VAR    ${value}    value
+        VAR    ${value}    value    scope=LOCAL
     END
 
 Inline IF set with one assign no args
     IF    ${condition}
-        VAR    ${value}    ${EMPTY}
+        VAR    ${value}    ${EMPTY}    scope=LOCAL
     END
 
 Inline IF set with two assign two args
     IF    True
-        VAR    ${many}    value
-        VAR    ${vars}    value
+        VAR    ${many}    value    scope=LOCAL
+        VAR    ${vars}    value    scope=LOCAL
     END
 
 Inline IF set with two assign one arg
@@ -173,9 +173,9 @@ Inline IF set if and custom keyword value2
     # ELSE belongs to IF, and it cannot be converted to inline if
     IF    ${rc} > 0
         IF    ${rc}==1
-            VAR    ${assign}    value1
+            VAR    ${assign}    value1    scope=LOCAL
         ELSE
-            VAR    ${assign}    ${None}
+            VAR    ${assign}    ${None}    scope=LOCAL
         END
     ELSE
         ${assign}    value2
@@ -185,9 +185,9 @@ Inline IF set if with else value2
     # second value is ELSE value
     IF    ${rc} > 0
         IF    ${rc}==1
-            VAR    ${assign}    value1
+            VAR    ${assign}    value1    scope=LOCAL
         ELSE
-            VAR    ${assign}    value2
+            VAR    ${assign}    value2    scope=LOCAL
         END
     END
 

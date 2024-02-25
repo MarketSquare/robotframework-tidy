@@ -76,14 +76,15 @@ Create List
     ${first_list}    ${second_list}    Create List    value    value  # valid but does not return list
 
 Create Dictionary
-    VAR    &{dict}    key=value
+    ${dict}    Create Dictionary    key=value
     TRY
-        VAR    &{dict}    key=value
+        &{dict}    Create Dictionary    key=value
     EXCEPT
         No Operation
     END
-    VAR    &{dict}    &{EMPTY}
-    VAR    &{dict}    key=value    key2=value  # comment
+    ${dict}    Create Dictionary
+    ${dict}=    Create Dictionary    key=value
+    ...    key2=value  # comment
     ${dict}    Create Dictionary    key=value
     ...
     ...    key2=value

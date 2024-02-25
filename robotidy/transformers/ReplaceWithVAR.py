@@ -19,9 +19,31 @@ if TYPE_CHECKING:
 
 class ReplaceWithVAR(Transformer):
     """
-    Short description in one line.
+    Replace ``Set Variable``, ``Create Dictionary``, ``Create List`` and ``Catenate`` keywords with ``VAR``.
 
-    Long description with short example before/after.
+    Following code:
+
+    ```robotframework
+    *** Keywords ***
+    Custom Keyword
+        ${var}    Set Variable    value
+        Set Suite Variable    ${SUITE_VAR}    ${var}
+        ${list}    Create List    ${var}    second value
+        ${string}    Catenate    join  with  spaces
+
+    ``
+
+    will be replaced to:
+
+    ```robotframework
+    *** Keywords ***
+    Custom Keyword
+        VAR    ${var}    value
+        VAR    ${SUITE_VAR}    ${var}    scope=SUITE
+        VAR    @{list}    ${var}    second value
+        VAR    ${string}    join    with    spaces    separator=${SPACE}
+
+    ```
     """
 
     ENABLED = False
@@ -69,9 +91,6 @@ class ReplaceWithVAR(Transformer):
         kw_name = misc.after_last_dot(misc.normalize_name(node.keyword))
         if kw_name not in self.SET_KW:
             return node
-        # we can retrieve comments here
-        # single comments we could try to stick to line where VAR is
-        # multiple comments need to be put in separate lines before VAR
         comments = node.get_tokens(Token.COMMENT)
         indent = node.get_token(Token.SEPARATOR)
         converted_node = self.SET_KW[kw_name](node, kw_name, indent.value)
@@ -83,7 +102,6 @@ class ReplaceWithVAR(Transformer):
     def visit_If(self, node: "If"):  # noqa
         if not self.is_inline_if(node):
             return self.generic_visit(node)
-        # FIXME comments
         indent = node.header.get_token(Token.SEPARATOR).value
         block_indent = indent + self.formatting_config.indent
         block_indent_token = Token(Token.SEPARATOR, block_indent)
@@ -94,18 +112,21 @@ class ReplaceWithVAR(Transformer):
         )
         modified = False
         head = tail = None
-        source_node = node  # TODO replace with node
+        source_node = node
         while True:
-            # TODO pop comments
+            if source_node.errors:
+                return node
             branch_statement = source_node.body[0]
             if isinstance(branch_statement, KeywordCall):
                 if branch_statement.errors:
                     return node
                 kw_name = misc.after_last_dot(misc.normalize_name(branch_statement.keyword))
                 if kw_name in self.SET_KW:
+                    comments = branch_statement.get_tokens(Token.COMMENT)
                     branch_statement = self.SET_KW[kw_name](branch_statement, kw_name, block_indent, assign)
                     if branch_statement is None:
                         return node
+                    self.restore_comments(branch_statement, comments, block_indent)
                     modified = True
                 else:
                     if assign:
@@ -166,7 +187,8 @@ class ReplaceWithVAR(Transformer):
         comment_nodes = [Comment.from_params(comment=comment.value, indent=indent) for comment in comments]
         return *comment_nodes, node
 
-    def resolve_variable_name(self, name: str) -> Optional[str]:
+    @staticmethod
+    def resolve_variable_name(name: str) -> Optional[str]:
         if name.startswith("\\"):
             name = name[1:]
         if len(name) < 2 or name[0] not in "$@&":
@@ -175,7 +197,8 @@ class ReplaceWithVAR(Transformer):
             name = f"{name[0]}{{{name[1:]}}}"
         return name
 
-    def resolve_assign_name(self, name: str) -> str:
+    @staticmethod
+    def resolve_assign_name(name: str) -> str:
         return name.rstrip("=").rstrip()
 
     def get_assign_names(self, assign: Tuple[str]) -> List[str]:
@@ -190,13 +213,19 @@ class ReplaceWithVAR(Transformer):
             values = [arg.value if arg.value else "${EMPTY}" for arg in args]
         else:
             values = ["${EMPTY}"]
+        scope = "LOCAL" if self.explicit_local else None
         if len(assign) == 1:
             var_name = assign[0]
             if len(values) > 1:
                 var_name = "@" + var_name[1:]
-            return Var.from_params(name=var_name, value=values, indent=indent)
+            return Var.from_params(
+                name=var_name, value=values, separator=self.formatting_config.separator, indent=indent, scope=scope
+            )
         return [
-            Var.from_params(name=var_assign, value=value, indent=indent) for var_assign, value in zip(assign, values)
+            Var.from_params(
+                name=var_assign, value=value, separator=self.formatting_config.separator, indent=indent, scope=scope
+            )
+            for var_assign, value in zip(assign, values)
         ]
 
     def replace_set_variable_scope(self, node, kw_name: str, indent: str, assign: Optional[List[str]] = None):
@@ -221,7 +250,9 @@ class ReplaceWithVAR(Transformer):
         else:
             values = [var_name]
         scope = scope.upper() if self.explicit_local or scope != "local" else None
-        return Var.from_params(name=var_name, value=values, indent=indent, scope=scope)
+        return Var.from_params(
+            name=var_name, value=values, separator=self.formatting_config.separator, indent=indent, scope=scope
+        )
 
     def replace_set_variable_if_kw(self, node, kw_name: str, indent: str, assign: Optional[List[str]] = None):
         """
@@ -236,7 +267,6 @@ class ReplaceWithVAR(Transformer):
 
         # Set Variable If    @{ITEMS} -> cannot be converted
         """
-        # TODO set indent and separator
         assign = assign or self.get_assign_names(node.assign)
         if not self.replace_set_variable_if or len(assign) != 1:
             return None
@@ -245,6 +275,7 @@ class ReplaceWithVAR(Transformer):
             return None
         scope = "LOCAL" if self.explicit_local else None
         in_block_indent = indent + self.formatting_config.indent
+        separator = self.formatting_config.separator
         var_name = assign[0]
         head = tail = None
         while True:
@@ -254,14 +285,16 @@ class ReplaceWithVAR(Transformer):
                 condition, value = None, args[0]
             else:
                 condition, value = args[:2]
-            variable = Var.from_params(name=var_name, value=value, indent=in_block_indent, scope=scope)
+            variable = Var.from_params(
+                name=var_name, value=value, separator=separator, indent=in_block_indent, scope=scope
+            )
             if tail:
                 if condition:
-                    header = ElseIfHeader.from_params(condition=condition, indent=indent)
+                    header = ElseIfHeader.from_params(condition=condition, indent=indent, separator=separator)
                 else:
                     header = ElseHeader.from_params(indent=indent)
             else:
-                header = IfHeader.from_params(condition=condition, indent=indent)
+                header = IfHeader.from_params(condition=condition, indent=indent, separator=separator)
             if_node = If(header=header, body=[variable])
             if head:
                 tail.orelse = if_node
@@ -301,12 +334,13 @@ class ReplaceWithVAR(Transformer):
         var_name = "@" + var_name[1:]
         args = node.get_tokens(Token.ARGUMENT)
         if args:
-            # TODO test for single empty values ie Create List \n ...
             values = [arg.value if arg.value else "${EMPTY}" for arg in args]
         else:
             values = ["@{EMPTY}"]
         scope = "LOCAL" if self.explicit_local else None
-        return Var.from_params(name=var_name, value=values, indent=indent, scope=scope)
+        return Var.from_params(
+            name=var_name, value=values, separator=self.formatting_config.separator, indent=indent, scope=scope
+        )
 
     def replace_create_dictionary_kw(self, node, kw_name: str, indent: str, assign: Optional[List[str]] = None):
         assign = assign or self.get_assign_names(node.assign)
@@ -316,11 +350,12 @@ class ReplaceWithVAR(Transformer):
         var_name = "&" + var_name[1:]
         args = node.get_tokens(Token.ARGUMENT)
         if args:
-            # TODO empty values?
             values = [arg.value for arg in args]
             if any(not value for value in values):
                 return None
         else:
             values = ["&{EMPTY}"]
         scope = "LOCAL" if self.explicit_local else None
-        return Var.from_params(name=var_name, value=values, indent=indent, scope=scope)
+        return Var.from_params(
+            name=var_name, value=values, separator=self.formatting_config.separator, indent=indent, scope=scope
+        )

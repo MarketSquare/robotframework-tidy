@@ -89,17 +89,19 @@ Create Dictionary
     ...    key2=value
 
 Catenate
-    VAR    ${string}    join    with    spaces    separator=${SPACE}
-    VAR    ${string}    join    with    spaces    separator=${SPACE}
-    VAR    ${string}    comma    separated    list    separator=,
+    ${string}    Catenate    join  with  spaces
+    ${string}    BuiltIn.Catenate    SEPARATOR=${SPACE}    join  with  spaces
+    ${string}=  Catenate    SEPARATOR=,   comma  separated  list
     Catenate    No  Assign
-    VAR    ${string}    single ${value}    separator=${SPACE}
-    VAR    ${multiline_with_empty}    value    ${EMPTY}    third value    separator=${SPACE}
+    ${string}    Catenate   single ${value}
+    ${multiline_with_empty}    Catenate    value
+    ...
+    ...   third value
     Catenate
     Catenate    SEPARATOR=\n
-    VAR    ${assign}    separator=${SPACE}    separator=${SPACE}
-    VAR    ${assign}    ${EMPTY}    separator=${SPACE}
-    VAR    ${assign}    first    SEPARATOR=${SPACE}    separator=${SPACE}
+    ${assign}    Catenate    separator=${SPACE}
+    ${assign}    Catenate    SEPARATOR=${SPACE}
+    ${assign}    Catenate    first    SEPARATOR=${SPACE}
 
 Set Variable If
     IF    ${rc} == 0

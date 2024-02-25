@@ -66,12 +66,16 @@ Multiple Set Variable
     ${var1}    ${var2}    Set Variable    @{list}
 
 Create List
-    VAR    @{scalar}    a    b
-    VAR    @{list}    a    ${1}    ${2}
+    ${scalar}    Create List    a    b
+    @{list}    Create List    a    ${1}
+    ...    ${2}
     IF    ${condition}
-        VAR    @{empty_list}    @{EMPTY}
+        ${empty_list}    Create List
     END
-    VAR    @{empty_values}    a    ${EMPTY}    c
+    ${empty_values}    Create List
+    ...    a
+    ...
+    ...    c
     ${first_list}    ${second_list}    Create List    value  # invalid
     ${first_list}    ${second_list}    Create List    value    value  # valid but does not return list
 

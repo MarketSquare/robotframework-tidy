@@ -102,28 +102,11 @@ Catenate
     VAR    ${assign}    first    SEPARATOR=${SPACE}    separator=${SPACE}
 
 Set Variable If
-    IF    ${rc} == 0
-        VAR    ${var1}    zero
-    ELSE
-        VAR    ${var1}    nonzero
-    END
-    IF    ${rc} > 0
-        VAR    ${var2}    value1
-    ELSE
-        VAR    ${var2}    value2
-    END
-    IF    ${rc} > 0
-        VAR    ${var3}    whatever
-    ELSE
-        VAR    ${var3}    ${None}
-    END
-    IF    ${rc} == 0
-        VAR    ${var}    zero
-    ELSE IF    ${rc} > 0
-        VAR    ${var}    greater than zero
-    ELSE
-        VAR    ${var}    less then zero
-    END
+    ${var1} =    Set Variable If    ${rc} == 0    zero    nonzero
+    ${var2}    Set Variable If    ${rc} > 0    value1    value2
+    ${var3} =    Set Variable If    ${rc} > 0    whatever
+    ${var}=    Set Variable If    ${rc} == 0    zero
+    ...    ${rc} > 0    greater than zero    less then zero
     ${var}    Set Variable If    ${condition}    @{items}
     ${var}    Set Variable If
 
@@ -171,25 +154,11 @@ Inline IF set with two assign one arg
 
 Inline IF set if and custom keyword value2
     # ELSE belongs to IF, and it cannot be converted to inline if
-    IF    ${rc} > 0
-        IF    ${rc}==1
-            VAR    ${assign}    value1
-        ELSE
-            VAR    ${assign}    ${None}
-        END
-    ELSE
-        ${assign}    value2
-    END
+    ${assign}    IF    ${rc} > 0    Set Variable If  ${rc}==1  value1  ELSE  value2
 
 Inline IF set if with else value2
     # second value is ELSE value
-    IF    ${rc} > 0
-        IF    ${rc}==1
-            VAR    ${assign}    value1
-        ELSE
-            VAR    ${assign}    value2
-        END
-    END
+    ${assign}    IF    ${rc} > 0    Set Variable If  ${rc}==1  value1  value2
 
 Inline IF set scope
     IF    ${condition}
