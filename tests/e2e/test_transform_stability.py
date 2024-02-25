@@ -61,6 +61,7 @@ RERUN_NEEDED = {
         "tests": 2,
         "keyword_name_in_var": 2,
     },
+    "ReplaceWithVAR": {"invalid_inline_if": 2},
     "SmartSortKeywords": {"multiple_sections": 2, "sort_input": 2},
     "SplitTooLongLine": {"continuation_indent": 2, "disablers": 2, "tests": 2, "comments": 2, "settings": 2},
     "Translate": {"pl_language_header": 2},
