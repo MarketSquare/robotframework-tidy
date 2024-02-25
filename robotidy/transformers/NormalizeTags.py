@@ -3,6 +3,7 @@ from robot.api.parsing import Token
 from robotidy.disablers import skip_section_if_disabled
 from robotidy.exceptions import InvalidParameterValueError
 from robotidy.transformers import Transformer
+from robotidy.utils import variable_matcher
 
 
 class NormalizeTags(Transformer):
@@ -39,14 +40,15 @@ class NormalizeTags(Transformer):
 
     def __init__(self, case: str = "lowercase", normalize_case: bool = True, preserve_format: bool = False):
         super().__init__()
-        self.case = case.lower()
+        self.case_function = case.lower()
         self.normalize_case = normalize_case
         self.preserve_format = preserve_format
-        try:
-            self.case_function = self.CASE_FUNCTIONS[self.case]
-        except KeyError:
+        self.validate_case_function()
+
+    def validate_case_function(self):
+        if self.case_function not in self.CASE_FUNCTIONS:
             raise InvalidParameterValueError(
-                self.__class__.__name__, "case", case, "Supported cases: lowercase, uppercase, titlecase."
+                self.__class__.__name__, "case", self.case_function, "Supported cases: lowercase, uppercase, titlecase."
             )
 
     @skip_section_if_disabled
@@ -69,13 +71,28 @@ class NormalizeTags(Transformer):
             return self.normalize_tags_tokens_preserve_formatting(node)
         return self.normalize_tags_tokens_ignore_formatting(node, indent)
 
+    def format_with_case_function(self, string: str) -> str:
+        if "{" not in string:
+            return self.CASE_FUNCTIONS[self.case_function](string)
+        tag = ""
+        var_found = False
+        for match in variable_matcher.VariableMatches(string, ignore_errors=True):
+            var_found = True
+            tag += self.CASE_FUNCTIONS[self.case_function](match.before)
+            tag += match.match
+            tag += self.CASE_FUNCTIONS[self.case_function](match.after)
+        if var_found:
+            return tag
+        else:
+            return self.CASE_FUNCTIONS[self.case_function](string)
+
     def normalize_tags_tokens_preserve_formatting(self, node):
         if not self.normalize_case:
             return node
         for token in node.tokens:
             if token.type != Token.ARGUMENT:
                 continue
-            token.value = self.case_function(token.value)
+            token.value = self.format_with_case_function(token.value)
         return node
 
     def normalize_tags_tokens_ignore_formatting(self, node, indent):
@@ -99,7 +116,7 @@ class NormalizeTags(Transformer):
         return node
 
     def convert_case(self, tags):
-        return [self.case_function(item) for item in tags]
+        return [self.format_with_case_function(item) for item in tags]
 
     @staticmethod
     def remove_duplicates(tags):
