@@ -83,8 +83,7 @@ class NormalizeTags(Transformer):
             tag += self.CASE_FUNCTIONS[self.case_function](match.after)
         if var_found:
             return tag
-        else:
-            return self.CASE_FUNCTIONS[self.case_function](string)
+        return self.CASE_FUNCTIONS[self.case_function](string)
 
     def normalize_tags_tokens_preserve_formatting(self, node):
         if not self.normalize_case:

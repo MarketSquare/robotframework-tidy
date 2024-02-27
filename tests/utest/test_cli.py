@@ -152,7 +152,7 @@ class TestCli:
 
     def test_find_project_root_from_src(self):
         src = TEST_DATA_DIR / "nested" / "test.robot"
-        path = find_project_root((src,))
+        path = find_project_root((str(src),))
         assert path == TEST_DATA_DIR / "nested"
 
     def test_ignore_git_dir(self):
@@ -161,9 +161,9 @@ class TestCli:
         (src / ".git").mkdir(exist_ok=True)
         root_with_git = src
         root_without_git = TEST_DATA_DIR / "with_git_dir"
-        path = find_project_root((src,), ignore_git_dir=False)
+        path = find_project_root((str(src),), ignore_git_dir=False)
         assert path == root_with_git
-        path = find_project_root((src,), ignore_git_dir=True)
+        path = find_project_root((str(src),), ignore_git_dir=True)
         assert path == root_without_git
 
     def test_read_robotidy_config(self):

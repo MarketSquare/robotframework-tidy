@@ -2,13 +2,14 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, Iterable, Iterator, List, Optional, Pattern, Tuple
 
+import pathspec
+
 try:
     import rich_click as click
 except ImportError:
     import click
 
 import tomli
-from pathspec import PathSpec
 
 DEFAULT_EXCLUDES = r"/(\.direnv|\.eggs|\.git|\.hg|\.nox|\.tox|\.venv|venv|\.svn)/"
 INCLUDE_EXT = (".robot", ".resource")
@@ -39,7 +40,7 @@ def find_source_config_file(src: Path, ignore_git_dir: bool = False) -> Optional
 
 
 @lru_cache()
-def find_project_root(srcs: Iterable[str], ignore_git_dir: bool = False) -> Path:
+def find_project_root(srcs: Tuple[str], ignore_git_dir: bool = False) -> Path:
     """Return a directory containing .git, or robotidy.toml.
     That directory will be a common parent of all files and directories
     passed in `srcs`.
@@ -85,31 +86,44 @@ def read_pyproject_config(config_path: Path) -> Dict[str, Any]:
 
 
 @lru_cache()
-def get_gitignore(root: Path) -> PathSpec:
+def get_gitignore(root: Path) -> pathspec.PathSpec:
     """Return a PathSpec matching gitignore content if present."""
     gitignore = root / ".gitignore"
     lines: List[str] = []
     if gitignore.is_file():
         with gitignore.open(encoding="utf-8") as gf:
             lines = gf.readlines()
-    return PathSpec.from_lines("gitwildmatch", lines)
+    return pathspec.PathSpec.from_lines(pathspec.patterns.GitWildMatchPattern, lines)
 
 
 def should_parse_path(
-    path: Path, exclude: Optional[Pattern[str]], extend_exclude: Optional[Pattern[str]], gitignore: Optional[PathSpec]
+    path: Path,
+    root_parent: Path,
+    exclude: Optional[Pattern[str]],
+    extend_exclude: Optional[Pattern[str]],
+    gitignore: Optional[pathspec.PathSpec],
 ) -> bool:
     normalized_path = str(path)
     for pattern in (exclude, extend_exclude):
         match = pattern.search(normalized_path) if pattern else None
         if bool(match and match.group(0)):
             return False
-    if gitignore is not None and gitignore.match_file(path):
-        return False
+    if gitignore is not None:
+        relative_path = get_path_relative_to_project_root(path, root_parent)
+        if gitignore.match_file(relative_path):
+            return False
     if path.is_file():
         return path.suffix in INCLUDE_EXT
     if exclude and exclude.match(path.name):
         return False
     return True
+
+
+def get_path_relative_to_project_root(path: Path, root_parent: Path) -> Path:
+    try:
+        return path.relative_to(root_parent)
+    except ValueError:
+        return path
 
 
 def get_paths(
@@ -126,12 +140,13 @@ def get_paths(
             sources.add("-")
             continue
         path = Path(s).resolve()
-        if not should_parse_path(path, exclude, extend_exclude, gitignore):
+        root_parent = root.parent if root.parent else root
+        if not should_parse_path(path, root_parent, exclude, extend_exclude, gitignore):
             continue
         if path.is_file():
             sources.add(path)
         elif path.is_dir():
-            sources.update(iterate_dir((path,), exclude, extend_exclude, gitignore))
+            sources.update(iterate_dir((path,), exclude, extend_exclude, root_parent, gitignore))
         elif s == "-":
             sources.add(path)
 
@@ -142,16 +157,18 @@ def iterate_dir(
     paths: Iterable[Path],
     exclude: Optional[Pattern],
     extend_exclude: Optional[Pattern],
-    gitignore: Optional[PathSpec],
+    root_parent: Path,
+    gitignore: Optional[pathspec.PathSpec],
 ) -> Iterator[Path]:
     for path in paths:
-        if not should_parse_path(path, exclude, extend_exclude, gitignore):
+        if not should_parse_path(path, root_parent, exclude, extend_exclude, gitignore):
             continue
         if path.is_dir():
             yield from iterate_dir(
                 path.iterdir(),
                 exclude,
                 extend_exclude,
+                root_parent,
                 gitignore + get_gitignore(path) if gitignore is not None else None,
             )
         elif path.is_file():
