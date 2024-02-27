@@ -61,8 +61,7 @@ class NormalizeTags(Transformer):
     def visit_DefaultTags(self, node):  # noqa
         return self.normalize_tags(node)
 
-    def visit_ForceTags(self, node):  # noqa
-        return self.normalize_tags(node)
+    visit_TestTags = visit_ForceTags = visit_DefaultTags
 
     def normalize_tags(self, node, indent=False):
         if self.disablers.is_node_disabled(node, full_match=False):

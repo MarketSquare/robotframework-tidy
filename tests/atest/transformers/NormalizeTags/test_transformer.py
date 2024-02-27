@@ -37,8 +37,11 @@ class TestNormalizeTags(TransformerAcceptanceTest):
     def test_only_remove_duplicates(self):
         self.compare(source="duplicates.robot", config=f":normalize_case=False")
 
-    def test_disablers(self):
-        self.compare(source="disablers.robot", not_modified=True)
+    @pytest.mark.parametrize(
+        "disablers", ["disablers.robot", "disablers2.robot", "disablers3.robot", "disablers4.robot"]
+    )
+    def test_disablers(self, disablers):
+        self.compare(source=disablers, not_modified=True)
 
     @pytest.mark.parametrize("indent", [2, 4])
     @pytest.mark.parametrize("spaces", [2, 4])

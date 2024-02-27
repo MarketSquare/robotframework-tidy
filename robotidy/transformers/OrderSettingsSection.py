@@ -206,7 +206,7 @@ class OrderSettingsSection(Transformer):
             return node
         if getattr(node.tokens[-1], "type", None) != Token.EOL:
             return node
-        node.tokens = list(node.tokens[:-1]) + [Token(Token.EOL, "\n")]
+        node.tokens[-1].value = "\n"
         return node
 
     @staticmethod

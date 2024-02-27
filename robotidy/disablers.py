@@ -97,14 +97,17 @@ class DisabledLines:
         return line in self.disabled_headers
 
     def is_node_disabled(self, node, full_match=True):
+        if not node:
+            return False
+        end_lineno = max(node.lineno, node.end_lineno)  # workaround for transformers setting -1 as end_lineno
         if full_match:
             for start_line, end_line in self.lines:
                 # lines are sorted on start_line, so we can return on first match
-                if end_line >= node.end_lineno:
+                if end_line >= end_lineno:
                     return start_line <= node.lineno
         else:
             for start_line, end_line in self.lines:
-                if node.lineno <= end_line and node.end_lineno >= start_line:
+                if node.lineno <= end_line and end_lineno >= start_line:
                     return True
         return False
 
