@@ -64,3 +64,12 @@ class TestNormalizeTags(TransformerAcceptanceTest):
 
     def test_ignore_format(self):
         self.compare(source="preserve_format.robot", expected="preserve_format_default.robot")
+
+    @pytest.mark.parametrize("case_function", ["lowercase", "uppercase", "titlecase"])
+    def test_variable_in_tag(self, case_function: str):
+        self.compare(
+            source="variables_in_tags.robot",
+            expected=f"variables_in_tags_{case_function}.robot",
+            config=f":case={case_function}",
+            target_version=">=6",
+        )
