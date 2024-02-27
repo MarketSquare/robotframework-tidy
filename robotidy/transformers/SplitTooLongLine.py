@@ -1,5 +1,5 @@
 import re
-from typing import List
+from typing import List, Tuple
 
 from robot.api.parsing import Comment, Token
 
@@ -163,6 +163,23 @@ class SplitTooLongLine(Transformer):
             return node
         return self.split_keyword_call(node)
 
+    def visit_Var(self, node):  # noqa
+        if self.disablers.is_node_disabled(node, full_match=False) or not self.should_transform_node(node):
+            return node
+        var_name = node.get_token(Token.VARIABLE)
+        if not var_name:
+            return node
+        indent = node.tokens[0]
+        separator = Token(Token.SEPARATOR, self.formatting_config.separator)
+        line = [indent, node.data_tokens[0], separator, var_name]
+        tokens, comments = self.split_tokens(
+            node.tokens, line, self.split_on_every_value, indent=indent, split_types=(Token.ARGUMENT, Token.OPTION)
+        )
+        comments = [Comment([comment, EOL]) for comment in comments]
+        node.tokens = tokens
+        # FIXME test comments
+        return (*comments, node)
+
     @skip_if_disabled
     def visit_Variable(self, node):  # noqa
         if not self.should_transform_node(node):
@@ -227,7 +244,7 @@ class SplitTooLongLine(Transformer):
             yield EOL
             first = False
 
-    def split_tokens(self, tokens, line, split_on, indent=None):
+    def split_tokens(self, tokens, line, split_on, indent=None, split_types: Tuple = (Token.ARGUMENT,)):
         separator = Token(Token.SEPARATOR, self.formatting_config.separator)
         align_new_line = self.align_new_line and not split_on
         if align_new_line:
@@ -246,7 +263,7 @@ class SplitTooLongLine(Transformer):
                 last_separator = token
             elif token.type == Token.COMMENT:
                 self.join_split_comments(comments, token, last_separator)
-            elif token.type == Token.ARGUMENT:
+            elif token.type in split_types:
                 if token.value == "":
                     token.value = "${EMPTY}"
                 if split_on or not self.col_fit_in_line(line + [separator, token]):

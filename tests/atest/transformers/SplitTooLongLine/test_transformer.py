@@ -178,3 +178,6 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
             "-c OrderTags:enabled=False",
             run_all=True,
         )
+
+    def test_var_syntax(self):
+        self.compare(source="VAR_syntax.robot", target_version=">=7")
