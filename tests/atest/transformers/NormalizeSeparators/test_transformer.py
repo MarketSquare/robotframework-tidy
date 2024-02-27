@@ -39,8 +39,11 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
     def test_rf5_syntax(self):
         self.compare(source="rf5_syntax.robot", target_version=">=5")
 
-    def test_disablers(self):
-        self.compare(source="disablers.robot", not_modified=True)
+    @pytest.mark.parametrize(
+        "disablers", ["disablers.robot", "disablers2.robot", "disablers3.robot", "disablers4.robot"]
+    )
+    def test_disablers(self, disablers):
+        self.compare(source=disablers, not_modified=True)
 
     def test_skip_documentation_default(self):
         self.compare(source="test.robot", config=":skip_documentation=False")

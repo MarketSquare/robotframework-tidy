@@ -27,7 +27,7 @@ class RenameKeywords(Transformer):
     to set replacement value. This configuration (underscores are used instead of spaces):
 
     ```
-    robotidy --transform RenameKeywords -c RenameKeywords:replace_pattern=^(?i)rename\s?me$:replace_to=New_Shining_Name .
+    robotidy --transform RenameKeywords -c RenameKeywords:replace_pattern=^(?i)rename\\s?me$:replace_to=New_Shining_Name .
     ```
 
     will transform following code:
