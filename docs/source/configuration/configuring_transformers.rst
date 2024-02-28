@@ -3,18 +3,18 @@
 Configuring Transformers
 ========================
 
-Transformers can be configured through three different options: ``--transform`` (``-t``), ``--load-transformer`` and
+Transformers can be configured through three different options: ``--transform`` (``-t``), ``--custom-transformers`` and
 ``--configure`` (``-c``). They share the same syntax for parameter names and values.
 
 - ``--configure`` simply provides the configuration to the transformer,
 - ``--transform`` is used to include only transformers that have ``--transform`` option,
-- ``--load-transformer`` is used to load user transformers. Read more at :ref:`external-transformers`.
+- ``--custom-transformers`` is used to load user transformers. Read more at :ref:`external-transformers`.
 
 For example::
 
     robotidy --transform NormalizeNewLines:test_case_lines=2 src
     robotidy --configure NormalizeNewLines:test_case_lines=2 src
-    robotidy --configure NormalizeNewLines:test_case_lines=1 --load-transformer MyCustomTransformer.py:param=value src
+    robotidy --configure NormalizeNewLines:test_case_lines=1 --custom-transformers MyCustomTransformer.py:param=value src
 
 With first command robotidy will run only ``NormalizeNewLines`` transformer and it will configure it with ``test_case_lines = 2``.
 
