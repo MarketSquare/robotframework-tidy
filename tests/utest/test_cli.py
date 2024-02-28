@@ -518,6 +518,18 @@ class TestCli:
                 option_names.append("empty")
         run_tidy([*option_names, str(tmp_path)])
 
+    @pytest.mark.parametrize("option_name", ["custom_transformers", "load_transformers"])
+    def test_load_custom_transformers_from_config(self, option_name):
+        config_path = TEST_DATA_DIR / "config_with_custom_transformers" / f"{option_name}.toml"
+        config_file = read_pyproject_config(config_path)
+        config = RawConfig().from_config_file(config_file, config_path)
+        assert config.custom_transformers[0].name == "CustomTransformer.py"
+
+    @pytest.mark.parametrize("option_name", ["--custom-transformers", "--load-transformers"])
+    def test_load_custom_transformers_from_cli(self, option_name, tmp_path):
+        custom_transformer = TEST_DATA_DIR / "config_with_custom_transformers" / "CustomTransformer.py"
+        run_tidy([option_name, str(custom_transformer), str(tmp_path)])
+
 
 class TestGenerateConfig:
     def validate_generated_default_configuration(

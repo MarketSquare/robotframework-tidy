@@ -195,13 +195,13 @@ any other transformer not listed with ``--transform``. That's why if user would 
     > robotidy --transform MyCustomClass.py test.robot
 
 It would disable all default transformers and only run MyCustomClass.
-This release introduces new option ``--load-transformer`` which imports custom transformers on top of the default ones::
+This release introduces new option ``--custom-transformers`` which imports custom transformers on top of the default ones::
 
-    > robotidy --load-transformer MyCustomClass.py test.robot
+    > robotidy --custom-transformers MyCustomClass.py test.robot
 
 It is also possible to pass transformer configuration either using this option or through ``--configure``::
 
-    > robotidy -c ExtClass1.py:param=value --load-transformer ExtClass2.py:param2=value test.robot
+    > robotidy -c ExtClass1.py:param=value --custom-transformers ExtClass2.py:param2=value test.robot
 
 Load custom transformers from the module
 -------------------------------------------
@@ -210,7 +210,7 @@ It is now possible to load transformers from the Python module. Importing transf
 to how custom libraries are imported in Robot Framework. If the file has the same name as transformer, it will
 be auto-imported. The following command::
 
-    > robotidy --load-transformer CustomClass.py
+    > robotidy --custom-transformers CustomClass.py
 
 will load ``class CustomClass`` from the ``CustomClass.py`` file. It's the old behaviour and it will not change.
 
@@ -357,7 +357,7 @@ Spaces in the transformer name or configuration
 Spaces are now allowed in the transformer path or configuration value. To provide such name or value
 enclose it with quotation marks::
 
-    > robotidy --load-transformer "C:\\My Transformers\\Transformer.py"
+    > robotidy --custom-transformers "C:\\My Transformers\\Transformer.py"
     > robotidy --configure CustomTransformer:value="param value"
 
 Bugs

@@ -232,6 +232,7 @@ def generate_config(global_config: config_module.MainConfig):
 )
 @click.option(
     "--load-transformers",
+    "--custom-transformers",
     "custom_transformers",
     type=TransformConfigParameter(),
     multiple=True,

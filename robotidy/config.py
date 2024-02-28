@@ -186,6 +186,9 @@ class RawConfig:
         options_map = map_class_fields_with_their_types(self)
         parsed_config = {"defined_in_config": {"defined_in_config", "config_path"}, "config_path": config_path}
         for key, value in config.items():
+            # workaround to be able to use two option names for same action - backward compatibility change
+            if key == "load_transformers":
+                key = "custom_transformers"
             if key not in options_map:
                 raise exceptions.NoSuchOptionError(key, list(options_map.keys())) from None
             value_type = options_map[key]

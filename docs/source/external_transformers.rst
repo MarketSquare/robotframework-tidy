@@ -7,12 +7,12 @@ file with class to run external transformers with *robotidy*::
 
     robotidy --transform MyTransformers.YourCustomTransformer src
     robotidy --transform C:\transformers\YourCustomTransformer2.py src
-    robotidy --load-transformer C:\transformers\YourCustomTransformer2.py src
+    robotidy --custom-transformers C:\transformers\YourCustomTransformer2.py src
 
 External transformers can be configured in the same way internal transformers are configured - see :ref:`configuring-transformers`.
 
-You can use both ``--transform`` and ``--load-transformer`` options to load custom user transformer. The main difference
-is that ``--transform`` works like include and will only run transformers listed with ``--transform``. While ``--load-transformer``
+You can use both ``--transform`` and ``--custom-transformers`` options to load custom user transformer. The main difference
+is that ``--transform`` works like include and will only run transformers listed with ``--transform``. While ``--custom-transformers``
 will run default transformers first and then user transformers.
 
 Importing whole modules
@@ -21,7 +21,7 @@ Importing whole modules
 Importing transformers from module works similarly to how custom libraries are imported in Robot Framework. If the the
 file has the same name as transformer it will be auto imported. For example following import::
 
-    robotidy --load-transformer CustomFormatter.py src
+    robotidy --custom-transformers CustomFormatter.py src
 
 will auto import class ``CustomFormatter`` from the file.
 
