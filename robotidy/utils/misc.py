@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import ast
 import difflib
 import os
 import re
 from enum import Enum
 from functools import total_ordering
-from typing import Iterable, List, Optional, Pattern
+from typing import Iterable, Pattern
 
 import click
 
@@ -79,14 +81,14 @@ class StatementLinesCollector(ModelVisitor):
         return other.text == self.text
 
 
-def validate_regex(value: Optional[str]) -> Optional[Pattern]:
+def validate_regex(value: str | None) -> Pattern | None:
     try:
         return re.compile(value) if value is not None else None
     except re.error:
         raise click.BadParameter("Not a valid regular expression")
 
 
-def decorate_diff_with_color(contents: List[str]) -> List[str]:
+def decorate_diff_with_color(contents: list[str]) -> list[str]:
     """Decorate diff lines with rich console styles."""
     lines = []
     for line in contents:
@@ -448,7 +450,7 @@ def get_line_length_with_sep(tokens, sep_len: int):
     return get_line_length(tokens) + ((len(tokens) - 1) * sep_len)
 
 
-def join_comments(comments) -> List:
+def join_comments(comments) -> list:
     tokens = []
     separator = Token(Token.SEPARATOR, "  ")
     for token in comments:

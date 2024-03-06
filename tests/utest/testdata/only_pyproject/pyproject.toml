@@ -4,6 +4,7 @@ diff = false
 startline = 10
 endline = 20
 continuation-indent = 2
+exclude = "Regex\\s"
 transform = [
    "DiscardEmptySections:allow_only_comments=True",
    "SplitTooLongLine"

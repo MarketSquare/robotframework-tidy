@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import functools
 import shutil
 from pathlib import Path
-from typing import List, Tuple
 
 import pytest
 from click.testing import CliRunner
@@ -97,7 +98,7 @@ def run_with_source_and_check(source: Path, orig: Path, enable_disabled: bool):
 
 
 @functools.lru_cache(1)
-def get_enable_disabled_config() -> List[str]:
+def get_enable_disabled_config() -> list[str]:
     """Returns config required to enable all disabled transformers."""
 
     def is_transformer_disabled(transformer):
@@ -121,7 +122,7 @@ def is_e2e_only(path: Path) -> bool:
     return path.parent.parent.name == "e2e"
 
 
-def get_test_attributes_from_path(path: Path) -> Tuple[str, str]:
+def get_test_attributes_from_path(path: Path) -> tuple[str, str]:
     transformer = path.parent.parent.name
     test_name = path.stem
     return transformer, test_name

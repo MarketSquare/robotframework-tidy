@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import re
-from typing import List, Optional, Pattern
+from typing import Pattern
 
 import click
 from robot.api import Token
@@ -17,7 +19,7 @@ def str_to_bool(value):
     return value.lower() == "true"
 
 
-def validate_regex(value: str) -> Optional[Pattern]:
+def validate_regex(value: str) -> Pattern | None:
     try:
         return re.compile(value)
     except re.error:
@@ -52,8 +54,8 @@ class SkipConfig:
         self,
         documentation: bool = False,
         return_values: bool = False,
-        keyword_call: Optional[List] = None,
-        keyword_call_pattern: Optional[List] = None,
+        keyword_call: list | None = None,
+        keyword_call_pattern: list | None = None,
         settings: bool = False,
         arguments: bool = False,
         setup: bool = False,
@@ -68,8 +70,8 @@ class SkipConfig:
     ):
         self.documentation = documentation
         self.return_values = return_values
-        self.keyword_call: List = keyword_call if keyword_call else []
-        self.keyword_call_pattern: List = keyword_call_pattern if keyword_call_pattern else []
+        self.keyword_call: list = keyword_call if keyword_call else []
+        self.keyword_call_pattern: list = keyword_call_pattern if keyword_call_pattern else []
         self.settings = settings
         self.arguments = arguments
         self.setup = setup

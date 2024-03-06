@@ -48,7 +48,7 @@ class Robotidy:
                 elif self.config.verbose:
                     click.echo(f"Found {source} file")
                 model = self.get_model(source)
-                model_path = model.source
+                model_path = model.source or source
                 disabler_finder.visit(model)
                 if disabler_finder.is_disabled_in_file(disablers.ALL_TRANSFORMERS):
                     continue

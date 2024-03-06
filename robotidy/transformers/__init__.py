@@ -8,12 +8,14 @@ need to inherit from ``ModelTransformer`` or ``ast.NodeTransformer`` class. Fina
 If you don't want to run your transformer by default and only when calling robotidy with --transform YourTransformer
 then add ``ENABLED = False`` class attribute inside.
 """
+from __future__ import annotations
+
 import copy
 import inspect
 import pathlib
 import textwrap
 from itertools import chain
-from typing import Dict, Iterable, List, Optional
+from typing import Iterable
 
 try:
     import rich_click as click
@@ -122,12 +124,12 @@ class TransformConfigMap:
 
     def __init__(
         self,
-        transform: List[TransformConfig],
-        custom_transformers: List[TransformConfig],
-        config: List[TransformConfig],
+        transform: list[TransformConfig],
+        custom_transformers: list[TransformConfig],
+        config: list[TransformConfig],
     ):
         self.force_included_only = False
-        self.transformers: Dict[str, TransformConfig] = dict()
+        self.transformers: dict[str, TransformConfig] = dict()
         for tr in chain(transform, custom_transformers, config):
             self.add_transformer(tr)
 
@@ -139,7 +141,7 @@ class TransformConfigMap:
         else:
             self.transformers[tr.name] = tr
 
-    def get_args(self, *names) -> Dict:
+    def get_args(self, *names) -> dict:
         for name in names:
             name = str(name)
             if name in self.transformers:
@@ -162,15 +164,15 @@ class TransformConfigMap:
             return False
         return self.transformers[name].force_include or self.transformers[name].args.get("enabled", False)
 
-    def update_with_defaults(self, defaults: List[str]):
+    def update_with_defaults(self, defaults: list[str]):
         for default in defaults:
             if default in self.transformers:
                 self.transformers[default].is_config_only = False
             else:
                 self.transformers[default] = TransformConfig(default, False, False, False)
 
-    def order_using_list(self, order: List[str]):
-        temp_transformers: Dict[str, TransformConfig] = dict()
+    def order_using_list(self, order: list[str]):
+        temp_transformers: dict[str, TransformConfig] = dict()
         for name in order:
             if name in self.transformers:
                 temp_transformers[name] = self.transformers[name]
@@ -260,10 +262,10 @@ class TransformerContainer:
 
 
 class Transformer(ModelTransformer):
-    def __init__(self, skip: Optional[Skip] = None):
+    def __init__(self, skip: Skip | None = None):
         self.formatting_config = None  # to make lint happy (we're injecting the configs)
         self.languages = None
-        self.transformers: Dict = dict()
+        self.transformers: dict = dict()
         self.disablers = None
         self.config_directory = None
         self.skip = skip
@@ -362,7 +364,7 @@ def split_args_to_class_and_skip(args):
     return filtered_args, skip_args
 
 
-def resolve_argument_names(argument_names: List[str], handles_skip):
+def resolve_argument_names(argument_names: list[str], handles_skip):
     """Get transformer argument names with resolved skip parameters."""
     new_args = ["enabled"]
     if "skip" not in argument_names:

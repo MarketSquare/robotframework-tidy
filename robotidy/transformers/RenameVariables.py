@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import re
 from enum import Enum
-from typing import Pattern, Tuple
+from typing import Pattern
 
 from robot.api.parsing import Arguments, Token
 from robot.errors import VariableError
@@ -539,7 +541,7 @@ class RenameVariables(Transformer):
         return variable_name + item_access
 
 
-def split_string_on_delimiter(string: str) -> Tuple[str, str]:
+def split_string_on_delimiter(string: str) -> tuple[str, str]:
     """
     Split string on first occurrence of the delimiters.
 

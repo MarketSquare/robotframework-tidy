@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, List, Optional, Tuple
+from __future__ import annotations
+from typing import TYPE_CHECKING
 
 from robot.api.parsing import Comment, ElseHeader, ElseIfHeader, End, If, IfHeader, KeywordCall, Token
 from robot.utils.escaping import split_from_equals
@@ -177,7 +178,7 @@ class ReplaceWithVAR(Transformer):
         statement.tokens = tuple(updated_tokens)
         return statement
 
-    def restore_comments(self, node, comments: List[Token], indent: str):
+    def restore_comments(self, node, comments: list[Token], indent: str):
         if not comments:
             return node
         if len(comments) == 1:
@@ -185,10 +186,10 @@ class ReplaceWithVAR(Transformer):
             node.tokens = tuple(list(node.tokens[:-1]) + [Token(Token.SEPARATOR, "  "), comments[0], node.tokens[-1]])
             return node
         comment_nodes = [Comment.from_params(comment=comment.value, indent=indent) for comment in comments]
-        return (*comment_nodes, node)  # TODO remove parenthesis in 3.8
+        return *comment_nodes, node
 
     @staticmethod
-    def resolve_variable_name(name: str) -> Optional[str]:
+    def resolve_variable_name(name: str) -> str | None:
         if name.startswith("\\"):
             name = name[1:]
         if len(name) < 2 or name[0] not in "$@&":
@@ -201,10 +202,10 @@ class ReplaceWithVAR(Transformer):
     def resolve_assign_name(name: str) -> str:
         return name.rstrip("=").rstrip()
 
-    def get_assign_names(self, assign: Tuple[str]) -> List[str]:
+    def get_assign_names(self, assign: tuple[str, ...]) -> list[str]:
         return [self.resolve_assign_name(assign) for assign in assign]
 
-    def replace_set_variable(self, node, kw_name: str, indent: str, assign: Optional[List[str]] = None):
+    def replace_set_variable(self, node, kw_name: str, indent: str, assign: list[str] | None = None):
         assign = assign or self.get_assign_names(node.assign)
         args = node.get_tokens(Token.ARGUMENT)
         if not assign or (len(assign) != 1 and len(assign) != len(args)):
@@ -228,7 +229,7 @@ class ReplaceWithVAR(Transformer):
             for var_assign, value in zip(assign, values)
         ]
 
-    def replace_set_variable_scope(self, node, kw_name: str, indent: str, assign: Optional[List[str]] = None):
+    def replace_set_variable_scope(self, node, kw_name: str, indent: str, assign: list[str] | None = None):
         assign = assign or node.assign
         args = node.get_tokens(Token.ARGUMENT)
         if not args or assign:
@@ -254,7 +255,7 @@ class ReplaceWithVAR(Transformer):
             name=var_name, value=values, separator=self.formatting_config.separator, indent=indent, scope=scope
         )
 
-    def replace_set_variable_if_kw(self, node, kw_name: str, indent: str, assign: Optional[List[str]] = None):
+    def replace_set_variable_if_kw(self, node, kw_name: str, indent: str, assign: list[str] | None = None):
         """
         # ${var}    Set Variable If    ${cond}    1
         # IF    ${cond}    VAR    1    ELSE    VAR    ${None}
@@ -306,7 +307,7 @@ class ReplaceWithVAR(Transformer):
                 return head
             args = args[2:]
 
-    def replace_catenate_kw(self, node, kw_name: str, indent: str, assign: Optional[List[str]] = None):
+    def replace_catenate_kw(self, node, kw_name: str, indent: str, assign: list[str] | None = None):
         assign = assign or self.get_assign_names(node.assign)
         # not items - VAR with ${EMPTY}
         if not self.replace_catenate or len(assign) != 1:
@@ -326,7 +327,7 @@ class ReplaceWithVAR(Transformer):
         scope = "LOCAL" if self.explicit_local else None
         return Var.from_params(name=var_name, value=values, indent=indent, value_separator=separator, scope=scope)
 
-    def replace_create_list_kw(self, node, kw_name: str, indent: str, assign: Optional[List[str]] = None):
+    def replace_create_list_kw(self, node, kw_name: str, indent: str, assign: list[str] | None = None):
         assign = assign or self.get_assign_names(node.assign)
         if not self.replace_create_list or len(assign) != 1:
             return None
@@ -342,7 +343,7 @@ class ReplaceWithVAR(Transformer):
             name=var_name, value=values, separator=self.formatting_config.separator, indent=indent, scope=scope
         )
 
-    def _split_dict_items(self, items: List[str]):
+    def _split_dict_items(self, items: list[str]):
         separate = []
         for item in items:
             name, value = split_from_equals(item)
@@ -352,7 +353,7 @@ class ReplaceWithVAR(Transformer):
         return separate, items[len(separate) :]
 
     @staticmethod
-    def _combine_separated_items(items: List[str]):
+    def _combine_separated_items(items: list[str]):
         if not items:
             return items
         combined = [f"{key}={value}" for key, value in zip(items[::2], items[1::2])]
@@ -360,7 +361,7 @@ class ReplaceWithVAR(Transformer):
             combined.append(items[-1])
         return combined
 
-    def replace_create_dictionary_kw(self, node, kw_name: str, indent: str, assign: Optional[List[str]] = None):
+    def replace_create_dictionary_kw(self, node, kw_name: str, indent: str, assign: list[str] | None = None):
         assign = assign or self.get_assign_names(node.assign)
         if not self.replace_create_dictionary or len(assign) != 1:
             return None

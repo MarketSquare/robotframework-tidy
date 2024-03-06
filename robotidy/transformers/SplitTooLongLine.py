@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import re
-from typing import List, Tuple
 
 from robot.api.parsing import Comment, Token
 
@@ -246,7 +247,7 @@ class SplitTooLongLine(Transformer):
             yield EOL
             first = False
 
-    def split_tokens(self, tokens, line, split_on, indent=None, split_types: Tuple = (Token.ARGUMENT,)):
+    def split_tokens(self, tokens, line, split_on, indent=None, split_types: tuple = (Token.ARGUMENT,)):
         separator = Token(Token.SEPARATOR, self.formatting_config.separator)
         align_new_line = self.align_new_line and not split_on
         if align_new_line:
@@ -284,7 +285,7 @@ class SplitTooLongLine(Transformer):
         return split_tokens, comments
 
     @staticmethod
-    def join_split_comments(comments: List, token: Token, last_separator: Token):
+    def join_split_comments(comments: list, token: Token, last_separator: Token):
         """Join split comments when splitting line.
         AST splits comments with separators, e.g.
         "# Comment     rest" -> ["# Comment", "     ", "rest"].
@@ -295,7 +296,7 @@ class SplitTooLongLine(Transformer):
         else:
             comments.append(token)
 
-    def calculate_align_separator(self, line: List) -> str:
+    def calculate_align_separator(self, line: list) -> str:
         """Calculate width of the separator required to align new line to previous line."""
         if len(line) <= 2:
             # line only fits one column, so we don't have anything to align it for
