@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, Iterable, Iterator, List, Optional, Pattern, Tuple
+from typing import Any, Iterable, Iterator, Pattern
 
 import pathspec
 
@@ -18,7 +20,7 @@ CONFIG_NAMES = ("robotidy.toml", "pyproject.toml", DOTFILE_CONFIG)
 
 
 @lru_cache()
-def find_source_config_file(src: Path, ignore_git_dir: bool = False) -> Optional[Path]:
+def find_source_config_file(src: Path, ignore_git_dir: bool = False) -> Path | None:
     """Find and return configuration file for the source path.
 
     This method looks iteratively in source parents for directory that contains configuration file and
@@ -40,7 +42,7 @@ def find_source_config_file(src: Path, ignore_git_dir: bool = False) -> Optional
 
 
 @lru_cache()
-def find_project_root(srcs: Tuple[str], ignore_git_dir: bool = False) -> Path:
+def find_project_root(srcs: tuple[str, ...], ignore_git_dir: bool = False) -> Path:
     """Return a directory containing .git, or robotidy.toml.
     That directory will be a common parent of all files and directories
     passed in `srcs`.
@@ -69,7 +71,7 @@ def find_project_root(srcs: Tuple[str], ignore_git_dir: bool = False) -> Path:
     return directory
 
 
-def load_toml_file(config_path: Path) -> Dict[str, Any]:
+def load_toml_file(config_path: Path) -> dict[str, Any]:
     try:
         with config_path.open("rb") as tf:
             config = tomli.load(tf)
@@ -78,7 +80,7 @@ def load_toml_file(config_path: Path) -> Dict[str, Any]:
         raise click.FileError(filename=str(config_path), hint=f"Error reading configuration file: {e}")
 
 
-def read_pyproject_config(config_path: Path) -> Dict[str, Any]:
+def read_pyproject_config(config_path: Path) -> dict[str, Any]:
     config = load_toml_file(config_path)
     if config_path.name != DOTFILE_CONFIG or "tool" in config:
         config = config.get("tool", {}).get("robotidy", {})
@@ -89,7 +91,7 @@ def read_pyproject_config(config_path: Path) -> Dict[str, Any]:
 def get_gitignore(root: Path) -> pathspec.PathSpec:
     """Return a PathSpec matching gitignore content if present."""
     gitignore = root / ".gitignore"
-    lines: List[str] = []
+    lines: list[str] = []
     if gitignore.is_file():
         with gitignore.open(encoding="utf-8") as gf:
             lines = gf.readlines()
@@ -99,9 +101,9 @@ def get_gitignore(root: Path) -> pathspec.PathSpec:
 def should_parse_path(
     path: Path,
     root_parent: Path,
-    exclude: Optional[Pattern[str]],
-    extend_exclude: Optional[Pattern[str]],
-    gitignore: Optional[pathspec.PathSpec],
+    exclude: Pattern[str] | None,
+    extend_exclude: Pattern[str] | None,
+    gitignore: pathspec.PathSpec | None,
 ) -> bool:
     normalized_path = str(path)
     for pattern in (exclude, extend_exclude):
@@ -126,9 +128,7 @@ def get_path_relative_to_project_root(path: Path, root_parent: Path) -> Path:
         return path
 
 
-def get_paths(
-    src: Tuple[str, ...], exclude: Optional[Pattern], extend_exclude: Optional[Pattern], skip_gitignore: bool
-):
+def get_paths(src: tuple[str, ...], exclude: Pattern | None, extend_exclude: Pattern | None, skip_gitignore: bool):
     root = find_project_root(src)
     if skip_gitignore:
         gitignore = None
@@ -155,10 +155,10 @@ def get_paths(
 
 def iterate_dir(
     paths: Iterable[Path],
-    exclude: Optional[Pattern],
-    extend_exclude: Optional[Pattern],
+    exclude: Pattern | None,
+    extend_exclude: Pattern | None,
     root_parent: Path,
-    gitignore: Optional[pathspec.PathSpec],
+    gitignore: pathspec.PathSpec | None,
 ) -> Iterator[Path]:
     for path in paths:
         if not should_parse_path(path, root_parent, exclude, extend_exclude, gitignore):

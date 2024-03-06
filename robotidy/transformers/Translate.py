@@ -1,4 +1,4 @@
-from typing import Optional, Set
+from __future__ import annotations
 
 from robot.api import Token
 from robot.api.parsing import CommentSection, EmptyLine
@@ -61,11 +61,11 @@ class Translate(Transformer):
         language: str = "en",
         translate_bdd: bool = False,
         add_language_header: bool = False,
-        but_alternative: Optional[str] = None,
-        given_alternative: Optional[str] = None,
-        and_alternative: Optional[str] = None,
-        then_alternative: Optional[str] = None,
-        when_alternative: Optional[str] = None,
+        but_alternative: str | None = None,
+        given_alternative: str | None = None,
+        and_alternative: str | None = None,
+        then_alternative: str | None = None,
+        when_alternative: str | None = None,
     ):
         super().__init__()
         self.in_settings = False
@@ -94,7 +94,7 @@ class Translate(Transformer):
                 self._bdd_mapping.update({name.title(): "When" for name in language.when_prefixes})
         return self._bdd_mapping
 
-    def get_bdd_keyword(self, container: Set, alternative: Optional[str], param_name: str) -> str:
+    def get_bdd_keyword(self, container: set, alternative: str | None, param_name: str) -> str:
         if alternative is not None:
             names = ",".join(sorted(container))
             if alternative not in container:
@@ -109,11 +109,11 @@ class Translate(Transformer):
 
     def get_translated_bdd(
         self,
-        but_alternative: Optional[str],
-        given_alternative: Optional[str],
-        and_alternative: Optional[str],
-        then_alternative: Optional[str],
-        when_alternative: Optional[str],
+        but_alternative: str | None,
+        given_alternative: str | None,
+        and_alternative: str | None,
+        then_alternative: str | None,
+        when_alternative: str | None,
     ):
         if not self.translate_bdd:
             return {}
@@ -147,7 +147,7 @@ class Translate(Transformer):
             if ImplicitCommentSection:
                 section = ImplicitCommentSection(body=[language_header, empty_line])
             else:
-                section = CommentSection(body=[language_header, empty_line])
+                section = CommentSection(header=None, body=[language_header, empty_line])
             node.sections.insert(0, section)
         return node
 

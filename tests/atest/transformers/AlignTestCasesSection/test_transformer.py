@@ -1,4 +1,4 @@
-from typing import Tuple
+from __future__ import annotations
 
 import pytest
 
@@ -39,7 +39,7 @@ class TestAlignTestCasesSection(TransformerAcceptanceTest):
     )
     @pytest.mark.parametrize("handle_too_long", ["overflow", "ignore_line", "ignore_rest"])
     @pytest.mark.parametrize("alignment_type", ["auto", "fixed"])
-    def test_simple(self, alignment_type, handle_too_long, widths: Tuple):
+    def test_simple(self, alignment_type, handle_too_long, widths: tuple[int, ...]):
         width_name = "_".join(str(width) for width in widths)
         if width_name == "0_0_0":
             width_name = "0"  # it should be the same result so we can reuse expected file

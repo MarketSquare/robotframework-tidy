@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from collections import defaultdict
-from typing import Dict
 
 from robot.api.parsing import Token
 from robot.parsing.model import Statement
@@ -117,7 +118,7 @@ class AlignVariablesSection(Transformer):
             aligned_statements.append(Statement.from_tokens(aligned_statement))
         return aligned_statements
 
-    def get_separator(self, index: int, up_to: int, token, look_up: Dict[int, int]) -> str:
+    def get_separator(self, index: int, up_to: int, token, look_up: dict[int, int]) -> str:
         if index < up_to:
             if self.fixed_width:
                 return max(self.fixed_width - len(token.value), self.formatting_config.space_count) * " "
@@ -125,7 +126,7 @@ class AlignVariablesSection(Transformer):
         else:
             return self.formatting_config.separator
 
-    def create_look_up(self, statements) -> Dict[int, int]:
+    def create_look_up(self, statements) -> dict[int, int]:
         look_up = defaultdict(int)
         for st in statements:
             for line in st:

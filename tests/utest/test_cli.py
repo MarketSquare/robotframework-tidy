@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 from contextlib import contextmanager
 from pathlib import Path
@@ -185,6 +186,7 @@ class TestCli:
             "continuation_indent": 2,
             "startline": 10,
             "endline": 20,
+            "exclude": "Regex\\s",
             "transform": ["DiscardEmptySections:allow_only_comments=True", "SplitTooLongLine"],
             "configure": [
                 "DiscardEmptySections:allow_only_comments=False",
@@ -530,6 +532,12 @@ class TestCli:
     def test_load_custom_transformers_from_cli(self, option_name, tmp_path):
         custom_transformer = TEST_DATA_DIR / "config_with_custom_transformers" / "CustomTransformer.py"
         run_tidy([option_name, str(custom_transformer), str(tmp_path)])
+
+    def test_exclude_pattern_from_config(self):
+        config_path = TEST_DATA_DIR / "only_pyproject" / f"pyproject.toml"
+        config_file = read_pyproject_config(config_path)
+        config = RawConfig().from_config_file(config_file, config_path)
+        assert config.exclude == re.compile("Regex\\s")
 
 
 class TestGenerateConfig:

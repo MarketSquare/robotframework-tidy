@@ -1,5 +1,3 @@
-from typing import List
-
 from robot.api.parsing import Token
 
 from robotidy.disablers import skip_if_disabled

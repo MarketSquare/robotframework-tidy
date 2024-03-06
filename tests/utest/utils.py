@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from pathlib import Path
-from typing import List, Optional
 
 from click.testing import CliRunner
 
@@ -7,10 +8,10 @@ from robotidy.cli import cli
 
 
 def run_tidy(
-    args: List[str] = None,
+    args: list[str] = None,
     exit_code: int = 0,
-    output: Optional[str] = None,
-    std_in: Optional = None,
+    output: str | None = None,
+    std_in: str | None = None,
     overwrite_input: bool = False,
 ):
     runner = CliRunner(mix_stderr=False)

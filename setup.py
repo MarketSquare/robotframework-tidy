@@ -39,7 +39,7 @@ setup(
     keywords="robotframework",
     packages=["robotidy"],
     include_package_data=True,
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=[
         "robotframework>=4.0,<8.0",
         "click==8.1.*",
