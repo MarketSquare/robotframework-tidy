@@ -317,7 +317,7 @@ class ReplaceWithVAR(Transformer):
         var_name = assign[0]
         values = [arg.value if arg.value else "${EMPTY}" for arg in args]
         if values[0].startswith("SEPARATOR="):
-            separator = values[0].replace("SEPARATOR=", "", 1) or "${SPACE}"
+            separator = values[0].replace("SEPARATOR=", "", 1) or "${EMPTY}"
             values = values[1:]
             if not values:
                 values = ["${EMPTY}"]

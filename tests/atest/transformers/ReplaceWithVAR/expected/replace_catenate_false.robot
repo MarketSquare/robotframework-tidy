@@ -102,6 +102,8 @@ Catenate
     ${assign}    Catenate    separator=${SPACE}
     ${assign}    Catenate    SEPARATOR=${SPACE}
     ${assign}    Catenate    first    SEPARATOR=${SPACE}
+    ${assign}    Catenate    SEPARATOR=    first
+    ${assign}    Catenate    first    SEPARATOR=
 
 Set Variable If
     IF    ${rc} == 0
