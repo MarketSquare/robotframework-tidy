@@ -358,6 +358,7 @@ class TestCli:
         # overwrite input which is read-only file
         result = run_tidy([str(source)], overwrite_input=True)
         assert "Permission denied" in result.output
+        assert "\n0 files reformatted, 0 files left unchanged. 1 file skipped.\n" in result.output
 
     @pytest.mark.parametrize("color_flag", ["--color", "--no-color", None])
     @pytest.mark.parametrize("color_env", [True, False])

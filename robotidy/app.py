@@ -29,12 +29,14 @@ class Robotidy:
 
     def transform_files(self):
         changed_files = 0
+        skipped_files = 0
         all_files = 0
         stdin = False
         for source, config in self.main_config.get_sources_with_configs():
             self.config = config
             all_files += 1
             disabler_finder = RegisterDisablers(self.config.formatting.start_line, self.config.formatting.end_line)
+            previous_changed_files = changed_files
             try:
                 stdin = False
                 if str(source) == "-":
@@ -59,20 +61,25 @@ class Robotidy:
                     changed_files += 1
             except DataError as err:
                 click.echo(f"Failed to decode {source} with an error: {err}\nSkipping file")
-        return self.formatting_result(all_files, changed_files, stdin)
+                changed_files = previous_changed_files
+                skipped_files += 1
+        return self.formatting_result(all_files, changed_files, skipped_files, stdin)
 
-    def formatting_result(self, all_files: int, changed_files: int, stdin: bool):
+    def formatting_result(self, all_files: int, changed_files: int, skipped_files: int, stdin: bool):
         """
         Print formatting summary and return status code.
         """
         if not stdin:
-            all_files = all_files - changed_files
+            all_files = all_files - changed_files - skipped_files
             all_files_plurar = "" if all_files == 1 else "s"
             changed_files_plurar = "" if changed_files == 1 else "s"
+            skipped_files_plurar = "" if skipped_files == 1 else "s"
+
             future_tense = "" if self.config.overwrite else " would be"
             click.echo(
                 f"\n{changed_files} file{changed_files_plurar}{future_tense} reformatted, "
-                f"{all_files} file{all_files_plurar}{future_tense} left unchanged."
+                f"{all_files} file{all_files_plurar}{future_tense} left unchanged." +
+                (f" {skipped_files} file{skipped_files_plurar}{future_tense} skipped." if skipped_files else "")
             )
         if not self.config.check or not changed_files:
             return 0
