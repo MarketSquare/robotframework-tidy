@@ -91,6 +91,11 @@ Create Dictionary
     ${dict}    Create Dictionary    key=value
     ...
     ...    key2=value
+    VAR    &{dict}    key=value
+    VAR    &{dict}    key=value    key2=value
+    VAR    &{dict}    key=value    key2
+    VAR    &{dict}    ${1}=${2}    &{dict}    foo=new
+    VAR    &{dict}    key=value    separate    value
 
 Catenate
     VAR    ${string}    join    with    spaces    separator=${SPACE}

@@ -1,8 +1,8 @@
-from copy import deepcopy
 from typing import TYPE_CHECKING, List, Optional, Tuple
 
 from robot.api.parsing import Comment, ElseHeader, ElseIfHeader, End, If, IfHeader, KeywordCall, Token
-from robot.variables.search import is_list_variable
+from robot.utils.escaping import split_from_equals
+from robot.variables.search import is_dict_variable, is_list_variable
 
 try:
     from robot.api.parsing import InlineIfHeader, Var
@@ -342,6 +342,24 @@ class ReplaceWithVAR(Transformer):
             name=var_name, value=values, separator=self.formatting_config.separator, indent=indent, scope=scope
         )
 
+    def _split_dict_items(self, items: List[str]):
+        separate = []
+        for item in items:
+            name, value = split_from_equals(item)
+            if value is not None or is_dict_variable(item):
+                break
+            separate.append(item)
+        return separate, items[len(separate) :]
+
+    @staticmethod
+    def _combine_separated_items(items: List[str]):
+        if not items:
+            return items
+        combined = [f"{key}={value}" for key, value in zip(items[::2], items[1::2])]
+        if len(items) % 2 != 0:
+            combined.append(items[-1])
+        return combined
+
     def replace_create_dictionary_kw(self, node, kw_name: str, indent: str, assign: Optional[List[str]] = None):
         assign = assign or self.get_assign_names(node.assign)
         if not self.replace_create_dictionary or len(assign) != 1:
@@ -353,6 +371,8 @@ class ReplaceWithVAR(Transformer):
             values = [arg.value for arg in args]
             if any(not value for value in values):
                 return None
+            separate, combined = self._split_dict_items(values)
+            values = self._combine_separated_items(separate) + combined
         else:
             values = ["&{EMPTY}"]
         scope = "LOCAL" if self.explicit_local else None
