@@ -50,7 +50,7 @@ class TestSkip:
         [
             ("Execute Javascript", ["Execute Javascript"], [True]),
             ("Execute Javascript", ["executejavascript"], [False]),
-            ("(?i)execute\s?javascript", ["Execute Javascript"], [True]),
+            (r"(?i)execute\s?javascript", ["Execute Javascript"], [True]),
             ("executejavascript", ["Keyword"], [False]),
             ("Javascript", ["Execute Javascript"], [True]),
             ("^Javascript", ["Execute Javascript"], [False]),
@@ -58,7 +58,7 @@ class TestSkip:
             ("Execute1", ["Execute Javascript"], [False]),
             ("Execute", ["Execute Javascript", "Execute Other Stuff", "Keyword"], [True, True, False]),
             (
-                "(?i)Library\.",
+                r"(?i)Library\.",
                 ["Library.Stuff", "Library2.Stuff", "library.Other_stuff", "library"],
                 [True, False, True, False],
             ),

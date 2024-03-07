@@ -93,7 +93,7 @@ class TestSplitTooLongLine(TransformerAcceptanceTest):
         self.compare(
             source="tests.robot",
             expected="skip_keywords.robot",
-            config=":line_length=80:skip_keyword_call=thisisakeyword:skip_keyword_call_pattern=(i?)sets\sthe\svariable",
+            config=r":line_length=80:skip_keyword_call=thisisakeyword:skip_keyword_call_pattern=(i?)sets\sthe\svariable",
             target_version=">=5",
         )
 
