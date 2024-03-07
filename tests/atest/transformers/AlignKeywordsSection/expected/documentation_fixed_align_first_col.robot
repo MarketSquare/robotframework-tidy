@@ -8,7 +8,7 @@ Example of alignment to second column of Documentation
     ...                     note that you must give some unique column/value pair that is used to select the row
     ...
     ...                     == Examples ==
-    ...                     # makes sure chechbox is unchecked in column Owner in a row where Name is "NORDEA FINANS"
+    ...                     # makes sure checkbox is unchecked in column Owner in a row where Name is "NORDEA FINANS"
     ...                     Table_CheckboxUnSelect  Owner      Name    NORDEA FINANS
 
 Keyword with documentation and keyword calls
