@@ -101,6 +101,8 @@ Catenate
     VAR    ${assign}    separator=${SPACE}    separator=${SPACE}
     VAR    ${assign}    ${EMPTY}    separator=${SPACE}
     VAR    ${assign}    first    SEPARATOR=${SPACE}    separator=${SPACE}
+    VAR    ${assign}    first    separator=${EMPTY}
+    VAR    ${assign}    first    SEPARATOR=    separator=${SPACE}
 
 Set Variable If
     IF    ${rc} == 0

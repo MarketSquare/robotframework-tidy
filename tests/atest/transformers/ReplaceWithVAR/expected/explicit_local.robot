@@ -100,6 +100,8 @@ Catenate
     VAR    ${assign}    separator=${SPACE}    scope=LOCAL    separator=${SPACE}
     VAR    ${assign}    ${EMPTY}    scope=LOCAL    separator=${SPACE}
     VAR    ${assign}    first    SEPARATOR=${SPACE}    scope=LOCAL    separator=${SPACE}
+    VAR    ${assign}    first    scope=LOCAL    separator=${EMPTY}
+    VAR    ${assign}    first    SEPARATOR=    scope=LOCAL    separator=${SPACE}
 
 Set Variable If
     IF    ${rc} == 0
