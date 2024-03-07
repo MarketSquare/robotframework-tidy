@@ -13,7 +13,7 @@ def run_tidy(
     std_in: Optional = None,
     overwrite_input: bool = False,
 ):
-    runner = CliRunner()
+    runner = CliRunner(mix_stderr=False)
     arguments = args if args is not None else []
     if not overwrite_input:
         if output:

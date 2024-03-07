@@ -74,7 +74,7 @@ class TransformerAcceptanceTest:
     ):
         if not self.enabled_in_version(target_version):
             pytest.skip(f"Test enabled only for RF {target_version}")
-        runner = CliRunner()
+        runner = CliRunner(mix_stderr=False)
         output_path = str(self.TRANSFORMERS_DIR / "actual" / source)
         arguments = ["--output", output_path]
         if not_modified:
@@ -116,7 +116,7 @@ class MultipleConfigsTest:
     ROOT_DIR = Path(__file__).parent / "configuration_files"
 
     def run_tidy(self, tmpdir, args: List[str] = None, exit_code: int = 0, not_modified: bool = False):
-        runner = CliRunner()
+        runner = CliRunner(mix_stderr=False)
         temporary_dir = tmpdir / self.TEST_DIR
         shutil.copytree(self.ROOT_DIR / self.TEST_DIR / "source", temporary_dir)
         arguments = []

@@ -134,7 +134,7 @@ def print_description(name: str, target_version: int):
     else:
         rec_finder = misc.RecommendationFinder()
         similar = rec_finder.find_similar(name, transformer_by_names.keys())
-        click.echo(f"Transformer with the name '{name}' does not exist.{similar}")
+        click.echo(f"Transformer with the name '{name}' does not exist.{similar}", err=True)
         return 1
     return 0
 

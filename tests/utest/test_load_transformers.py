@@ -260,7 +260,7 @@ class TestLoadTransformers:
                 ]
             expected_output = "".join(expected_output)
             output = capsys.readouterr()
-            assert output.out == expected_output
+            assert output.err == expected_output
 
     @pytest.mark.parametrize(
         "transform, warn_on",

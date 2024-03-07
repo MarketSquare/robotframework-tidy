@@ -60,7 +60,7 @@ class Robotidy:
                     self.output_diff(model_path, old_model, new_model)
                     changed_files += 1
             except DataError as err:
-                click.echo(f"Failed to decode {source} with an error: {err}\nSkipping file")
+                click.echo(f"Failed to decode {source} with an error: {err}\nSkipping file", err=True)
                 changed_files = previous_changed_files
                 skipped_files += 1
         return self.formatting_result(all_files, changed_files, skipped_files, stdin)
@@ -78,8 +78,8 @@ class Robotidy:
             future_tense = "" if self.config.overwrite else " would be"
             click.echo(
                 f"\n{changed_files} file{changed_files_plurar}{future_tense} reformatted, "
-                f"{all_files} file{all_files_plurar}{future_tense} left unchanged." +
-                (f" {skipped_files} file{skipped_files_plurar}{future_tense} skipped." if skipped_files else "")
+                f"{all_files} file{all_files_plurar}{future_tense} left unchanged."
+                + (f" {skipped_files} file{skipped_files_plurar}{future_tense} skipped." if skipped_files else "")
             )
         if not self.config.check or not changed_files:
             return 0

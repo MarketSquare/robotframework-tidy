@@ -451,14 +451,16 @@ def can_run_in_robot_version(transformer, overwritten, target_version):
             click.echo(
                 f"{transformer.__class__.__name__} transformer requires Robot Framework {transformer.MIN_VERSION}.* "
                 f"version but you have {misc.ROBOT_VERSION} installed. "
-                f"Upgrade installed Robot Framework if you want to use this transformer."
+                f"Upgrade installed Robot Framework if you want to use this transformer.",
+                err=True,
             )
         else:
             click.echo(
                 f"{transformer.__class__.__name__} transformer requires Robot Framework {transformer.MIN_VERSION}.* "
                 f"version but you set --target-version rf{target_version}. "
                 f"Set --target-version to rf{transformer.MIN_VERSION} or do not forcefully enable this transformer "
-                f"with --transform / enable parameter."
+                f"with --transform / enable parameter.",
+                err=True,
             )
     return False
 
