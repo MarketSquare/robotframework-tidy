@@ -87,6 +87,11 @@ Create Dictionary
     ${dict}    Create Dictionary    key=value
     ...
     ...    key2=value
+    VAR    &{dict}    key=value    scope=LOCAL
+    VAR    &{dict}    key=value    key2=value    scope=LOCAL
+    VAR    &{dict}    key=value    key2    scope=LOCAL
+    VAR    &{dict}    ${1}=${2}    &{dict}    foo=new    scope=LOCAL
+    VAR    &{dict}    key=value    separate    value    scope=LOCAL
 
 Catenate
     VAR    ${string}    join    with    spaces    scope=LOCAL    separator=${SPACE}
