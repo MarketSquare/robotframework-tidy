@@ -113,3 +113,9 @@ class TestAlignTestCasesSection(TransformerAcceptanceTest):
             "compact_overflow_limit=1:"
             "skip_return_values=True",
         )
+
+    def test_templated_test_with_setting(self):
+        """Tests with [Template]"""
+        self.compare(
+            source="templated_with_setting.robot", config=":align_comments=True --transform NormalizeSeparators"
+        )

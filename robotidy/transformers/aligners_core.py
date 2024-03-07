@@ -46,6 +46,7 @@ class AlignKeywordsTestsSection(Transformer):
         alignment_type: str,
         handle_too_long: str,
         compact_overflow_limit: int = 2,
+        align_comments: bool = False,
         skip: Skip = None,
     ):
         super().__init__(skip)
@@ -55,6 +56,7 @@ class AlignKeywordsTestsSection(Transformer):
         self.fixed_alignment = self.parse_alignment_type(alignment_type)
         self.compact_overflow_limit = compact_overflow_limit
         self.split_too_long = False
+        self.align_comments = align_comments
         # column widths map - 0: 40, 1: 30
         if widths:
             self.widths = self.parse_widths(widths)
@@ -297,7 +299,7 @@ class AlignKeywordsTestsSection(Transformer):
     visit_ReturnStatement = visit_ReturnSetting = visit_Return
 
     @skip_if_disabled
-    def visit_Template(self, node):  # noqa
+    def visit_TemplateArguments(self, node):  # noqa
         if node.errors or self.skip.setting("Template"):
             return node
         return self.align_node(node, check_length=False)
@@ -355,7 +357,10 @@ class AlignKeywordsTestsSection(Transformer):
         if misc.is_blank_multiline(line):  # ...\n edge case
             line[-1].value = line[-1].value.lstrip(" \t")  # normalize eol from '  \n' to '\n'
             return line
-        tokens, comments = separate_comments(line)
+        if self.align_comments:
+            tokens, comments = line, []
+        else:
+            tokens, comments = separate_comments(line)
         if len(tokens) < 2:  # only happens with weird encoding, better to skip
             return None
         # skip_tokens, tokens = self.skip_return_values_if_needed(tokens)
@@ -551,7 +556,7 @@ class ColumnWidthCounter(ModelVisitor):
 
     visit_Arguments = (
         visit_Setup
-    ) = visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_Tags = visit_KeywordCall  # TODO skip
+    ) = visit_Teardown = visit_Timeout = visit_Return = visit_Tags = visit_KeywordCall  # TODO skip
 
     @skip_if_disabled
     def visit_Documentation(self, node):  # noqa
