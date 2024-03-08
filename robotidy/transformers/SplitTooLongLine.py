@@ -318,6 +318,8 @@ class SplitTooLongLine(Transformer):
         indent = node.tokens[0]
 
         keyword = node.get_token(Token.KEYWORD)
+        if not keyword:
+            return node
         # check if assign tokens needs to be split too
         assign = node.get_tokens(Token.ASSIGN)
         line = [indent, *self.join_on_separator(assign, separator), keyword]
