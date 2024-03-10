@@ -235,7 +235,9 @@ class RenameVariables(Transformer):
             )
         return self.generic_visit(node)
 
-    visit_DefaultTags = (
+    visit_Tags = (
+        visit_DefaultTags
+    ) = (
         visit_TestTags
     ) = (
         visit_ForceTags

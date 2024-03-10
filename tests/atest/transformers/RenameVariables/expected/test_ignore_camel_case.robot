@@ -86,6 +86,10 @@ Test case with ${VARIABLE} in name
     [Documentation]    The RF surprises me vol. 678
     Step
 
+Test with variables in tags
+    [Tags]    ${VAR}    tag with ${VAR}
+    Step
+
 
 *** Keywords ***
 Arguments
