@@ -303,7 +303,7 @@ class TestCli:
         expected_output = f"Transformer with the name '{name}' does not exist.{similar}"
         args = f"--desc {name} -".split()
         result = run_tidy(args, exit_code=1)
-        assert expected_output in str(result.output)
+        assert expected_output in str(result.stderr)
 
     @pytest.mark.parametrize("flag", ["--help", "-h"])
     def test_help(self, flag):
@@ -357,8 +357,8 @@ class TestCli:
         source.chmod(0o400)
         # overwrite input which is read-only file
         result = run_tidy([str(source)], overwrite_input=True)
-        assert "Permission denied" in result.output
-        assert "\n0 files reformatted, 0 files left unchanged. 1 file skipped.\n" in result.output
+        assert "Permission denied" in result.stderr
+        assert "\n0 files reformatted, 0 files left unchanged. 1 file skipped.\n" in result.stdout
 
     @pytest.mark.parametrize("color_flag", ["--color", "--no-color", None])
     @pytest.mark.parametrize("color_env", [True, False])
