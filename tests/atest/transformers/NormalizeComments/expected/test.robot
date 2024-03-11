@@ -4,7 +4,7 @@
 #  comment
 #    comment
 # robotidy: off
-# robotidy:  on
+# robotidy: on
 
 
 *** Settings ***

@@ -1,7 +1,7 @@
 import functools
 import re
 
-from robot.api.parsing import Comment, ModelVisitor, Token
+from robot.api.parsing import Comment, CommentSection, ModelVisitor, Token
 
 
 def skip_if_disabled(func):
@@ -120,6 +120,7 @@ class RegisterDisablers(ModelVisitor):
         self.disabler_pattern = re.compile(r"\s*#\s?robotidy:\s?(?P<disabler>on|off)")
         self.stack = []
         self.file_disabled = False
+        self.file_level_disablers = False
 
     def any_disabler_open(self):
         return any(disabler for disabler in self.stack)
@@ -132,15 +133,20 @@ class RegisterDisablers(ModelVisitor):
     def close_disabler(self, end_line):
         disabler = self.stack.pop()
         if disabler:
+            if self.file_level_disablers:
+                self.file_disabled = True
             self.disablers.add_disabler(disabler, end_line)
 
     def visit_File(self, node):  # noqa
+        self.file_level_disablers = False
         self.disablers = DisabledLines(self.start_line, self.end_line, node.end_lineno)
         self.disablers.parse_global_disablers()
         self.stack = []
-        self.generic_visit(node)
+        for index, section in enumerate(node.sections):
+            self.file_level_disablers = index == 0 and isinstance(section, CommentSection)
+            self.visit_Section(section)
         self.disablers.sort_disablers()
-        self.file_disabled = self.disablers.file_disabled
+        self.file_disabled = self.file_disabled or self.disablers.file_disabled
 
     def visit_SectionHeader(self, node):  # noqa
         for comment in node.get_tokens(Token.COMMENT):

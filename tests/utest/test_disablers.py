@@ -52,6 +52,9 @@ def test_is_node_disabled(check_start, check_end, start_line, end_line, lines, f
     "test_file, expected_lines, file_disabled, rf_version",
     [
         ("file_disabled.robot", [(1, 1), (14, 15)], True, 4),
+        ("file_disabled_in_comments.robot", [(2, 4), (17, 18)], True, 4),
+        ("file_disabled_in_comments_no_header.robot", [(2, 4), (17, 18)], True, 4),
+        ("file_disabled_enabled_in_comments.robot", [(2, 6), (21, 22)], False, 4),
         ("file_disabled_and_enabled.robot", [(1, 2), (15, 16)], False, 4),
         ("test.robot", [(13, 14), (25, 37), (30, 33), (40, 41), (46, 48), (57, 58), (67, 67)], False, 5),
         ("open_disabler_in_section.robot", [(5, 8), (13, 15), (20, 23)], False, 4),
