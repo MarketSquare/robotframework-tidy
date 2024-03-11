@@ -70,7 +70,7 @@ class OrderTags(Transformer):
         return self.order_tags(node) if self.force_tags else node
 
     def order_tags(self, node, indent=False):
-        if self.disablers.is_node_disabled(node):
+        if self.disablers.is_node_disabled("OrderTags", node):
             return node
         ordered_tags = sorted(
             (tag.value for tag in node.data_tokens[1:]),

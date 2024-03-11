@@ -1,7 +1,6 @@
 import os
 import sys
 from difflib import unified_diff
-from typing import Dict
 
 try:
     import rich_click as click
@@ -11,8 +10,8 @@ except ImportError:  # Fails on vendored-in LSP plugin
 from robot.api import get_model
 from robot.errors import DataError
 
+from robotidy import disablers
 from robotidy.config import MainConfig
-from robotidy.disablers import RegisterDisablers
 from robotidy.rich_console import console
 from robotidy.utils import misc
 
@@ -35,7 +34,9 @@ class Robotidy:
         for source, config in self.main_config.get_sources_with_configs():
             self.config = config
             all_files += 1
-            disabler_finder = RegisterDisablers(self.config.formatting.start_line, self.config.formatting.end_line)
+            disabler_finder = disablers.RegisterDisablers(
+                self.config.formatting.start_line, self.config.formatting.end_line
+            )
             previous_changed_files = changed_files
             try:
                 stdin = False
@@ -49,7 +50,7 @@ class Robotidy:
                 model = self.get_model(source)
                 model_path = model.source
                 disabler_finder.visit(model)
-                if disabler_finder.file_disabled:
+                if disabler_finder.is_disabled_in_file(disablers.ALL_TRANSFORMERS):
                     continue
                 diff, old_model, new_model, model = self.transform_until_stable(model, disabler_finder)
                 if stdin:
@@ -109,6 +110,8 @@ class Robotidy:
         old_model = misc.StatementLinesCollector(model)
         for transformer in self.config.transformers:
             setattr(transformer, "disablers", disablers)  # set dynamically to allow using external transformers
+            if disablers.is_disabled_in_file(transformer.__class__.__name__):
+                continue
             transformer.visit(model)
         new_model = misc.StatementLinesCollector(model)
         return new_model != old_model, old_model, new_model

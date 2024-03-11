@@ -50,7 +50,7 @@ For loop
     FOR   ${i}   IN    1  2  3  4  5  6  7  8  9  10  11  12  13  14  15  16  17  18  20
         This is a keyword     these args do not fit       even if you set spacing properly  # robotidy: off
 
-        This is a keyword     these    arguments    won't    fit    with     that   # robotidy: off
+        This is a keyword     these    arguments    won't    fit    with     that   # robotidy: off = SplitTooLongLine
 
         This is a keyword     these     args    have    an    interesting
         ...  # Edge case here →→→→→→→→→→→→→→→→                                    HERE  # robotidy: off

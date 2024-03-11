@@ -64,7 +64,7 @@ class NormalizeTags(Transformer):
     visit_TestTags = visit_ForceTags = visit_DefaultTags
 
     def normalize_tags(self, node, indent=False):
-        if self.disablers.is_node_disabled(node, full_match=False):
+        if self.disablers.is_node_disabled("NormalizeTags", node, full_match=False):
             return node
         if self.preserve_format:
             return self.normalize_tags_tokens_preserve_formatting(node)

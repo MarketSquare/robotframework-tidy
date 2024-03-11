@@ -123,7 +123,7 @@ class NormalizeAssignments(Transformer):
         for child in node.body:
             if not isinstance(child, Variable):
                 continue
-            if self.disablers.is_node_disabled(child):
+            if self.disablers.is_node_disabled("NormalizeAssignments", child):
                 continue
             var_token = child.get_token(Token.VARIABLE)
             self.normalize_equal_sign(

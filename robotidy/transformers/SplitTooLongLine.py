@@ -157,14 +157,16 @@ class SplitTooLongLine(Transformer):
             return node
         if not self.should_transform_node(node):
             return node
-        if self.disablers.is_node_disabled(node, full_match=False):
+        if self.disablers.is_node_disabled("SplitTooLongLine", node, full_match=False):
             return node
         if self.is_run_keyword(node.keyword):
             return node
         return self.split_keyword_call(node)
 
     def visit_Var(self, node):  # noqa
-        if self.disablers.is_node_disabled(node, full_match=False) or not self.should_transform_node(node):
+        if self.disablers.is_node_disabled(
+            "SplitTooLongLine", node, full_match=False
+        ) or not self.should_transform_node(node):
             return node
         var_name = node.get_token(Token.VARIABLE)
         if not var_name:
@@ -209,7 +211,7 @@ class SplitTooLongLine(Transformer):
     def split_setting_with_args(self, node, settings_section):
         if not self.should_transform_node(node):
             return node
-        if self.disablers.is_node_disabled(node, full_match=False):
+        if self.disablers.is_node_disabled("SplitTooLongLine", node, full_match=False):
             return node
         if settings_section:
             indent = 0

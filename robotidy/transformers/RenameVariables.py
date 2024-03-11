@@ -334,7 +334,7 @@ class RenameVariables(Transformer):
 
     def visit_KeywordCall(self, node):  # noqa
         self.handle_set_local_variable(node)
-        if not self.disablers.is_node_disabled(node):
+        if not self.disablers.is_node_disabled("RenameVariables", node):
             for token in node.data_tokens:
                 if token.type == Token.ASSIGN:
                     token.value = self.rename_value(token.value, variable_case="lower", is_var=False)

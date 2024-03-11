@@ -64,7 +64,7 @@ class RemoveEmptySettings(Transformer):
         # when not setting type or setting type but not empty
         if node.type not in Token.SETTING_TOKENS or len(node.data_tokens) != 1:
             return node
-        if self.disablers.is_node_disabled(node):
+        if self.disablers.is_node_disabled("RemoveEmptySettings", node):
             return node
         # when empty and not overwriting anything - remove
         if (
