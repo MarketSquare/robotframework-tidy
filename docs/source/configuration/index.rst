@@ -9,6 +9,7 @@ Configuration
 
    config_file
    configuring_transformers
+   disablers
    skip_formatting
 
 Behaviour of *robotidy* can be changed through global options or by configuring specific transformer.
@@ -23,9 +24,9 @@ To list *robotidy* command line options run::
 
 .. rubric:: Ignored paths
 
-Robotidy reads and ignores paths from ``.gitignore`` and ``--exclude``. You can overwrite default excludes by using
-``--exclude`` option. If you want to exclude additional paths on top of those from ``--exclude`` and ``.gitignore`` use
-``--extend-exclude`` with pattern::
+Robotidy reads and ignores paths from ``.gitignore`` file and ``--exclude`` option. You can overwrite default excludes
+by using ``--exclude`` option. If you want to exclude additional paths on top of those from ``--exclude`` and
+``.gitignore`` use ``--extend-exclude`` with pattern::
 
     robotidy --extend-exclude skip_me.robot|some_dir/* .
 
@@ -85,86 +86,3 @@ Language header in the file is supported by default::
 
 
 Custom language file is currently not supported.
-
-.. _disablers:
-
-.. rubric:: Disablers
-
-You can disable formatting in Robot Framework statement or in span of lines using ``# robotidy: off`` marker.
-
-To skip the formatting for one statement:
-
-.. code-block:: robotframework
-
-    Keyword That Is Longer Than Allowed Line Length  ${arg}  # robotidy: off
-
-To skip multiple lines:
-
-.. code-block:: robotframework
-
-    *** Test Cases ***
-    Test that will be formatted
-        Step
-
-    # robotidy: off
-    Test that will not be formatted
-        Step
-
-    # robotidy: on
-    Another test that will be formatted
-        Step
-
-
-``# robotidy: on`` marker is used to enable the formatting again - but is not required. ``# robotidy: off`` will disable
-the formatting to the end of the current block:
-
-.. code-block:: robotframework
-
-    *** Keywords ***
-    Keyword
-        Keyword That Is Formatted
-        IF    $condition
-            Formatted
-        ELSE
-            Formatted
-            # robotidy: off
-            Not Formatted
-            WHILE    $condition
-                Not Formatted
-            END
-        END
-        Formatted
-
-It's possible to disable the formatting in whole file by putting ``# robotidy: off`` on first line:
-
-.. code-block:: robotframework
-
-    # robotidy: off
-    *** Settings ***
-    Library    Collections
-
-You can also disable the formatting in the whole section if you put ``# robotidy: off`` in the section header:
-
-.. code-block:: robotframework
-
-    *** Test Cases ***
-    Formatted
-        Step
-
-    *** Keywords ***  # robotidy: off
-    Not Formatted
-        Step
-
-It is possible to disable only selected transformers by passing their names to disabler in comma separated list:
-
-.. code-block:: robotframework
-
-    *** Test Cases ***
-    Formatted Partially
-        Step
-        ...    ${arg}  # robotidy: off=AlignTestCasesSection,NormalizeSeparators
-        Step 2
-
-    *** Keywords ***  # robotidy: off = NormalizeNewLines
-    Not Formatted
-        Step
