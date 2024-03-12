@@ -2,6 +2,7 @@
 
 Quickstart
 ===========
+
 `Robotidy` is easy to use and you can do it just by running::
 
     robotidy path/to/file_or_directory.robot
@@ -97,7 +98,7 @@ To see list of transformers included with `Robotidy` use ``--list``::
 
     Non-default transformers needs to be selected explicitly with --transform or configured with param `enabled=True`.
 
-Pass optional value ``enabled`` or ``disabled`` to filter our output by the status of the transformer::
+Pass optional value ``enabled`` or ``disabled`` to filter out output by the status of the transformer::
 
     > robotidy --list disabled
                     Transformers
@@ -170,3 +171,24 @@ configuring ``lineseparator`` option:
 - windows: use Windows line endings (CRLF)
 - unix:    use Unix line endings (LF)
 - auto:    maintain existing line endings (uses what's used in the first line of the file)
+
+Rerun the transformation in place
+----------------------------------
+
+Because of high independence of each transformer, Robotidy runs them in specific order to obtain predictable results.
+But sometimes the subsequent transformer modifies the file to the point that it requires another run of Robotidy.
+Good example would be one transformer that replaces the deprecated syntax - but new syntax is inserted using standard
+whitespace. If there is transformer that aligns this whitespace according to special rules
+(like ``AlignKeywordsSection``) we need to run Robotidy again to format this whitespace.
+
+This could be inconvenient in some cases where user had to rerun Robotidy without knowing why. That's why Robotidy
+now has option ``reruns`` that allows to define limit of how many extra reruns Robotidy can perform if the
+file keeps changing after the transformation. The default is ``0``. Recommended value is ``3``
+although in vast majority of cases one extra run should suffice (and only in cases described above).
+
+Example usage::
+
+    > robotidy --reruns 3 --diff test.robot
+
+Note that if you enable it, it can double the execution time of Robotidy (if the file was modified, it will be
+transformed again to check if next transformation does not further modify the file).

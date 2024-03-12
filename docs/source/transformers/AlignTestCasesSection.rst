@@ -70,11 +70,11 @@ Widths
 The column width is configurable via ``widths`` parameter. The default value is ``24``.
 It's possible to configure width of the several columns (using comma separated list of integers)::
 
-    robotidy -c AlignKeywordsSection:widths=20
+    robotidy -c AlignTestCasesSection:widths=20
 
 ::
 
-    robotidy -c AlignKeywordsSection:widths=10,10,24,30
+    robotidy -c AlignTestCasesSection:widths=10,10,24,30
 
 The last width will be used for the remaining columns. In previous example we configured widths for the 4 columns.
 The last width (``30``) will be used for 5th, 6th.. and following columns.
@@ -173,7 +173,7 @@ does not fit in the column.
 
 Below example was run with config::
 
-    robotidy -c AlignKeywordsSection:enabled=True:handle_too_long=compact_overflow:widths=24,28,20 src.robot
+    robotidy -c AlignTestCasesSection:enabled=True:handle_too_long=compact_overflow:widths=24,28,20 src.robot
 
 .. tab-set::
 

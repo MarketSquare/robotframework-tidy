@@ -4,7 +4,9 @@ Skip formatting
 ================
 .. rubric:: Skip formatting
 
-It is possible to skip formatting on code that matches given criteria.
+It is possible to skip formatting on code that matches given criteria. Skip options apply to all instances of the
+given code - for example it is possible to skip formatting on all documentation. If you want to disable formatting
+on specific lines, see :ref:`disablers`.
 
 To see what types are possible to skip, see ``Skip formatting`` sections in each transformer documentation.
 
