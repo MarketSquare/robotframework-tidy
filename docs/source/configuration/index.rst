@@ -154,3 +154,17 @@ You can also disable the formatting in the whole section if you put ``# robotidy
     *** Keywords ***  # robotidy: off
     Not Formatted
         Step
+
+It is possible to disable only selected transformers by passing their names to disabler in comma separated list:
+
+.. code-block:: robotframework
+
+    *** Test Cases ***
+    Formatted Partially
+        Step
+        ...    ${arg}  # robotidy: off=AlignTestCasesSection,NormalizeSeparators
+        Step 2
+
+    *** Keywords ***  # robotidy: off = NormalizeNewLines
+    Not Formatted
+        Step

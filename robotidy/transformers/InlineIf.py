@@ -71,7 +71,7 @@ class InlineIf(Transformer):
     def visit_If(self, node: If):  # noqa
         if node.errors or getattr(node.end, "errors", None):
             return node
-        if self.disablers.is_node_disabled(node, full_match=False):
+        if self.disablers.is_node_disabled("InlineIf", node, full_match=False):
             return node
         if self.is_inline(node):
             return self.handle_inline(node)

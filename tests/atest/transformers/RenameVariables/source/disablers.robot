@@ -28,14 +28,17 @@ ${camelCASEName_word_camelCase}    ${camelCASEName_WORD_camelCase}
 *** Test Cases ***
 Assign
     ${ variable}    Keyword
-    ${MULTIPLE}
-    ...   ${variables }    Keyword
+    FOR    ${var}    IN    1  2
+        # robotidy: off=NormalizeNewLines, RenameVariables
+        ${MULTIPLE}
+        ...   ${variables }    Keyword
+    END
     ${variable} =    Keyword
-    ${variable}=    Keyword
+    ${Variable}=    Keyword
 
 Args
     Keyword    ${variable }
-    Keyword    ${v a _riAbles}  # robotidy: off
+    Keyword    ${v a _riAbles}  # robotidy: off = RenameVariables
     ...    value with ${_ variable _}
 
 Arguments

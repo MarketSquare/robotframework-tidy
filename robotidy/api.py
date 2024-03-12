@@ -39,7 +39,7 @@ def transform_model(model, root_dir: str, output: Optional[str] = None, **kwargs
         robotidy_class.config.formatting.start_line, robotidy_class.config.formatting.end_line
     )
     disabler_finder.visit(model)
-    if disabler_finder.file_disabled:
+    if disabler_finder.is_disabled_in_file(disablers.ALL_TRANSFORMERS):
         return None
     diff, _, new_model = robotidy_class.transform(model, disabler_finder.disablers)
     if not diff:

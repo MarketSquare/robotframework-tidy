@@ -49,24 +49,28 @@ def test_is_node_disabled(check_start, check_end, start_line, end_line, lines, f
 
 
 @pytest.mark.parametrize(
-    "test_file, expected_lines, file_disabled, rf_version",
+    "test_file, expected_lines, file_disabled, rf_version, check_transformer",
     [
-        ("file_disabled.robot", [(1, 1), (14, 15)], True, 4),
-        ("file_disabled_in_comments.robot", [(2, 4), (17, 18)], True, 4),
-        ("file_disabled_in_comments_no_header.robot", [(2, 4), (17, 18)], True, 4),
-        ("file_disabled_enabled_in_comments.robot", [(2, 6), (21, 22)], False, 4),
-        ("file_disabled_and_enabled.robot", [(1, 2), (15, 16)], False, 4),
-        ("test.robot", [(13, 14), (25, 37), (30, 33), (40, 41), (46, 48), (57, 58), (67, 67)], False, 5),
-        ("open_disabler_in_section.robot", [(5, 8), (13, 15), (20, 23)], False, 4),
-        ("empty.robot", [], False, 4),
+        ("file_disabled.robot", [(1, 1), (14, 15)], True, 4, "all"),
+        ("file_disabled_in_selected.robot", [(1, 1)], True, 4, "NormalizeNewLines"),
+        ("file_disabled_in_selected.robot", [(14, 15)], False, 4, "all"),
+        ("file_disabled_in_selected.robot", [], False, 4, "AlignTestCasesSection"),
+        ("file_disabled_in_comments.robot", [(2, 4), (17, 18)], True, 4, "all"),
+        ("file_disabled_in_comments_no_header.robot", [(2, 4), (17, 18)], True, 4, "all"),
+        ("file_disabled_enabled_in_comments.robot", [(2, 6), (21, 22)], False, 4, "all"),
+        ("file_disabled_and_enabled.robot", [(1, 2), (15, 16)], False, 4, "all"),
+        ("test.robot", [(13, 14), (25, 37), (30, 33), (40, 41), (46, 48), (57, 58), (67, 67)], False, 5, "all"),
+        ("open_disabler_in_section.robot", [(5, 8), (13, 15), (20, 23)], False, 4, "all"),
+        ("empty.robot", [], False, 4, "all"),
     ],
 )
-def test_register_disablers(test_file, expected_lines, file_disabled, rf_version):
+def test_register_disablers(test_file, expected_lines, file_disabled, rf_version, check_transformer):
     if ROBOT_VERSION.major < rf_version:
         pytest.skip(f"Test enabled only for RF {rf_version}.*")
     test_file_path = Path(__file__).parent / "testdata" / "disablers" / test_file
     model = get_model(test_file_path)
     register_disablers = RegisterDisablers(None, None)
     register_disablers.visit(model)
-    assert register_disablers.disablers.lines == expected_lines
-    assert register_disablers.file_disabled == file_disabled
+    if check_transformer in register_disablers.disablers.disablers:
+        assert register_disablers.disablers.disablers[check_transformer].lines == expected_lines
+    assert register_disablers.is_disabled_in_file(check_transformer) == file_disabled

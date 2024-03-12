@@ -90,7 +90,7 @@ class AlignSettingsSection(Transformer):
     def visit_SettingSection(self, node):  # noqa
         statements = []
         for child in node.body:
-            if self.disablers.is_node_disabled(child) or self.is_node_skip(child):
+            if self.disablers.is_node_disabled("AlignSettingsSection", child) or self.is_node_skip(child):
                 statements.append(child)
             elif child.type in (Token.EOL, Token.COMMENT):
                 statements.append(misc.left_align(child))

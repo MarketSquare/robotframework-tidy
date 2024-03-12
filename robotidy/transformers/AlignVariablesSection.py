@@ -77,7 +77,7 @@ class AlignVariablesSection(Transformer):
     def visit_VariableSection(self, node):  # noqa
         statements = []
         for child in node.body:
-            if self.disablers.is_node_disabled(child):
+            if self.disablers.is_node_disabled("AlignVariablesSection", child):
                 statements.append(child)
             elif child.type in (Token.EOL, Token.COMMENT):
                 statements.append(misc.left_align(child))
