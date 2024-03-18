@@ -72,6 +72,10 @@ class DisablersInFile:
         self.file_end = file_end
         self.disablers = {ALL_TRANSFORMERS: DisabledLines(start_line, end_line, file_end)}
 
+    @property
+    def file_disabled(self):
+        return self.is_disabled_in_file(ALL_TRANSFORMERS)
+
     def parse_global_disablers(self):
         self.disablers[ALL_TRANSFORMERS].parse_global_disablers()
 
