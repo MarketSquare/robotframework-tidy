@@ -1,4 +1,4 @@
-from typing import Optional
+from __future__ import annotations
 
 from robot.api.parsing import CommentSection, EmptyLine, Token
 
@@ -37,7 +37,7 @@ class NormalizeNewLines(Transformer):
     def __init__(
         self,
         test_case_lines: int = 1,
-        keyword_lines: Optional[int] = None,
+        keyword_lines: int | None = None,
         section_lines: int = 2,
         separate_templated_tests: bool = False,
         consecutive_lines: int = 1,

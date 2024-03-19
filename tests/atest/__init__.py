@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 import filecmp
 import shutil
 from difflib import unified_diff
 from pathlib import Path
-from typing import List, Optional
 
 import pytest
 from click.testing import CliRunner
@@ -43,9 +44,9 @@ class TransformerAcceptanceTest:
         self,
         source: str,
         not_modified: bool = False,
-        expected: Optional[str] = None,
+        expected: str | None = None,
         config: str = "",
-        target_version: Optional[str] = None,
+        target_version: str | None = None,
         run_all: bool = False,
     ):
         """
@@ -66,11 +67,11 @@ class TransformerAcceptanceTest:
 
     def run_tidy(
         self,
-        args: List[str] = None,
+        args: list[str] = None,
         source: str = None,
         exit_code: int = 0,
         not_modified: bool = False,
-        target_version: Optional[str] = None,
+        target_version: str | None = None,
     ):
         if not self.enabled_in_version(target_version):
             pytest.skip(f"Test enabled only for RF {target_version}")
@@ -103,7 +104,7 @@ class TransformerAcceptanceTest:
             display_file_diff(expected, actual)
             pytest.fail(f"File {actual_name} is not same as expected")
 
-    def enabled_in_version(self, target_version: Optional[str]) -> bool:
+    def enabled_in_version(self, target_version: str | None) -> bool:
         if target_version and ROBOT_VERSION not in SpecifierSet(target_version, prereleases=True):
             return False
         if self.TRANSFORMER_NAME in VERSION_MATRIX:
@@ -115,7 +116,7 @@ class MultipleConfigsTest:
     TEST_DIR: str = "PLACEHOLDER"
     ROOT_DIR = Path(__file__).parent / "configuration_files"
 
-    def run_tidy(self, tmpdir, args: List[str] = None, exit_code: int = 0, not_modified: bool = False):
+    def run_tidy(self, tmpdir, args: list[str] | None = None, exit_code: int = 0, not_modified: bool = False):
         runner = CliRunner(mix_stderr=False)
         temporary_dir = tmpdir / self.TEST_DIR
         shutil.copytree(self.ROOT_DIR / self.TEST_DIR / "source", temporary_dir)

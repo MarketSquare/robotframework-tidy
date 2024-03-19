@@ -1,14 +1,15 @@
 """
 Methods for transforming Robot Framework ast model programmatically.
 """
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Optional
 
 from robotidy import app, disablers, files
 from robotidy.config import MainConfig, RawConfig
 
 
-def get_robotidy(src: str, output: Optional[str], ignore_git_dir: bool = False, **kwargs):
+def get_robotidy(src: str, output: str | None, ignore_git_dir: bool = False, **kwargs):
     config = RawConfig(**kwargs)
     config_file = files.find_source_config_file(Path(src), ignore_git_dir)
     if config_file:
@@ -24,7 +25,7 @@ def get_robotidy(src: str, output: Optional[str], ignore_git_dir: bool = False, 
     return app.Robotidy(main_config)
 
 
-def transform_model(model, root_dir: str, output: Optional[str] = None, **kwargs) -> Optional[str]:
+def transform_model(model, root_dir: str, output: str | None = None, **kwargs) -> str | None:
     """
     :param model: The model to be transformed.
     :param root_dir: Root directory. Configuration file is searched based

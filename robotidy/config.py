@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import copy
 import dataclasses
 import os
@@ -6,7 +8,7 @@ import sys
 from collections import namedtuple
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Optional, Pattern, Set, Tuple
+from typing import Pattern
 
 try:
     from robot.api import Languages  # RF 6.0
@@ -25,11 +27,11 @@ class FormattingConfig:
     def __init__(
         self,
         space_count: int,
-        indent: Optional[int],
-        continuation_indent: Optional[int],
+        indent: int | None,
+        continuation_indent: int | None,
         line_sep: str,
-        start_line: Optional[int],
-        end_line: Optional[int],
+        start_line: int | None,
+        end_line: int | None,
         separator: str,
         line_length: int,
     ):
@@ -66,7 +68,7 @@ class FormattingConfig:
             return os.linesep
 
 
-def validate_target_version(value: Optional[str]) -> Optional[int]:
+def validate_target_version(value: str | None) -> int | None:
     if value is None:
         return misc.ROBOT_VERSION.major
     try:
@@ -82,7 +84,7 @@ def validate_target_version(value: Optional[str]) -> Optional[int]:
     return target_version
 
 
-def csv_list_type(value: Optional[str]) -> List[str]:
+def csv_list_type(value: str | None) -> list[str]:
     if not value:
         return []
     return value.split(",")
@@ -90,11 +92,11 @@ def csv_list_type(value: Optional[str]) -> List[str]:
 
 def convert_transformers_config(
     param_name: str,
-    config: Dict,
+    config: dict,
     force_included: bool = False,
     custom_transformer: bool = False,
     is_config: bool = False,
-) -> List[TransformConfig]:
+) -> list[TransformConfig]:
     return [
         TransformConfig(tr, force_include=force_included, custom_transformer=custom_transformer, is_config=is_config)
         for tr in config.get(param_name, ())
@@ -120,10 +122,10 @@ SourceAndConfig = namedtuple("SourceAndConfig", "source config")
 class RawConfig:
     """Configuration read directly from cli or configuration file."""
 
-    transform: List[TransformConfig] = field(default_factory=list)
-    custom_transformers: List[TransformConfig] = field(default_factory=list)
-    configure: List[TransformConfig] = field(default_factory=list)
-    src: Tuple[str, ...] = None
+    transform: list[TransformConfig] = field(default_factory=list)
+    custom_transformers: list[TransformConfig] = field(default_factory=list)
+    configure: list[TransformConfig] = field(default_factory=list)
+    src: tuple[str, ...] = None
     exclude: Pattern = re.compile(files.DEFAULT_EXCLUDES)
     extend_exclude: Pattern = None
     skip_gitignore: bool = False
@@ -148,14 +150,14 @@ class RawConfig:
     output: Path = None
     force_order: bool = False
     target_version: int = misc.ROBOT_VERSION.major
-    language: List[str] = field(default_factory=list)
+    language: list[str] = field(default_factory=list)
     reruns: int = 0
     ignore_git_dir: bool = False
     skip_comments: bool = False
     skip_documentation: bool = False
     skip_return_values: bool = False
-    skip_keyword_call: List[str] = None
-    skip_keyword_call_pattern: List[str] = None
+    skip_keyword_call: list[str] = None
+    skip_keyword_call_pattern: list[str] = None
     skip_settings: bool = False
     skip_arguments: bool = False
     skip_setup: bool = False
@@ -166,8 +168,8 @@ class RawConfig:
     skip_tags: bool = False
     skip_block_comments: bool = False
     skip_sections: str = ""
-    defined_in_cli: Set = field(default_factory=set)
-    defined_in_config: Set = field(default_factory=set)
+    defined_in_cli: set = field(default_factory=set)
+    defined_in_config: set = field(default_factory=set)
 
     @classmethod
     def from_cli(cls, ctx: click.Context, **kwargs):
@@ -178,7 +180,7 @@ class RawConfig:
                 defined_in_cli.add(option)
         return cls(**kwargs, defined_in_cli=defined_in_cli)
 
-    def from_config_file(self, config: Dict, config_path: Path) -> "RawConfig":
+    def from_config_file(self, config: dict, config_path: Path) -> "RawConfig":
         """Creates new RawConfig instance from dictionary.
 
         Dictionary key:values needs to be normalized and parsed to correct types.
@@ -192,19 +194,19 @@ class RawConfig:
             if key not in options_map:
                 raise exceptions.NoSuchOptionError(key, list(options_map.keys())) from None
             value_type = options_map[key]
-            if value_type == bool:
+            if value_type == "bool":  # will not be required for basic types after Python 3.9
                 parsed_config[key] = str_to_bool(value)
             elif key == "target_version":
                 parsed_config[key] = validate_target_version(value)
             elif key == "language":
                 parsed_config[key] = csv_list_type(value)
-            elif value_type == int:
+            elif value_type == "int":
                 parsed_config[key] = int(value)
-            elif value_type == List[TransformConfig]:
+            elif value_type == "list[TransformConfig]":
                 parsed_config[key] = [convert_transform_config(val, key) for val in value]
             elif key == "src":
                 parsed_config[key] = tuple(value)
-            elif value_type == Pattern:
+            elif value_type in ("Pattern", Pattern):  # future typing for 3.8 provides type as str
                 parsed_config[key] = misc.validate_regex(value)
             else:
                 parsed_config[key] = value
@@ -250,7 +252,7 @@ class MainConfig:
             cli_config = cli_config.from_config_file(config_file, config_path)
         return cli_config
 
-    def get_sources(self, sources: Tuple[str, ...]) -> Optional[Tuple[str, ...]]:
+    def get_sources(self, sources: tuple[str, ...]) -> tuple[str, ...] | None:
         """Get list of sources to be transformed by Robotidy.
 
         If the sources tuple is empty, look for most common configuration file and load sources from there.
@@ -306,13 +308,13 @@ class Config:
         show_diff: bool,
         verbose: bool,
         check: bool,
-        output: Optional[Path],
+        output: Path | None,
         force_order: bool,
         target_version: int,
         color: bool,
-        language: Optional[List[str]],
+        language: list[str] | None,
         reruns: int,
-        config_path: Optional[Path],
+        config_path: Path | None,
     ):
         self.formatting = formatting
         self.overwrite = self.set_overwrite_mode(overwrite, check)
