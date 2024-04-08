@@ -53,7 +53,7 @@ jobs:
       run:
         coverage run -m pytest --e2e
     - name: Codecov
-      uses: codecov/codecov-action@v4.1.1
+      uses: codecov/codecov-action@v4.2.0
       with:
         name: codecov-robotidy
       if: always()
