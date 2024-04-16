@@ -127,7 +127,7 @@ Skipped files are now reported separately in the run summary::
     > robotidy read_only_file.robot
     0 files reformatted, 0 files left unchanged. 1 file skipped.
 
-Thanks @kottenko for contributing PR.
+Thanks @kkotenko for contributing PR.
 
 Errors outputted to error stream (#664)
 ---------------------------------------
@@ -135,4 +135,4 @@ Errors outputted to error stream (#664)
 Configuration or file errors use now error stream for reporting issues instead of standard output. It makes it easy
 to notice issues when running Robotidy on Unix systems.
 
-Thanks @kottenko for contributing PR.
+Thanks @kkotenko for contributing PR.
