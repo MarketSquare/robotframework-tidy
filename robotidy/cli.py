@@ -16,7 +16,12 @@ from robotidy import config as config_module
 from robotidy import decorators, exceptions, files, skip, version
 from robotidy.config import RawConfig, csv_list_type, validate_target_version
 from robotidy.rich_console import console
-from robotidy.transformers import TransformConfigMap, TransformConfigParameter, load_transformers
+from robotidy.transformers import (
+    TransformConfigMap,
+    TransformConfigParameter,
+    complete_transformer_name,
+    load_transformers,
+)
 from robotidy.utils import misc
 
 CLI_OPTIONS_LIST = [
@@ -185,6 +190,12 @@ def print_transformers_list(global_config: config_module.MainConfig):
         "Non-default transformers needs to be selected explicitly with [bold cyan]--transform[/] or "
         "configured with param `enabled=True`.\n"
     )
+
+
+def complete_transformers(ctx, param, incomplete):
+    transformers = load_transformers(TransformConfigMap([], [], []), allow_disabled=True, target_version=None)
+    # TODO if name:config in incomplete, complete config? check parameters and args
+    return [tr.name for tr in transformers if tr.name.startswith(incomplete)]
 
 
 def generate_config(global_config: config_module.MainConfig):
@@ -415,6 +426,7 @@ def generate_config(global_config: config_module.MainConfig):
     "--desc",
     "-d",
     default=None,
+    shell_complete=complete_transformer_name,
     metavar="TRANSFORMER_NAME",
     help="Show documentation for selected transformer.",
 )
