@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from robotidy.skip import SkipConfig
-from robotidy.transformers import TransformConfig, TransformConfigMap, load_transformers
+from robotidy.transformers import TRANSFORMERS, TransformConfig, TransformConfigMap, load_transformers
 from robotidy.utils.misc import ROBOT_VERSION
 
 
@@ -36,6 +36,11 @@ class TestLoadTransformers:
             get_transformer_config_from_order(order_2), skip=skip_config, target_version=ROBOT_VERSION.major
         )
         assert all(t1.name == t2.name for t1, t2 in zip(transformers_1, transformers_2))
+
+    def test_order_contains_all_defaults(self):
+        defaults = load_transformers(TransformConfigMap([], [], []), allow_disabled=True, target_version=None)
+        defaults = [tr.name for tr in defaults]
+        assert defaults == TRANSFORMERS
 
     def test_transformer_force_order(self, skip_config):
         # default_order = ['NormalizeSeparators', 'OrderSettings']

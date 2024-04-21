@@ -8,12 +8,15 @@ need to inherit from ``ModelTransformer`` or ``ast.NodeTransformer`` class. Fina
 If you don't want to run your transformer by default and only when calling robotidy with --transform YourTransformer
 then add ``ENABLED = False`` class attribute inside.
 """
+
 import copy
 import inspect
 import pathlib
 import textwrap
 from itertools import chain
 from typing import Dict, Iterable, List, Optional
+
+from click.shell_completion import CompletionItem
 
 try:
     import rich_click as click
@@ -207,6 +210,14 @@ def convert_transform_config(value: str, param_name: str) -> TransformConfig:
     )
 
 
+def complete_transformer_name(ctx, param, incomplete) -> List[CompletionItem]:
+    incomplete = incomplete.lower()
+    matches = [CompletionItem(name) for name in TRANSFORMERS if name.lower().startswith(incomplete)]
+    if not matches:
+        matches = [CompletionItem(name) for name in TRANSFORMERS if incomplete in name.lower()]
+    return matches
+
+
 class TransformConfigParameter(click.ParamType):
     """
     Click parameter that holds the name of the transformer and optional configuration.
@@ -216,6 +227,9 @@ class TransformConfigParameter(click.ParamType):
 
     def convert(self, value, param, ctx):
         return convert_transform_config(value, param.name)
+
+    def shell_complete(self, ctx, param, incomplete) -> List[CompletionItem]:
+        return complete_transformer_name(ctx, param, incomplete)
 
 
 class TransformerParameter:
@@ -341,7 +355,7 @@ def import_transformer(name, config: TransformConfigMap, skip) -> Iterable[Trans
         ) from None
 
 
-def create_transformer_instance(imported_class, short_name, args, skip):
+def create_transformer_instance(imported_class, short_name, args, skip) -> TransformerContainer:
     spec = IMPORTER._get_arg_spec(imported_class)
     handles_skip = getattr(imported_class, "HANDLES_SKIP", {})
     positional, named, argument_names = resolve_args(short_name, spec, args, skip, handles_skip=handles_skip)
@@ -441,7 +455,7 @@ def resolve_core_import_path(name):
 
 
 def can_run_in_robot_version(transformer, overwritten, target_version):
-    if not hasattr(transformer, "MIN_VERSION"):
+    if not target_version or not hasattr(transformer, "MIN_VERSION"):
         return True
     if target_version >= transformer.MIN_VERSION:
         return True
@@ -472,7 +486,7 @@ def load_transformers(
     allow_disabled=False,
     force_order=False,
     allow_version_mismatch=True,
-):
+) -> List[TransformerContainer]:
     """Dynamically load all classes from this file with attribute `name` defined in selected_transformers"""
     loaded_transformers = []
     transformers_config.update_with_defaults(TRANSFORMERS)

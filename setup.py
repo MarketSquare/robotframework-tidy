@@ -48,6 +48,7 @@ setup(
         "tomli==2.0.*",
         "rich_click>=1.4,<1.7.5",
         "jinja2>=3.1.3,<4.0",
+        "shellingham>=1.3.0",
     ],
     extras_require={
         "dev": [
