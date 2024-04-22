@@ -1,2 +1,3 @@
 [codespell]
-ignore-words-list =ba,confgure,ist,Ende,Variablen,Indention,cript
+ignore-words-list=confgure,indention,cript
+skip=translated.robot,de.robot,pl_and_de.robot
