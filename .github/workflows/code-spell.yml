@@ -15,4 +15,3 @@ jobs:
         with:
           only_warn: 1
           skip: "pyproject_confgure.toml"
-          ignore_words_list: ba,confgure,ist,Ende,Variablen,Indention,cript
