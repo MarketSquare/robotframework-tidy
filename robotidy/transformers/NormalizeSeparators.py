@@ -204,7 +204,7 @@ class NormalizeSeparators(Transformer):
                     if align_continuation:
                         if first_data_token:
                             first_col_width += max(len(token.value), 3) - 3  # remove ... token length
-                            # Check if first line is not longer than allowed line length - we cant align over limit
+                            # Check if first line is not longer than allowed line length - we can't align over limit
                             align_continuation = align_continuation and first_col_width < self.allowed_line_length
                             first_data_token = False
                         elif not is_sep_after_first_data_token and token.type != Token.EOL:
