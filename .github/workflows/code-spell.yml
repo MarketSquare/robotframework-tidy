@@ -12,5 +12,3 @@ jobs:
         uses: actions/checkout@v4
       - name: Codespell
         uses: codespell-project/actions-codespell@master
-        with:
-          only_warn: 1
