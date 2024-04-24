@@ -72,7 +72,9 @@ IMPORTER = Importer()
 
 
 class TransformConfig:
-    def __init__(self, config, force_include, custom_transformer, is_config):
+    def __init__(
+        self, config: str, force_include: bool = False, custom_transformer: bool = False, is_config: bool = False
+    ):
         name, args = misc.split_args_from_name_or_path(config)
         self.name = name.strip()
         self.args = self.convert_args(args)
@@ -210,10 +212,17 @@ def convert_transform_config(value: str, param_name: str) -> TransformConfig:
     )
 
 
+# FIXME first try to find those that starts with incomplete
+# if none, return those that contain name
+# if none, return all?
 def complete_transformer_name(ctx, param, incomplete) -> List[CompletionItem]:
     transformers = load_transformers(TransformConfigMap([], [], []), allow_disabled=True, target_version=None)
+    incomplete = incomplete.lower()
     if ":" not in incomplete:
-        return [CompletionItem(tr.name) for tr in transformers if incomplete.lower() in tr.name.lower()]
+        matching_start = [CompletionItem(tr.name) for tr in transformers if tr.name.lower().startswith(incomplete)]
+        if matching_start:
+            return matching_start
+        return [CompletionItem(tr.name) for tr in transformers if incomplete in tr.name.lower()]
     tr_name, config = incomplete.split(":")
     config = config.lower()
     for transformer in transformers:
@@ -231,13 +240,10 @@ class TransformConfigParameter(click.ParamType):
     Click parameter that holds the name of the transformer and optional configuration.
     """
 
-    name = "transform"
+    name = "transformer_name"
 
     def convert(self, value, param, ctx):
         return convert_transform_config(value, param.name)
-
-    def shell_complete(self, ctx, param, incomplete) -> List[CompletionItem]:
-        return complete_transformer_name(ctx, param, incomplete)
 
 
 class TransformerParameter:

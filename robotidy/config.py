@@ -14,6 +14,7 @@ except ImportError:
     Languages = None
 
 import click
+import typer
 from click.core import ParameterSource
 
 from robotidy import exceptions, files, skip
@@ -66,7 +67,7 @@ class FormattingConfig:
             return os.linesep
 
 
-def validate_target_version(value: Optional[str]) -> Optional[int]:
+def validate_target_version(value: Optional[str]) -> int:
     if value is None:
         return misc.ROBOT_VERSION.major
     try:
@@ -144,7 +145,7 @@ class RawConfig:
     line_length: int = 120
     list_transformers: str = ""
     generate_config: str = ""
-    desc: str = None
+    describe_transformer: str = None
     output: Path = None
     force_order: bool = False
     target_version: int = misc.ROBOT_VERSION.major
@@ -170,13 +171,20 @@ class RawConfig:
     defined_in_config: Set = field(default_factory=set)
 
     @classmethod
-    def from_cli(cls, ctx: click.Context, **kwargs):
-        """Creates RawConfig instance while saving which options were supplied from CLI."""
-        defined_in_cli = set()
+    def from_cli(cls, ctx: click.Context, version: str, **kwargs):
+        """Creates RawConfig instance while saving which options were supplied from CLI.
+
+        Args:
+            ctx: Typer (click) context
+            version: Parameter from the CLI - ignored.
+            **kwargs: CLI input parameters.
+
+        """
+        defined_in_cli = {}
         for option in kwargs:
             if ctx.get_parameter_source(option) == ParameterSource.COMMANDLINE:
-                defined_in_cli.add(option)
-        return cls(**kwargs, defined_in_cli=defined_in_cli)
+                defined_in_cli[option] = kwargs[option]
+        return cls(**defined_in_cli, defined_in_cli=set(defined_in_cli.keys()))
 
     def from_config_file(self, config: Dict, config_path: Path) -> "RawConfig":
         """Creates new RawConfig instance from dictionary.
@@ -236,10 +244,15 @@ class MainConfig:
         self.sources = self.get_sources(self.default.src)
 
     def validate_src_is_required(self):
-        if self.sources or self.default.list_transformers or self.default.desc or self.default.generate_config:
+        if (
+            self.sources
+            or self.default.list_transformers
+            or self.default.describe_transformer
+            or self.default.generate_config
+        ):
             return
-        print("No source path provided. Run robotidy --help to see how to use robotidy")
-        sys.exit(1)
+        print("No source path provided. Run robotidy --help to see how to use robotidy")  # FIXME should be stderr
+        raise typer.Exit(1)
 
     @staticmethod
     def load_config_from_option(cli_config: RawConfig) -> RawConfig:

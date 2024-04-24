@@ -1,4 +1,4 @@
-from robotidy.cli import cli
+from robotidy.cli_typer import cli_app
 
 if __name__ == "__main__":
-    cli()
+    cli_app()
