@@ -27,6 +27,9 @@ Path and line separators
 Environment variable
     Log    %{APPLICATION_PORT=8080}
     Log    %{ENV_VAR}
+    Set Test Variable    ${LOCAL_VARIABLE}    %{ENV_VARIABLE=string message}
+    Log    %{MY_ENV=${DEFAULT}}
+    Log    %{MY_ENV=${DEFAULT} with extra}
 
 True and False
     IF    $True

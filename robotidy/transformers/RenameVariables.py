@@ -444,7 +444,15 @@ class RenameVariables(Transformer):
                     name += match.before
             # inline eval will start and end with {}
             if not (match.base.startswith("{") and match.base.endswith("}")):
-                base = self.rename_value(match.base, variable_case=variable_case, is_var=True)
+                # handle environment variable with default %{ENV=default}
+                if match.identifier == "%" and "=" in match.base:
+                    base, default = match.base.split("=", maxsplit=1)
+                    default = self.rename_value(default, variable_case=variable_case, is_var=False)
+                else:
+                    base, default = match.base, ""
+                base = self.rename_value(base, variable_case=variable_case, is_var=True)
+                if default:
+                    base = f"{base}={default}"
                 base = f"{match.name[:2]}{base}}}"
             else:
                 base = match.name
