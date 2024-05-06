@@ -37,6 +37,8 @@ class NormalizeNewLines(Transformer):
     def __init__(
         self,
         test_case_lines: int = 1,
+        # | was added in Python 3.10. We can't use it with from __future__ import annotations because of RF
+        # auto conversion - future annotations replaces everything to string
         keyword_lines: Optional[int] = None,
         section_lines: int = 2,
         separate_templated_tests: bool = False,

@@ -1,6 +1,6 @@
+from __future__ import annotations
+
 import re
-import string
-from typing import Optional
 
 from robot.api.parsing import Token
 
@@ -98,8 +98,8 @@ class RenameTestCases(Transformer):
 
     def __init__(
         self,
-        replace_pattern: Optional[str] = None,
-        replace_to: Optional[str] = None,
+        replace_pattern: str | None = None,
+        replace_to: str | None = None,
         capitalize_each_word: bool = False,
     ):
         super().__init__()

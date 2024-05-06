@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import re
 from pathlib import Path
-from typing import Optional
 
 from jinja2 import Template
 from jinja2.exceptions import TemplateError
@@ -129,7 +130,7 @@ class GenerateDocumentation(Transformer):
 
     WHITESPACE_PATTERN = re.compile(r"(\s{2,}|\t)", re.UNICODE)
 
-    def __init__(self, overwrite: bool = False, doc_template: str = "google", template_directory: Optional[str] = None):
+    def __init__(self, overwrite: bool = False, doc_template: str = "google", template_directory: str | None = None):
         self.overwrite = overwrite
         self.doc_template = self.load_template(doc_template, template_directory)
         self.args_returns_finder = ArgumentsAndReturnsVisitor()
@@ -140,7 +141,7 @@ class GenerateDocumentation(Transformer):
 
     visit_SettingSection = visit_TestCaseSection
 
-    def load_template(self, template: str, template_directory: Optional[str] = None) -> str:
+    def load_template(self, template: str, template_directory: str | None = None) -> Template:
         try:
             return Template(self.get_template(template, template_directory))
         except TemplateError as err:
@@ -151,7 +152,7 @@ class GenerateDocumentation(Transformer):
                 f"Failed to load the template: {err}",
             )
 
-    def get_template(self, template: str, template_directory: Optional[str] = None) -> str:
+    def get_template(self, template: str, template_directory: str | None = None) -> str:
         if template == "google":
             return GOOGLE_TEMPLATE
         template_path = Path(template)

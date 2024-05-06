@@ -1,4 +1,5 @@
-from typing import List
+from __future__ import annotations
+
 from unittest.mock import Mock, patch
 
 import pytest
@@ -18,7 +19,7 @@ def empty_transformers_config_map() -> TransformConfigMap:
     return TransformConfigMap([], [], [])
 
 
-def get_transformer_config_from_order(order: List[str]) -> TransformConfigMap:
+def get_transformer_config_from_order(order: list[str]) -> TransformConfigMap:
     transformers = [
         TransformConfig(transf, force_include=True, custom_transformer=False, is_config=False) for transf in order
     ]

@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import sys
 from pathlib import Path
-from typing import List, Optional, Pattern, Tuple, Union
+from typing import Pattern
 
 try:
     import rich_click as click
@@ -89,17 +91,17 @@ if RICH_PRESENT:
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
 
-def validate_regex_callback(ctx: click.Context, param: click.Parameter, value: Optional[str]) -> Optional[Pattern]:
+def validate_regex_callback(ctx: click.Context, param: click.Parameter, value: str | None) -> Pattern | None:
     return misc.validate_regex(value)
 
 
 def validate_target_version_callback(
-    ctx: click.Context, param: Union[click.Option, click.Parameter], value: Optional[str]
-) -> Optional[int]:
+    ctx: click.Context, param: click.Option | click.Parameter, value: str | None
+) -> int | None:
     return validate_target_version(value)
 
 
-def validate_list_optional_value(ctx: click.Context, param: Union[click.Option, click.Parameter], value: Optional[str]):
+def validate_list_optional_value(ctx: click.Context, param: click.Option | click.Parameter, value: str | None):
     if not value:
         return value
     allowed = ["all", "enabled", "disabled"]
@@ -108,9 +110,7 @@ def validate_list_optional_value(ctx: click.Context, param: Union[click.Option, 
     return value
 
 
-def csv_list_type_callback(
-    ctx: click.Context, param: Union[click.Option, click.Parameter], value: Optional[str]
-) -> List[str]:
+def csv_list_type_callback(ctx: click.Context, param: click.Option | click.Parameter, value: str | None) -> list[str]:
     return csv_list_type(value)
 
 
@@ -139,7 +139,7 @@ def print_description(name: str, target_version: int):
     return 0
 
 
-def _load_external_transformers(transformers: List, transformers_config: TransformConfigMap, target_version: int):
+def _load_external_transformers(transformers: list, transformers_config: TransformConfigMap, target_version: int):
     external = []
     transformers_names = {transformer.name for transformer in transformers}
     transformers_from_conf = load_transformers(transformers_config, target_version=target_version)

@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import sys
-from typing import List
 
 from click import NoSuchOption
 
@@ -51,7 +52,7 @@ class MissingOptionalTomliWDependencyError(RobotidyConfigError):
 
 
 class NoSuchOptionError(NoSuchOption):
-    def __init__(self, option_name: str, allowed_options: List[str]):
+    def __init__(self, option_name: str, allowed_options: list[str]):
         rec_finder = misc.RecommendationFinder()
         similar = rec_finder.find(option_name, allowed_options)
         super().__init__(option_name, possibilities=similar)

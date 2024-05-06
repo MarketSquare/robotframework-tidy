@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import re
-from typing import Optional
 
 from robot.api.parsing import Token
 
@@ -54,8 +55,8 @@ class RenameKeywords(Transformer):
 
     def __init__(
         self,
-        replace_pattern: Optional[str] = None,
-        replace_to: Optional[str] = None,
+        replace_pattern: str | None = None,
+        replace_to: str | None = None,
         remove_underscores: bool = True,
         ignore_library: bool = True,
         keyword_case: str = "capitalize_words",

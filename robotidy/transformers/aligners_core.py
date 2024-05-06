@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 from collections import defaultdict
-from typing import List, Tuple
 
 from robot.api.parsing import ElseHeader, ElseIfHeader, ModelVisitor, Token
 from robot.parsing.model import Statement
@@ -254,7 +255,7 @@ class AlignKeywordsTestsSection(Transformer):
             aligned_lines.extend(aligned_line)
         return Statement.from_tokens(aligned_lines)
 
-    def split_assign(self, line: List, possible_assign: bool) -> Tuple[List, List, int]:
+    def split_assign(self, line: list, possible_assign: bool) -> tuple[list, list, int]:
         """
         This method returns return values together with their separators in case
         we don't want to align them.
@@ -325,7 +326,7 @@ class AlignKeywordsTestsSection(Transformer):
             return node
         return self.align_node(node, check_length=False)
 
-    def align_line(self, line: List, skip_width: int):
+    def align_line(self, line: list, skip_width: int):
         """
         Align single line of the node.
 
@@ -363,7 +364,7 @@ class AlignKeywordsTestsSection(Transformer):
         aligned.extend([last_token, *misc.join_comments(comments), tokens[-1]])
         return aligned
 
-    def too_many_misaligned_cols(self, misaligned_cols: int, prev_overflow_len: int, tokens: List, index: int):
+    def too_many_misaligned_cols(self, misaligned_cols: int, prev_overflow_len: int, tokens: list, index: int):
         return misaligned_cols >= self.compact_overflow_limit and prev_overflow_len and index < len(tokens) - 1
 
     def find_starting_column(self, skip_width: int):
@@ -392,7 +393,7 @@ class AlignKeywordsTestsSection(Transformer):
             prev_overflow_len = 0
         return column, prev_overflow_len, [get_separator(skip_width)]
 
-    def align_tokens(self, tokens: List, skip_width: int):
+    def align_tokens(self, tokens: list, skip_width: int):
         last_assign, misaligned_cols = 0, 0
         min_separator = self.formatting_config.space_count
         column, prev_overflow_len, aligned = self.get_start_column_and_aligned(skip_width, min_separator)
