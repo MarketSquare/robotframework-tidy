@@ -17,21 +17,21 @@ Metadata  ${ITEM}    ${VALUE}
 
 
 *** Variables ***
-${VARIABLE}    value_
-${VAR IABLE}    ${VA LUE}
+${VARIABLE_}    value_
+${VAR_IABLE_}    ${VA LUE}
 ${VARIABLE}    This is string with ${VARIABLE}
 ${${VAR}}    value
 ${VARIABLE}    ${${VARIABLE}}
-${VARIABLE}    ${VAR ${VARIABLE} VAR}
+${VARIABLE}    ${VAR_${VARIABLE}_VAR}
 ${VARIABLE}    String with ${${VARIABLE}}
 ${VARIABLE}    ${VARIABLE['item_access']}
 ${VARIABLE}    ${VARIABLE}[item_access]
 ${VARIABLE}    ${VARIABLE}[${ITEM}_access]
 ${VARIABLE}    ${VARIABLE['${VARIABLE}']}
-${VARIABLE}    ${_}____
-${VARI ABLE}    ${WO RD}
+${VARIABLE__}    ${___}____
+${VARI_ ABLE}    ${WO_ RD}
 ${VARIABLE}     \${escaped}
-${INLINE EVAL}    ${{ eval }}
+${INLINE_EVAL}    ${{ eval }}
 
 &{DICT}    item=value
 ...    item=${VALUE}
@@ -42,7 +42,7 @@ ${INLINE EVAL}    ${{ eval }}
 ${CAMEL CASE NAME}    ${CAMEL CASE NAME}
 ${CAMEL CASE NAME}    ${CAMEL CASE NAME}
 ${CAMEL CASE NAME}    ${CAMEL CASE NAME}
-${CAMEL CASE NAME WORD CAMEL CASE}    ${CAMEL CASE NAME WORD CAMEL CASE}
+${CAMEL CASE NAME_WORD_CAMEL CASE}    ${CAMEL CASE NAME_WORD_CAMEL CASE}
 
 
 *** Test Cases ***
@@ -52,19 +52,19 @@ Assign
     ...   ${variables}    Keyword
     ${variable} =    Keyword
     ${variable}=    Keyword
-    Keyword  ${NESTED ${variable}}
+    Keyword  ${NESTED_${variable}}
 
 Args
     Keyword    ${VARIABLE}
-    Keyword    ${V A RI ABLES}
-    ...    value with ${VARIABLE}
+    Keyword    ${V A _RI ABLES}
+    ...    value with ${_ VARIABLE _}
 
 For header
     ${local}    Set Variable    item
     FOR    ${item}    IN    @{LIST}
         Log    ${item}
         Do Stuff    String with ${local} value
-        ...    ${lo cal}  # TODO We could normalize it to look as first local matching variable
+        ...    ${lo_cal}  # TODO We could normalize it to look as first local matching variable
     END
     Log    ${GLOBAL}
     Log    ${item}
@@ -113,10 +113,10 @@ Defaults With Other Arg
     [Arguments]    ${arg}    ${arg2} = ${arg}
     Step
 
-Embedded ${arguments} that ${should be lower} and also ${pattern:\S}
-    Log    ${should be lower}
+Embedded ${arguments} that ${should_be_lower} and also ${pattern:\S}
+    Log    ${should_be lower}
     Log    ${GLOBAL}
     Log    ${pattern}
 
 Multiple underscores
-    Log    ${MY VAR NESTED VAR 1 NESTED VAR 2}
+    Log    ${MY_VAR__NESTED_VAR_1__NESTED_VAR_2}

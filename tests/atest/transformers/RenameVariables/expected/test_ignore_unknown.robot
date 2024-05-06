@@ -117,3 +117,6 @@ Embedded ${arguments} that ${should_be_lower} and also ${pattern:\S}
     Log    ${should_be_lower}
     Log    ${global}
     Log    ${pattern}
+
+Multiple underscores
+    Log    ${MY_VAR_NESTED_VAR_1_NESTED_VAR_2}

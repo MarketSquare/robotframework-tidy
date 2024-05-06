@@ -53,6 +53,11 @@ class TestRenameVariables(TransformerAcceptanceTest):
             source="test.robot", expected="test_separator_underscore.robot", config=":variable_separator=space"
         )
 
+    def test_ignore_variable_separator(self):
+        self.compare(
+            source="test.robot", expected="test_ignore_var_separator.robot", config=":variable_separator=ignore"
+        )
+
     def test_return_and_set_globals(self):
         self.compare(source="return_and_set_global.robot")
 
@@ -87,7 +92,7 @@ class TestRenameVariables(TransformerAcceptanceTest):
         )
         expected_output = (
             f"Error: {self.TRANSFORMER_NAME}: Invalid 'variable_separator' parameter value: 'invalid'. "
-            f"Allowed values are: underscore, space\n"
+            f"Allowed values are: underscore, space, ignore\n"
         )
         assert expected_output == result.output
 
