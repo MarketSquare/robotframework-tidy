@@ -255,6 +255,7 @@ Allowed values are:
 
 - ``underscore`` (default)
 - ``space``
+- ``ignore``
 
 .. tab-set::
 
@@ -292,6 +293,18 @@ Allowed values are:
             *** Keywords ***
             Keyword
                 ${variable name}    Set Variable    value
+                Keyword Call    ${variable name}
+
+    .. tab-item:: After (variable_separator = ignore)
+
+        .. code:: robotframework
+
+            *** Variables ***
+            ${CAMEL CASE}    value
+
+            *** Keywords ***
+            Keyword
+                ${variable_name}    Set Variable    value
                 Keyword Call    ${variable name}
 
 Skip formatting
