@@ -263,7 +263,7 @@ class TestCli:
     def test_list_transformers_invalid_filter_value(self, flag):
         cmd = [flag, "RenameKeywords"]
         result = run_tidy(cmd, exit_code=2)
-        error = self.normalize_cli_error(result.output)
+        error = self.normalize_cli_error(result.stderr)
         assert (
             "Invalid value for '--list' / '-l': Not allowed value. Allowed values are: all, enabled, disabled"
         ) in error
@@ -486,7 +486,7 @@ class TestCli:
     def test_invalid_target_version(self, mocked_version, target_version):
         mocked_version.major = 5
         result = run_tidy(f"--target-version {target_version} .".split(), exit_code=2)
-        error = self.normalize_cli_error(result.output)
+        error = self.normalize_cli_error(result.stderr)
         assert f"Invalid value for '--target-version' / '-tv':" in error
 
     def normalize_cli_error(self, error):
@@ -500,7 +500,7 @@ class TestCli:
         target_version = 5
         mocked_version.major = 4
         result = run_tidy(f"{option_name} rf{target_version} .".split(), exit_code=2)
-        error = self.normalize_cli_error(result.output)
+        error = self.normalize_cli_error(result.stderr)
         assert (
             "Invalid value for '--target-version' / '-tv': "
             f"Target Robot Framework version ({target_version}) "
