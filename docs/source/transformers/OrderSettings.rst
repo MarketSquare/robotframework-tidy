@@ -3,13 +3,16 @@
 OrderSettings
 ================================
 
-Order settings like ``[Arguments]``, ``[Setup]``, ``[Return]`` inside Keywords and Test Cases.
+Order settings like ``[Arguments]``, ``[Setup]``, ``[Tags]`` inside Keywords and Test Cases.
 
 .. |TRANSFORMERNAME| replace:: OrderSettings
 .. include:: enabled_hint.txt
 
-Keyword settings ``[Documentation]``, ``[Tags]``, ``[Timeout]``, ``[Arguments]`` are put before keyword body and
-settings like ``[Teardown]``, ``[Return]`` are moved to the end of keyword.
+Test case settings ``[Documentation]``, ``[Tags]``, ``[Template]``, ``[Timeout]``, ``[Setup]`` are put before test case
+body and ``[Teardown]`` is moved to the end of test case.
+
+Keyword settings ``[Documentation]``, ``[Tags]``, ``[Timeout]``, ``[Arguments]``, ``[Setup]`` are put before keyword
+body and settings like ``[Teardown]``, ``[Return]`` are moved to the end of keyword.
 
 .. tab-set::
 
@@ -17,6 +20,17 @@ settings like ``[Teardown]``, ``[Return]`` are moved to the end of keyword.
 
         .. code:: robotframework
 
+            *** Test Cases ***
+            Test
+                [Setup]    Setup
+                [Teardown]    Teardown
+                [Documentation]    Test documentation.
+                [Tags]    tags
+                [Template]    Template
+                [Timeout]    60 min
+                Test Step
+
+
             *** Keywords ***
             Keyword
                 [Teardown]    Keyword
@@ -24,6 +38,7 @@ settings like ``[Teardown]``, ``[Return]`` are moved to the end of keyword.
                 [Arguments]    ${arg}
                 [Documentation]    this is
                 ...    doc
+                [Setup]    Setup
                 [Tags]    sanity
                 Pass
 
@@ -31,25 +46,35 @@ settings like ``[Teardown]``, ``[Return]`` are moved to the end of keyword.
 
         .. code:: robotframework
 
+            *** Test Cases ***
+            Test
+                [Documentation]    Test documentation.
+                [Tags]    tags
+                [Template]    Template
+                [Timeout]    60 min
+                [Setup]    Setup
+                Test Step
+                [Teardown]    Teardown
+
+
             *** Keywords ***
             Keyword
                 [Documentation]    this is
                 ...    doc
                 [Tags]    sanity
                 [Arguments]    ${arg}
+                [Setup]    Setup
                 Pass
                 [Teardown]    Keyword
                 [Return]    ${value}
 
-Test case settings ``[Documentation]``, ``[Tags]``, ``[Template]``, ``[Timeout]``, ``[Setup]`` are put before test case body and
-``[Teardown]`` is moved to the end of test case.
 
 Configure order of the settings
 ----------------------------------
 
 Default order can be changed using following parameters:
 
-- ``keyword_before = documentation,tags,timeout,arguments``
+- ``keyword_before = documentation,tags,arguments,timeout,setup``
 - ``keyword_after = teardown,return``
 - ``test_before = documentation,tags,template,timeout,setup``
 - ``test_after = teardown``
@@ -57,6 +82,9 @@ Default order can be changed using following parameters:
 For example::
 
     robotidy --configure OrderSettings:test_before=setup,teardown:test_after=documentation,tags
+
+It is not required to overwrite all orders - for example configuring only ``test_before`` and ``test_after`` keeps
+keyword order as default.
 
 .. tab-set::
 
@@ -75,6 +103,18 @@ For example::
                 [Setup]    Setup  # comment
                 Keyword2
 
+
+            *** Keywords ***
+            Keyword
+                [Documentation]    this is
+                ...    doc
+                [Tags]    sanity
+                [Arguments]    ${arg}
+                [Setup]    Setup
+                Pass
+                [Teardown]    Keyword
+                [Return]    ${value}
+
     .. tab-item:: After
 
         .. code:: robotframework
@@ -89,6 +129,18 @@ For example::
                 ...    doc
                 [Tags]
                 ...    tag
+
+
+            *** Keywords ***
+            Keyword
+                [Documentation]    this is
+                ...    doc
+                [Tags]    sanity
+                [Arguments]    ${arg}
+                [Setup]    Setup
+                Pass
+                [Teardown]    Keyword
+                [Return]    ${value}
 
 Not all settings names need to be passed to given parameter. Missing setting names are not ordered. Example::
 
@@ -106,6 +158,24 @@ This configuration is invalid because teardown is by default part of the ``test_
 We need to overwrite both orders::
 
     robotidy --configure OrderSettings:test_before=teardown:test_after=
+
+Splitting configuration
+-----------------------
+
+Robotidy combines split configuration. It is possible to configure the same transformer in multiple CLI commands or
+configuration entries::
+
+    robotidy --configure OrderSettings:keyword_before=documentation,tags,timeout,arguments,setup --configure OrderSettings:keyword_after=teardown,return
+
+Configuration files can also contain spaces for better readability.
+
+  .. code-block:: toml
+
+    [tool.robotidy]
+    configure = [
+        "OrderSettings: keyword_before = documentation, tags, timeout, arguments, setup",
+        "OrderSettings: keyword_after = teardown, return",
+    ]
 
 Settings comments
 ---------------------
