@@ -80,8 +80,8 @@ class OrderSettings(Transformer):
     KEYWORD_SETTINGS = {
         "documentation": Token.DOCUMENTATION,
         "tags": Token.TAGS,
-        "timeout": Token.TIMEOUT,
         "arguments": Token.ARGUMENTS,
+        "timeout": Token.TIMEOUT,
         "setup": Token.SETUP,
         "return": Token.RETURN,
         "teardown": Token.TEARDOWN,
