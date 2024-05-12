@@ -58,6 +58,7 @@ Keyword
         Log  ${var}
     END
     Pass
+    [Setup]  Setup
 
 Another Keyword ${var}
     No Operation

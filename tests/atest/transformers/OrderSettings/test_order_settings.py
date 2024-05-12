@@ -13,7 +13,7 @@ class TestOrderSettings(TransformerAcceptanceTest):
         "keyword_before, keyword_after, test_before, test_after, expected",
         [
             (
-                "documentation,tags,timeout,arguments",
+                "documentation,tags,timeout,arguments,setup",
                 "teardown,return",
                 "documentation,tags,template,timeout,setup",
                 "teardown",
@@ -21,7 +21,7 @@ class TestOrderSettings(TransformerAcceptanceTest):
             ),
             (
                 "",
-                "documentation,tags,timeout,arguments,teardown,return",
+                "documentation,tags,timeout,arguments,teardown,setup,return",
                 "",
                 "documentation,tags,template,timeout,setup,teardown",
                 "custom_order_all_end.robot",
@@ -50,7 +50,7 @@ class TestOrderSettings(TransformerAcceptanceTest):
         expected_output = (
             f"Error: {self.TRANSFORMER_NAME}: Invalid 'keyword_after' parameter value: 'tags,invalid'."
             f" Custom order should be provided in comma separated list with valid setting names: "
-            f"arguments,documentation,return,tags,teardown,timeout\n"
+            f"arguments,documentation,return,setup,tags,teardown,timeout\n"
         )
         assert result.output == expected_output
 

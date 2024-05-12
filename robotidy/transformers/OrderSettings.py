@@ -82,6 +82,7 @@ class OrderSettings(Transformer):
         "tags": Token.TAGS,
         "timeout": Token.TIMEOUT,
         "arguments": Token.ARGUMENTS,
+        "setup": Token.SETUP,
         "return": Token.RETURN,
         "teardown": Token.TEARDOWN,
     }
@@ -96,7 +97,7 @@ class OrderSettings(Transformer):
 
     def __init__(
         self,
-        keyword_before: str = "documentation,tags,timeout,arguments",
+        keyword_before: str = "documentation,tags,arguments,timeout,setup",
         keyword_after: str = "teardown,return",
         test_before: str = "documentation,tags,template,timeout,setup",
         test_after: str = "teardown",
