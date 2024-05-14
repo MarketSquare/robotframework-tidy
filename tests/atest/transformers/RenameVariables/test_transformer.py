@@ -110,7 +110,7 @@ class TestRenameVariables(TransformerAcceptanceTest):
         self.compare(source="math_operations.robot")
 
     def test_var_syntax(self):
-        self.compare(
-            source="VAR_syntax.robot",
-            target_version=">6.1.1",
-        )
+        self.compare(source="VAR_syntax.robot", target_version=">6.1.1")
+
+    def test_equal_sign_in_section(self):
+        self.compare(source="equal_sign_in_section.robot")

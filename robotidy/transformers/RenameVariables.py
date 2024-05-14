@@ -69,6 +69,20 @@ def is_nested_variable(variable: str) -> bool:
     return bool(match.base)
 
 
+def is_name_hex_or_binary(variable: str) -> bool:
+    if "x" in variable:
+        base = 16
+    elif "b" in variable:
+        base = 2
+    else:
+        return False
+    try:
+        int(variable, base)
+    except ValueError:
+        return False
+    return True
+
+
 def resolve_var_name(name: str) -> str:
     """Resolve name of the variable from \\${name} or $name syntax."""
     if name.startswith("\\"):
@@ -201,7 +215,7 @@ class RenameVariables(Transformer):
     MORE_THAN_2_SPACES: Pattern = re.compile(r"\s{2,}")
     CAMEL_CASE: Pattern = re.compile(r"((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))")
     EXTENDED_SYNTAX: Pattern = re.compile(r"(.+?)([^\s\w].+)", re.UNICODE)
-    DEFAULT_IGNORE_CASE = {"\\n"}
+    DEFAULT_IGNORE_CASE = {"\\n", "None", "True", "False"}
 
     def __init__(
         self,
@@ -493,10 +507,10 @@ class RenameVariables(Transformer):
             name += base
             after = match.after
         if after:
-            if is_var:
-                name += self.rename(after, case=variable_case, strip_fn="rstrip")
-            else:
+            if not is_var or after.strip() == "=":
                 name += after
+            else:
+                name += self.rename(after, case=variable_case, strip_fn="rstrip")
         return name
 
     def set_name_case(self, name: str, case: VariableCase):
@@ -523,6 +537,8 @@ class RenameVariables(Transformer):
 
     def rename(self, variable_value: str, case: VariableCase, strip_fn: str = "strip"):
         if not variable_value:
+            return variable_value
+        if is_name_hex_or_binary(variable_value):
             return variable_value
         # split on variable attribute access like ${var['item']}, ${var.item}, ${var(method)}..
         variable_name, item_access = split_string_on_delimiter(variable_value)
