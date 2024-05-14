@@ -47,6 +47,7 @@ Keyword
     ...    doc
     [Tags]  sanity
     [Arguments]  ${arg}
+    [Setup]  Setup
     Keyword
     No Operation
     IF  ${condition}

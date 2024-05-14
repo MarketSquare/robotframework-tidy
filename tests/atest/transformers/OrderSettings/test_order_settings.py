@@ -1,32 +1,36 @@
 import pytest
 
-from tests.atest import TransformerAcceptanceTest
+from tests.atest import ROBOT_VERSION, TransformerAcceptanceTest
 
 
 class TestOrderSettings(TransformerAcceptanceTest):
     TRANSFORMER_NAME = "OrderSettings"
 
     def test_order(self):
-        self.compare(source="test.robot")
+        if ROBOT_VERSION.major < 7:
+            expected = "test_pre_rf7.robot"
+        else:
+            expected = "test.robot"
+        self.compare(source="test.robot", expected=expected)
 
     @pytest.mark.parametrize(
         "keyword_before, keyword_after, test_before, test_after, expected",
         [
             (
-                "documentation,tags,timeout,arguments",
+                "documentation,tags,arguments,timeout,setup",
                 "teardown,return",
                 "documentation,tags,template,timeout,setup",
                 "teardown",
-                "custom_order_default.robot",
+                "custom_order_default",
             ),
             (
                 "",
-                "documentation,tags,timeout,arguments,teardown,return",
+                "documentation,tags,timeout,arguments,teardown,setup,return",
                 "",
                 "documentation,tags,template,timeout,setup,teardown",
-                "custom_order_all_end.robot",
+                "custom_order_all_end",
             ),
-            (None, None, None, "", "custom_order_without_test_teardown.robot"),
+            (None, None, None, "", "custom_order_without_test_teardown"),
         ],
     )
     def test_custom_order(self, keyword_before, keyword_after, test_before, test_after, expected):
@@ -39,6 +43,10 @@ class TestOrderSettings(TransformerAcceptanceTest):
             config += f":test_before={test_before}"
         if test_after is not None:
             config += f":test_after={test_after}"
+        if ROBOT_VERSION.major < 7:
+            expected += "_pre_rf7.robot"
+        else:
+            expected += ".robot"
         self.compare(source="test.robot", expected=expected, config=config)
 
     def test_custom_order_invalid_param(self):
@@ -50,7 +58,7 @@ class TestOrderSettings(TransformerAcceptanceTest):
         expected_output = (
             f"Error: {self.TRANSFORMER_NAME}: Invalid 'keyword_after' parameter value: 'tags,invalid'."
             f" Custom order should be provided in comma separated list with valid setting names: "
-            f"arguments,documentation,return,tags,teardown,timeout\n"
+            f"arguments,documentation,return,setup,tags,teardown,timeout\n"
         )
         assert result.output == expected_output
 

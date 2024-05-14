@@ -1,19 +1,19 @@
 *** Test Cases ***
 Test case 1
+    Keyword
+    Keyword
     [Documentation]  this is
     ...    doc
-    [Teardown]  Teardown
-    Keyword
     [Tags]
     ...  tag
     [Setup]  Setup  # comment
-    Keyword
+    [Teardown]  Teardown
 
 Test case 2
-    [Template]  Template
     Keyword
-    [Timeout]  timeout
     [Timeout]  timeout2  # this is error because it is duplicate
+    [Template]  Template
+    [Timeout]  timeout
 
 Test case with comment at the end
     [Teardown]  Keyword
@@ -25,30 +25,24 @@ Test case 3
     Golden Keyword
 
 Test case 4
-   [Teardown]  teardown
    Keyword1
    # comment1
    Keyword2
    # comment2
    Keyword3
+   [Teardown]  teardown
 
 Test case 5  # comment1
-   [Teardown]  teardown
-   [Documentation]  this is
    Keyword1
    # comment2
    Keyword2
    # comment3
    Keyword3
+   [Documentation]  this is
+   [Teardown]  teardown
 
 *** Keywords ***
 Keyword
-    [Teardown]  Keyword
-    [Return]  ${value}
-    [Arguments]  ${arg}
-    [Documentation]  this is
-    ...    doc
-    [Tags]  sanity
     Keyword
     No Operation
     IF  ${condition}
@@ -59,6 +53,12 @@ Keyword
     END
     Pass
     [Setup]  Setup
+    [Documentation]  this is
+    ...    doc
+    [Tags]  sanity
+    [Arguments]  ${arg}
+    [Teardown]  Keyword
+    [Return]  ${value}
 
 Another Keyword ${var}
     No Operation
@@ -85,8 +85,8 @@ Comment Before setting
     [Return]    ${value}
 
 Return first and comment last
-    [Return]  stuff
     Keyword
+    [Return]  stuff
     # I want to be here
 
 Comment on the same line  # comment

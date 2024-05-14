@@ -57,6 +57,7 @@ Keyword
     [Tags]  sanity
     [Arguments]  ${arg}
     [Teardown]  Keyword
+    [Setup]  Setup
     [Return]  ${value}
 
 Another Keyword ${var}
