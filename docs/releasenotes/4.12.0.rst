@@ -1,0 +1,102 @@
+:orphan:
+
+===============
+Robotidy 4.12.0
+===============
+
+Several updates and fixes for ``RenameVariables`` and ``OrderSettings`` transformers. We are also dropping support for
+Python 3.7 with this update.
+
+You can install the latest available version by running
+
+::
+
+    pip install --upgrade robotframework-tidy
+
+or to install exactly this version
+
+::
+
+    pip install robotframework-tidy==4.12.0
+
+.. contents::
+   :depth: 2
+   :local:
+
+
+Transformers changes
+====================
+
+Ignore variable separator in RenameVariables (#682)
+---------------------------------------------------
+
+Added new ``ignore`` mode to ``variable_separator`` parameter. It allows to ignore variable separators when
+formatting with ``RenameVariables``::
+
+    *** Variables ***
+    # following variables will have variable separators (spaces and underscores) untouched
+    ${variable with space}  value
+    ${mixed_variable and_space}  value
+
+Ignoring additional variables in RenameVariables (#692)
+-------------------------------------------------------
+
+``RenameVariables`` will now ignore and do not transform following variables:
+
+- ``${None}``
+- ``${True}``
+- ``${False}``
+- numerical values such as ``${0x1A}`` or ``${0b01010}``
+
+[Timeout] and [Setup] order for keywords in OrderSettings (#690)
+-----------------------------------------------------------------
+
+Default order of keyword settings in ``OrderSettings`` transformer was modified. Robot Framework 7.0 added ``[Setup]``
+to keywords (which wasn't supported by Robotidy until now). ``[Timeout]`` order was also changed.
+
+Old default order was ``documentation,tags,timeout,arguments`` and new order is
+``documentation,tags,arguments,timeout,setup``.
+
+``[Timeout]`` order was changed to follow Robot Framework Style Guide recommendation.
+
+If you are using ``OrderSettings`` with custom order, this change requires to add ``setup`` to your order.
+
+Note that if you're using ``[Setup]`` with keywords in your code (supported in RF from 7.0) but run Robotidy with older
+version (pre 7.0) it will order ``[Setup]`` like a keyword call - essentially ignoring its order.
+
+Fixes
+=====
+
+Handle default default of environment variable in RenameVariables (#677)
+------------------------------------------------------------------------
+
+``RenameVariables`` did not handle default value of environment variable correctly. Now following code::
+
+    Set Test Variable    ${local variable}    %{env variable=string message}
+    Log    %{MY_ENV=${global}}
+    Log    %{my env=${global} with extra}
+
+should be transformed to::
+
+    Set Test Variable    ${local_variable}    %{ENV_VARIABLE=string message}
+    Log    %{MY_ENV=${GLOBAL}}
+    Log    %{MY_ENV=${DEFAULT} with extra string}
+
+RenameVariables adding _ to variables with equal sign in Variables section (#692)
+---------------------------------------------------------------------------------
+
+Following code::
+
+    *** Variables ***
+    ${random_seed} =    ${None}
+
+was formatted incorrectly - ``_`` was added before ``=``.
+
+Other features
+==============
+
+Deprecated support for 3.7 (#570)
+---------------------------------
+
+We dropped support for Python 3.7 as it is reached end of lifecycle. It allowed us to refactor our code to use more
+recent Python features like improved typing.
