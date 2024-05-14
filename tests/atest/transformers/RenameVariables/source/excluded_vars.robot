@@ -37,3 +37,8 @@ True and False
     ELIF    ${False}
         Log    The lie.
     END
+
+Numerical Values
+    Log    ${0x1A}
+    Log    ${0b0110101}
+    Log    ${5}

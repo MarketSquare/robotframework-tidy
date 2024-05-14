@@ -178,7 +178,12 @@ Ignore variable case
 --------------------
 
 Case of all variables is converted according to the configured conventions. It is possible to pass the names of the
-variables that should be ignored. By default, only ${\n} ``${\n}`` variable case is ignored and not transformed.
+variables that should be ignored. By default, following variables case is ignored and not transformerd:
+
+- ``${\n}``
+- ``${None}``
+- ``${True}``
+- ``${False}``
 
 Configure ``ignore_case`` to ignore an additional list. This parameter accepts comma-separated list of variable names
 (case-sensitive)::
