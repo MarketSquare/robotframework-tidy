@@ -3,9 +3,10 @@
 AlignTemplatedTestCases
 ================================
 
-Align templated Test Cases to columns.
+Align suites with Test Template to columns.
 
-For non-templated test cases use ``AlignTestCasesSection`` transformer.
+For non-templated test cases use ``AlignTestCasesSection`` transformer. Test cases that are templated with
+``[Template]`` setting should also use ``AlignTestCasesSection``.
 
 .. |TRANSFORMERNAME| replace:: AlignTemplatedTestCases
 .. include:: disabled_hint.txt

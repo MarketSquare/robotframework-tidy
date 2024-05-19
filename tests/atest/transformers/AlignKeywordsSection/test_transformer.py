@@ -103,3 +103,8 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
             source="skip_return_values.robot",
             config=":widths=24,28,20:handle_too_long=compact_overflow:skip_return_values=True",
         )
+
+    def test_align_settings_separately(self):
+        self.compare(
+            source="align_settings_separately.robot", config=":alignment_type=auto:align_settings_separately=True"
+        )

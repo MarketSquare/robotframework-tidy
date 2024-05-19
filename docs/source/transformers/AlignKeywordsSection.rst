@@ -156,7 +156,7 @@ See example (for ``fixed`` alignment type and default width ``24``):
 
             *** Keywords ***
             Keyword
-                # the wole line containing too long token is ignored
+                # the whole line containing too long token is ignored
                 ${assign}    Looooooooonger Keyword Name    ${argument}    Short
                 Short                   Short                   Short                   Short
                 Single
@@ -295,6 +295,67 @@ will result in the following transformation:
 
                 # fits, will be aligned but not split
                 Keyword       argument
+
+Align comments
+---------------
+
+Comments are not aligned by default. You can enable it by configuring ``align_comments``::
+
+    robotidy -c AlignKeywordsSection:align_comments=True src
+
+It is especially useful if you want to use comments to name the aligned columns. For example::
+
+    *** Test Cases ***
+    Testing Random List
+        [Template]    Validate Random List Selection
+        # collection          nbr items
+        ${SIMPLE LIST}        2             # first test
+        ${MIXED LIST}         3             # second test
+        ${NESTED LIST}        4             # third test
+
+Align settings separately
+-------------------------
+
+Settings are aligned together with the rest of the code in the keyword. You can configure it to be aligned separately.
+It allows you to use different widths of the columns for settings (if ``alignment_type`` is set to ``auto``).
+You can enable it by configuring ``align_settings_separately``::
+
+    robotidy -c AlignKeywordsSection:alignment_type=auto:align_settings_separately=True src
+
+.. tab-set::
+
+    .. tab-item:: Before
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+                [Arguments]   ${argument_name}
+                [Tags]    tag    tag
+                Log    ${argument_name}
+                Perform Action And Wait For Result    ${argument_name}
+
+    .. tab-item:: align_settings_separately=False (default)
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+                [Arguments]     ${argument_name}
+                [Tags]          tag                 tag
+                Log             ${argument_name}
+                Perform Action And Wait             ${argument_name}
+
+    .. tab-item:: align_settings_separately=True
+
+        .. code:: robotframework
+
+            *** Keywords ***
+            Keyword
+                [Arguments]     ${argument_name}
+                [Tags]          tag                 tag
+                Log     ${argument_name}
+                Perform Action And Wait     ${argument_name}
 
 Skip formatting
 ----------------

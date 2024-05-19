@@ -2,27 +2,27 @@
 Testing Random List
     [Template]    Validate Random List Selection
     # collection          nbr items
-    ${HOMOGENOUS LIST}    2
+    ${SIMPLE LIST}        2
     ${MIXED LIST}         3
     ${NESTED LIST}        4
-    ${HOMOGENOUS LIST}    10
+    ${SIMPLE LIST}        10
     ${MIXED LIST}         11
     ${NESTED LIST}        12
 
 Testing Random Item
     [Template]    Validate Random Item Selection
     # collection
-    ${HOMOGENOUS LIST}
+    ${SIMPLE LIST}
     ${MIXED LIST}
     ${NESTED LIST}
 
 Testing Random Dict
     [Template]    Validate Random Dict Selection
     # collection          nbr items
-    ${HOMOGENOUS DICT}    2
+    ${SIMPLE DICT}        2
     ${MIXED DICT}         3
     ${NESTED DICT}        4
-    ${HOMOGENOUS DICT}    10
+    ${SIMPLE DICT}        10
     ${MIXED DICT}         11
     ${NESTED DICT}        12
 
@@ -60,3 +60,17 @@ Testing Random Integer
     integer    -56       56           # mixed
     integer    23        -15          # mixed max under min
     integer    -2        -2           # no range
+
+Test Password Policy Minimum Length Input Errors
+    [Documentation]    This Keyword Verifies Password Policy Minimum Length Input Errors
+    [Tags]        SERVICE-12345
+    [Setup]       Login With Random User
+    [Teardown]    Test Teardown For User "${CURRENT_USER}"
+    [Template]    Test Password Policy Minimum Length Error With Input
+    ${SPACE}                            Required
+    5                                   Invalid
+    15                                  Invalid
+    0                                   Invalid
+    65.90                               Invalid
+    hgsjaADC                            Invalid
+    $$ywu_%&#                           Invalid

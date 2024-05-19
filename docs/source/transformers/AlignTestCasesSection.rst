@@ -2,13 +2,13 @@
 
 AlignTestCasesSection
 ================================
-Align ``*** Test Cases ***`` section to columns.
 
+Align ``*** Test Cases ***`` section to columns.
 
 .. |TRANSFORMERNAME| replace:: AlignTestCasesSection
 .. include:: disabled_hint.txt
 
-Align keyword calls and settings into columns with predefined width in non-templated test cases.
+Align keyword calls and settings into columns with predefined width in test cases.
 There are two possible alignment types (configurable via ``alignment_type``):
 
 - ``fixed`` (default): pad the tokens to the fixed width of the column
@@ -20,8 +20,8 @@ The width of the column sets limit to the maximum width of the column. Default w
 With ``fixed`` alignment each column have fixed width (and tokens that does not fit
 go into ``overflow`` state - see :ref:`overflow tests`).
 
-``auto`` alignment align tokens to the longest token in the column - the column width can be shorter than
-configured width (but no longer).
+``auto`` alignment align tokens to the longest token in the column - the column width can be shorter or equal to
+configured width.
 
 See examples of the alignment types:
 
@@ -38,6 +38,11 @@ See examples of the alignment types:
                 ...    arg
                 ...    value
 
+            Templated test case
+                [Template]    Templated Keyword
+                first_arg  second_arg
+                value    ${500}
+
     .. tab-item:: fixed (default)
 
         .. code:: robotframework
@@ -49,6 +54,11 @@ See examples of the alignment types:
                 ...                     arg
                 ...                     value
 
+            Templated test case
+                [Template]    Templated Keyword
+                first_arg               second_arg
+                value                   ${500}
+
     .. tab-item:: auto
 
         .. code:: robotframework
@@ -59,6 +69,11 @@ See examples of the alignment types:
                 ${other_val}    Short Keyword
                 ...             arg
                 ...             value
+
+            Templated test case
+                [Template]    Templated Keyword
+                first_arg    second_arg
+                value        ${500}
 
 The ``auto`` alignment often leads to more compact code. But ``fixed`` setting offers more stability - adding new,
 slightly longer variable or keyword call will not change alignment of the other lines.
@@ -296,6 +311,66 @@ will result in the following transformation:
                 # fits, will be aligned but not split
                 Keyword       argument
 
+Align comments
+---------------
+
+Comments are not aligned by default. You can enable it by configuring ``align_comments``::
+
+    robotidy -c AlignTestCasesSection:align_comments=True src
+
+It is especially useful if you want to use comments to name the aligned columns. For example::
+
+    *** Test Cases ***
+    Testing Random List
+        [Template]    Validate Random List Selection
+        # collection          nbr items
+        ${SIMPLE LIST}        2             # first test
+        ${MIXED LIST}         3             # second test
+        ${NESTED LIST}        4             # third test
+
+Align settings separately
+-------------------------
+
+Settings are aligned together with the rest of the code in the keyword. You can configure it to be aligned separately.
+It allows you to use different widths of the columns for settings (if ``alignment_type`` is set to ``auto``).
+You can enable it by configuring ``align_settings_separately``::
+
+    robotidy -c AlignTestCasesSection:alignment_type=auto:align_settings_separately=True src
+
+.. tab-set::
+
+    .. tab-item:: Before
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test Password Policy Minimum Length Input Errors
+                [Timeout]   10 min
+                [Tags]    tag    tag
+                Log    ${argument_name}
+                Perform Action And Wait For Result    ${argument_name}
+
+    .. tab-item:: align_settings_separately=False (default)
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test Password Policy Minimum Length Input Errors
+                [Timeout]       10 min
+                [Tags]          tag                 tag
+                Log             ${argument_name}
+                Perform Action And Wait For Result          ${argument_name}
+
+    .. tab-item:: align_settings_separately=True
+
+        .. code:: robotframework
+
+            *** Test Cases ***
+            Test Password Policy Minimum Length Input Errors
+                [Timeout]       10 min
+                [Tags]          tag         tag
+                Log     ${argument_name}
+                Perform Action And Wait     ${argument_name}
 
 Skip formatting
 ----------------
