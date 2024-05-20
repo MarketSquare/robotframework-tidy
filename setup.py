@@ -55,7 +55,7 @@ setup(
             "invoke",
             "jinja2",
             "packaging>=21.0",
-            "pyflakes>=2.4,<3.3",  #  FIXME https://github.com/klen/pylama/issues/224
+            "pyflakes>=2.4,<3.3",
             "pylama",
             "pytest",
             "pre-commit",

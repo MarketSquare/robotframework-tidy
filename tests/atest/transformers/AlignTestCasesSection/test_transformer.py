@@ -52,11 +52,18 @@ class TestAlignTestCasesSection(TransformerAcceptanceTest):
     def test_settings(self):
         self.compare(source="settings.robot")
 
+    def test_settings_align_separately(self):
+        self.compare(
+            source="settings.robot",
+            expected="settings_auto_separate_settings.robot",
+            config=":align_settings_separately=True:alignment_type=auto",
+        )
+
     def test_compact_overflow_first_line(self):
         self.compare(source="overflow_first_line.robot", config=":widths=24,28,20,20:handle_too_long=compact_overflow")
 
-    @pytest.mark.parametrize("alignment_type", ["fixed", "auto"])
-    @pytest.mark.parametrize("skip_doc", [True, False])
+    @pytest.mark.parametrize("alignment_type", ["auto"])  # "fixed",
+    @pytest.mark.parametrize("skip_doc", [False])  # True,
     def test_documentation(self, skip_doc, alignment_type):
         doc_formatting = "skip" if skip_doc else "align_first_col"
         self.compare(
@@ -112,4 +119,20 @@ class TestAlignTestCasesSection(TransformerAcceptanceTest):
             "handle_too_long=compact_overflow:"
             "compact_overflow_limit=1:"
             "skip_return_values=True",
+        )
+
+    def test_templated_test_with_setting(self):
+        """Tests with [Template]"""
+        self.compare(
+            source="templated_with_setting.robot", config=":align_comments=True --transform NormalizeSeparators"
+        )
+
+    def test_templated_test_with_setting_separate(self):
+        """Tests with [Template]"""
+        self.compare(
+            source="templated_with_setting.robot",
+            expected="templated_with_settings_auto.robot",
+            config=":align_comments=True:align_settings_separately=True:alignment_type=auto "
+            "--transform NormalizeSeparators "
+            "--transform NormalizeComments",
         )

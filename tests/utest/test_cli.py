@@ -109,6 +109,8 @@ class TestCli:
             "alignment_type",
             "handle_too_long",
             "compact_overflow_limit",
+            "align_comments",
+            "align_settings_separately",
             "skip_documentation",
         ]
         # skip_documentation is overridden in transformer - the order is different because of that
