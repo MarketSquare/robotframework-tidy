@@ -1,4 +1,3 @@
-[![Unit-tests](https://img.shields.io/github/workflow/status/MarketSquare/robotframework-tidy/Unit%20tests/main)](https://github.com/MarketSquare/robotframework-tidy/actions?query=workflow%3A%22Unit+tests%22 "GitHub Workflow Unit Tests Status")
 ![Codecov](https://img.shields.io/codecov/c/github/MarketSquare/robotframework-tidy/main "Code coverage on master branch")
 ![PyPI](https://img.shields.io/pypi/v/robotframework-tidy?label=version "PyPI package version")
 ![Python versions](https://img.shields.io/pypi/pyversions/robotframework-tidy "Supported Python versions")
@@ -30,7 +29,7 @@ Full documentation available [here](https://robotidy.readthedocs.io). :open_book
 Requirements <a name="requirements"></a>
 ------------
 
-Python 3.7+ :snake: and Robot Framework 4.0.0+ :robot:.
+Python 3.8+ :snake: and Robot Framework 4.0.0+ :robot:.
 
 Installation <a name="installation"></a>
 ------------
