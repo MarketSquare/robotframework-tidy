@@ -99,7 +99,8 @@ class VariablesScope:
         self._local = set()
         self._global = set()
 
-    def _get_var_name(self, variable: str) -> "str|None":
+    @staticmethod
+    def _get_var_name(variable: str) -> "str|None":
         if len(variable) > 1 and variable[0] in "$@&" and variable[1] != "{":
             variable = f"{variable[0]}{{{variable[1:]}}}"
         match = search_variable(variable, ignore_errors=True)
@@ -543,7 +544,8 @@ class RenameVariables(Transformer):
         # split on variable attribute access like ${var['item']}, ${var.item}, ${var(method)}..
         variable_name, item_access = split_string_on_delimiter(variable_value)
         if self.convert_camel_case:
-            variable_name = self.CAMEL_CASE.sub(r" \1", variable_name)
+            var_sep = " " if self.variable_separator == VariableSeparator.SPACE else "_"
+            variable_name = self.CAMEL_CASE.sub(rf"{var_sep}\1", variable_name)
         if self.variable_separator != VariableSeparator.IGNORE:
             variable_name = variable_name.replace("_", " ")
             variable_name = self.MORE_THAN_2_SPACES.sub(" ", variable_name)
