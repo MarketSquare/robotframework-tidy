@@ -16,7 +16,7 @@ class OrderSettingsSection(Transformer):
       - documentation (Documentation, Metadata),
       - imports (Library, Resource, Variables),
       - settings (Suite Setup and Teardown, Test Setup and Teardown, Test Timeout, Test Template),
-      - tags (Force Tags, Default Tags)
+      - tags (Force Tags, Default Tags, Test Tags)
 
     Then ordered by groups (according to ``group_order = documentation,imports,settings,tags`` order). Every
     group is separated by ``new_lines_between_groups = 1`` new lines.
@@ -216,8 +216,8 @@ class OrderSettingsSection(Transformer):
             if (
                 isinstance(statement, LibraryImport)
                 and statement.name
-                and statement.name != "Remote"
                 and statement.name in STDLIBS
+                and statement.name != "Remote"
             ):
                 before.append((comments, statement))
             else:
