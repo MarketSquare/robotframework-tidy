@@ -90,6 +90,34 @@ class IndentNestedKeywords(Transformer):
         tokens.append(eol)
         return tokens
 
+    @staticmethod
+    def node_was_transformed(old_tokens, new_tokens) -> bool:
+        """
+        Compare code before and after transformation while ignoring comments to check if code was transformed.
+        """
+        if len(new_tokens) > len(old_tokens):
+            return True
+        old_tokens_no_comm = []
+        data_in_line = False
+        for token in old_tokens:
+            if token.type == Token.EOL:
+                if not data_in_line:
+                    continue
+                data_in_line = False
+            elif token.type == Token.COMMENT:
+                if old_tokens_no_comm and old_tokens_no_comm[-1].type == Token.SEPARATOR:
+                    old_tokens_no_comm.pop()
+                continue
+            elif token.type != Token.SEPARATOR:
+                data_in_line = True
+            old_tokens_no_comm.append(token)
+        if len(new_tokens) != len(old_tokens_no_comm):
+            return True
+        for new_token, old_token in zip(new_tokens, old_tokens_no_comm):
+            if new_token.type != old_token.type or new_token.value != old_token.value:
+                return True
+        return False
+
     @skip_if_disabled
     def visit_SuiteSetup(self, node):  # noqa
         lines = self.get_setting_lines(node, 0)
@@ -99,8 +127,11 @@ class IndentNestedKeywords(Transformer):
         separator = self.get_separator()
         new_line = misc.get_new_line()
         tokens = [node.data_tokens[0], separator, *misc.join_tokens_with_token(lines[0][1], separator)]
-        node.tokens = self.parse_keyword_lines(lines, tokens, new_line, eol=node.tokens[-1])
-        return (*comments, node)
+        formatted_tokens = self.parse_keyword_lines(lines, tokens, new_line, eol=node.tokens[-1])
+        if self.node_was_transformed(node.tokens, formatted_tokens):
+            node.tokens = formatted_tokens
+            return (*comments, node)
+        return node
 
     visit_SuiteTeardown = visit_TestSetup = visit_TestTeardown = visit_SuiteSetup
 
@@ -146,8 +177,11 @@ class IndentNestedKeywords(Transformer):
             tokens.extend([*misc.join_tokens_with_token(assign, separator), separator])
         tokens.extend(misc.join_tokens_with_token(lines[0][1], separator))
         new_line = misc.get_new_line(indent)
-        node.tokens = self.parse_keyword_lines(lines, tokens, new_line, eol=node.tokens[-1])
-        return (*comments, node)
+        formatted_tokens = self.parse_keyword_lines(lines, tokens, new_line, eol=node.tokens[-1])
+        if self.node_was_transformed(node.tokens, formatted_tokens):
+            node.tokens = formatted_tokens
+            return (*comments, node)
+        return node
 
     def split_too_long_lines(self, lines, indent):
         """

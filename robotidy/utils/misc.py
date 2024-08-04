@@ -348,10 +348,9 @@ def get_comments(tokens):
             if token.value.startswith("#"):
                 comments.append(token)
             elif comments:
-                comments[-1].value += prev_sep + token.value
+                comments[-1] = Token(Token.COMMENT, comments[-1].value + prev_sep + token.value)
             else:
-                token.value = f"# {token.value}"
-                comments.append(token)
+                comments.append(Token(Token.COMMENT, f"# {token.value}"))
         elif token.type == Token.SEPARATOR:
             prev_sep = token.value
     return comments

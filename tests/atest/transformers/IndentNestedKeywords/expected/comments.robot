@@ -1,3 +1,16 @@
+*** Settings ***
+Suite Setup    Run Keywords
+...    No Operation
+# ...    No Operation
+# comment
+Suite Teardown    Run Keywords
+...    No Operation
+...    No Operation
+Test Setup    Run Keywords
+# ...    No Operation
+...    No Operation
+
+
 *** Keywords ***
 Comments
     # comment1  comment2
@@ -11,3 +24,18 @@ Comments
     ...        Keyword    ${arg}
     ...    ELSE
     ...        Keyword
+
+Golden Keywords
+    [Test Setup]    Run Keywords
+    ...    No Operation
+    #    No Operation
+    ...    No Operation
+
+    Run Keywords
+    ...    No Operation
+    # ...    No Operation
+    ...    No Operation
+
+    Run Keywords
+    ...    No Operation
+    ...    No Operation  # comment about this keyword call
