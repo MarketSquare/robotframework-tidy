@@ -39,10 +39,10 @@ ${INLINE_EVAL}    ${{ eval }}
 ...    other ${VALUE}
 ...    ${{embedd_ ed}
 
-${CAMEL CASE NAME}    ${CAMEL CASE NAME}
-${CAMEL CASE NAME}    ${CAMEL CASE NAME}
-${CAMEL CASE NAME}    ${CAMEL CASE NAME}
-${CAMEL CASE NAME_WORD_CAMEL CASE}    ${CAMEL CASE NAME_WORD_CAMEL CASE}
+${CAMEL_CASE_NAME}    ${CAMEL_CASE_NAME}
+${CAMEL_CASE_NAME}    ${CAMEL_CASE_NAME}
+${CAMEL_CASE_NAME}    ${CAMEL_CASE_NAME}
+${CAMEL_CASE_NAME_WORD_CAMEL_CASE}    ${CAMEL_CASE_NAME_WORD_CAMEL_CASE}
 
 
 *** Test Cases ***
@@ -56,7 +56,7 @@ Assign
 
 Args
     Keyword    ${VARIABLE}
-    Keyword    ${V A _RI ABLES}
+    Keyword    ${V A _RI_ABLES}
     ...    value with ${_ VARIABLE _}
 
 For header
