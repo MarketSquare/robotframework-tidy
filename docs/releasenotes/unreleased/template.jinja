@@ -3,9 +3,7 @@
 ==============
 Robotidy {{ version }}
 ==============
-
 {{ summary }}
-
 You can install the latest available version by running
 
 ::
@@ -21,22 +19,21 @@ or to install exactly this version
 .. contents::
    :depth: 2
    :local:
-
 {% if transformers|length > 0 %}
 Transformers changes
 ====================
 
-{% for note in transformers %}{{ note }}{% endfor %}
-{% endif -%}
-{% if fixes|length > 0 %}
+{% for note in transformers %}{{ note }}
+{% endfor %}
+{% endif -%}{% if fixes|length > 0 %}
 Fixes
 =====
 
-{% for note in fixes %}{{ note }}{% endfor %}
-{% endif -%}
-{% if other|length > 0 %}
-
+{% for note in fixes %}{{ note }}
+{% endfor %}
+{% endif -%}{% if other|length > 0 %}
 Other features
 ==============
-{% for note in other %}{{ note }}{% endfor %}
+{% for note in other %}{{ note }}
+{% endfor %}
 {% endif -%}
