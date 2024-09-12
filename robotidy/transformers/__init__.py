@@ -334,12 +334,12 @@ def import_transformer(name, config: TransformConfigMap, skip) -> Iterable[Trans
                 yield create_transformer_instance(
                     transformer_class, name, config.get_args(name, short_name, import_path), skip
                 )
-    except DataError:
+    except DataError as err:
         similar_finder = misc.RecommendationFinder()
         similar = similar_finder.find_similar(short_name, TRANSFORMERS)
         raise ImportTransformerError(
             f"Importing transformer '{short_name}' failed. "
-            f"Verify if correct name or configuration was provided.{similar}"
+            f"Verify if correct name or configuration was provided.{similar}. Error: {err}"
         ) from None
 
 
