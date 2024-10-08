@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Pattern
+from re import Pattern
 
 try:
     import rich_click as click
@@ -13,12 +13,15 @@ except ImportError:  # Fails on vendored-in LSP plugin
 
     RICH_PRESENT = False
 
-from robotidy import app
+from robotidy import app, decorators, exceptions, files, skip, version
 from robotidy import config as config_module
-from robotidy import decorators, exceptions, files, skip, version
 from robotidy.config import RawConfig, csv_list_type, validate_target_version
 from robotidy.rich_console import console
-from robotidy.transformers import TransformConfigMap, TransformConfigParameter, load_transformers
+from robotidy.transformers import (
+    TransformConfigMap,
+    TransformConfigParameter,
+    load_transformers,
+)
 from robotidy.utils import misc
 
 CLI_OPTIONS_LIST = [
@@ -55,7 +58,10 @@ CLI_OPTIONS_LIST = [
             "--endline",
         ],
     },
-    {"name": "File exclusion", "options": ["--exclude", "--extend-exclude", "--skip-gitignore"]},
+    {
+        "name": "File exclusion",
+        "options": ["--exclude", "--extend-exclude", "--skip-gitignore"],
+    },
     skip.option_group,
     {
         "name": "Other",
@@ -124,7 +130,11 @@ def print_transformer_docs(transformer):
 @decorators.optional_rich
 def print_description(name: str, target_version: int):
     # TODO: --desc works only for default transformers, it should also print custom transformer desc
-    transformers = load_transformers(TransformConfigMap([], [], []), allow_disabled=True, target_version=target_version)
+    transformers = load_transformers(
+        TransformConfigMap([], [], []),
+        allow_disabled=True,
+        target_version=target_version,
+    )
     transformer_by_names = {transformer.name: transformer for transformer in transformers}
     if name == "all":
         for transformer in transformers:
@@ -159,7 +169,11 @@ def print_transformers_list(global_config: config_module.MainConfig):
     table = Table(title="Transformers", header_style="bold red")
     table.add_column("Name", justify="left", no_wrap=True)
     table.add_column("Enabled")
-    transformers = load_transformers(TransformConfigMap([], [], []), allow_disabled=True, target_version=target_version)
+    transformers = load_transformers(
+        TransformConfigMap([], [], []),
+        allow_disabled=True,
+        target_version=target_version,
+    )
     transformers.extend(_load_external_transformers(transformers, config.transformers_config, target_version))
 
     for transformer in transformers:
@@ -194,7 +208,11 @@ def generate_config(global_config: config_module.MainConfig):
         raise exceptions.MissingOptionalTomliWDependencyError()
     target_version = global_config.default.target_version
     config = global_config.default_loaded
-    transformers = load_transformers(TransformConfigMap([], [], []), allow_disabled=True, target_version=target_version)
+    transformers = load_transformers(
+        TransformConfigMap([], [], []),
+        allow_disabled=True,
+        target_version=target_version,
+    )
     transformers.extend(_load_external_transformers(transformers, config.transformers_config, target_version))
 
     toml_config = {

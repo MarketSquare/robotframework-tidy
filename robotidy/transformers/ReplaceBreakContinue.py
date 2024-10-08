@@ -1,4 +1,4 @@
-from typing import Iterable
+from collections.abc import Iterable
 
 from robot.api.parsing import Token
 
@@ -74,11 +74,11 @@ class ReplaceBreakContinue(Transformer):
             return node
         if normalized_name == "continueforloop":
             return self.create_statement_from_tokens(statement=Continue, tokens=node.tokens[2:], indent=node.tokens[0])
-        elif normalized_name == "exitforloop":
+        if normalized_name == "exitforloop":
             return self.create_statement_from_tokens(statement=Break, tokens=node.tokens[2:], indent=node.tokens[0])
-        elif normalized_name == "continueforloopif":
+        if normalized_name == "continueforloopif":
             return misc.wrap_in_if_and_replace_statement(node, Continue, self.formatting_config.separator)
-        elif normalized_name == "exitforloopif":
+        if normalized_name == "exitforloopif":
             return misc.wrap_in_if_and_replace_statement(node, Break, self.formatting_config.separator)
         return node
 

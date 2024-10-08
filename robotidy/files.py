@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from collections.abc import Iterable, Iterator
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Iterable, Iterator, Pattern
+from re import Pattern
+from typing import Any
 
 import pathspec
 
@@ -19,9 +21,10 @@ DOTFILE_CONFIG = ".robotidy"
 CONFIG_NAMES = ("robotidy.toml", "pyproject.toml", DOTFILE_CONFIG)
 
 
-@lru_cache()
+@lru_cache
 def find_source_config_file(src: Path, ignore_git_dir: bool = False) -> Path | None:
-    """Find and return configuration file for the source path.
+    """
+    Find and return configuration file for the source path.
 
     This method looks iteratively in source parents for directory that contains configuration file and
     returns its path. The lru_cache speeds up searching if there are multiple files in the same directory (they will
@@ -41,9 +44,10 @@ def find_source_config_file(src: Path, ignore_git_dir: bool = False) -> Path | N
     return find_source_config_file(src.parent, ignore_git_dir)
 
 
-@lru_cache()
+@lru_cache
 def find_project_root(srcs: tuple[str, ...], ignore_git_dir: bool = False) -> Path:
-    """Return a directory containing .git, or robotidy.toml.
+    """
+    Return a directory containing .git, or robotidy.toml.
     That directory will be a common parent of all files and directories
     passed in `srcs`.
     If no directory in the tree contains a marker that would specify it's the
@@ -87,7 +91,7 @@ def read_pyproject_config(config_path: Path) -> dict[str, Any]:
     return {k.replace("--", "").replace("-", "_"): v for k, v in config.items()}
 
 
-@lru_cache()
+@lru_cache
 def get_gitignore(root: Path) -> pathspec.PathSpec:
     """Return a PathSpec matching gitignore content if present."""
     gitignore = root / ".gitignore"
@@ -128,7 +132,12 @@ def get_path_relative_to_project_root(path: Path, root_parent: Path) -> Path:
         return path
 
 
-def get_paths(src: tuple[str, ...], exclude: Pattern | None, extend_exclude: Pattern | None, skip_gitignore: bool):
+def get_paths(
+    src: tuple[str, ...],
+    exclude: Pattern | None,
+    extend_exclude: Pattern | None,
+    skip_gitignore: bool,
+):
     root = find_project_root(src)
     if skip_gitignore:
         gitignore = None

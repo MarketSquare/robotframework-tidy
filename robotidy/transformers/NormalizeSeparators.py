@@ -128,8 +128,7 @@ class NormalizeSeparators(Transformer):
         has_pipes = statement.tokens[0].value.startswith("|")
         if has_pipes or not self.flatten_lines:
             return self.handle_spaces(statement, has_pipes)
-        else:
-            return self.handle_spaces_and_flatten_lines(statement)
+        return self.handle_spaces_and_flatten_lines(statement)
 
     @staticmethod
     def has_trailing_sep(tokens):

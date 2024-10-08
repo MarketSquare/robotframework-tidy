@@ -1,5 +1,55 @@
-[tool.black]
+[tool.ruff]
 line-length = 120
-[tool.isort]
-profile = "black"
-line_length = 120
+show-fixes = true
+target-version = "py39"  # TODO verify min Python version
+
+lint.select = [
+    "ALL", # include all the rules, including new ones
+]
+exclude = [
+    "tests/utest/testdata/"
+]
+lint.ignore = [
+    #### modules
+    "ANN", # flake8-annotations
+    "COM", # flake8-commas
+    "C90", # mccabe complexity
+    "DJ",  # django
+    "EXE", # flake8-executable
+    "PTH", # flake8-use-pathlib
+    "T10", # debugger
+    "TID", # flake8-tidy-imports
+    #### specific rules
+    "D100",   # ignore missing docs
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D106",
+    "D107",
+    "D200",
+    "D203",    # blank line before class body
+    "D205",
+    "D212",
+    "D400",
+    "D401",
+    "D415",
+    "E402",    # false positives for local imports
+    "E722",    # bare except
+    "B904",    # Raise from None
+    "EM101",   # No string-literal exceptions !?
+    "EM102",   # No Exceptions with f-strings
+    "PLR0913", # too many arguments to function call
+    "TRY003",  # external messages in exceptions are too verbose
+    "TD002",
+    "TD003",
+    "FIX002",  # too verbose descriptions of todos
+    "PLE1205", # too many arguments for logging
+    "T201", # print in code
+]
+
+[tool.ruff.format]
+quote-style = "double"
+skip-magic-trailing-comma = false
+line-ending = "auto"

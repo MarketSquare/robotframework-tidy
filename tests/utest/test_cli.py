@@ -10,7 +10,13 @@ from click import FileError, NoSuchOption
 
 from robotidy import skip
 from robotidy.config import RawConfig
-from robotidy.files import DEFAULT_EXCLUDES, find_project_root, get_paths, load_toml_file, read_pyproject_config
+from robotidy.files import (
+    DEFAULT_EXCLUDES,
+    find_project_root,
+    get_paths,
+    load_toml_file,
+    read_pyproject_config,
+)
 from robotidy.transformers.aligners_core import AlignKeywordsTestsSection
 from robotidy.transformers.AlignSettingsSection import AlignSettingsSection
 from robotidy.utils import misc
@@ -46,7 +52,10 @@ class TestCli:
         [
             ("NotExisting", ""),
             ("AlignSettings", " Did you mean:\n    AlignSettingsSection"),
-            ("align", " Did you mean:\n    AlignSettingsSection\n    AlignVariablesSection"),
+            (
+                "align",
+                " Did you mean:\n    AlignSettingsSection\n    AlignVariablesSection",
+            ),
             ("splittoolongline", " Did you mean:\n    SplitTooLongLine"),
             ("AssignmentNormalizer", " Did you mean:\n    NormalizeAssignments"),
         ],
@@ -175,7 +184,10 @@ class TestCli:
             "overwrite": False,
             "diff": False,
             "spacecount": 4,
-            "transform": ["DiscardEmptySections:allow_only_comments=True", "ReplaceRunKeywordIf"],
+            "transform": [
+                "DiscardEmptySections:allow_only_comments=True",
+                "ReplaceRunKeywordIf",
+            ],
         }
         config_path = TEST_DATA_DIR / "config" / "robotidy.toml"
         config = read_pyproject_config(config_path)
@@ -189,7 +201,10 @@ class TestCli:
             "startline": 10,
             "endline": 20,
             "exclude": "Regex\\s",
-            "transform": ["DiscardEmptySections:allow_only_comments=True", "SplitTooLongLine"],
+            "transform": [
+                "DiscardEmptySections:allow_only_comments=True",
+                "SplitTooLongLine",
+            ],
             "configure": [
                 "DiscardEmptySections:allow_only_comments=False",
                 "OrderSettings: keyword_before = documentation,tags,timeout,arguments",
@@ -276,7 +291,10 @@ class TestCli:
     @pytest.mark.parametrize(
         "name, expected_doc",
         [
-            ("ReplaceRunKeywordIf", "Run Keywords inside Run Keyword If will be split into separate keywords:"),
+            (
+                "ReplaceRunKeywordIf",
+                "Run Keywords inside Run Keyword If will be split into separate keywords:",
+            ),
             ("SmartSortKeywords", "By default sorting is case insensitive, but"),
         ],
     )
@@ -298,7 +316,10 @@ class TestCli:
         [
             ("NotExisting", ""),
             ("AlignSettings", " Did you mean:\n    AlignSettingsSection"),
-            ("align", " Did you mean:\n    AlignSettingsSection\n    AlignVariablesSection"),
+            (
+                "align",
+                " Did you mean:\n    AlignSettingsSection\n    AlignVariablesSection",
+            ),
             ("splittoolongline", " Did you mean:\n    SplitTooLongLine"),
             ("AssignmentNormalizer", " Did you mean:\n    NormalizeAssignments"),
         ],
@@ -312,13 +333,21 @@ class TestCli:
     @pytest.mark.parametrize("flag", ["--help", "-h"])
     def test_help(self, flag):
         result = run_tidy([flag])
-        assert f"Robotidy is a tool for formatting" in result.output
+        assert "Robotidy is a tool for formatting" in result.output
 
     @pytest.mark.parametrize(
         "source, return_status, expected_output",
         [
-            ("golden.robot", 0, "\n0 files would be reformatted, 1 file would be left unchanged.\n"),
-            ("not_golden.robot", 1, "\n1 file would be reformatted, 0 files would be left unchanged.\n"),
+            (
+                "golden.robot",
+                0,
+                "\n0 files would be reformatted, 1 file would be left unchanged.\n",
+            ),
+            (
+                "not_golden.robot",
+                1,
+                "\n1 file would be reformatted, 0 files would be left unchanged.\n",
+            ),
         ],
     )
     def test_check(self, source, return_status, expected_output):
@@ -346,7 +375,13 @@ class TestCli:
             expected_output = f"Reformatted {source}\n{expected_output}"
         with patch("robotidy.utils.misc.ModelWriter") as mock_writer:
             result = run_tidy(
-                ["--check", "--overwrite", "--transform", "NormalizeSectionHeaderName", str(source)],
+                [
+                    "--check",
+                    "--overwrite",
+                    "--transform",
+                    "NormalizeSectionHeaderName",
+                    str(source),
+                ],
                 exit_code=return_status,
             )
             if return_status:
@@ -383,7 +418,15 @@ class TestCli:
 
     def test_diff(self):
         source = TEST_DATA_DIR / "check" / "not_golden.robot"
-        result = run_tidy(["--diff", "--no-overwrite", "--transform", "NormalizeSectionHeaderName", str(source)])
+        result = run_tidy(
+            [
+                "--diff",
+                "--no-overwrite",
+                "--transform",
+                "NormalizeSectionHeaderName",
+                str(source),
+            ]
+        )
         assert "*** settings ***" in result.output
         assert "*** Settings ***" in result.output
 
@@ -396,7 +439,12 @@ class TestCli:
             run_tidy(["--lineseparator", line_sep, str(source)], output="test.robot")
         else:
             run_tidy([str(source)], output="test.robot")
-        line_end = {"unix": "\n", "windows": "\r\n", "native": os.linesep, None: os.linesep}[line_sep]
+        line_end = {
+            "unix": "\n",
+            "windows": "\r\n",
+            "native": os.linesep,
+            None: os.linesep,
+        }[line_sep]
         with open(str(expected)) as f:
             expected_str = f.read()
         expected_str = expected_str.replace("\n", line_end)
@@ -408,7 +456,11 @@ class TestCli:
     @pytest.mark.parametrize(
         "exclude, extend_exclude, allowed",
         [
-            (DEFAULT_EXCLUDES, None, ["nested/test.robot", "test.resource", "test.robot"]),
+            (
+                DEFAULT_EXCLUDES,
+                None,
+                ["nested/test.robot", "test.resource", "test.robot"],
+            ),
             ("test.resource", None, ["test.robot", "nested/test.robot"]),
             (DEFAULT_EXCLUDES, "test.resource", ["test.robot", "nested/test.robot"]),
             ("test.resource", "nested/*", ["test.robot"]),
@@ -442,7 +494,11 @@ class TestCli:
                 ["test3.robot"],
                 "0 files reformatted, 1 file left unchanged.",
             ),  # calls: robotidy test3.robot
-            ("test.robot", ["test.robot"], "0 files reformatted, 1 file left unchanged."),
+            (
+                "test.robot",
+                ["test.robot"],
+                "0 files reformatted, 1 file left unchanged.",
+            ),
             (
                 ".",
                 ["test.robot", "test3.robot", "resources/test.robot"],
@@ -458,7 +514,10 @@ class TestCli:
             result = run_tidy([str(source)])
         else:
             result = run_tidy()
-        expected = [f"Loaded configuration from {source_dir / 'pyproject.toml'}", summary]
+        expected = [
+            f"Loaded configuration from {source_dir / 'pyproject.toml'}",
+            summary,
+        ]
         for file in should_parse:
             path = source_dir / file
             expected.append(f"Found {path} file")
@@ -478,9 +537,7 @@ class TestCli:
             "*** Variables ***\n\n\n\n"
             "*** Keywords ***\nKeyword\n    Keyword1 ${arg}\n"
         )
-        expected_output = (
-            "*** Settings ***\nLibrary  SomeLib\n\n\n" "*** Keywords ***\nKeyword\n    Keyword1 ${arg}\n\n"
-        )
+        expected_output = "*** Settings ***\nLibrary  SomeLib\n\n\n*** Keywords ***\nKeyword\n    Keyword1 ${arg}\n\n"
         args = "--transform DiscardEmptySections -".split()
         result = run_tidy(args, std_in=input_file)
         assert result.output == expected_output
@@ -491,7 +548,7 @@ class TestCli:
         mocked_version.major = 5
         result = run_tidy(f"--target-version {target_version} .".split(), exit_code=2)
         error = self.normalize_cli_error(result.stderr)
-        assert f"Invalid value for '--target-version' / '-tv':" in error
+        assert "Invalid value for '--target-version' / '-tv':" in error
 
     def normalize_cli_error(self, error):
         error = error.replace("│", "").replace("\n", "")
@@ -513,7 +570,11 @@ class TestCli:
 
     def test_skip_options(self, tmp_path):
         alternate_names = {"--skip-return-statement": "--skip-return"}
-        with_values = {"--skip-keyword-call-pattern", "--skip-keyword-call", "--skip-sections"}
+        with_values = {
+            "--skip-keyword-call-pattern",
+            "--skip-keyword-call",
+            "--skip-sections",
+        }
         option_names = []
         for skip_option in skip.SkipConfig.HANDLES:
             option = f"--{skip_option.replace('_', '-')}"
@@ -536,7 +597,7 @@ class TestCli:
         run_tidy([option_name, str(custom_transformer), str(tmp_path)])
 
     def test_exclude_pattern_from_config(self):
-        config_path = TEST_DATA_DIR / "only_pyproject" / f"pyproject.toml"
+        config_path = TEST_DATA_DIR / "only_pyproject" / "pyproject.toml"
         config_file = read_pyproject_config(config_path)
         config = RawConfig().from_config_file(config_file, config_path)
         assert config.exclude == re.compile("Regex\\s")
@@ -544,7 +605,11 @@ class TestCli:
 
 class TestGenerateConfig:
     def validate_generated_default_configuration(
-        self, config_path: Path, diff: bool, add_missing_enabled: bool, rename_variables_enabled: bool
+        self,
+        config_path: Path,
+        diff: bool,
+        add_missing_enabled: bool,
+        rename_variables_enabled: bool,
     ):
         assert config_path.is_file()
         config = load_toml_file(config_path)
@@ -572,7 +637,10 @@ class TestGenerateConfig:
         config_path = temporary_cwd / "pyproject.toml"
         run_tidy(["--generate-config"])
         self.validate_generated_default_configuration(
-            config_path, diff=False, add_missing_enabled=True, rename_variables_enabled=False
+            config_path,
+            diff=False,
+            add_missing_enabled=True,
+            rename_variables_enabled=False,
         )
 
     def test_generate_config_ignore_existing_config(self, temporary_cwd):
@@ -581,21 +649,30 @@ class TestGenerateConfig:
         shutil.copy(orig_config_path, config_path)
         run_tidy(["--generate-config"])
         self.validate_generated_default_configuration(
-            config_path, diff=False, add_missing_enabled=True, rename_variables_enabled=False
+            config_path,
+            diff=False,
+            add_missing_enabled=True,
+            rename_variables_enabled=False,
         )
 
     def test_generate_config_with_filename(self, temporary_cwd):
         config_path = temporary_cwd / "different.txt"
         run_tidy(["--generate-config", "different.txt"])
         self.validate_generated_default_configuration(
-            config_path, diff=False, add_missing_enabled=True, rename_variables_enabled=False
+            config_path,
+            diff=False,
+            add_missing_enabled=True,
+            rename_variables_enabled=False,
         )
 
     def test_generate_config_with_cli_config(self, temporary_cwd):
         config_path = temporary_cwd / "pyproject.toml"
         run_tidy(["--generate-config", "--diff", "--transform", "RenameVariables"])
         self.validate_generated_default_configuration(
-            config_path, diff=True, add_missing_enabled=False, rename_variables_enabled=True
+            config_path,
+            diff=True,
+            add_missing_enabled=False,
+            rename_variables_enabled=True,
         )
 
     def test_missing_dependency(self, monkeypatch, temporary_cwd):

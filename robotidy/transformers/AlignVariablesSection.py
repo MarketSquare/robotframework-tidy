@@ -123,8 +123,7 @@ class AlignVariablesSection(Transformer):
             if self.fixed_width:
                 return max(self.fixed_width - len(token.value), self.formatting_config.space_count) * " "
             return (look_up[index] - len(token.value)) * " "
-        else:
-            return self.formatting_config.separator
+        return self.formatting_config.separator
 
     def create_look_up(self, statements) -> dict[int, int]:
         look_up = defaultdict(int)

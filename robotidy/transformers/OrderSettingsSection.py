@@ -92,7 +92,11 @@ class OrderSettingsSection(Transformer):
             "tags",
             tags_order,
             (Token.FORCE_TAGS, Token.DEFAULT_TAGS),
-            {"force_tags": Token.FORCE_TAGS, "test_tags": Token.FORCE_TAGS, "default_tags": Token.DEFAULT_TAGS},
+            {
+                "force_tags": Token.FORCE_TAGS,
+                "test_tags": Token.FORCE_TAGS,
+                "default_tags": Token.DEFAULT_TAGS,
+            },
         )
 
     def parse_group_order(self, order):
@@ -137,7 +141,7 @@ class OrderSettingsSection(Transformer):
     @skip_section_if_disabled
     def visit_SettingSection(self, node):  # noqa
         if not node.body:
-            return
+            return None
         if node is self.last_section and not isinstance(node.body[-1], EmptyLine):
             node.body[-1] = self.fix_eol(node.body[-1])
         comments, errors = [], []

@@ -94,7 +94,7 @@ class MergeAndOrderSections(Transformer):
         }
         parsed_order = [self.LANGUAGE_MARKER_SECTION]
         for part in parts:
-            parsed_order.append(map_names.get(part, None))
+            parsed_order.append(map_names.get(part))
         # all sections need to be here, and either tasks or test cases or both of them
         any_of_sections = [Token.TESTCASE_HEADER, "TASK HEADER"]
         required_sections = [section for section in default_order if section not in any_of_sections]
@@ -148,7 +148,8 @@ class MergeAndOrderSections(Transformer):
         return new_tokens
 
     def from_last_section(self, node):
-        """Last node use different logic for new line marker. It is not possible to preserve all empty lines, but
+        """
+        Last node use different logic for new line marker. It is not possible to preserve all empty lines, but
         we need at least ensure that following code::
 
              *** Test Case ***

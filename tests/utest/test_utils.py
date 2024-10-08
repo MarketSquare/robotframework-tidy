@@ -5,7 +5,11 @@ import pytest
 
 from robotidy.app import Robotidy
 from robotidy.config import FormattingConfig, MainConfig, RawConfig
-from robotidy.utils.misc import ROBOT_VERSION, decorate_diff_with_color, split_args_from_name_or_path
+from robotidy.utils.misc import (
+    ROBOT_VERSION,
+    decorate_diff_with_color,
+    split_args_from_name_or_path,
+)
 
 
 @pytest.fixture
@@ -54,14 +58,26 @@ class TestUtils:
         "name_or_path, expected_name, expected_args",
         [
             ("DiscardEmptySections", "DiscardEmptySections", []),
-            ("DiscardEmptySections:allow_only_comments=True", "DiscardEmptySections", ["allow_only_comments=True"]),
-            ("DiscardEmptySections;allow_only_comments=True", "DiscardEmptySections", ["allow_only_comments=True"]),
+            (
+                "DiscardEmptySections:allow_only_comments=True",
+                "DiscardEmptySections",
+                ["allow_only_comments=True"],
+            ),
+            (
+                "DiscardEmptySections;allow_only_comments=True",
+                "DiscardEmptySections",
+                ["allow_only_comments=True"],
+            ),
             (
                 "DiscardEmptySections;allow_only_comments=True:my_var=1",
                 "DiscardEmptySections",
                 ["allow_only_comments=True:my_var=1"],
             ),
-            (r"C:\path\to\module\transformer:my_variable=1", r"C:\path\to\module\transformer", ["my_variable=1"]),
+            (
+                r"C:\path\to\module\transformer:my_variable=1",
+                r"C:\path\to\module\transformer",
+                ["my_variable=1"],
+            ),
             (__file__, __file__, []),
         ],
     )
