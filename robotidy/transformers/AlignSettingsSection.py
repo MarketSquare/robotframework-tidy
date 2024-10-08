@@ -157,10 +157,8 @@ class AlignSettingsSection(Transformer):
                     )
                     * " "
                 )
-            else:
-                return (look_up[index] - len(token.value) + arg_indent + 4) * " "
-        else:
-            return self.formatting_config.space_count * " "
+            return (look_up[index] - len(token.value) + arg_indent + 4) * " "
+        return self.formatting_config.space_count * " "
 
     def create_look_up(self, statements):
         look_up = defaultdict(int)

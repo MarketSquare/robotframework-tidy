@@ -1,6 +1,7 @@
 """
 Methods for transforming Robot Framework ast model programmatically.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -37,7 +38,8 @@ def transform_model(model, root_dir: str, output: str | None = None, **kwargs) -
     """
     robotidy_class = get_robotidy(root_dir, output, **kwargs)
     disabler_finder = disablers.RegisterDisablers(
-        robotidy_class.config.formatting.start_line, robotidy_class.config.formatting.end_line
+        robotidy_class.config.formatting.start_line,
+        robotidy_class.config.formatting.end_line,
     )
     disabler_finder.visit(model)
     if disabler_finder.is_disabled_in_file(disablers.ALL_TRANSFORMERS):

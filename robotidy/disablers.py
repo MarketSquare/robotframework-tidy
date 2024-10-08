@@ -66,7 +66,12 @@ def is_line_start(node):
 
 
 class DisablersInFile:
-    def __init__(self, start_line: Optional[int], end_line: Optional[int], file_end: Optional[int] = None):
+    def __init__(
+        self,
+        start_line: Optional[int],
+        end_line: Optional[int],
+        file_end: Optional[int] = None,
+    ):
         self.start_line = start_line
         self.end_line = end_line
         self.file_end = file_end
@@ -254,9 +259,8 @@ class RegisterDisablers(ModelVisitor):
                         continue
                     self.disablers.add_disabler(transformer, start_line, node.lineno)
                     self.disablers_in_scope[index][transformer] = 0
-                else:
-                    if not self.disablers_in_scope[index].get(transformer):
-                        self.disablers_in_scope[index][transformer] = node.lineno
+                elif not self.disablers_in_scope[index].get(transformer):
+                    self.disablers_in_scope[index][transformer] = node.lineno
         else:
             # inline disabler
             for comment in node.get_tokens(Token.COMMENT):

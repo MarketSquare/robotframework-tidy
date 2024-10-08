@@ -25,7 +25,7 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
             self.compare(
                 source="test.robot",
                 not_modified=True,
-                config=f":skip_sections=settings,variables,testcases,keywords,comments",
+                config=":skip_sections=settings,variables,testcases,keywords,comments",
             )
         elif not skip_sections:
             self.compare(source="test.robot", expected="skip_none.robot")
@@ -40,7 +40,8 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
         self.compare(source="rf5_syntax.robot", target_version=">=5")
 
     @pytest.mark.parametrize(
-        "disablers", ["disablers.robot", "disablers2.robot", "disablers3.robot", "disablers4.robot"]
+        "disablers",
+        ["disablers.robot", "disablers2.robot", "disablers3.robot", "disablers4.robot"],
     )
     def test_disablers(self, disablers):
         self.compare(source=disablers, not_modified=True)
@@ -49,10 +50,17 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
         self.compare(source="test.robot", config=":skip_documentation=False")
 
     def test_skip_documentation(self):
-        self.compare(source="test.robot", expected="skip_documentation.robot", config=":skip_documentation=True")
+        self.compare(
+            source="test.robot",
+            expected="skip_documentation.robot",
+            config=":skip_documentation=True",
+        )
 
     def test_continuation_indent(self):
-        self.compare(source="continuation_indent.robot", config=" --continuation-indent 4 --indent 4 --spacecount 2")
+        self.compare(
+            source="continuation_indent.robot",
+            config=" --continuation-indent 4 --indent 4 --spacecount 2",
+        )
 
     @pytest.mark.parametrize("indent", [2, 4])
     @pytest.mark.parametrize("spaces", [2, 4])
@@ -67,7 +75,7 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
     def test_inline_if_flatten(self):
         self.compare(
             source="inline_if.robot",
-            expected=f"inline_if_flatten.robot",
+            expected="inline_if_flatten.robot",
             config=":flatten_lines=True:align_new_line=True --indent 4 --spacecount 4",
             target_version=">=5",
         )
@@ -76,27 +84,41 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
         self.compare(
             source="test.robot",
             expected="test_skip_keyword.robot",
-            config=":skip_keyword_call_pattern=(?i)should\sbe\sequal",
+            config=r":skip_keyword_call_pattern=(?i)should\sbe\sequal",
         )
 
     def test_file_with_pipes_bug390(self):
         self.compare(source="bug390.robot")
 
     @pytest.mark.parametrize(
-        "config", [":skip_comments=True:skip_block_comments=True", ":skip_comments=True", ":skip_block_comments=True"]
+        "config",
+        [
+            ":skip_comments=True:skip_block_comments=True",
+            ":skip_comments=True",
+            ":skip_block_comments=True",
+        ],
     )
     def test_comments(self, config):
         if "skip_comments" in config:
             expected = "comments_skip_comments.robot"
         else:
             expected = "comments_skip_block_comments.robot"
-        self.compare(source="comments.robot", expected=expected, config=config, target_version=">=5")
+        self.compare(
+            source="comments.robot",
+            expected=expected,
+            config=config,
+            target_version=">=5",
+        )
 
     def test_flatten_lines(self):
         if ROBOT_VERSION.major > 4:
             self.compare(source="flatten.robot", config=":flatten_lines=True")
         else:
-            self.compare(source="flatten.robot", expected="flatten_rf4.robot", config=":flatten_lines=True")
+            self.compare(
+                source="flatten.robot",
+                expected="flatten_rf4.robot",
+                config=":flatten_lines=True",
+            )
 
     def test_align_new_line(self):
         self.compare(

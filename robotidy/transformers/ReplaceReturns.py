@@ -77,7 +77,7 @@ class ReplaceReturns(Transformer):
             return misc.create_statement_from_tokens(
                 statement=ReturnStatement, tokens=node.tokens[2:], indent=node.tokens[0]
             )
-        elif normalized_name == "returnfromkeywordif":
+        if normalized_name == "returnfromkeywordif":
             return misc.wrap_in_if_and_replace_statement(node, ReturnStatement, self.formatting_config.separator)
         return node
 

@@ -13,14 +13,14 @@ class TestNormalizeTags(TransformerAcceptanceTest):
         self.compare(
             source="tests.robot",
             expected="lowercase.robot",
-            config=f":case=lowercase:normalize_case=True",
+            config=":case=lowercase:normalize_case=True",
         )
 
     def test_uppercase(self):
-        self.compare(source="tests.robot", expected="uppercase.robot", config=f":case=uppercase")
+        self.compare(source="tests.robot", expected="uppercase.robot", config=":case=uppercase")
 
     def test_titlecase(self):
-        self.compare(source="tests.robot", expected="titlecase.robot", config=f":case=titlecase")
+        self.compare(source="tests.robot", expected="titlecase.robot", config=":case=titlecase")
 
     def test_wrong_case(self):
         result = self.run_tidy(
@@ -35,10 +35,11 @@ class TestNormalizeTags(TransformerAcceptanceTest):
         assert expected_output == result.output
 
     def test_only_remove_duplicates(self):
-        self.compare(source="duplicates.robot", config=f":normalize_case=False")
+        self.compare(source="duplicates.robot", config=":normalize_case=False")
 
     @pytest.mark.parametrize(
-        "disablers", ["disablers.robot", "disablers2.robot", "disablers3.robot", "disablers4.robot"]
+        "disablers",
+        ["disablers.robot", "disablers2.robot", "disablers3.robot", "disablers4.robot"],
     )
     def test_disablers(self, disablers):
         self.compare(source=disablers, not_modified=True)
@@ -57,12 +58,16 @@ class TestNormalizeTags(TransformerAcceptanceTest):
 
     def test_preserve_format(self):
         self.compare(
-            source="preserve_format.robot", expected="preserve_format_enabled.robot", config=":preserve_format=True"
+            source="preserve_format.robot",
+            expected="preserve_format_enabled.robot",
+            config=":preserve_format=True",
         )
 
     def test_preserve_format_do_not_normalize_case(self):
         self.compare(
-            source="preserve_format.robot", config=":preserve_format=True:normalize_case=False", not_modified=True
+            source="preserve_format.robot",
+            config=":preserve_format=True:normalize_case=False",
+            not_modified=True,
         )
 
     def test_ignore_format(self):

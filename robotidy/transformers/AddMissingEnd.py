@@ -110,7 +110,8 @@ class AddMissingEnd(Transformer):
         node.header.data_tokens[0].value = header_name
 
     def collect_inside_statements(self, node):
-        """Split statements from node for those that belong to it and outside nodes.
+        """
+        Split statements from node for those that belong to it and outside nodes.
 
         In this example with missing END:
             FOR  ${i}  IN RANGE  10

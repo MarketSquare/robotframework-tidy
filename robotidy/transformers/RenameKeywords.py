@@ -149,7 +149,10 @@ class RenameKeywords(Transformer):
         # capitalize first letter of every word, leave rest untouched
         for index, word in enumerate(split_words):
             if not word:
-                if index in (0, len(split_words) - 1):  # leading and trailing whitespace
+                if index in (
+                    0,
+                    len(split_words) - 1,
+                ):  # leading and trailing whitespace
                     words.append("")
             else:
                 words.append(word[0].upper() + word[1:])
@@ -195,11 +198,11 @@ class RenameKeywords(Transformer):
 
     def parse_run_keyword(self, tokens):
         if not tokens:
-            return
+            return None
         self.rename_node(tokens[0], is_keyword_call=True)
         run_keyword = self.get_run_keyword(tokens[0].value)
         if not run_keyword:
-            return
+            return None
         tokens = tokens[run_keyword.resolve :]
         if run_keyword.branches:
             if "ELSE IF" in run_keyword.branches:
@@ -210,7 +213,7 @@ class RenameKeywords(Transformer):
                 prefix, branch, tokens = misc.split_on_token_value(tokens, "ELSE", 1)
                 self.parse_run_keyword(prefix)
                 self.parse_run_keyword(tokens)
-                return
+                return None
         elif run_keyword.split_on_and:
             return self.split_on_and(tokens)
         self.parse_run_keyword(tokens)

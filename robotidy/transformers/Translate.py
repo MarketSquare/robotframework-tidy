@@ -79,7 +79,11 @@ class Translate(Transformer):
             self.language, self.settings = None, None
         self._bdd_mapping = None
         self.bdd = self.get_translated_bdd(
-            but_alternative, given_alternative, and_alternative, then_alternative, when_alternative
+            but_alternative,
+            given_alternative,
+            and_alternative,
+            then_alternative,
+            when_alternative,
         )
 
     @property
@@ -169,7 +173,7 @@ class Translate(Transformer):
         if not self.translate_bdd or not node.keyword:
             return node
         prefix, *name = node.keyword.split(maxsplit=1)
-        if not name or not prefix.title() in self.languages.bdd_prefixes:
+        if not name or prefix.title() not in self.languages.bdd_prefixes:
             return node
         english_bdd = self.bdd_mapping.get(prefix.title(), None)
         if not english_bdd:
@@ -235,28 +239,8 @@ class Translate(Transformer):
         node.data_tokens[0].value = translated_value
         return self.generic_visit(node)
 
-    visit_Teardown = (
-        visit_Template
-    ) = (
-        visit_Timeout
-    ) = (
-        visit_Arguments
-    ) = (
-        visit_Tags
-    ) = (
-        visit_Documentation
-    ) = (
+    visit_Teardown = visit_Template = visit_Timeout = visit_Arguments = visit_Tags = visit_Documentation = (
         visit_Metadata
-    ) = (
-        visit_SuiteSetup
-    ) = (
-        visit_SuiteTeardown
-    ) = (
-        visit_TestSetup
-    ) = (
-        visit_TestTeardown
-    ) = (
-        visit_TestTemplate
-    ) = (
+    ) = visit_SuiteSetup = visit_SuiteTeardown = visit_TestSetup = visit_TestTeardown = visit_TestTemplate = (
         visit_TestTimeout
     ) = visit_KeywordTags = visit_LibraryImport = visit_VariablesImport = visit_ResourceImport = visit_Setup

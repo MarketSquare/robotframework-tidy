@@ -38,11 +38,26 @@ RERUN_NEEDED = {
         "test": 2,
         "test_disablers": 2,
     },
-    "MergeAndOrderSections": {"disablers": 3, "parsing_error": 2, "translated": 2, "tests": 3},
+    "MergeAndOrderSections": {
+        "disablers": 3,
+        "parsing_error": 2,
+        "translated": 2,
+        "tests": 3,
+    },
     "NormalizeNewLines": {"tests": 2, "multiline": 2},
-    "NormalizeSeparators": {"continuation_indent": 2, "test": 2, "disablers": 2, "pipes": 2},
+    "NormalizeSeparators": {
+        "continuation_indent": 2,
+        "test": 2,
+        "disablers": 2,
+        "pipes": 2,
+    },
     "NormalizeSettingName": {"disablers": 2, "translated": 2, "tests": 2},
-    "NormalizeTags": {"disablers": 2, "duplicates": 2, "tests": 2, "preserve_format": 2},
+    "NormalizeTags": {
+        "disablers": 2,
+        "duplicates": 2,
+        "tests": 2,
+        "preserve_format": 2,
+    },
     "OrderSettings": {"test": 2, "translated": 2},
     "OrderSettingsSection": {"test": 2},
     "OrderTags": {"tests": 2},
@@ -64,10 +79,20 @@ RERUN_NEEDED = {
     },
     "ReplaceWithVAR": {"invalid_inline_if": 2},
     "SmartSortKeywords": {"multiple_sections": 2, "sort_input": 2},
-    "SplitTooLongLine": {"continuation_indent": 2, "disablers": 2, "tests": 2, "comments": 2, "settings": 2},
+    "SplitTooLongLine": {
+        "continuation_indent": 2,
+        "disablers": 2,
+        "tests": 2,
+        "comments": 2,
+        "settings": 2,
+    },
     "Translate": {"pl_language_header": 2},
 }
-SKIP_TESTS_4 = {"ReplaceReturns": {"test"}, "GenerateDocumentation": {"test": 2}, "SplitTooLongLine": {"settings"}}
+SKIP_TESTS_4 = {
+    "ReplaceReturns": {"test"},
+    "GenerateDocumentation": {"test": 2},
+    "SplitTooLongLine": {"settings"},
+}
 SKIP_TESTS = {
     "ReplaceRunKeywordIf": {"invalid_data"},
     "SplitTooLongLine": {"variables"},

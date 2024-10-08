@@ -21,7 +21,7 @@ def run_tidy(
             output_path = str(Path(Path(__file__).parent, "actual", output))
         else:
             output_path = str(Path(Path(__file__).parent, "actual", "tmp"))
-        arguments = ["--output", output_path] + arguments
+        arguments = ["--output", output_path, *arguments]
     result = runner.invoke(cli, arguments, input=std_in)
     if result.exit_code != exit_code:
         print(result.output)

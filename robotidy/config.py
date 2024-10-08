@@ -8,7 +8,7 @@ import sys
 from collections import namedtuple
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Pattern
+from re import Pattern
 
 try:
     from robot.api import Languages  # RF 6.0
@@ -19,7 +19,12 @@ import click
 from click.core import ParameterSource
 
 from robotidy import exceptions, files, skip
-from robotidy.transformers import TransformConfig, TransformConfigMap, convert_transform_config, load_transformers
+from robotidy.transformers import (
+    TransformConfig,
+    TransformConfigMap,
+    convert_transform_config,
+    load_transformers,
+)
 from robotidy.utils import misc
 
 
@@ -60,12 +65,11 @@ class FormattingConfig:
     def get_line_sep(line_sep):
         if line_sep == "windows":
             return "\r\n"
-        elif line_sep == "unix":
+        if line_sep == "unix":
             return "\n"
-        elif line_sep == "auto":
+        if line_sep == "auto":
             return "auto"
-        else:
-            return os.linesep
+        return os.linesep
 
 
 def validate_target_version(value: str | None) -> int | None:
@@ -98,7 +102,12 @@ def convert_transformers_config(
     is_config: bool = False,
 ) -> list[TransformConfig]:
     return [
-        TransformConfig(tr, force_include=force_included, custom_transformer=custom_transformer, is_config=is_config)
+        TransformConfig(
+            tr,
+            force_include=force_included,
+            custom_transformer=custom_transformer,
+            is_config=is_config,
+        )
         for tr in config.get(param_name, ())
     ]
 
@@ -180,13 +189,17 @@ class RawConfig:
                 defined_in_cli.add(option)
         return cls(**kwargs, defined_in_cli=defined_in_cli)
 
-    def from_config_file(self, config: dict, config_path: Path) -> "RawConfig":
-        """Creates new RawConfig instance from dictionary.
+    def from_config_file(self, config: dict, config_path: Path) -> RawConfig:
+        """
+        Creates new RawConfig instance from dictionary.
 
         Dictionary key:values needs to be normalized and parsed to correct types.
         """
         options_map = map_class_fields_with_their_types(self)
-        parsed_config = {"defined_in_config": {"defined_in_config", "config_path"}, "config_path": config_path}
+        parsed_config = {
+            "defined_in_config": {"defined_in_config", "config_path"},
+            "config_path": config_path,
+        }
         for key, value in config.items():
             # workaround to be able to use two option names for same action - backward compatibility change
             if key == "load_transformers":
@@ -206,7 +219,10 @@ class RawConfig:
                 parsed_config[key] = [convert_transform_config(val, key) for val in value]
             elif key == "src":
                 parsed_config[key] = tuple(value)
-            elif value_type in ("Pattern", Pattern):  # future typing for 3.8 provides type as str
+            elif value_type in (
+                "Pattern",
+                Pattern,
+            ):  # future typing for 3.8 provides type as str
                 parsed_config[key] = misc.validate_regex(value)
             else:
                 parsed_config[key] = value
@@ -214,8 +230,9 @@ class RawConfig:
         from_config = RawConfig(**parsed_config)
         return self.merge_with_config_file(from_config)
 
-    def merge_with_config_file(self, config: "RawConfig") -> "RawConfig":
-        """Merge cli config with the configuration file config.
+    def merge_with_config_file(self, config: RawConfig) -> RawConfig:
+        """
+        Merge cli config with the configuration file config.
 
         Use configuration file parameter value only if it was not defined in the cli already.
         """
@@ -253,7 +270,8 @@ class MainConfig:
         return cli_config
 
     def get_sources(self, sources: tuple[str, ...]) -> tuple[str, ...] | None:
-        """Get list of sources to be transformed by Robotidy.
+        """
+        Get list of sources to be transformed by Robotidy.
 
         If the sources tuple is empty, look for most common configuration file and load sources from there.
         """
@@ -273,7 +291,10 @@ class MainConfig:
 
     def get_sources_with_configs(self):
         sources = files.get_paths(
-            self.sources, self.default.exclude, self.default.extend_exclude, self.default.skip_gitignore
+            self.sources,
+            self.default.exclude,
+            self.default.extend_exclude,
+            self.default.skip_gitignore,
         )
         for source in sources:
             if self.default.config:
@@ -350,7 +371,7 @@ class Config:
         return "NO_COLOR" not in os.environ
 
     @classmethod
-    def from_raw_config(cls, raw_config: "RawConfig"):
+    def from_raw_config(cls, raw_config: RawConfig):
         skip_config = skip.SkipConfig(
             documentation=raw_config.skip_documentation,
             return_values=raw_config.skip_return_values,
@@ -416,8 +437,8 @@ class Config:
         )
         for transformer in transformers:
             # inject global settings TODO: handle it better
-            setattr(transformer.instance, "formatting_config", self.formatting)
-            setattr(transformer.instance, "transformers", self.transformers_lookup)
-            setattr(transformer.instance, "languages", self.language)
+            transformer.instance.formatting_config = self.formatting
+            transformer.instance.transformers = self.transformers_lookup
+            transformer.instance.languages = self.language
             self.transformers.append(transformer.instance)
             self.transformers_lookup[transformer.name] = transformer.instance

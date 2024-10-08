@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from enum import Enum
-from typing import Pattern
+from re import Pattern
 
 from robot.api.parsing import Arguments, Token
 from robot.errors import VariableError
@@ -14,7 +14,12 @@ from robotidy.skip import Skip
 from robotidy.transformers import Transformer
 from robotidy.utils import misc, variable_matcher
 
-SET_GLOBAL_VARIABLES = {"settestvariable", "settaskvariable", "setsuitevariable", "setglobalvariable"}
+SET_GLOBAL_VARIABLES = {
+    "settestvariable",
+    "settaskvariable",
+    "setsuitevariable",
+    "setglobalvariable",
+}
 SET_LOCAL_VARIABLE = "setlocalvariable"
 
 
@@ -56,7 +61,8 @@ def is_set_local_variable(keyword: str) -> bool:
 
 
 def is_nested_variable(variable: str) -> bool:
-    """Checks if variable name is nested.
+    """
+    Checks if variable name is nested.
 
     name -> not nested
     ${name} -> not nested
@@ -100,7 +106,7 @@ class VariablesScope:
         self._global = set()
 
     @staticmethod
-    def _get_var_name(variable: str) -> "str|None":
+    def _get_var_name(variable: str) -> str | None:
         if len(variable) > 1 and variable[0] in "$@&" and variable[1] != "{":
             variable = f"{variable[0]}{{{variable[1:]}}}"
         match = search_variable(variable, ignore_errors=True)
@@ -113,7 +119,8 @@ class VariablesScope:
         self._global.add(misc.normalize_name(var_name))
 
     def add_local(self, variable: str, split_pattern: bool = False):
-        """Add variable name to local cache.
+        """
+        Add variable name to local cache.
 
         If the variable is embedded argument, it can contain pattern we need to ignore (${var:[^pattern]})
         """
@@ -277,23 +284,11 @@ class RenameVariables(Transformer):
             )
         return self.generic_visit(node)
 
-    visit_Tags = (
-        visit_DefaultTags
-    ) = (
-        visit_TestTags
-    ) = (
-        visit_ForceTags
-    ) = (
-        visit_Metadata
-    ) = (
-        visit_SuiteSetup
-    ) = (
+    visit_Tags = visit_DefaultTags = visit_TestTags = visit_ForceTags = visit_Metadata = visit_SuiteSetup = (
         visit_SuiteTeardown
-    ) = (
-        visit_TestSetup
-    ) = (
-        visit_TestTeardown
-    ) = visit_TestTemplate = visit_TestTimeout = visit_VariablesImport = visit_ResourceImport = visit_LibraryImport
+    ) = visit_TestSetup = visit_TestTeardown = visit_TestTemplate = visit_TestTimeout = visit_VariablesImport = (
+        visit_ResourceImport
+    ) = visit_LibraryImport
 
     @skip_if_disabled
     def visit_Setup(self, node):  # noqa
@@ -301,9 +296,9 @@ class RenameVariables(Transformer):
             data_token.value = self.rename_value(data_token.value, variable_case=VariableCase.AUTO, is_var=False)
         return self.generic_visit(node)
 
-    visit_Teardown = (
-        visit_Timeout
-    ) = visit_Template = visit_Return = visit_ReturnStatement = visit_ReturnSetting = visit_Setup
+    visit_Teardown = visit_Timeout = visit_Template = visit_Return = visit_ReturnStatement = visit_ReturnSetting = (
+        visit_Setup
+    )
 
     @skip_if_disabled
     def visit_Variable(self, node):  # noqa
@@ -312,11 +307,15 @@ class RenameVariables(Transformer):
         for data_token in node.data_tokens:
             if data_token.type == Token.VARIABLE:
                 data_token.value = self.rename_value(
-                    data_token.value, variable_case=self.variables_section_case, is_var=True
+                    data_token.value,
+                    variable_case=self.variables_section_case,
+                    is_var=True,
                 )
             elif data_token.type == Token.ARGUMENT:
                 data_token.value = self.rename_value(
-                    data_token.value, variable_case=self.variables_section_case, is_var=False
+                    data_token.value,
+                    variable_case=self.variables_section_case,
+                    is_var=False,
                 )
         return node
 
@@ -329,7 +328,7 @@ class RenameVariables(Transformer):
     def visit_TemplateArguments(self, node):  # noqa
         for arg_template in node.get_tokens(Token.ARGUMENT):
             arg_template.value = self.rename_value(arg_template.value, variable_case=VariableCase.AUTO, is_var=False)
-        return self.generic_visit(node)  # noqa
+        return self.generic_visit(node)
 
     @skip_if_disabled
     def visit_TestCaseName(self, node):  # noqa

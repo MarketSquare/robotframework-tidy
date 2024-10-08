@@ -94,6 +94,7 @@ class RenameTestCases(Transformer):
         No Operation
     ```
     """
+
     ENABLED = False
 
     def __init__(

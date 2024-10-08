@@ -3,10 +3,15 @@ from robot.variables.search import VariableMatch, search_variable
 try:
     from robot.variables import VariableMatches
 except ImportError:
-    from typing import Iterator, Sequence
+    from collections.abc import Iterator, Sequence
 
     class VariableMatches:
-        def __init__(self, string: str, identifiers: Sequence[str] = "$@&%", ignore_errors: bool = False):
+        def __init__(
+            self,
+            string: str,
+            identifiers: Sequence[str] = "$@&%",
+            ignore_errors: bool = False,
+        ):
             self.string = string
             self.identifiers = identifiers
             self.ignore_errors = ignore_errors

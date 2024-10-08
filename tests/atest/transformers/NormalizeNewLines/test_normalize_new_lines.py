@@ -34,10 +34,10 @@ class TestNormalizeNewLines(TransformerAcceptanceTest):
         )
 
     def test_test_case_last_0(self):
-        self.compare(source=f"test_case_last_0_lines.robot", expected="test_case_last.robot")
+        self.compare(source="test_case_last_0_lines.robot", expected="test_case_last.robot")
 
     def test_test_case_last_1(self):
-        self.compare(source=f"test_case_last_1_lines.robot", not_modified=True)
+        self.compare(source="test_case_last_1_lines.robot", not_modified=True)
 
     @pytest.mark.parametrize("empty_lines", [0, 1, 2])
     def test_consecutive_empty_lines(self, empty_lines):
@@ -49,7 +49,11 @@ class TestNormalizeNewLines(TransformerAcceptanceTest):
 
     @pytest.mark.parametrize("trailing_lines", [0, 1, 2])
     def test_inline_if(self, trailing_lines):
-        self.compare(source=f"inline_if_{trailing_lines}_lines.robot", expected="inline_if.robot", target_version=">=5")
+        self.compare(
+            source=f"inline_if_{trailing_lines}_lines.robot",
+            expected="inline_if.robot",
+            target_version=">=5",
+        )
 
     def test_disablers(self):
         self.compare(source="disablers.robot", not_modified=True)
@@ -67,6 +71,8 @@ class TestNormalizeNewLines(TransformerAcceptanceTest):
         self.compare(source="language_header_0empty.robot", target_version=">=6")
         self.compare(source="language_header_2empty.robot", target_version=">=6")
         self.compare(
-            source="language_header_5empty.robot", expected="language_header_2empty.robot", target_version=">=6"
+            source="language_header_5empty.robot",
+            expected="language_header_2empty.robot",
+            target_version=">=6",
         )
         self.compare(source="language_header_and_comments.robot", target_version=">=6")

@@ -61,7 +61,10 @@ class Robotidy:
                     self.output_diff(model_path, old_model, new_model)
                     changed_files += 1
             except DataError as err:
-                click.echo(f"Failed to decode {source} with an error: {err}\nSkipping file", err=True)
+                click.echo(
+                    f"Failed to decode {source} with an error: {err}\nSkipping file",
+                    err=True,
+                )
                 changed_files = previous_changed_files
                 skipped_files += 1
         return self.formatting_result(all_files, changed_files, skipped_files, stdin)
@@ -109,7 +112,7 @@ class Robotidy:
     def transform(self, model, disablers):
         old_model = misc.StatementLinesCollector(model)
         for transformer in self.config.transformers:
-            setattr(transformer, "disablers", disablers)  # set dynamically to allow using external transformers
+            transformer.disablers = disablers  # set dynamically to allow using external transformers
             if disablers.is_disabled_in_file(transformer.__class__.__name__):
                 continue
             transformer.visit(model)
@@ -137,11 +140,15 @@ class Robotidy:
                     return os.linesep
                 if isinstance(f.newlines, str):
                     return f.newlines
-                else:
-                    return f.newlines[0]
+                return f.newlines[0]
         return self.config.formatting.line_sep
 
-    def output_diff(self, path: str, old_model: misc.StatementLinesCollector, new_model: misc.StatementLinesCollector):
+    def output_diff(
+        self,
+        path: str,
+        old_model: misc.StatementLinesCollector,
+        new_model: misc.StatementLinesCollector,
+    ):
         if not self.config.show_diff:
             return
         old = [l + "\n" for l in old_model.text.splitlines()]

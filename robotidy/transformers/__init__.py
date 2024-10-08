@@ -8,14 +8,15 @@ need to inherit from ``ModelTransformer`` or ``ast.NodeTransformer`` class. Fina
 If you don't want to run your transformer by default and only when calling robotidy with --transform YourTransformer
 then add ``ENABLED = False`` class attribute inside.
 """
+
 from __future__ import annotations
 
 import copy
 import inspect
 import pathlib
 import textwrap
+from collections.abc import Iterable
 from itertools import chain
-from typing import Iterable
 
 try:
     import rich_click as click
@@ -26,7 +27,11 @@ from robot.api.parsing import ModelTransformer
 from robot.errors import DataError
 from robot.utils.importer import Importer
 
-from robotidy.exceptions import ImportTransformerError, InvalidParameterError, InvalidParameterFormatError
+from robotidy.exceptions import (
+    ImportTransformerError,
+    InvalidParameterError,
+    InvalidParameterFormatError,
+)
 from robotidy.skip import Skip, SkipConfig
 from robotidy.utils import misc
 
@@ -97,7 +102,7 @@ class TransformConfig:
                 converted[param] = value
         return converted
 
-    def join_transformer_configs(self, transformer_config: "TransformConfig"):
+    def join_transformer_configs(self, transformer_config: TransformConfig):
         """
         Join 2 configurations i.e. from --transform, --load-transformers or --config.
         """
@@ -113,7 +118,7 @@ class TransformConfig:
         self.custom_transformer = self.custom_transformer or transformer_config.custom_transformer
         self.join_args(transformer_config)
 
-    def join_args(self, transformer_config: "TransformConfig"):
+    def join_args(self, transformer_config: TransformConfig):
         self.args.update(transformer_config.args)
 
 
@@ -196,7 +201,7 @@ class TransformConfigMap:
             transformer_names = [name for name, transf in self.transformers.items() if not transf.is_config_only]
             similar = similar_finder.find_similar(transf_name, transformer_names)
             raise ImportTransformerError(
-                f"Configuring transformer '{transf_name}' failed. " f"Verify if correct name was provided.{similar}"
+                f"Configuring transformer '{transf_name}' failed. Verify if correct name was provided.{similar}"
             ) from None
 
 
@@ -205,7 +210,10 @@ def convert_transform_config(value: str, param_name: str) -> TransformConfig:
     custom_transformer = param_name == "custom_transformers"
     is_config = param_name == "configure"
     return TransformConfig(
-        value, force_include=force_included, custom_transformer=custom_transformer, is_config=is_config
+        value,
+        force_include=force_included,
+        custom_transformer=custom_transformer,
+        is_config=is_config,
     )
 
 
@@ -325,14 +333,20 @@ def import_transformer(name, config: TransformConfigMap, skip) -> Iterable[Trans
         imported = IMPORTER.import_class_or_module(name)
         if inspect.isclass(imported):
             yield create_transformer_instance(
-                imported, short_name, config.get_args(name, short_name, import_path), skip
+                imported,
+                short_name,
+                config.get_args(name, short_name, import_path),
+                skip,
             )
         else:
             transformers = load_transformers_from_module(imported)
             transformers = order_transformers(transformers, imported)
             for name, transformer_class in transformers.items():
                 yield create_transformer_instance(
-                    transformer_class, name, config.get_args(name, short_name, import_path), skip
+                    transformer_class,
+                    name,
+                    config.get_args(name, short_name, import_path),
+                    skip,
                 )
     except DataError:
         similar_finder = misc.RecommendationFinder()
@@ -375,8 +389,10 @@ def resolve_argument_names(argument_names: list[str], handles_skip):
 
 
 def assert_handled_arguments(transformer, args, argument_names):
-    """Check if provided arguments are handled by given transformer.
-    Raises InvalidParameterError if arguments does not match."""
+    """
+    Check if provided arguments are handled by given transformer.
+    Raises InvalidParameterError if arguments does not match.
+    """
     arg_names = [arg.split("=")[0] for arg in args]
     for arg in arg_names:
         # it's fine to only check for first non-matching parameter
@@ -486,11 +502,10 @@ def load_transformers(
         for container in import_transformer(name, transformers_config, skip):
             if transformers_config.force_included_only:
                 enabled = container.args.get("enabled", True)
+            elif "enabled" in container.args:
+                enabled = container.args["enabled"]
             else:
-                if "enabled" in container.args:
-                    enabled = container.args["enabled"]
-                else:
-                    enabled = getattr(container.instance, "ENABLED", True)
+                enabled = getattr(container.instance, "ENABLED", True)
             if not (enabled or allow_disabled):
                 continue
             if can_run_in_robot_version(
@@ -501,7 +516,7 @@ def load_transformers(
                 container.enabled_by_default = enabled
                 loaded_transformers.append(container)
             elif allow_version_mismatch and allow_disabled:
-                setattr(container.instance, "ENABLED", False)
+                container.instance.ENABLED = False
                 container.enabled_by_default = False
                 loaded_transformers.append(container)
     return loaded_transformers

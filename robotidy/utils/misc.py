@@ -4,9 +4,10 @@ import ast
 import difflib
 import os
 import re
+from collections.abc import Iterable
 from enum import Enum
 from functools import total_ordering
-from typing import Iterable, Pattern
+from re import Pattern
 
 import click
 
@@ -121,7 +122,8 @@ def after_last_dot(name):
 
 
 def split_args_from_name_or_path(name):
-    """Split arguments embedded to name or path like ``Example:arg1:arg2``.
+    """
+    Split arguments embedded to name or path like ``Example:arg1:arg2``.
 
     The separator can be either colon ``:`` or semicolon ``;``. If both are used,
     the first one is considered to be the separator.
@@ -198,7 +200,7 @@ def tokens_by_lines(node):
 
 
 def left_align(node):
-    """remove leading separator token"""
+    """Remove leading separator token"""
     tokens = list(node.tokens)
     if tokens:
         tokens[0].value = tokens[0].value.lstrip(" \t")
@@ -372,8 +374,7 @@ def collect_comments_from_tokens(tokens, indent):
     eol = Token(Token.EOL)
     if indent:
         return [Comment([indent, comment, eol]) for comment in comments]
-    else:
-        return [Comment([comment, eol]) for comment in comments]
+    return [Comment([comment, eol]) for comment in comments]
 
 
 def flatten_multiline(tokens, separator, remove_comments: bool = False):
@@ -416,8 +417,7 @@ def split_on_token_value(tokens, value, resolve: int):
             branch = tokens[index : index + resolve]
             remainder = tokens[index + resolve :]
             return prefix, branch, remainder
-    else:
-        return [], [], tokens
+    return [], [], tokens
 
 
 def join_tokens_with_token(tokens, token):
