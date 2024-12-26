@@ -45,7 +45,7 @@ setup(
         "click==8.1.*",
         "colorama>=0.4.3,<0.4.7",
         "pathspec>=0.9.0,<0.12.2",
-        "tomli==2.0.*",
+        "tomli>=2.0,<2.3",
         "rich_click>=1.4,<1.8.6",
         "jinja2>=3.1.3,<4.0",
     ],
@@ -59,7 +59,7 @@ setup(
             "pylama",
             "pytest",
             "pre-commit",
-            "tomli_w==1.0.*",
+            "tomli_w>=1.0,<1.2",
         ],
         "doc": [
             "sphinx",
@@ -67,7 +67,7 @@ setup(
             "sphinx-design",
             "sphinx-copybutton==0.5.2",
         ],
-        "generate_config": ["tomli_w==1.0.*"],
+        "generate_config": ["tomli_w>=1.0,<1.2"],
     },
     entry_points={"console_scripts": ["robotidy=robotidy.cli:cli"]},
 )
