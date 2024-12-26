@@ -46,7 +46,7 @@ setup(
         "colorama>=0.4.3,<0.4.7",
         "pathspec>=0.9.0,<0.12.2",
         "tomli==2.0.*",
-        "rich_click>=1.4,<1.8.4",
+        "rich_click>=1.4,<1.8.6",
         "jinja2>=3.1.3,<4.0",
     ],
     extras_require={
