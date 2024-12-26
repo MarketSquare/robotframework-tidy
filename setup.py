@@ -41,7 +41,7 @@ setup(
     include_package_data=True,
     python_requires=">=3.8",
     install_requires=[
-        "robotframework>=4.0,<8.0",
+        "robotframework>=4.0,<7.2",
         "click==8.1.*",
         "colorama>=0.4.3,<0.4.7",
         "pathspec>=0.9.0,<0.12.2",

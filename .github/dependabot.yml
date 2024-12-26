@@ -6,7 +6,7 @@ updates:
       interval: "daily"
   
   - package-ecosystem: pip
-    directory: "/tests/rf_versions_matrix/requirements_rf7.txt"
+    directory: "/tests/rf_versions_matrix/rf7/"
     schedule:
       interval: "daily"
 
