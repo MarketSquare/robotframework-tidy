@@ -1,12 +1,12 @@
 version: 2
 updates:
   - package-ecosystem: pip
-    directory: "/tests/rf_versions_matrix/requirements_rf7.txt"
+    directory: "/"
     schedule:
       interval: "daily"
-
+  
   - package-ecosystem: pip
-    directory: "/"
+    directory: "/tests/rf_versions_matrix/requirements_rf7.txt"
     schedule:
       interval: "daily"
 
