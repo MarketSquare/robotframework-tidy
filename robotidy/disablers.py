@@ -66,7 +66,12 @@ def is_line_start(node):
 
 
 class DisablersInFile:
-    def __init__(self, start_line: Optional[int], end_line: Optional[int], file_end: Optional[int] = None):
+    def __init__(
+        self,
+        start_line: Optional[int],
+        end_line: Optional[int],
+        file_end: Optional[int] = None,
+    ):
         self.start_line = start_line
         self.end_line = end_line
         self.file_end = file_end

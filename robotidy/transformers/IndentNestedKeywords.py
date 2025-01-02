@@ -126,7 +126,11 @@ class IndentNestedKeywords(Transformer):
         comments = misc.collect_comments_from_tokens(node.tokens, indent=None)
         separator = self.get_separator()
         new_line = misc.get_new_line()
-        tokens = [node.data_tokens[0], separator, *misc.join_tokens_with_token(lines[0][1], separator)]
+        tokens = [
+            node.data_tokens[0],
+            separator,
+            *misc.join_tokens_with_token(lines[0][1], separator),
+        ]
         formatted_tokens = self.parse_keyword_lines(lines, tokens, new_line, eol=node.tokens[-1])
         if self.node_was_transformed(node.tokens, formatted_tokens):
             node.tokens = formatted_tokens
@@ -144,7 +148,12 @@ class IndentNestedKeywords(Transformer):
         indent = node.tokens[0]
         separator = self.get_separator()
         new_line = misc.get_new_line(indent)
-        tokens = [indent, node.data_tokens[0], separator, *misc.join_tokens_with_token(lines[0][1], separator)]
+        tokens = [
+            indent,
+            node.data_tokens[0],
+            separator,
+            *misc.join_tokens_with_token(lines[0][1], separator),
+        ]
         comment = misc.merge_comments_into_one(node.tokens)
         if comment:
             # need to add comments on first line for [Setup] / [Teardown] settings

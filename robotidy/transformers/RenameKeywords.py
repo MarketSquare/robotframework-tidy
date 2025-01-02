@@ -149,7 +149,10 @@ class RenameKeywords(Transformer):
         # capitalize first letter of every word, leave rest untouched
         for index, word in enumerate(split_words):
             if not word:
-                if index in (0, len(split_words) - 1):  # leading and trailing whitespace
+                if index in (
+                    0,
+                    len(split_words) - 1,
+                ):  # leading and trailing whitespace
                     words.append("")
             else:
                 words.append(word[0].upper() + word[1:])

@@ -128,7 +128,12 @@ def get_path_relative_to_project_root(path: Path, root_parent: Path) -> Path:
         return path
 
 
-def get_paths(src: tuple[str, ...], exclude: Pattern | None, extend_exclude: Pattern | None, skip_gitignore: bool):
+def get_paths(
+    src: tuple[str, ...],
+    exclude: Pattern | None,
+    extend_exclude: Pattern | None,
+    skip_gitignore: bool,
+):
     root = find_project_root(src)
     if skip_gitignore:
         gitignore = None

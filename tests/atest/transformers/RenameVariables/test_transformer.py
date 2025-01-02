@@ -114,3 +114,6 @@ class TestRenameVariables(TransformerAcceptanceTest):
 
     def test_equal_sign_in_section(self):
         self.compare(source="equal_sign_in_section.robot")
+
+    def test_groups(self):
+        self.compare(source="groups.robot", target_version=">7.1.1")

@@ -98,7 +98,12 @@ def convert_transformers_config(
     is_config: bool = False,
 ) -> list[TransformConfig]:
     return [
-        TransformConfig(tr, force_include=force_included, custom_transformer=custom_transformer, is_config=is_config)
+        TransformConfig(
+            tr,
+            force_include=force_included,
+            custom_transformer=custom_transformer,
+            is_config=is_config,
+        )
         for tr in config.get(param_name, ())
     ]
 
@@ -186,7 +191,10 @@ class RawConfig:
         Dictionary key:values needs to be normalized and parsed to correct types.
         """
         options_map = map_class_fields_with_their_types(self)
-        parsed_config = {"defined_in_config": {"defined_in_config", "config_path"}, "config_path": config_path}
+        parsed_config = {
+            "defined_in_config": {"defined_in_config", "config_path"},
+            "config_path": config_path,
+        }
         for key, value in config.items():
             # workaround to be able to use two option names for same action - backward compatibility change
             if key == "load_transformers":
@@ -206,7 +214,10 @@ class RawConfig:
                 parsed_config[key] = [convert_transform_config(val, key) for val in value]
             elif key == "src":
                 parsed_config[key] = tuple(value)
-            elif value_type in ("Pattern", Pattern):  # future typing for 3.8 provides type as str
+            elif value_type in (
+                "Pattern",
+                Pattern,
+            ):  # future typing for 3.8 provides type as str
                 parsed_config[key] = misc.validate_regex(value)
             else:
                 parsed_config[key] = value
@@ -273,7 +284,10 @@ class MainConfig:
 
     def get_sources_with_configs(self):
         sources = files.get_paths(
-            self.sources, self.default.exclude, self.default.extend_exclude, self.default.skip_gitignore
+            self.sources,
+            self.default.exclude,
+            self.default.extend_exclude,
+            self.default.skip_gitignore,
         )
         for source in sources:
             if self.default.config:

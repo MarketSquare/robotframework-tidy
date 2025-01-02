@@ -46,7 +46,13 @@ class AlignVariablesSection(Transformer):
     To align all columns set ``up_to_column`` to 0.
     """
 
-    def __init__(self, up_to_column: int = 2, skip_types: str = "", min_width: int = None, fixed_width: int = None):
+    def __init__(
+        self,
+        up_to_column: int = 2,
+        skip_types: str = "",
+        min_width: int = None,
+        fixed_width: int = None,
+    ):
         super().__init__()
         self.up_to_column = up_to_column - 1
         self.min_width = min_width
@@ -121,7 +127,13 @@ class AlignVariablesSection(Transformer):
     def get_separator(self, index: int, up_to: int, token, look_up: dict[int, int]) -> str:
         if index < up_to:
             if self.fixed_width:
-                return max(self.fixed_width - len(token.value), self.formatting_config.space_count) * " "
+                return (
+                    max(
+                        self.fixed_width - len(token.value),
+                        self.formatting_config.space_count,
+                    )
+                    * " "
+                )
             return (look_up[index] - len(token.value)) * " "
         else:
             return self.formatting_config.separator

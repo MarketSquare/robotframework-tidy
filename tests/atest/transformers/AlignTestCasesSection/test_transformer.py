@@ -136,3 +136,6 @@ class TestAlignTestCasesSection(TransformerAcceptanceTest):
             "--transform NormalizeSeparators "
             "--transform NormalizeComments",
         )
+
+    def test_groups(self):
+        self.compare(source="groups.robot", target_version=">7.1.1")

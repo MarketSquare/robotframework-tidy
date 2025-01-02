@@ -79,7 +79,11 @@ class Translate(Transformer):
             self.language, self.settings = None, None
         self._bdd_mapping = None
         self.bdd = self.get_translated_bdd(
-            but_alternative, given_alternative, and_alternative, then_alternative, when_alternative
+            but_alternative,
+            given_alternative,
+            and_alternative,
+            then_alternative,
+            when_alternative,
         )
 
     @property

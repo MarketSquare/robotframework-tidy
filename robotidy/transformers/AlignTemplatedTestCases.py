@@ -110,7 +110,13 @@ class AlignTemplatedTestCases(Transformer):
         for index, token in enumerate(statement.data_tokens[:-1]):
             tokens.append(token)
             if self.min_width:
-                separator = max(self.formatting_config.space_count, self.min_width - len(token.value)) * " "
+                separator = (
+                    max(
+                        self.formatting_config.space_count,
+                        self.min_width - len(token.value),
+                    )
+                    * " "
+                )
             else:
                 separator = (self.widths[index] - len(token.value) + self.formatting_config.space_count) * " "
             tokens.append(Token(Token.SEPARATOR, separator))
