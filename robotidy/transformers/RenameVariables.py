@@ -14,7 +14,12 @@ from robotidy.skip import Skip
 from robotidy.transformers import Transformer
 from robotidy.utils import misc, variable_matcher
 
-SET_GLOBAL_VARIABLES = {"settestvariable", "settaskvariable", "setsuitevariable", "setglobalvariable"}
+SET_GLOBAL_VARIABLES = {
+    "settestvariable",
+    "settaskvariable",
+    "setsuitevariable",
+    "setglobalvariable",
+}
 SET_LOCAL_VARIABLE = "setlocalvariable"
 
 
@@ -312,11 +317,15 @@ class RenameVariables(Transformer):
         for data_token in node.data_tokens:
             if data_token.type == Token.VARIABLE:
                 data_token.value = self.rename_value(
-                    data_token.value, variable_case=self.variables_section_case, is_var=True
+                    data_token.value,
+                    variable_case=self.variables_section_case,
+                    is_var=True,
                 )
             elif data_token.type == Token.ARGUMENT:
                 data_token.value = self.rename_value(
-                    data_token.value, variable_case=self.variables_section_case, is_var=False
+                    data_token.value,
+                    variable_case=self.variables_section_case,
+                    is_var=False,
                 )
         return node
 
@@ -450,6 +459,8 @@ class RenameVariables(Transformer):
         for arg in node.header.get_tokens(Token.ARGUMENT):
             arg.value = self.rename_value(arg.value, variable_case=VariableCase.AUTO, is_var=False)
         return self.generic_visit(node)
+
+    visit_Group = visit_While
 
     @skip_if_disabled
     def visit_Var(self, node):  # noqa

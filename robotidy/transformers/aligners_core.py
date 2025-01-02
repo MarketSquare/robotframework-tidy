@@ -20,7 +20,6 @@ WHITESPACE_TOKENS = frozenset({Token.SEPARATOR, Token.EOS})
 
 
 class AlignKeywordsTestsSection(Transformer):
-
     ENABLED = False
     DEFAULT_WIDTH = 24
     HANDLES_SKIP = frozenset(
@@ -158,7 +157,7 @@ class AlignKeywordsTestsSection(Transformer):
         self.remove_auto_widths_for_context()
         return node
 
-    visit_While = visit_For
+    visit_While = visit_Group = visit_For
 
     def get_width(self, col: int, is_setting: bool, override_default_zero: bool = False) -> int:
         # If auto mode is enabled, use auto widths for current context (last defined widths)
@@ -199,7 +198,10 @@ class AlignKeywordsTestsSection(Transformer):
                             len(prev_token.value) + self.formatting_config.space_count
                         ) - len(prev_token.value)
                     else:
-                        separator_len = max(width - len(prev_token.value), self.formatting_config.space_count)
+                        separator_len = max(
+                            width - len(prev_token.value),
+                            self.formatting_config.space_count,
+                        )
                     token.value = " " * separator_len
                     break
                 elif token.type != Token.ARGUMENT:  # ...   # comment edge case
@@ -237,7 +239,7 @@ class AlignKeywordsTestsSection(Transformer):
         node.tokens = [indent] + list(node.tokens[1:])
         return node
 
-    visit_End = visit_ForHeader  # TODO add other headers
+    visit_End = visit_GroupHeader = visit_ForHeader  # TODO add other headers
 
     @skip_if_disabled
     def visit_KeywordCall(self, node):  # noqa
@@ -250,7 +252,13 @@ class AlignKeywordsTestsSection(Transformer):
     def should_skip_return_values(self, line: list[Token], possible_assign: bool) -> bool:
         return possible_assign and self.skip.return_values and any(token.type == Token.ASSIGN for token in line)
 
-    def align_node(self, node, check_length: bool, possible_assign: bool = False, is_setting: bool = False):
+    def align_node(
+        self,
+        node,
+        check_length: bool,
+        possible_assign: bool = False,
+        is_setting: bool = False,
+    ):
         indent = Token(Token.SEPARATOR, self.indent * self.formatting_config.indent)
         aligned_lines = []
         for line in node.lines:
@@ -446,13 +454,21 @@ class AlignKeywordsTestsSection(Transformer):
                         misaligned_cols += 1
                         while prev_overflow_len > width:
                             column += 1
-                            width = self.get_width(column, override_default_zero=True, is_setting=is_setting)
+                            width = self.get_width(
+                                column,
+                                override_default_zero=True,
+                                is_setting=is_setting,
+                            )
                             prev_overflow_len -= width
                             misaligned_cols += 1
                         if self.too_many_misaligned_cols(misaligned_cols, prev_overflow_len, tokens, index):
                             # check if next col fits next token with prev_overflow, if not, jump to the next column
                             next_token = tokens[index + 1]
-                            next_width = self.get_width(column + 1, override_default_zero=True, is_setting=is_setting)
+                            next_width = self.get_width(
+                                column + 1,
+                                override_default_zero=True,
+                                is_setting=is_setting,
+                            )
                             required_width = next_width - prev_overflow_len - len(next_token.value)
                             if required_width < min_separator:
                                 column += 1
@@ -461,7 +477,11 @@ class AlignKeywordsTestsSection(Transformer):
                     else:  # "overflow"
                         while misc.round_to_four(len(token.value) + min_separator) > width:
                             column += 1
-                            width += self.get_width(column, override_default_zero=True, is_setting=is_setting)
+                            width += self.get_width(
+                                column,
+                                override_default_zero=True,
+                                is_setting=is_setting,
+                            )
                         separator_len = width - len(token.value)
             separator_len = max(
                 min_separator, separator_len
@@ -586,7 +606,11 @@ class ColumnWidthCounter(ModelVisitor):
                 self.settings_widths[column] = max(filter_widths, default=max_width)
 
     def get_and_store_columns_widths(
-        self, node, widths: defaultdict, up_to: int = 0, filter_tokens: frozenset | None = None
+        self,
+        node,
+        widths: defaultdict,
+        up_to: int = 0,
+        filter_tokens: frozenset | None = None,
     ):
         """
         Save columns widths to use them later to find the longest token in column.

@@ -62,7 +62,9 @@ class ReplaceReturns(Transformer):
             while node.body and isinstance(node.body[-1], (EmptyLine, Comment)):
                 skip_lines.append(node.body.pop())
             return_stmt = misc.create_statement_from_tokens(
-                statement=ReturnStatement, tokens=self.return_statement.tokens[2:], indent=indent
+                statement=ReturnStatement,
+                tokens=self.return_statement.tokens[2:],
+                indent=indent,
             )
             node.body.append(return_stmt)
             node.body.extend(skip_lines)

@@ -108,3 +108,6 @@ class TestAlignKeywordsSection(TransformerAcceptanceTest):
         self.compare(
             source="align_settings_separately.robot", config=":alignment_type=auto:align_settings_separately=True"
         )
+
+    def test_groups(self):
+        self.compare(source="groups.robot", target_version=">7.1.1")

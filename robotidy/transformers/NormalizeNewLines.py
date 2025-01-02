@@ -118,7 +118,7 @@ class NormalizeNewLines(Transformer):
         self.trim_empty_lines(node)
         return self.generic_visit(node)
 
-    visit_For = visit_While = visit_Try = visit_If
+    visit_For = visit_While = visit_Group = visit_Try = visit_If
 
     def visit_Statement(self, node):  # noqa
         tokens = []

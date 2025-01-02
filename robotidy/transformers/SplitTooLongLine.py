@@ -76,7 +76,14 @@ class SplitTooLongLine(Transformer):
     """
 
     IGNORED_WHITESPACE = {Token.EOL, Token.CONTINUATION}
-    HANDLES_SKIP = frozenset({"skip_comments", "skip_keyword_call", "skip_keyword_call_pattern", "skip_sections"})
+    HANDLES_SKIP = frozenset(
+        {
+            "skip_comments",
+            "skip_keyword_call",
+            "skip_keyword_call_pattern",
+            "skip_sections",
+        }
+    )
 
     def __init__(
         self,
@@ -176,7 +183,11 @@ class SplitTooLongLine(Transformer):
         separator = Token(Token.SEPARATOR, self.formatting_config.separator)
         line = [indent, node.data_tokens[0], separator, var_name]
         tokens, comments = self.split_tokens(
-            node.tokens, line, self.split_on_every_value, indent=indent, split_types=(Token.ARGUMENT, Token.OPTION)
+            node.tokens,
+            line,
+            self.split_on_every_value,
+            indent=indent,
+            split_types=(Token.ARGUMENT, Token.OPTION),
         )
         comments = [Comment([comment, EOL]) for comment in comments]
         node.tokens = tokens
@@ -247,7 +258,14 @@ class SplitTooLongLine(Transformer):
             yield EOL
             first = False
 
-    def split_tokens(self, tokens, line, split_on, indent=None, split_types: tuple = (Token.ARGUMENT,)):
+    def split_tokens(
+        self,
+        tokens,
+        line,
+        split_on,
+        indent=None,
+        split_types: tuple = (Token.ARGUMENT,),
+    ):
         separator = Token(Token.SEPARATOR, self.formatting_config.separator)
         align_new_line = self.align_new_line and not split_on
         if align_new_line:
@@ -338,7 +356,10 @@ class SplitTooLongLine(Transformer):
         else:
             head = []
         tokens, comments = self.split_tokens(
-            node.tokens[node.tokens.index(keyword) + 1 :], line, self.split_on_every_arg, indent
+            node.tokens[node.tokens.index(keyword) + 1 :],
+            line,
+            self.split_on_every_arg,
+            indent,
         )
         head.extend(tokens)
         comment_tokens = []

@@ -104,3 +104,6 @@ class TestNormalizeSeparators(TransformerAcceptanceTest):
             expected="cont_indent_align_new_line.robot",
             config=":align_new_line=True",
         )
+
+    def test_groups(self):
+        self.compare(source="groups.robot", target_version=">7.1.1")

@@ -33,7 +33,12 @@ class NormalizeSeparators(Transformer):
         }
     )
 
-    def __init__(self, flatten_lines: bool = False, align_new_line: bool = False, skip: Skip = None):
+    def __init__(
+        self,
+        flatten_lines: bool = False,
+        align_new_line: bool = False,
+        skip: Skip = None,
+    ):
         super().__init__(skip=skip)
         self.indent = 0
         self.flatten_lines = flatten_lines
@@ -75,6 +80,8 @@ class NormalizeSeparators(Transformer):
         node = self.indented_block(node)
         self.visit_Statement(node.end)
         return node
+
+    visit_Group = visit_For
 
     def visit_Try(self, node):
         node = self.indented_block(node)

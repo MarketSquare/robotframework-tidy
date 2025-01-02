@@ -66,6 +66,11 @@ class ReplaceEmptyValues(Transformer):
                     tokens.append(token)
                 prev_token = token
         else:
-            tokens = [node.tokens[0], sep, Token(Token.ARGUMENT, node.name[0] + "{EMPTY}"), *node.tokens[1:]]
+            tokens = [
+                node.tokens[0],
+                sep,
+                Token(Token.ARGUMENT, node.name[0] + "{EMPTY}"),
+                *node.tokens[1:],
+            ]
         node.tokens = tokens
         return node

@@ -43,7 +43,10 @@ class RemoveEmptySettings(Transformer):
         super().__init__()
         if work_mode not in ("overwrite_ok", "always"):
             raise InvalidParameterValueError(
-                self.__class__.__name__, "work_mode", work_mode, "Possible values:\n    overwrite_ok\n    always"
+                self.__class__.__name__,
+                "work_mode",
+                work_mode,
+                "Possible values:\n    overwrite_ok\n    always",
             )
         self.work_mode = work_mode
         self.more_explicit = more_explicit

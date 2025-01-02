@@ -38,7 +38,12 @@ class NormalizeTags(Transformer):
         "titlecase": str.title,
     }
 
-    def __init__(self, case: str = "lowercase", normalize_case: bool = True, preserve_format: bool = False):
+    def __init__(
+        self,
+        case: str = "lowercase",
+        normalize_case: bool = True,
+        preserve_format: bool = False,
+    ):
         super().__init__()
         self.case_function = case.lower()
         self.normalize_case = normalize_case
@@ -48,7 +53,10 @@ class NormalizeTags(Transformer):
     def validate_case_function(self):
         if self.case_function not in self.CASE_FUNCTIONS:
             raise InvalidParameterValueError(
-                self.__class__.__name__, "case", self.case_function, "Supported cases: lowercase, uppercase, titlecase."
+                self.__class__.__name__,
+                "case",
+                self.case_function,
+                "Supported cases: lowercase, uppercase, titlecase.",
             )
 
     @skip_section_if_disabled
@@ -102,7 +110,10 @@ class NormalizeTags(Transformer):
         tags = self.remove_duplicates(tags)
         comments = node.get_tokens(Token.COMMENT)
         if indent:
-            tokens = [Token(Token.SEPARATOR, self.formatting_config.indent), setting_name]
+            tokens = [
+                Token(Token.SEPARATOR, self.formatting_config.indent),
+                setting_name,
+            ]
         else:
             tokens = [setting_name]
         for tag in tags:

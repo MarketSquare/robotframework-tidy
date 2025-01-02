@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
 from robot.api.parsing import Comment, ElseHeader, ElseIfHeader, End, If, IfHeader, KeywordCall, Token
@@ -220,11 +221,19 @@ class ReplaceWithVAR(Transformer):
             if len(values) > 1:
                 var_name = "@" + var_name[1:]
             return Var.from_params(
-                name=var_name, value=values, separator=self.formatting_config.separator, indent=indent, scope=scope
+                name=var_name,
+                value=values,
+                separator=self.formatting_config.separator,
+                indent=indent,
+                scope=scope,
             )
         return [
             Var.from_params(
-                name=var_assign, value=value, separator=self.formatting_config.separator, indent=indent, scope=scope
+                name=var_assign,
+                value=value,
+                separator=self.formatting_config.separator,
+                indent=indent,
+                scope=scope,
             )
             for var_assign, value in zip(assign, values)
         ]
@@ -252,7 +261,11 @@ class ReplaceWithVAR(Transformer):
             values = [var_name]
         scope = scope.upper() if self.explicit_local or scope != "local" else None
         return Var.from_params(
-            name=var_name, value=values, separator=self.formatting_config.separator, indent=indent, scope=scope
+            name=var_name,
+            value=values,
+            separator=self.formatting_config.separator,
+            indent=indent,
+            scope=scope,
         )
 
     def replace_set_variable_if_kw(self, node, kw_name: str, indent: str, assign: list[str] | None = None):
@@ -287,7 +300,11 @@ class ReplaceWithVAR(Transformer):
             else:
                 condition, value = args[:2]
             variable = Var.from_params(
-                name=var_name, value=value, separator=separator, indent=in_block_indent, scope=scope
+                name=var_name,
+                value=value,
+                separator=separator,
+                indent=in_block_indent,
+                scope=scope,
             )
             if tail:
                 if condition:
@@ -325,7 +342,13 @@ class ReplaceWithVAR(Transformer):
         else:
             separator = "${SPACE}"
         scope = "LOCAL" if self.explicit_local else None
-        return Var.from_params(name=var_name, value=values, indent=indent, value_separator=separator, scope=scope)
+        return Var.from_params(
+            name=var_name,
+            value=values,
+            indent=indent,
+            value_separator=separator,
+            scope=scope,
+        )
 
     def replace_create_list_kw(self, node, kw_name: str, indent: str, assign: list[str] | None = None):
         assign = assign or self.get_assign_names(node.assign)
@@ -340,7 +363,11 @@ class ReplaceWithVAR(Transformer):
             values = ["@{EMPTY}"]
         scope = "LOCAL" if self.explicit_local else None
         return Var.from_params(
-            name=var_name, value=values, separator=self.formatting_config.separator, indent=indent, scope=scope
+            name=var_name,
+            value=values,
+            separator=self.formatting_config.separator,
+            indent=indent,
+            scope=scope,
         )
 
     def _split_dict_items(self, items: list[str]):
@@ -378,5 +405,9 @@ class ReplaceWithVAR(Transformer):
             values = ["&{EMPTY}"]
         scope = "LOCAL" if self.explicit_local else None
         return Var.from_params(
-            name=var_name, value=values, separator=self.formatting_config.separator, indent=indent, scope=scope
+            name=var_name,
+            value=values,
+            separator=self.formatting_config.separator,
+            indent=indent,
+            scope=scope,
         )

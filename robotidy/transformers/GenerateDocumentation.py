@@ -130,7 +130,12 @@ class GenerateDocumentation(Transformer):
 
     WHITESPACE_PATTERN = re.compile(r"(\s{2,}|\t)", re.UNICODE)
 
-    def __init__(self, overwrite: bool = False, doc_template: str = "google", template_directory: str | None = None):
+    def __init__(
+        self,
+        overwrite: bool = False,
+        doc_template: str = "google",
+        template_directory: str | None = None,
+    ):
         self.overwrite = overwrite
         self.doc_template = self.load_template(doc_template, template_directory)
         self.args_returns_finder = ArgumentsAndReturnsVisitor()
@@ -174,7 +179,11 @@ class GenerateDocumentation(Transformer):
         if not self.overwrite and self.args_returns_finder.doc_exists:
             return node
         formatting = FormattingData(self.formatting_config.continuation_indent, self.formatting_config.separator)
-        kw_data = KeywordData(node.name, self.args_returns_finder.arguments, self.args_returns_finder.returns)
+        kw_data = KeywordData(
+            node.name,
+            self.args_returns_finder.arguments,
+            self.args_returns_finder.returns,
+        )
         generated = self.doc_template.render(keyword=kw_data, formatting=formatting)
         doc_node = self.create_documentation_from_string(generated)
         if self.overwrite:
@@ -186,7 +195,11 @@ class GenerateDocumentation(Transformer):
         return None
 
     def create_documentation_from_string(self, doc_string):
-        new_line = [Token(Token.EOL), Token(Token.SEPARATOR, self.formatting_config.indent), Token(Token.CONTINUATION)]
+        new_line = [
+            Token(Token.EOL),
+            Token(Token.SEPARATOR, self.formatting_config.indent),
+            Token(Token.CONTINUATION),
+        ]
         tokens = [
             Token(Token.SEPARATOR, self.formatting_config.indent),
             Token(Token.DOCUMENTATION, "[Documentation]"),

@@ -114,7 +114,16 @@ class Skip:
 
     @staticmethod
     def parse_skip_settings(skip_config):
-        settings = {"settings", "arguments", "setup", "teardown", "timeout", "template", "return_statement", "tags"}
+        settings = {
+            "settings",
+            "arguments",
+            "setup",
+            "teardown",
+            "timeout",
+            "template",
+            "return_statement",
+            "tags",
+        }
         skip_settings = set()
         for setting in settings:
             if getattr(skip_config, setting):
@@ -156,7 +165,10 @@ class Skip:
 documentation_option = click.option("--skip-documentation", is_flag=True, help="Skip formatting of documentation")
 return_values_option = click.option("--skip-return-values", is_flag=True, help="Skip formatting of return values")
 keyword_call_option = click.option(
-    "--skip-keyword-call", type=str, multiple=True, help="Keyword call name that should not be formatted"
+    "--skip-keyword-call",
+    type=str,
+    multiple=True,
+    help="Keyword call name that should not be formatted",
 )
 keyword_call_pattern_option = click.option(
     "--skip-keyword-call-pattern",

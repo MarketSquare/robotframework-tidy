@@ -147,7 +147,13 @@ class AlignSettingsSection(Transformer):
     def calc_separator(self, index, up_to, indent_arg, token, look_up):
         if index < up_to:
             if self.fixed_width:
-                return max(self.fixed_width - len(token.value), self.formatting_config.space_count) * " "
+                return (
+                    max(
+                        self.fixed_width - len(token.value),
+                        self.formatting_config.space_count,
+                    )
+                    * " "
+                )
             arg_indent = self.argument_indent if indent_arg else 0
             if indent_arg and index != 0:
                 return (

@@ -136,7 +136,12 @@ class OrderSettings(Transformer):
         shared_keyword = orders["keyword_before"].intersection(orders["keyword_after"])
         shared_test = orders["test_before"].intersection(orders["test_after"])
         if shared_keyword:
-            raise SettingInBothOrdersError(self.__class__.__name__, "keyword_before", "keyword_after", shared_keyword)
+            raise SettingInBothOrdersError(
+                self.__class__.__name__,
+                "keyword_before",
+                "keyword_after",
+                shared_keyword,
+            )
         if shared_test:
             raise SettingInBothOrdersError(self.__class__.__name__, "test_before", "test_after", shared_test)
 

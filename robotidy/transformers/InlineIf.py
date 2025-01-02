@@ -179,7 +179,11 @@ class InlineIf(Transformer):
         # check for ElseIfHeader first since it's child of IfHeader class
         if isinstance(node.header, ElseIfHeader):
             header = ElseIfHeader(
-                [Token(Token.ELSE_IF), Token(Token.SEPARATOR, separator), Token(Token.ARGUMENT, node.header.condition)]
+                [
+                    Token(Token.ELSE_IF),
+                    Token(Token.SEPARATOR, separator),
+                    Token(Token.ARGUMENT, node.header.condition),
+                ]
             )
         elif isinstance(node.header, IfHeader):
             tokens = [Token(Token.SEPARATOR, indent)]
@@ -202,7 +206,10 @@ class InlineIf(Transformer):
 
     @staticmethod
     def to_inline_keyword(keyword, separator, last_token):
-        tokens = [Token(Token.SEPARATOR, separator), Token(Token.KEYWORD, keyword.keyword)]
+        tokens = [
+            Token(Token.SEPARATOR, separator),
+            Token(Token.KEYWORD, keyword.keyword),
+        ]
         for arg in keyword.get_tokens(Token.ARGUMENT):
             tokens.extend([Token(Token.SEPARATOR, separator), arg])
         tokens.append(last_token)
@@ -321,11 +328,15 @@ class InlineIf(Transformer):
         else_found = False
         if isinstance(node.header, InlineIfHeader):
             header = IfHeader.from_params(
-                condition=node.condition, indent=indent, separator=self.formatting_config.separator
+                condition=node.condition,
+                indent=indent,
+                separator=self.formatting_config.separator,
             )
         elif isinstance(node.header, ElseIfHeader):
             header = ElseIfHeader.from_params(
-                condition=node.condition, indent=indent, separator=self.formatting_config.separator
+                condition=node.condition,
+                indent=indent,
+                separator=self.formatting_config.separator,
             )
         else:
             header = ElseHeader.from_params(indent=indent)

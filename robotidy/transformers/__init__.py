@@ -8,6 +8,7 @@ need to inherit from ``ModelTransformer`` or ``ast.NodeTransformer`` class. Fina
 If you don't want to run your transformer by default and only when calling robotidy with --transform YourTransformer
 then add ``ENABLED = False`` class attribute inside.
 """
+
 from __future__ import annotations
 
 import copy
@@ -205,7 +206,10 @@ def convert_transform_config(value: str, param_name: str) -> TransformConfig:
     custom_transformer = param_name == "custom_transformers"
     is_config = param_name == "configure"
     return TransformConfig(
-        value, force_include=force_included, custom_transformer=custom_transformer, is_config=is_config
+        value,
+        force_include=force_included,
+        custom_transformer=custom_transformer,
+        is_config=is_config,
     )
 
 
@@ -325,14 +329,20 @@ def import_transformer(name, config: TransformConfigMap, skip) -> Iterable[Trans
         imported = IMPORTER.import_class_or_module(name)
         if inspect.isclass(imported):
             yield create_transformer_instance(
-                imported, short_name, config.get_args(name, short_name, import_path), skip
+                imported,
+                short_name,
+                config.get_args(name, short_name, import_path),
+                skip,
             )
         else:
             transformers = load_transformers_from_module(imported)
             transformers = order_transformers(transformers, imported)
             for name, transformer_class in transformers.items():
                 yield create_transformer_instance(
-                    transformer_class, name, config.get_args(name, short_name, import_path), skip
+                    transformer_class,
+                    name,
+                    config.get_args(name, short_name, import_path),
+                    skip,
                 )
     except DataError:
         similar_finder = misc.RecommendationFinder()

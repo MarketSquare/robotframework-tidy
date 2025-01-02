@@ -51,7 +51,12 @@ class SmartSortKeywords(Transformer):
 
     ENABLED = False
 
-    def __init__(self, case_insensitive=True, ignore_leading_underscore=False, ignore_other_underscore=True):
+    def __init__(
+        self,
+        case_insensitive=True,
+        ignore_leading_underscore=False,
+        ignore_other_underscore=True,
+    ):
         super().__init__()
         self.ci = case_insensitive
         self.ilu = ignore_leading_underscore

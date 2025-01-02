@@ -64,7 +64,10 @@ class NormalizeAssignments(Transformer):
     HANDLES_SKIP = frozenset({"skip_sections"})
 
     def __init__(
-        self, equal_sign_type: str = "autodetect", equal_sign_type_variables: str = "remove", skip: Skip = None
+        self,
+        equal_sign_type: str = "autodetect",
+        equal_sign_type_variables: str = "remove",
+        skip: Skip = None,
     ):
         super().__init__(skip)
         self.remove_equal_sign = re.compile(r"\s?=$")

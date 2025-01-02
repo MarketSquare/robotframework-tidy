@@ -35,7 +35,14 @@ class NormalizeSectionHeaderName(Transformer):
     """
 
     HANDLES_SKIP = frozenset({"skip_sections"})
-    EN_SINGULAR_HEADERS = {"comment", "setting", "variable", "task", "test case", "keyword"}
+    EN_SINGULAR_HEADERS = {
+        "comment",
+        "setting",
+        "variable",
+        "task",
+        "test case",
+        "keyword",
+    }
 
     def __init__(self, uppercase: bool = False, skip: Skip = None):
         super().__init__(skip)

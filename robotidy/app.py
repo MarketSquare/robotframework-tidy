@@ -61,7 +61,10 @@ class Robotidy:
                     self.output_diff(model_path, old_model, new_model)
                     changed_files += 1
             except DataError as err:
-                click.echo(f"Failed to decode {source} with an error: {err}\nSkipping file", err=True)
+                click.echo(
+                    f"Failed to decode {source} with an error: {err}\nSkipping file",
+                    err=True,
+                )
                 changed_files = previous_changed_files
                 skipped_files += 1
         return self.formatting_result(all_files, changed_files, skipped_files, stdin)
@@ -141,7 +144,12 @@ class Robotidy:
                     return f.newlines[0]
         return self.config.formatting.line_sep
 
-    def output_diff(self, path: str, old_model: misc.StatementLinesCollector, new_model: misc.StatementLinesCollector):
+    def output_diff(
+        self,
+        path: str,
+        old_model: misc.StatementLinesCollector,
+        new_model: misc.StatementLinesCollector,
+    ):
         if not self.config.show_diff:
             return
         old = [l + "\n" for l in old_model.text.splitlines()]
