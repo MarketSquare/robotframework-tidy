@@ -1,0 +1,15 @@
+:orphan:
+
+==============
+Robotidy 4.16.0
+==============
+
+
+Update Robotidy rules with GROUP support from Robot Framework 7.2.
+
+Following transformers are updated & tested with GROUPs:
+
+- ``AlignKeywordsSection``
+- ``AlignTestCasesSection``
+- ``NormalizeSeparators``
+- ``RenameVariables``
