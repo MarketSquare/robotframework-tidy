@@ -492,6 +492,7 @@ def cli(ctx: click.Context, **kwargs):
     Robotidy is a tool for formatting Robot Framework source code.
     Full documentation available at <https://robotidy.readthedocs.io> .
     """
+    print_deprecation_warning()
     cli_config = RawConfig.from_cli(ctx=ctx, **kwargs)
     global_config = config_module.MainConfig(cli_config)
     global_config.validate_src_is_required()
@@ -507,3 +508,10 @@ def cli(ctx: click.Context, **kwargs):
     tidy = app.Robotidy(global_config)
     status = tidy.transform_files()
     sys.exit(status)
+
+
+def print_deprecation_warning() -> None:
+    print(
+        "DeprecationWarning: Starting with Robocop 6.0, Robotidy is now integrated into Robocop. "
+        "The standalone version of Robotidy is deprecated and may not support the latest Robot Framework versions.\n"
+    )

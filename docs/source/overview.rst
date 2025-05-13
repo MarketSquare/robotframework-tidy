@@ -1,3 +1,11 @@
+Deprecation notice
+-------------------
+
+Starting with Robocop 6.0, Robotidy is now integrated into Robocop.
+The standalone version of Robotidy is deprecated and may not support the latest Robot Framework versions.
+
+Please see https://robocop.readthedocs.io/en/stable/ for Robocop documentation.
+
 Introduction
 ------------
 Robotidy is a tool for autoformatting Robot Framework code.
