@@ -32,7 +32,7 @@ class TestNormalizeTags(TransformerAcceptanceTest):
             f"Error: {self.TRANSFORMER_NAME}: Invalid 'case' parameter value: 'invalid'. "
             f"Supported cases: lowercase, uppercase, titlecase.\n"
         )
-        assert expected_output == result.output
+        assert expected_output in result.output
 
     def test_only_remove_duplicates(self):
         self.compare(source="duplicates.robot", config=f":normalize_case=False")

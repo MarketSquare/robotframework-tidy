@@ -16,6 +16,12 @@ Robotidy
 - [Usage](#usage)
 - [Example](#example)
 
+DEPRECATION NOTICE
+------------
+Starting from Robocop 6.0, Robotidy is part of Robocop as formatter.
+
+If you are new users, please use https://github.com/MarketSquare/robotframework-robocop instead.
+
 Introduction <a name="introduction"></a>
 ------------
 Robotidy is a tool for autoformatting Robot Framework code.

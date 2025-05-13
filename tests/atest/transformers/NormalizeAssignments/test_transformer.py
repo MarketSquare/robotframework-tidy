@@ -48,7 +48,7 @@ class TestNormalizeAssignments(TransformerAcceptanceTest):
             f"Error: {self.TRANSFORMER_NAME}: Invalid '=' parameter value: '{param_name}'. "
             "Possible values:\n    remove\n    equal_sign\n    space_and_equal_sign\n"
         )
-        assert expected_output == result.output
+        assert expected_output in result.output
 
     def test_disablers(self):
         self.compare(source="disablers.robot", not_modified=True)

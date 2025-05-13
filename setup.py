@@ -41,13 +41,13 @@ setup(
     include_package_data=True,
     python_requires=">=3.8",
     install_requires=[
-        "robotframework>=4.0,<7.3",
+        "robotframework>=4.0",
         "click==8.1.*",
-        "colorama>=0.4.3,<0.4.7",
-        "pathspec>=0.9.0,<0.12.2",
-        "tomli>=2.0,<2.3",
-        "rich_click>=1.4,<1.8.6",
-        "jinja2>=3.1.3,<4.0",
+        "colorama>=0.4.3",
+        "pathspec>=0.9.0",
+        "tomli>=2.0",
+        "rich_click>=1.4",
+        "jinja2>=3.1.3",
     ],
     extras_require={
         "dev": [

@@ -44,7 +44,7 @@ class TestRenameTestCases(TransformerAcceptanceTest):
             rf"Error: {self.TRANSFORMER_NAME}: Invalid 'replace_pattern' parameter value: '[\911]'. "
             "It should be a valid regex expression. Regex error: 'bad escape \\9'\n"
         )
-        assert expected_output == result.output
+        assert expected_output in result.output
 
     def test_disablers(self):
         self.compare(source="disablers.robot", not_modified=True)

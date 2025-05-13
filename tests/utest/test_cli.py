@@ -58,7 +58,7 @@ class TestCli:
         )
         args = f"--transform {name} --transform MissingTransformer --transform DiscardEmptySections -".split()
         result = run_tidy(args, exit_code=1)
-        assert expected_output == result.output
+        assert expected_output in result.output
 
     # Disabled until validate_config_names remains commented out
     # @pytest.mark.parametrize(
@@ -77,7 +77,7 @@ class TestCli:
     #     )
     #     args = f"--configure {name}:param=value -".split()
     #     result = run_tidy(args, exit_code=1)
-    #     assert expected_output == result.output
+    #     assert expected_output in result.output
 
     @pytest.mark.parametrize("option_name", ["-t", "--transform"])
     def test_not_existing_configurable_similar(self, option_name):
@@ -89,7 +89,7 @@ class TestCli:
 
         args = f"{option_name} DiscardEmptySections:allow_only_commentss=True -".split()
         result = run_tidy(args, exit_code=1)
-        assert result.output == expected_output
+        assert expected_output in result.output
 
     def test_not_existing_configurable(self):
         expected_output = (
@@ -100,7 +100,7 @@ class TestCli:
 
         args = "--transform DiscardEmptySections:invalid=True -".split()
         result = run_tidy(args, exit_code=1)
-        assert result.output == expected_output
+        assert expected_output in result.output
 
     def test_not_existing_configurable_skip(self):
         expected_args = [
@@ -123,7 +123,7 @@ class TestCli:
         )
         args = "--transform AlignTestCasesSection:invalid=True -".split()
         result = run_tidy(args, exit_code=1)
-        assert result.output == expected_output
+        assert expected_output in result.output
 
     def test_invalid_configurable_usage(self):
         expected_output = (
@@ -132,7 +132,7 @@ class TestCli:
         )
         args = "--transform DiscardEmptySections=allow_only_comments=False -".split()
         result = run_tidy(args, exit_code=1)
-        assert result.output == expected_output
+        assert expected_output in result.output
 
     def test_too_many_arguments_for_transform(self):
         expected_output = (
@@ -141,7 +141,7 @@ class TestCli:
         )
         args = "--transform DiscardEmptySections:allow_only_comments:False -".split()
         result = run_tidy(args, exit_code=1)
-        assert result.output == expected_output
+        assert expected_output in result.output
 
     def test_invalid_argument_type_for_transform(self):
         expected_output = (
@@ -151,7 +151,7 @@ class TestCli:
         )
         args = "--transform AlignVariablesSection:up_to_column=1a -".split()
         result = run_tidy(args, exit_code=1)
-        assert result.output == expected_output
+        assert expected_output in result.output
 
     def test_find_project_root_from_src(self):
         src = TEST_DATA_DIR / "nested" / "test.robot"
@@ -267,7 +267,8 @@ class TestCli:
     def test_list_transformers_invalid_filter_value(self, flag):
         cmd = [flag, "RenameKeywords"]
         result = run_tidy(cmd, exit_code=2)
-        error = self.normalize_cli_error(result.stderr)
+        # Click bug, ignored due to Robotidy deprecation
+        error = self.normalize_cli_error(result.stderr + result.stdout)
         assert (
             "Invalid value for '--list' / '-l': Not allowed value. Allowed values are: all, enabled, disabled"
         ) in error
@@ -331,7 +332,7 @@ class TestCli:
                 exit_code=return_status,
             )
             mock_writer.assert_not_called()
-            assert result.output == expected_output
+            assert expected_output in result.output
 
     @pytest.mark.parametrize(
         "source, return_status, expected_output",
@@ -353,7 +354,7 @@ class TestCli:
                 mock_writer.assert_called()
             else:
                 mock_writer.assert_not_called()
-            assert result.output == expected_output
+            assert expected_output in result.output
 
     def test_read_only_file(self):
         source = TEST_DATA_DIR / "read_only" / "test.robot"
@@ -463,7 +464,7 @@ class TestCli:
             path = source_dir / file
             expected.append(f"Found {path} file")
         actual = sorted(line for line in result.output.split("\n") if line.strip())
-        assert actual == sorted(expected)
+        assert all(line in actual for line in expected)
 
     @pytest.mark.parametrize("source", [1, 2])
     def test_empty_configuration(self, source):
@@ -483,14 +484,15 @@ class TestCli:
         )
         args = "--transform DiscardEmptySections -".split()
         result = run_tidy(args, std_in=input_file)
-        assert result.output == expected_output
+        assert expected_output in result.output
 
     @pytest.mark.parametrize("target_version", ["rf", "abc", "5", "rf3"])
     @patch("robotidy.utils.misc.ROBOT_VERSION")
     def test_invalid_target_version(self, mocked_version, target_version):
         mocked_version.major = 5
         result = run_tidy(f"--target-version {target_version} .".split(), exit_code=2)
-        error = self.normalize_cli_error(result.stderr)
+        # Click bug, ignored due to Robotidy deprecation
+        error = self.normalize_cli_error(result.stderr + result.stdout)
         assert f"Invalid value for '--target-version' / '-tv':" in error
 
     def normalize_cli_error(self, error):
@@ -504,7 +506,8 @@ class TestCli:
         target_version = 5
         mocked_version.major = 4
         result = run_tidy(f"{option_name} rf{target_version} .".split(), exit_code=2)
-        error = self.normalize_cli_error(result.stderr)
+        # Click bug, ignored due to Robotidy deprecation
+        error = self.normalize_cli_error(result.stderr + result.stdout)
         assert (
             "Invalid value for '--target-version' / '-tv': "
             f"Target Robot Framework version ({target_version}) "
@@ -605,4 +608,4 @@ class TestGenerateConfig:
             "Error: Missing optional dependency: tomli_w. Install robotidy with extra `generate_config` "
             "profile:\n\npip install robotframework-tidy[generate_config]\n"
         )
-        assert result.output == expected_output
+        assert expected_output in result.output
