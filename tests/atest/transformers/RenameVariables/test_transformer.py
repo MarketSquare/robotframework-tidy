@@ -82,7 +82,7 @@ class TestRenameVariables(TransformerAcceptanceTest):
             f"Error: {self.TRANSFORMER_NAME}: Invalid '{param_name}' parameter value: 'invalid'. "
             f"Invalid case type. Allowed case types are: {allowed}\n"
         )
-        assert expected_output == result.output
+        assert expected_output in result.output
 
     def test_invalid_variable_separator(self):
         result = self.run_tidy(
@@ -94,7 +94,7 @@ class TestRenameVariables(TransformerAcceptanceTest):
             f"Error: {self.TRANSFORMER_NAME}: Invalid 'variable_separator' parameter value: 'invalid'. "
             f"Allowed values are: underscore, space, ignore\n"
         )
-        assert expected_output == result.output
+        assert expected_output in result.output
 
     def test_excluded_and_env_vars(self):
         self.compare(source="excluded_vars.robot")

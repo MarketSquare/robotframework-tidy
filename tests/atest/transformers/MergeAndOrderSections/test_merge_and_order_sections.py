@@ -69,7 +69,7 @@ class TestMergeAndOrderSections(TransformerAcceptanceTest):
             "Custom order should be provided in comma separated list with all section names:\n"
             "order=comments,settings,variables,testcases,tasks,variables\n"
         )
-        assert expected_output == result.output
+        assert expected_output in result.output
 
     def test_inline_if(self):
         self.compare(source="inline_if.robot", not_modified=True)

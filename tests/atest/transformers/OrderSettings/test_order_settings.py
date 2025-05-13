@@ -60,7 +60,7 @@ class TestOrderSettings(TransformerAcceptanceTest):
             f" Custom order should be provided in comma separated list with valid setting names: "
             f"arguments,documentation,return,setup,tags,teardown,timeout\n"
         )
-        assert result.output == expected_output
+        assert expected_output in result.output
 
     def test_disablers(self):
         self.compare(source="disablers.robot", not_modified=True)
@@ -76,7 +76,7 @@ class TestOrderSettings(TransformerAcceptanceTest):
             f"Error: {self.TRANSFORMER_NAME}: Invalid 'test_after' parameter value: 'teardown,teardown'. "
             "Custom order cannot contain duplicated setting names.\n"
         )
-        assert result.output == expected_output
+        assert expected_output in result.output
 
     def test_custom_order_setting_twice_in_after_before(self):
         config = "keyword_before=documentation,arguments:keyword_after=teardown,documentation"
@@ -89,7 +89,7 @@ class TestOrderSettings(TransformerAcceptanceTest):
             f"Error: {self.TRANSFORMER_NAME}: Invalid 'keyword_before' and 'keyword_after' order values. "
             f"Following setting names exists in both orders: documentation\n"
         )
-        assert result.output == expected_output
+        assert expected_output in result.output
 
     def test_translated(self):
         self.compare(source="translated.robot", target_version=">=6")

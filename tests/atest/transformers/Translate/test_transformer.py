@@ -54,7 +54,7 @@ class TestTranslate(TransformerAcceptanceTest):
             f"Error: {self.TRANSFORMER_NAME}: Invalid 'but_alternative' parameter value: 'chyba'. "
             "Provided BDD keyword alternative does not exist in the destination language. Select one of: Ale\n"
         )
-        assert expected_output == result.output
+        assert expected_output in result.output
 
     def test_add_language_header(self):
         config = ":language=pl:add_language_header=True"

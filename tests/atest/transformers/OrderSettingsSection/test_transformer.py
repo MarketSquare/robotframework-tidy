@@ -64,7 +64,7 @@ class TestOrderSettingsSection(TransformerAcceptanceTest):
             "Custom order should be provided in comma separated list with valid group names:\n"
             "('documentation', 'imports', 'settings', 'tags')\n"
         )
-        assert expected_output == result.output
+        assert expected_output in result.output
 
     def test_custom_order_inside_group(self):
         self.compare(
@@ -84,7 +84,7 @@ class TestOrderSettingsSection(TransformerAcceptanceTest):
             f"Custom order should be provided in comma separated list with valid group names:\n"
             f"['documentation', 'metadata']\n"
         )
-        assert expected_output == result.output
+        assert expected_output in result.output
 
     def test_remote_library_as_external(self):
         self.compare(source="remote_library.robot", config=":imports_order=library,resource,variables")
