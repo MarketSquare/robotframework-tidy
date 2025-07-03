@@ -51,6 +51,7 @@ setup(
     ],
     extras_require={
         "dev": [
+            "click>=8.2",  # 8.2 change signature of CliRunner used in test
             "coverage",
             "invoke",
             "jinja2",

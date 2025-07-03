@@ -78,7 +78,7 @@ SKIP_TESTS = {
 def run_tidy(cmd, enable_disabled: bool):
     if enable_disabled:
         cmd = get_enable_disabled_config() + cmd
-    runner = CliRunner(mix_stderr=False)
+    runner = CliRunner()
     return runner.invoke(cli, cmd)
 
 
