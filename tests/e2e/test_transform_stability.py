@@ -5,11 +5,11 @@ import shutil
 from pathlib import Path
 
 import pytest
-from click.testing import CliRunner
 
 from robotidy.cli import cli
 from robotidy.transformers import TransformConfigMap, load_transformers
 from robotidy.utils.misc import ROBOT_VERSION
+from tests.utils import cli_runner
 
 RERUN_NEEDED_4 = {
     "RenameKeywords": {"run_keywords": 2, "disablers": 2},
@@ -78,7 +78,7 @@ SKIP_TESTS = {
 def run_tidy(cmd, enable_disabled: bool):
     if enable_disabled:
         cmd = get_enable_disabled_config() + cmd
-    runner = CliRunner()
+    runner = cli_runner()
     return runner.invoke(cli, cmd)
 
 

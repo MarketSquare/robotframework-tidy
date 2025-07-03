@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from click.testing import CliRunner
-
 from robotidy.cli import cli
+from tests.utils import cli_runner
 
 
 def run_tidy(
@@ -14,7 +13,7 @@ def run_tidy(
     std_in: str | None = None,
     overwrite_input: bool = False,
 ):
-    runner = CliRunner()
+    runner = cli_runner()
     arguments = args if args is not None else []
     if not overwrite_input:
         if output:
